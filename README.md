@@ -1,2 +1,2 @@
 # dungeonbuilder
-Randomly generated rpg dungeons
+Randomly generate dungeons for 2D RPGs
