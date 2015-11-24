@@ -1,4 +1,3 @@
-#pragma once
 #include <vector>
 #include <iostream>
 
@@ -10,85 +9,61 @@ class TwoDVector
 {
 private:
 	std::vector<T> vex;
-	int w, h;
+	unsigned int mWidth, mHeight;
 public:
 	/**********************************************/
 	/*****************MANIPULATE*******************/
 	/**********************************************/
-	void fill(T item, int width, int height)
+	void fill(const T &item, const unsigned int &width, const unsigned int &height)
 	{
-		w = width;
-		h = height;
-		for (int i = 0; i < (w * h); i++)
-		{
+		mWidth = width, mHeight = height;
+		const unsigned int size = mWidth * mHeight;
+		for (unsigned int i = 0; i < size; i++)
 			vex.push_back(item);
-		}
 	}
 
-	void push_back(T item)
-	{
-		vex.push_back(item);
-	}
+	void push_back(const T &item)
+	{ vex.push_back(item); }
 
-	void erase(int x, int y)
-	{
-		vex.erase(x + (y * w))
-	}
+	void erase(const unsigned int &x, const unsigned int &y)
+	{ vex.erase(x + (y * mWidth)) }
 
-	void replace(int absPos, T item)
-	{
-		vex.at(absPos) = item;
-	}
+	void replace(const unsigned int &absPos, const T &item)
+	{ vex.at(absPos) = item; }
 
 	void clear()
-	{
-		vex.clear();
-	}
+	{ vex.clear(); }
 
 	/**********************************************/
 	/*******************ACCESS*********************/
 	/**********************************************/
-	T at(int x, int y)
-	{
-		return vex.at(x + (y * w));
-	}
+	T at(const unsigned int &x, const unsigned int &y)
+	{ return vex.at(x + (y * mWidth)); }
 
-	int getX(int absolutePosition)
-	{
-		return absolutePosition % w;
-	}
+	int getX(const unsigned int &absolutePosition)
+	{ return absolutePosition % mWidth; }
 
-	int getY(int absolutePosition)
-	{
-		return absolutePosition / w;
-	}
+	int getY(const unsigned int &absolutePosition)
+	{ return absolutePosition / mWidth; }
 
-	T at(int absPos)
-	{
-		return vex.at(absPos);
-	}
+	T at(const unsigned int &absPos)
+	{ return vex.at(absPos); }
 
 	int size()
-	{
-		return vex.size();
-	}
+	{ return vex.size(); }
 
 	int width()
-	{
-		return w;
-	}
+	{ return mWidth; }
 
 	int height()
-	{
-		return h;
-	}
+	{ return mHeight; }
 
 	void print()
 	{
-		int position = 0;
-		for (int i = 0; i < h; i++)
+		unsigned int position = 0;
+		for (unsigned int i = 0; i < mHeight; i++)
 		{
-			for (int j = 0; j < w; j++)
+			for (unsigned int j = 0; j < mWidth; j++)
 			{
 				std::cout << vex.at(position);
 				position++;
