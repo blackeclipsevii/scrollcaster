@@ -23,24 +23,22 @@ void safetyReset()
 		dungeon.clear();
 		generateWalls(25, 25);
 	}
-	else
-	{
-		pass++;
-	}
+	else pass++;
 }
 
 int getAbsolutePosition()
 {
-	int absolutePosition;
-	int x, y;
+	int absolutePosition, x, y;
 
 	do{
 		std::cout << ".";
 		absolutePosition = rand() % dungeon.size();
 		x = dungeon.getX(absolutePosition);
 		y = dungeon.getY(absolutePosition);
-	} while (x <= 1 || x > (dungeon.width() - 4)
-		|| y <= 1 || absolutePosition > dungeon.size() - (3)*dungeon.width());
+	} while (x <= 1 ||
+		 x > (dungeon.width() - 4) || 
+		 y <= 1 ||
+		 absolutePosition > dungeon.size() - (3)*dungeon.width());
 
 	std::cout << ".";
 	return absolutePosition;
@@ -61,14 +59,8 @@ void generateHallway(int roomCenter)
 	{
 		safetyReset();
 
-		if (dungeon.getX(it) > oldX)
-		{
-			it--;
-		}
-		else
-		{
-			it++;
-		}
+		if (dungeon.getX(it) > oldX) it--;
+		else it++;
 		dungeon.replace(it, 'H');
 	}
 
@@ -76,14 +68,9 @@ void generateHallway(int roomCenter)
 	{
 		safetyReset();
 
-		if (dungeon.getY(it) > oldY)
-		{
-			it -= dungeon.width();
-		}
-		else
-		{
-			it += dungeon.width();
-		}
+		if (dungeon.getY(it) > oldY) it -= dungeon.width();
+		else it += dungeon.width();
+
 		dungeon.replace(it, 'H');
 	}
 
@@ -93,12 +80,8 @@ void generateHallway(int roomCenter)
 void DungeonBuilder::replaceHalls()
 {
 	for (int i = 0; i < dungeon.size(); i++)
-	{
 		if (dungeon.at(i) == 'H')
-		{
 			dungeon.replace(i, 'O');
-		}
-	}
 }
 
 void DungeonBuilder::generateRoom()
@@ -123,9 +106,7 @@ void DungeonBuilder::generateRoom()
 				//check it against the acceptable characters
 				//if the character is not accepted, an overlap has occured
 				if (a != 'w' && a != 'H')
-				{
 					overlap = true;
-				}
 			}
 		}
 
@@ -136,7 +117,8 @@ void DungeonBuilder::generateRoom()
 	int pos = 0;
 	for (int i = 0; i < room.width(); i++)
 	{
-		for (int j = 0; j < room.height(); j++){	
+		for (int j = 0; j < room.height(); j++)
+		{	
 			dungeon.replace((absolutePosition + j + i*dungeon.width()), room.at(pos));
 			pos++;
 		}
