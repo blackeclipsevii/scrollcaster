@@ -10,7 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "desktop-ui",
+        "title": "army-thing",
         "width": 480,
         "height": 720
       }

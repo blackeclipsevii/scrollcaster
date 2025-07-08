@@ -1,15 +1,16 @@
-import { createServer } from 'node:http';
+
 import path from 'path';
-import AgeOfSigmar from './AgeOfSigmar.js'
-import Unit from './Unit.js';
 import url from 'url';
 import fs from 'fs'
 import express from 'express'
 
+import AgeOfSigmar from './packages/library/AgeOfSigmar.js'
+import Unit from './packages/library/Unit.js';
+
 const server = express();
 const hostname = '127.0.0.1';
 const port = 3000;
-const directoryPath = "C:\\Users\\jdeck\\Documents\\git\\army-thing\\age-of-sigmar-4th-main";
+const directoryPath = "./age-of-sigmar-4th-main";
 var libraries;
 
 const getLibraries = (directoryPath) => {

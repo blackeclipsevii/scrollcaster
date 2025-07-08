@@ -1,4 +1,3 @@
-// import {AbilityTiming, AbilityTimingConstraint, AbilityLimit, AbilityKeywords, Ability } from "./Ability.js";
 import { AbilityType } from "./Ability.js";
 import Ability from "./Ability.js";
 import { WeaponType } from "./Weapon.js";
