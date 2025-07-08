@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>Army Builder</header>
+  <header>My Rosters</header>
 
   <!-- Container for created armies -->
   <div id="army-list" style="padding: 1rem;"></div>
@@ -16,19 +16,14 @@
   <div class="overlay" id="overlay">
     <div class="modal">
       <select id="army">
-        <option value="">Select Army</option>
-        <option>Space Marines</option>
-        <option>Eldar</option>
-        <option>Orks</option>
       </select>
 
       <select id="ruleset">
         <option value="">Select Ruleset</option>
-        <option>9th Edition</option>
-        <option>10th Edition</option>
+        <option>GHB 2025-26</option>
       </select>
 
-      <input type="number" id="points" placeholder="Points" />
+      <input value="2000" type="number" id="points" placeholder="Points" />
       <input type="text" id="name" placeholder="Name" />
       <textarea id="description" placeholder="Description"></textarea>
 
@@ -39,7 +34,25 @@
   <script>
     function toggleOverlay() {
       const overlay = document.getElementById("overlay");
-      overlay.style.display = overlay.style.display === "flex" ? "none" : "flex";
+      if (overlay.style.display === "flex") {
+        overlay.style.display = "none";
+      } else {
+        const host = 'http://localhost';
+        const port = 3000;
+
+        overlay.style.display = "flex";
+        fetch(`${host}:${port}/armies`).
+        then(resp => resp.json()).
+        then(armies => {
+          let armySelect = document.getElementById("army");
+          armies.forEach((army)=> {
+            const option = document.createElement("option");
+            option.value = army;
+            option.textContent = army;
+            armySelect.appendChild(option);
+          });
+        });
+      }
     }
 
     function createArmy() {
