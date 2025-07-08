@@ -1,0 +1,12 @@
+{
+  "name": "army-thing",
+  "version": "1.0.0",
+  "directories": {
+    "aos": "packages/age-of-sigmar/src"
+  },
+  "dependencies": {
+    "fast-xml-parser": "5.0.4",
+    "express": "5.1.0"
+  },
+  "type":"module"
+}
