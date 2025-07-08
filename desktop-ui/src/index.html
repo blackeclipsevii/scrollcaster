@@ -1,7 +1,92 @@
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    
+  <meta charset="UTF-8" />
+  <title>My Rosters</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <script src="index.js"></script>
+  <header>Army Builder</header>
+
+  <!-- Container for created armies -->
+  <div id="army-list" style="padding: 1rem;"></div>
+
+  <button class="fab" onclick="toggleOverlay()">+</button>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <select id="army">
+        <option value="">Select Army</option>
+        <option>Space Marines</option>
+        <option>Eldar</option>
+        <option>Orks</option>
+      </select>
+
+      <select id="ruleset">
+        <option value="">Select Ruleset</option>
+        <option>9th Edition</option>
+        <option>10th Edition</option>
+      </select>
+
+      <input type="number" id="points" placeholder="Points" />
+      <input type="text" id="name" placeholder="Name" />
+      <textarea id="description" placeholder="Description"></textarea>
+
+      <button onclick="createArmy()">Create</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleOverlay() {
+      const overlay = document.getElementById("overlay");
+      overlay.style.display = overlay.style.display === "flex" ? "none" : "flex";
+    }
+
+    function createArmy() {
+      const army = document.getElementById("army").value;
+      const ruleset = document.getElementById("ruleset").value;
+      const points = document.getElementById("points").value;
+      const name = document.getElementById("name").value;
+      const description = document.getElementById("description").value;
+
+      if (!army || !ruleset || !points || !name) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      const entry = document.createElement("div");
+      entry.className = "army-card";
+      entry.innerHTML = `
+        <strong>${name}</strong><br />
+        ${army} | ${ruleset} | ${points} pts
+        <p>${description}</p>
+      `;
+      entry.onclick = () => {
+        localStorage.setItem('selectedArmyName', name);
+        window.location.href = './pages/army/army.html';
+      };
+
+      document.getElementById("army-list").appendChild(entry);
+
+      // Reset and close modal
+      document.querySelector(".modal").reset?.(); // for future-proofing
+      document.getElementById("overlay").style.display = "none";
+    }
+  </script>
+
+  <style>
+    .army-card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: #f9f9f9;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .army-card:hover {
+      background: #eef;
+    }
+  </style>
 </body>

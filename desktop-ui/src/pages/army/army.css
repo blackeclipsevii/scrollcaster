@@ -1,0 +1,95 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #282c34;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    position: relative;
+}
+
+.back-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 40px;
+    height: 40px;
+    background: #ff5c5c;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.section {
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+}
+
+.section h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.regiment-item {
+  align-items: center;
+  padding: 0.5rem;
+  background: #f2f2f2;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.menu-wrapper {
+  position: relative;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.menu {
+  display: none;
+  list-style: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 0;
+  margin: 0;
+  z-index: 1;
+}
+
+.menu li {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.menu li:hover {
+  background: #eee;
+}
