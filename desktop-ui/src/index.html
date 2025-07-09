@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>My Rosters</title>
   <link rel="stylesheet" href="style.css">
+  <script src="roster.js"></script>
 </head>
 <body>
   <header>My Rosters</header>
@@ -32,61 +33,15 @@
   </div>
 
   <script>
-    function toggleOverlay() {
-      const overlay = document.getElementById("overlay");
-      if (overlay.style.display === "flex") {
-        overlay.style.display = "none";
-      } else {
-        const host = 'http://localhost';
-        const port = 3000;
-
-        overlay.style.display = "flex";
-        fetch(`${host}:${port}/armies`).
-        then(resp => resp.json()).
-        then(armies => {
-          let armySelect = document.getElementById("army");
-          armies.forEach((army)=> {
-            const option = document.createElement("option");
-            option.value = army;
-            option.textContent = army;
-            armySelect.appendChild(option);
-          });
-        });
-      }
-    }
-
-    function createArmy() {
-      const army = document.getElementById("army").value;
-      const ruleset = document.getElementById("ruleset").value;
-      const points = document.getElementById("points").value;
-      const name = document.getElementById("name").value;
-      const description = document.getElementById("description").value;
-
-      if (!army || !ruleset || !points || !name) {
-        alert("Please fill in all required fields.");
-        return;
-      }
-
-      const entry = document.createElement("div");
-      entry.className = "army-card";
-      entry.innerHTML = `
-        <strong>${name}</strong><br />
-        ${army} | ${ruleset} | ${points} pts
-        <p>${description}</p>
-      `;
-      entry.onclick = () => {
-        localStorage.setItem('selectedArmyName', name);
-        window.location.href = './pages/army/army.html';
-      };
-
-      document.getElementById("army-list").appendChild(entry);
-
-      // Reset and close modal
-      document.querySelector(".modal").reset?.(); // for future-proofing
-      document.getElementById("overlay").style.display = "none";
-    }
+      viewRosters();
+      const overlay = document.getElementById('overlay');
+      overlay.addEventListener('click', function(event) {
+        if (event.target === overlay) {
+          overlay.style.display = 'none';
+        }
+      });
   </script>
-
+  
   <style>
     .army-card {
       border: 1px solid #ccc;
