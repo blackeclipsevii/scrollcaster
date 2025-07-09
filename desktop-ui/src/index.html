@@ -33,6 +33,10 @@
   </div>
 
   <script>
+      const ruleset = document.getElementById("ruleset");
+      ruleset.selectedIndex = 1;
+      // ruleset.disabled = true;
+
       viewRosters();
       const overlay = document.getElementById('overlay');
       overlay.addEventListener('click', function(event) {

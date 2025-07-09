@@ -72,12 +72,22 @@ function addEntry(button) {
     const content = parent.querySelector('.regiment-content');
     const count = content.children.length;
 
-    const unit = document.createElement("div");
-    unit.textContent = count === 0 ? "Hero Unit" : `Unit ${count}`;
-    unit.style.padding = "0.5rem";
-    unit.style.background = "#ddd";
-    unit.style.marginBottom = "0.3rem";
-    unit.style.borderRadius = "4px";
+    if (1) {
+        localStorage.setItem('selectedArmyName', roster.army);
+        const url = `../units/units.html?army=${roster.army}`;
+        if (count === 0) {
+            window.location.href = `${url}&type=hero`;
+        } else {
+            window.location.href = url
+        }
+    } else {
+        const unit = document.createElement("div");
+        unit.textContent = count === 0 ? "Hero Unit" : `Unit ${count}`;
+        unit.style.padding = "0.5rem";
+        unit.style.background = "#ddd";
+        unit.style.marginBottom = "0.3rem";
+        unit.style.borderRadius = "4px";
 
-    content.appendChild(unit);
+        content.appendChild(unit);
+    }
 }

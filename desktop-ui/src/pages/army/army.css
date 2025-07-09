@@ -1,3 +1,4 @@
+
 body {
     font-family: sans-serif;
     margin: 0;
@@ -31,6 +32,7 @@ header {
 }
 
 .section {
+    gap: 1rem;
     padding: 1rem;
     border-bottom: 1px solid #ccc;
 }

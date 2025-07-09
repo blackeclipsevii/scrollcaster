@@ -1,12 +1,13 @@
 const host = 'http://localhost';
 const port = 3000;
 
+function goBack() {
+    window.history.back();
+}
+
 const displayChars = (unit) => {
     _clearDiv('char');
     _initializeCharDiv();
-
-    const disp = document.getElementById('unitTitle');
-    disp.innerHTML = unit.name;
 
     const tbody = document.getElementById("characteristics");
     
@@ -315,113 +316,43 @@ const _initializeCharDiv = () => {
         div = document.createElement("div");
     div.id = 'charDiv';
 
-    let unitTitle = document.createElement('h3');
-    unitTitle.id = 'unitTitle';
-
     let characteristics = document.createElement('table');
     characteristics.id = 'characteristics';
     characteristics.style.border = "2px solid black";
 
-    div.appendChild(unitTitle);
     div.appendChild(characteristics);
     return div;
 }
 
-window.addEventListener('DOMContentLoaded', (event) => {
-    let armySelect = document.createElement('select');
-    armySelect.id = 'armyselect';
+const body = document.getElementById('warscroll');
 
-    fetch(`${host}:${port}/armies`).
+const charDiv = _initializeCharDiv();
+const rangedDiv = _initializeWeaponsDiv('ranged');
+const meleeDiv = _initializeWeaponsDiv('melee');
+const abilitiesDiv = _initializeAbilitiesDiv();
+const keywordsDiv = _initializeKeywordsDiv();
+
+async function readUnit() {
+    const params = new URLSearchParams(window.location.search);
+    const armyName = params.get('army');
+    const unitName = params.get('unit');
+    const hdr = document.getElementById('army-header');
+    hdr.innerHTML = decodeURI(unitName);
+    fetch(`${host}:${port}/units?army=${armyName}&name=${unitName}`).
     then(resp => resp.json()).
-    then(armies => {
-            armies.forEach((army)=> {
-                const option = document.createElement("option");
-                option.value = army;
-                option.textContent = army;
-                armySelect.appendChild(option);
-        });
+    then(unit => {
+        console.log(JSON.stringify(unit));
+        body.appendChild(charDiv);
+        body.appendChild(rangedDiv);
+        body.appendChild(meleeDiv);
+        body.appendChild(abilitiesDiv);
+        body.appendChild(keywordsDiv);
+
+        displayChars(unit);
+        displayWeapons('ranged', unit);
+        displayWeapons('melee', unit);
+        displayAbilities(unit);
+        displayKeywords(unit);
     });
-
-    let body = document.querySelector('body');
-
-    let armyHeader = document.createElement('h2');
-    armyHeader.innerHTML = 'Choose an army:';
-    body.appendChild(armyHeader);
-    body.appendChild(armySelect);
-
-    let label = document.createElement('h2');
-    label.innerHTML = 'Choose a unit:';
-    body.appendChild(document.createElement('br'));
-    body.appendChild(label);
-
-    let select = document.createElement('select');
-    select.id = 'unitselect';
-    
-    const charDiv = _initializeCharDiv();
-    const rangedDiv = _initializeWeaponsDiv('ranged');
-    const meleeDiv = _initializeWeaponsDiv('melee');
-    const abilitiesDiv = _initializeAbilitiesDiv();
-    const keywordsDiv = _initializeKeywordsDiv();
-
-    function readSelected() {
-        let armyName = document.getElementById("armyselect").value;
-        if (!armyName)
-            armyName = 'Lumineth Realm-lords';
-        const selected = document.getElementById("unitselect").value;
-        if (!selected) {
-            selected = select.options[0].value;
-        }
-
-        if (!selected)
-            return;
-
-        armyName = encodeURI(armyName);
-        unitName = encodeURI(selected);
-        fetch(`${host}:${port}/units?army=${armyName}&name=${unitName}`).
-        then(resp => resp.json()).
-        then(unit => {
-            console.log(JSON.stringify(unit));
-            displayChars(unit);
-            displayWeapons('ranged', unit);
-            displayWeapons('melee', unit);
-            displayAbilities(unit);
-            displayKeywords(unit);
-        });
-    }
-
-    let initialize = true;
-
-    const getUnits = () => {
-        let armyName = document.getElementById("armyselect").value;
-        if (!armyName)
-            armyName = 'Lumineth Realm-lords';
-        
-        _clear();
-        armyName = encodeURI(armyName);
-        fetch(`${host}:${port}/units?army=${armyName}`).
-        then(resp => resp.json()).
-        then(units => {
-            select.innerHTML = '';
-            units.forEach((unit)=> {
-                const option = document.createElement("option");
-                option.value = unit.name;
-                option.textContent = unit.name;
-                select.appendChild(option);
-            });
-            if (initialize) {
-                body.appendChild(select);
-                body.appendChild(charDiv);
-                body.appendChild(rangedDiv);
-                body.appendChild(meleeDiv);
-                body.appendChild(abilitiesDiv);
-                body.appendChild(keywordsDiv);
-                initialize = false;
-            }
-
-            //readSelected();
-        });
-    }
-
-    select.onclick = readSelected;
-    armySelect.onclick = getUnits;
-})
+}
+readUnit();
