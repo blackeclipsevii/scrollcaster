@@ -1,38 +1,47 @@
-const hostname = "http://localhost";
-const port = 3000;
-
+const params = new URLSearchParams(window.location.search);
+const rosterName = params.get('id');
 var roster;
 
-async function getRoster(id) {
-    let roster = null;
-    await fetch(`${hostname}:${port}/roster?id=${id}`, {
-        method: "GET" // default, so we can ignore
-    }).then(response => { roster = response.json() });
-    return roster;
-}
+function displayRegiment(index) {
+    const regimentsDiv = document.getElementById('regiments');
+    const prototype = document.getElementById('regiment-item-prototype');
+    const regiment = roster.regiments[index];
+    const newRegItem = prototype.cloneNode(true);
+    newRegItem.id = `regiment-item-${index+1}`;
+    const title = newRegItem.querySelector('.regiment-item-title');
+    title.innerHTML = `Regiment ${index+1}`;
 
-async function updateRoster(partialRoster) {
-  await fetch(`${hostname}:${port}/roster?id=${partialRoster.name}`,{
-      method: "POST" // default, so we can ignore
-  });
-}
-
-function goBack() {
-    window.history.back();
+    const content = newRegItem.querySelector('.regiment-content');
+    for (let j = 0; j < regiment.units.length; ++j) {
+        const unitDiv = document.createElement("div");
+        unitDiv.textContent = regiment.units[j].name;
+        unitDiv.style.padding = "0.5rem";
+        unitDiv.style.background = "#ddd";
+        unitDiv.style.marginBottom = "0.3rem";
+        unitDiv.style.borderRadius = "4px";
+        content.appendChild(unitDiv);
+    }
+    newRegItem.removeAttribute('style');
+    regimentsDiv.appendChild(newRegItem);
 }
 
 async function loadArmy() {
-    const armyName = localStorage.getItem('selectedArmyName') || 'Army Detail';
-    roster = await getRoster(armyName);
+    roster = await getRoster(rosterName);
 
-    for (let i = 0; i < roster.regiments; ++i) {
-        // populate regiments
-    }
-    document.getElementById('army-header').textContent = armyName;
+    for (let i = 0; i < roster.regiments.length; ++i)
+        displayRegiment(i);
+
+    document.getElementById('army-header').textContent = rosterName;
 }
 
-function addItem(section) {
-    alert(`Add new item to ${section}`);
+async function addItem(section) {
+    if (section.toLowerCase() === 'regiments') {
+        roster.regiments.push({ units: [] });
+        displayRegiment(roster.regiments.length - 1);
+        await putRoster(roster);
+    } else {
+        alert(`Add new item to ${section}`);
+    }
 }
 
 loadArmy();
@@ -42,14 +51,16 @@ function toggleMenu(button) {
     menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-function duplicateRegiment(item) {
+async function duplicateRegiment(item) {
     const parent = item.closest(".menu");
     parent.style.display = "none";
 
     const original = item.closest(".regiment-item");
-    const clone = original.cloneNode(true);
-    clone.querySelector("span").textContent = "Regiment " + (document.querySelectorAll(".regiment-item").length + 1);
-    original.parentNode.appendChild(clone);
+    const index = Number(original.id.substring(original.id.length-1)) - 1;
+    const json = JSON.stringify(roster.regiment[index]);
+    roster.regiment.push(JSON.parse(json));
+    displayRegiment(roster.regiment.length - 1);
+    await putRoster(roster);
 }
 
 function deleteRegiment(item) {
@@ -69,25 +80,15 @@ function deleteRegiment(item) {
 
 function addEntry(button) {
     const parent = button.closest(".regiment-item");
+    const idx = Number(parent.id.substring(parent.id.length-1)) - 1;
     const content = parent.querySelector('.regiment-content');
     const count = content.children.length;
 
-    if (1) {
-        localStorage.setItem('selectedArmyName', roster.army);
-        const url = `../units/units.html?army=${roster.army}`;
-        if (count === 0) {
-            window.location.href = `${url}&type=hero`;
-        } else {
-            window.location.href = url
-        }
+    localStorage.setItem('selectedArmyName', roster.army);
+    const url = `../units/units.html?roster=${roster.name}&regimentIndex=${idx}&army=${roster.army}`;
+    if (count === 0) {
+        window.location.href = `${url}&type=hero`;
     } else {
-        const unit = document.createElement("div");
-        unit.textContent = count === 0 ? "Hero Unit" : `Unit ${count}`;
-        unit.style.padding = "0.5rem";
-        unit.style.background = "#ddd";
-        unit.style.marginBottom = "0.3rem";
-        unit.style.borderRadius = "4px";
-
-        content.appendChild(unit);
+        window.location.href = url
     }
 }

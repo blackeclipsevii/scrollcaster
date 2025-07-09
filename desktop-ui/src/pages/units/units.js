@@ -1,22 +1,22 @@
 
-const host = 'http://localhost';
-const port = 3000;
-
 const params = new URLSearchParams(window.location.search);
+const rosterName = params.get('roster');
+const regimentIndex = Number(params.get('regimentIndex'));
 const army = params.get('army');
 const type = params.get('type');
 
 async function loadUnits() {
     const unitList = document.getElementById('unitList');
     const armyName = encodeURI(army);
-    await fetch(`${host}:${port}/units?army=${armyName}`).
+    await fetch(`${hostname}:${port}/units?army=${armyName}`).
     then(resp => resp.json()).
     then(units => {
         units.forEach(unit => {
-            if (type && !unit.keywords.includes(type.toUpperCase())) {
-                console.log(unit.keywords);
+            if (type && !unit.keywords.includes(type.toUpperCase()))
                 return;
-            }
+
+            if (unit.type > 5)
+                return;
 
             const item = document.createElement('div');
             item.classList.add('unit-item');
@@ -39,9 +39,13 @@ async function loadUnits() {
             const addBtn = document.createElement('button');
             addBtn.classList.add('add-btn');
             addBtn.textContent = '+';
-            addBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevents click from triggering page change
-                alert(`Added ${unit.name} to your army!`);
+            addBtn.addEventListener('click', async (e) => {
+                e.stopPropagation(); // Prevents click from triggering page change
+                const roster = await getRoster(rosterName);
+                const regiment = roster.regiments[regimentIndex];
+                regiment.units.push(unit);
+                await putRoster(roster);
+                goBack();
             });
 
             right.append(points, addBtn);
@@ -51,7 +55,3 @@ async function loadUnits() {
     });
 }
 loadUnits();
-
-function goBack() {
-    window.history.back();
-}

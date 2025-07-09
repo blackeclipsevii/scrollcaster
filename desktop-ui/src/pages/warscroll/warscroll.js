@@ -1,9 +1,3 @@
-const host = 'http://localhost';
-const port = 3000;
-
-function goBack() {
-    window.history.back();
-}
 
 const displayChars = (unit) => {
     _clearDiv('char');
@@ -338,7 +332,7 @@ async function readUnit() {
     const unitName = params.get('unit');
     const hdr = document.getElementById('army-header');
     hdr.innerHTML = decodeURI(unitName);
-    fetch(`${host}:${port}/units?army=${armyName}&name=${unitName}`).
+    fetch(`${hostname}:${port}/units?army=${armyName}&name=${unitName}`).
     then(resp => resp.json()).
     then(unit => {
         console.log(JSON.stringify(unit));

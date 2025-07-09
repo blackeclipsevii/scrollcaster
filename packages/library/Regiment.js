@@ -1,8 +1,6 @@
 
 export default class Regiment {
     constructor () {
-        this.leader = null;
-        this.general = null;
         this.units = [];
     }
 

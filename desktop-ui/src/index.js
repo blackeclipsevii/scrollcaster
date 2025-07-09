@@ -1,37 +1,4 @@
 
-const hostname = "http://localhost";
-const port = 3000;
-
-async function getRosters() {
-    let rosters = null;
-    await fetch(`${hostname}:${port}/roster`,{
-        method: "GET" // default, so we can ignore
-    }).then(response => { rosters = response.json() });
-    return rosters;
-}
-
-async function getRoster(id) {
-    let roster = null;
-    await fetch(`${hostname}:${port}/roster?id=${id}`, {
-        method: "GET" // default, so we can ignore
-    }).then(response => { roster = response.json() });
-    return roster;
-}
-
-async function putRoster(roster) {
-    await fetch(`${hostname}:${port}/roster?id=${roster.name}`, {
-        method: "PUT",
-        body: JSON.stringify(roster),
-        headers: { 'Content-Type': 'application/json' }
-    });
-}
-
-async function updateRoster(partialRoster) {
-  await fetch(`${hostname}:${port}/roster?id=${partialRoster.name}`,{
-      method: "POST" // default, so we can ignore
-  });
-}
-
 function toggleOverlay() {
     const overlay = document.getElementById("overlay");
     if (overlay.style.display === "flex") {
@@ -79,13 +46,16 @@ function toggleOverlay() {
     const army = document.getElementById("army").value;
     const ruleset = document.getElementById("ruleset").value;
     const points = document.getElementById("points").value;
-    const name = document.getElementById("name").value;
+    let name = document.getElementById("name").value;
     const description = document.getElementById("description").value;
 
-    if (!army || !ruleset || !points || !name) {
+    if (!army || !ruleset || !points) {
       alert("Please fill in all required fields.");
       return;
     }
+
+    if (!name)
+      name = army;
 
     const rosters = getRosters();
     for (let i = 0; i < rosters.length; ++i) {

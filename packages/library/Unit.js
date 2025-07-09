@@ -5,13 +5,41 @@ import Weapon from "./Weapon.js";
 
 export const UnitType = {
     Hero: 0,
-    Other: 1
+    Infantry: 1,
+    Cavalry: 2,
+    Beast: 3,
+    Monster: 4,
+    WarMachine: 5,
+    Manifestation: 6,
+    Terrain: 7
+}
+
+export function strToUnitType(str) {
+    const upper = str.toUpperCase();
+    if (upper.includes('HERO')) {
+        return UnitType.Hero;
+    } else if (upper.includes('INFANTRY')) {
+        return UnitType.Infantry;
+    } else if (upper.includes('CAVALRY')) {
+        return UnitType.Cavalry;
+    } else if (upper.includes('BEAST')) {
+        return UnitType.Beast;
+    } else if (upper.includes('MONSTER')) {
+        return UnitType.Monster;
+    } else if (upper.includes('MACHINE')) {
+        return UnitType.WarMachine;
+    } else if (upper.includes('MANIFEST')) {
+        return UnitType.Manifestation;
+    } else if (upper.includes('TERRAIN')) {
+        return UnitType.Terrain;
+    }
 }
 
 export default class Unit {
     constructor(selectionEntry) {
         this.abilities = [];
         this._parse(selectionEntry);
+        this.type = strToUnitType(this.keywords.join(' '));
     }
 
     _parseKeywords(categoryLinks) {

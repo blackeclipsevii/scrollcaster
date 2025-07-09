@@ -79,7 +79,7 @@ server.get('/units', (req, res) => {
       }
     }
   }
-
+  units.sort((a, b) => a.type - b.type);
   res.end(JSON.stringify(units));
 });
 
