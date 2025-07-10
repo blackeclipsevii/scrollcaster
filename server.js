@@ -134,7 +134,7 @@ server.delete('/roster', (req, res) => {
   const parsedUrl = url.parse(req.url, true);
   if (parsedUrl.query.id) {
     const id = decodeURI(parsedUrl.query.id);
-    rosters[id] = undefined;
+    delete rosters[id];
   }
   res.end();
   return res.status(200);

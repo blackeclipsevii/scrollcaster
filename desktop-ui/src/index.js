@@ -20,6 +20,9 @@ function toggleOverlay() {
   }
 
 function displayRoster(roster) {
+  if (!roster)
+    return;
+  
   const armies = document.getElementById("army-list");
   const container = document.createElement("div");
   container.className = "army-card";
@@ -36,7 +39,7 @@ function displayRoster(roster) {
   };
   entry.style.float = "left";
 
-  const menu = createContextMenu(roster.id, 'Roster');
+  const menu = createContextMenu(roster.id, 'RosterCallback');
   container.appendChild(entry);
   container.appendChild(menu);
 
@@ -44,6 +47,8 @@ function displayRoster(roster) {
 }
 
 async function viewRosters() {
+  const armies = document.getElementById("army-list");
+  armies.innerHTML = '';
   const rosters = await getRosters();
   for (let i = 0; i < rosters.length; ++i) {
       const roster = await getRoster(rosters[i]);
@@ -51,7 +56,7 @@ async function viewRosters() {
   }
 }
 
-async function duplicateRoster(e) {
+async function duplicateRosterCallback(e) {
     const name = 'menu-wrapper';
     const original = e.closest(`.${name}`);
     const id = original.id.substring(name.length+1, original.id.length);
@@ -65,13 +70,12 @@ async function duplicateRoster(e) {
     displayRoster(clone);
 }
 
-async function deleteRoster(rosterId) {
-    //const original = item.closest(".regiment-item");
-    //const index = Number(original.id.substring(original.id.length-1)) - 1;
-    //const json = JSON.stringify(roster.regiment[index]);
-    //roster.regiment.push(JSON.parse(json));
-    //displayRegiment(roster.regiment.length - 1);
-    //await putRoster(roster);
+async function deleteRosterCallback(e) {
+    const name = 'menu-wrapper';
+    const original = e.closest(`.${name}`);
+    const id = original.id.substring(name.length+1, original.id.length);
+    deleteRoster(id);
+    viewRosters();
 }
 
   async function createArmy() {

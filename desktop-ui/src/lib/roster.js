@@ -28,7 +28,13 @@ async function putRoster(roster) {
 
 async function updateRoster(partialRoster) {
   await fetch(`${hostname}:${port}/roster?id=${roster.id}`,{
-      method: "POST", // default, so we can ignore
+      method: "POST",
       body: JSON.stringify(partialRoster)
+  });
+}
+
+async function deleteRoster(id) {
+  await fetch(`${hostname}:${port}/roster?id=${id}`,{
+      method: "DELETE"
   });
 }
