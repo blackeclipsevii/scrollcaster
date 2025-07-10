@@ -1,7 +1,8 @@
 
 const params = new URLSearchParams(window.location.search);
 const rosterId = params.get('id');
-const regimentIndex = Number(params.get('regimentIndex'));
+const auxiliary = params.get('auxiliary');
+const regimentIndex = auxiliary ? 0 : Number(params.get('regimentIndex'));
 const army = params.get('army');
 const type = params.get('type');
 
@@ -44,8 +45,12 @@ async function loadUnits() {
             addBtn.textContent = '+';
             addBtn.addEventListener('click', async (e) => {
                 e.stopPropagation(); // Prevents click from triggering page change
-                const regiment = roster.regiments[regimentIndex];
-                regiment.units.push(unit);
+                if (auxiliary) {
+                    roster.auxiliaryUnits.push(unit);
+                } else {
+                    const regiment = roster.regiments[regimentIndex];
+                    regiment.units.push(unit);
+                }
                 await putRoster(roster);
                 goBack();
                 // window.location.href = `../army/army.html?id=${rosterId}`;

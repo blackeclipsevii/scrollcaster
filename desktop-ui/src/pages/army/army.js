@@ -41,6 +41,29 @@ function displayRegiment(index) {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
+function displayAux(index) {
+    const auxiliaryDiv = document.getElementById('auxiliary');
+    const unit = roster.auxiliaryUnits[index];
+    
+    const usPrototype = document.getElementById("unit-slot-prototype");
+    const newUsItem = usPrototype.cloneNode(true);
+    newUsItem.style.display = "";
+    const usName = newUsItem.querySelector('.unit-slot-name');
+    usName.textContent = unit.name;
+    const usPoints = newUsItem.querySelector('.unit-slot-points');
+    usPoints.textContent = `${unit.points} pts`;
+    newUsItem.style.padding = "0.5rem";
+    newUsItem.style.background = "#ddd";
+    newUsItem.style.marginBottom = "0.3rem";
+    newUsItem.style.borderRadius = "4px";
+    auxiliaryDiv.appendChild(newUsItem);
+    
+    totalPoints += unit.points;
+
+    let pointsOverlay = document.getElementById('pointsOverlay');
+    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
+}
+
 async function loadArmy() {
     const params = new URLSearchParams(window.location.search);
     const rosterId = params.get('id');
@@ -52,6 +75,9 @@ async function loadArmy() {
     for (let i = 0; i < roster.regiments.length; ++i)
         displayRegiment(i);
 
+    for (let i = 0; i< roster.auxiliaryUnits.length; ++i)
+        displayAux(i);
+
     document.getElementById('army-header').textContent = roster.name;
 }
 
@@ -60,7 +86,12 @@ async function addItem(section) {
         roster.regiments.push({ units: [] });
         displayRegiment(roster.regiments.length - 1);
         await putRoster(roster);
-    } else {
+    } 
+    else if (section.toLowerCase().includes('auxiliary')) {   
+        const url = `../units/units.html?id=${roster.id}&auxiliary=true&army=${roster.army}`;
+        window.location.href = encodeURI(url);
+    }
+    else {
         alert(`Add new item to ${section}`);
     }
 }

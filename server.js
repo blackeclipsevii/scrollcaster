@@ -11,9 +11,28 @@ const server = express();
 const hostname = '127.0.0.1';
 const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
+const saveData = "./saveData.json";
 var libraries;
 var armies = {};
 var rosters = {};
+
+async function saveRosters() {
+  const content = JSON.stringify(rosters);
+  fs.writeFile(saveData, content, err => {
+    if (err) {
+      console.error(err);
+    } else {
+      // file written successfully
+    }
+  });
+}
+
+function loadRosters() {
+  if (fs.existsSync(saveData)) {
+    const data = fs.readFileSync(saveData);
+    rosters = JSON.parse(data);
+  }
+}
 
 const getLibraries = (directoryPath) => {
   let files = fs.readdirSync(directoryPath);
@@ -119,6 +138,7 @@ server.post('/roster', (req, res) => {
     rosters[req.body.id] = req.body;
   }
   res.end();
+  saveRosters();
   return res.status(200);
 });
 
@@ -127,6 +147,7 @@ server.put('/roster', (req, res) => {
   rosters[req.body.id] = req.body;
   res.status(200);
   res.end();
+  saveRosters();
 });
 
 server.delete('/roster', (req, res) => {
@@ -137,10 +158,14 @@ server.delete('/roster', (req, res) => {
     delete rosters[id];
   }
   res.end();
+  saveRosters();
   return res.status(200);
 });
 
 server.listen(port, hostname, () => {
+  console.log(`Loading libraries...`);
   libraries = getLibraries(directoryPath);
+  console.log(`Loading save data...`);
+  loadRosters();
   console.log(`Server running at http://${hostname}:${port}/`);
 });
