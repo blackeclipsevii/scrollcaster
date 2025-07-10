@@ -11,35 +11,47 @@ export const UnitType = {
     Monster: 4,
     WarMachine: 5,
     Manifestation: 6,
-    Terrain: 7
+    Terrain: 7,
+    Unknown: 99
 }
 
 export function strToUnitType(str) {
     const upper = str.toUpperCase();
-    if (upper.includes('HERO')) {
+    if (upper === 'HERO') {
         return UnitType.Hero;
-    } else if (upper.includes('INFANTRY')) {
+    } else if (upper === 'INFANTRY') {
         return UnitType.Infantry;
-    } else if (upper.includes('CAVALRY')) {
+    } else if (upper === 'CAVALRY') {
         return UnitType.Cavalry;
-    } else if (upper.includes('BEAST')) {
+    } else if (upper === 'BEAST') {
         return UnitType.Beast;
-    } else if (upper.includes('MONSTER')) {
+    } else if (upper === 'MONSTER') {
         return UnitType.Monster;
-    } else if (upper.includes('MACHINE')) {
+    } else if (upper === 'WAR MACHINE') {
         return UnitType.WarMachine;
-    } else if (upper.includes('MANIFEST')) {
+    } else if (upper === 'MANIFEST') {
         return UnitType.Manifestation;
-    } else if (upper.includes('TERRAIN')) {
+    } else if (upper === 'TERRAIN') {
         return UnitType.Terrain;
     }
+    return UnitType.Unknown;
 }
 
 export default class Unit {
     constructor(selectionEntry) {
+        this.canHaveHeroicTrait = false;
+        this.canHaveArtefact = false;
+        this.canBeGeneral = false;
+        this.canBeReinforced = false;
         this.abilities = [];
+        this.points = 0;
         this._parse(selectionEntry);
-        this.type = strToUnitType(this.keywords.join(' '));
+        this.type = UnitType.Unknown;
+        this.keywords.forEach(keyword => {
+            let type = strToUnitType(keyword);
+            if (type < this.type)
+                this.type = type;
+        });
     }
 
     _parseKeywords(categoryLinks) {
@@ -98,6 +110,7 @@ export default class Unit {
 
     _parse(selectionEntry) {
         this.name = selectionEntry['@name'];
+        this.id = selectionEntry['@id'];
         
         this._parseKeywords(selectionEntry.categoryLinks);
 

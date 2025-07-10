@@ -1,11 +1,4 @@
-const hostname = "http://localhost";
-const port = 3000;
-
-function goBack() {
-    window.history.back();
-}
-
-function generateId(length) {
+export function makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;

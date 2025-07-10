@@ -5,7 +5,22 @@
   <title>Army Detail</title>
   <link rel="stylesheet" href="./army.css">
   <script src="../../lib/host.js"></script>
+  <script src="../../lib/widgets/contextMenu.js"></script>
   <script src="../../lib/roster.js"></script>
+  <script src="./army.js"></script>
+  <script>
+    window.addEventListener( "pageshow", function ( event ) {
+      var historyTraversal = event.persisted || 
+                            ( typeof window.performance != "undefined" && 
+                                  window.performance.navigation.type === 2 );
+      if ( historyTraversal ) {
+        // Handle page restore.
+        // window.location.reload();
+        console.log('load army');
+        // loadArmy();
+      }
+    });
+  </script>
 </head>
 
 <body>
@@ -17,10 +32,15 @@
   <div class="section">
     <h2>Regiments <button onclick="addItem('Regiments')">+</button></h2>
 
+    <div style="display: none; overflow: hidden;" class="unit-slot" id="unit-slot-prototype">
+      <span class="unit-slot-name" style="float: left;"></span>
+      <span class="unit-slot-points" style="float: right;"></span>
+    </div>
+
     <div style='display: none' class="regiment-item" id="regiment-item-prototype">
       <div style="display: flex; align-items: center; gap: 0.5rem;">
           <span class="regiment-item-title"></span>
-          <span class="regiment-item-points" style="margin-left:auto;">100 pts</span>
+          <span class="regiment-item-points" style="margin-left:auto;"></span>
           <div class="menu-wrapper">
           <button class="menu-btn" onclick="toggleMenu(this)">⋯</button>
           <ul class="menu">
@@ -70,7 +90,10 @@
     <h2>Regiments of Renown <button onclick="addItem('Regiments of Renown')">+</button></h2>
     <div id="renown"></div>
   </div>
+  
+  <div id="pointsOverlay">10 / 2000 points</div>
 
-  <script src="./army.js"></script>
+  
+  <script>loadArmy();</script>
 </body>
 </html>

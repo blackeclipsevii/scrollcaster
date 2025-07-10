@@ -4,9 +4,7 @@ import url from 'url';
 import fs from 'fs'
 import express from 'express'
 
-import AgeOfSigmar from './packages/library/AgeOfSigmar.js'
-import Unit from './packages/library/Unit.js';
-import { request } from 'http';
+import Army from './packages/library/Army.js';
 import Roster from './packages/library/Roster.js';
 
 const server = express();
@@ -14,6 +12,7 @@ const hostname = '127.0.0.1';
 const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
 var libraries;
+var armies = {};
 var rosters = {};
 
 const getLibraries = (directoryPath) => {
@@ -23,7 +22,7 @@ const getLibraries = (directoryPath) => {
 
 server.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
@@ -50,37 +49,35 @@ server.get('/units', (req, res) => {
     console.log(`Army requested: ${armyValue}`);
   }
 
-  let i = 0;
-  for (; i < libraries.length; ++i) {
-    if (libraries[i].includes(armyValue)) {
-      break;
+  let army = null;
+  if (armies[armyValue]) {
+    army = armies[armyValue];
+  } else {
+    let i = 0;
+    for (; i < libraries.length; ++i) {
+      if (libraries[i].includes(armyValue)) {
+        break;
+      }
     }
+    
+    const library = libraries[i].split(' - ')[0] + '.cat';
+    army = new Army(directoryPath, library);
+    armies[armyValue] = army;
   }
   
-  const filename = directoryPath + "\\" + libraries[i];
-  if (!fs.existsSync(filename)) {
-    console.log('file doesnt exist');
-  }
-  
-  const xmlContent = fs.readFileSync(filename, 'utf8');
-  const aos = new AgeOfSigmar(xmlContent);
-  let units = [];
-  if (aos.isValid) {
-    const entries = aos.root.catalogue.sharedSelectionEntries;
-    for (let i = 0; i < entries.length; ++i) {
-      const entry = entries[i];
-      if (entry['@type'] === 'unit') {
-        const unit = new Unit(entry);
-        if (unitName && unit.name === unitName) {
-          res.end(JSON.stringify(unit));
-          return;
-        }
-        units.push(unit);
+  if (unitName) {
+    const unitIds = Object.getOwnPropertyNames(army.units);
+    for (let i = 0; i < unitIds.length; ++i) {
+      const unit = army.units[unitIds[i]];
+      if (unit.name === unitName) {
+        res.end(JSON.stringify(unit));
+        res.status(200);
+        return;
       }
     }
   }
-  units.sort((a, b) => a.type - b.type);
-  res.end(JSON.stringify(units));
+
+  res.end(JSON.stringify(army.units));
 });
 
 server.get('/roster', (req, res) => {
@@ -110,29 +107,34 @@ server.get('/roster', (req, res) => {
 
 server.post('/roster', (req, res) => {
   console.log("POST roster")
-  const parsedUrl = url.parse(req.url, true);
-  const id = decodeURI(parsedUrl.query.id);
-  let current = rosters[id];
+  let current = rosters[req.body.id];
   let updated = req.body;
   if (current) {
     let names = Object.getOwnPropertyNames(req.body);
     for (let i = 0; i < names.length; ++i) {
       current[names[i]] = updated[names[i]];
     }
-    rosters[id] = current;
+    rosters[req.body.id] = current;
   } else {
-    rosters[id] = req.body;
+    rosters[req.body.id] = req.body;
   }
   res.end();
   return res.status(200);
 });
 
 server.put('/roster', (req, res) => {
-  console.log("PUT roster")
+  console.log(`PUT roster ${req.body.id}`)
+  rosters[req.body.id] = req.body;
+  res.status(200);
+  res.end();
+});
+
+server.delete('/roster', (req, res) => {
+  console.log("DELETE roster")
   const parsedUrl = url.parse(req.url, true);
   if (parsedUrl.query.id) {
     const id = decodeURI(parsedUrl.query.id);
-    rosters[id] = req.body;
+    rosters[id] = undefined;
   }
   res.end();
   return res.status(200);

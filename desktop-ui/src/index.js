@@ -19,28 +19,60 @@ function toggleOverlay() {
     }
   }
 
-  async function viewRosters() {
-    const armies = document.getElementById("army-list");
-    armies.innerHTML = "";
+function displayRoster(roster) {
+  const armies = document.getElementById("army-list");
+  const container = document.createElement("div");
+  container.className = "army-card";
+  container.style.overflow = "hidden";
+  const entry = document.createElement("div");
+  entry.innerHTML = `
+  <strong>${roster.name}</strong><br/>
+  ${roster.army} | ${roster.ruleset} | ${roster.points} pts
+  <p>${roster.description}</p>
+  <div style="display: hidden" class="roster-id" id="${roster.id}"></div>
+  `;
+  entry.onclick = () => {
+      window.location.href = encodeURI(`./pages/army/army.html?id=${roster.id}`);
+  };
+  entry.style.float = "left";
 
-    const rosters = await getRosters();
-    for (let i = 0; i < rosters.length; ++i) {
-        const roster = await getRoster(rosters[i]);
-        const entry = document.createElement("div");
-        entry.className = "army-card";
-        entry.innerHTML = `
-        <strong>${roster.name}</strong><br />
-        ${roster.army} | ${roster.ruleset} | ${roster.points} pts
-        <p>${roster.description}</p>
-        `;
-        entry.onclick = () => {
-            localStorage.setItem('selectedArmyName', roster.name);
-            window.location.href = `./pages/army/army.html?id=${roster.name}`;
-        };
+  const menu = createContextMenu(roster.id, 'Roster');
+  container.appendChild(entry);
+  container.appendChild(menu);
 
-        armies.appendChild(entry);
-    }
+  armies.appendChild(container);
+}
+
+async function viewRosters() {
+  const rosters = await getRosters();
+  for (let i = 0; i < rosters.length; ++i) {
+      const roster = await getRoster(rosters[i]);
+      displayRoster(roster);
   }
+}
+
+async function duplicateRoster(e) {
+    const name = 'menu-wrapper';
+    const original = e.closest(`.${name}`);
+    const id = original.id.substring(name.length+1, original.id.length);
+    const originalRoster = await getRoster(id);
+    if (originalRoster.id !== id)
+      console.log(`Could not retrieve roster ${id}`)
+    const json = JSON.stringify(originalRoster);
+    const clone = JSON.parse(json);
+    clone.id = generateId(16);
+    await putRoster(clone);
+    displayRoster(clone);
+}
+
+async function deleteRoster(rosterId) {
+    //const original = item.closest(".regiment-item");
+    //const index = Number(original.id.substring(original.id.length-1)) - 1;
+    //const json = JSON.stringify(roster.regiment[index]);
+    //roster.regiment.push(JSON.parse(json));
+    //displayRegiment(roster.regiment.length - 1);
+    //await putRoster(roster);
+}
 
   async function createArmy() {
     const army = document.getElementById("army").value;
@@ -57,16 +89,10 @@ function toggleOverlay() {
     if (!name)
       name = army;
 
-    const rosters = getRosters();
-    for (let i = 0; i < rosters.length; ++i) {
-        if (rosters[i].name === name) {
-            alert("Name must be unique.");
-            return;
-        }
-    }
-
-    let roster = await getRoster(name);
+    let roster = await getRoster('this is a bad roster');
+    console.log(JSON.stringify(roster));
     roster.name = name;
+    roster.id = generateId(16);
     roster.army = army;
     roster.ruleset = ruleset;
     roster.points = points;

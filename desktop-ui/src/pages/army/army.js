@@ -1,6 +1,6 @@
-const params = new URLSearchParams(window.location.search);
-const rosterName = params.get('id');
+
 var roster;
+var totalPoints = 0;
 
 function displayRegiment(index) {
     const regimentsDiv = document.getElementById('regiments');
@@ -12,26 +12,47 @@ function displayRegiment(index) {
     title.innerHTML = `Regiment ${index+1}`;
 
     const content = newRegItem.querySelector('.regiment-content');
-    for (let j = 0; j < regiment.units.length; ++j) {
-        const unitDiv = document.createElement("div");
-        unitDiv.textContent = regiment.units[j].name;
-        unitDiv.style.padding = "0.5rem";
-        unitDiv.style.background = "#ddd";
-        unitDiv.style.marginBottom = "0.3rem";
-        unitDiv.style.borderRadius = "4px";
-        content.appendChild(unitDiv);
-    }
+
+    let points = 0;
+    regiment.units.forEach(unit => {
+        const usPrototype = document.getElementById("unit-slot-prototype");
+        const newUsItem = usPrototype.cloneNode(true);
+        newUsItem.style.display = "";
+        const usName = newUsItem.querySelector('.unit-slot-name');
+        usName.textContent = unit.name;
+        const usPoints = newUsItem.querySelector('.unit-slot-points');
+        usPoints.textContent = `${unit.points} pts`;
+        newUsItem.style.padding = "0.5rem";
+        newUsItem.style.background = "#ddd";
+        newUsItem.style.marginBottom = "0.3rem";
+        newUsItem.style.borderRadius = "4px";
+        points += unit.points;
+        content.appendChild(newUsItem);
+    });
+    
+    const pointsSpan = newRegItem.querySelector('.regiment-item-points');
+    pointsSpan.textContent = `${points} pts`;
+    totalPoints += points;
+
     newRegItem.removeAttribute('style');
     regimentsDiv.appendChild(newRegItem);
+
+    let pointsOverlay = document.getElementById('pointsOverlay');
+    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
 async function loadArmy() {
-    roster = await getRoster(rosterName);
+    const params = new URLSearchParams(window.location.search);
+    const rosterId = params.get('id');
+    roster = await getRoster(rosterId);
+    
+    const regimentsDiv = document.getElementById('regiments');
+    regimentsDiv.innerHTML = '';
 
     for (let i = 0; i < roster.regiments.length; ++i)
         displayRegiment(i);
 
-    document.getElementById('army-header').textContent = rosterName;
+    document.getElementById('army-header').textContent = roster.name;
 }
 
 async function addItem(section) {
@@ -42,13 +63,6 @@ async function addItem(section) {
     } else {
         alert(`Add new item to ${section}`);
     }
-}
-
-loadArmy();
-  
-function toggleMenu(button) {
-    const menu = button.nextElementSibling;
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
 async function duplicateRegiment(item) {
@@ -63,11 +77,12 @@ async function duplicateRegiment(item) {
     await putRoster(roster);
 }
 
-function deleteRegiment(item) {
+async function deleteRegiment(item) {
     const parent = item.closest(".menu");
     parent.style.display = "none";
 
     const target = item.closest(".regiment-item");
+    const index = Number(target.id.substring(target.id.length-1)) - 1;
     
     const regiments = document.getElementById("regiments");
     if (regiments.children.length > 1) {
@@ -76,6 +91,17 @@ function deleteRegiment(item) {
         const content = target.querySelector('.regiment-content');
         content.innerHTML = "";
     }
+    roster.regiments.splice(index, 1);
+
+    let points = 0;
+    roster.regiments.forEach(regiment => {
+        regiment.units.forEach(unit => {
+            points += unit.points;
+        })
+    });
+    let pointsOverlay = document.getElementById('pointsOverlay');
+    pointsOverlay.textContent = `${points} / ${roster.points} pts`;
+    await putRoster(roster);
 }
 
 function addEntry(button) {
@@ -84,11 +110,10 @@ function addEntry(button) {
     const content = parent.querySelector('.regiment-content');
     const count = content.children.length;
 
-    localStorage.setItem('selectedArmyName', roster.army);
-    const url = `../units/units.html?roster=${roster.name}&regimentIndex=${idx}&army=${roster.army}`;
+    const url = `../units/units.html?id=${roster.id}&regimentIndex=${idx}&army=${roster.army}`;
     if (count === 0) {
-        window.location.href = `${url}&type=hero`;
+        window.location.href = encodeURI(`${url}&type=hero`);
     } else {
-        window.location.href = url
+        window.location.href = encodeURI(url);
     }
 }

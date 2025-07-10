@@ -33,28 +33,31 @@ export const AbilityType = {
 export default class Ability {
     constructor(profile) {
         this.name = profile['@name'];
-        const chars = profile.characteristics;
-        
-        for (let i = 0; i < chars.length; ++i) {
-            const char = chars[i];
+        profile.characteristics.forEach((char) => {
             const lcName = char['@name'].toLowerCase();
-            if (lcName === 'used by')
-                continue;
-            const value = bsTextSmoother(char['#text']);
-            this[lcName] = value ? value : null;
-        }
+            if (lcName !== 'used by') {
+                const value = bsTextSmoother(char['#text']);
+                this[lcName] = value ? value : null;
+            }
+        });
 
-        if (profile['@typeName'] === 'Ability (Activated)') {
+        profile.attributes.forEach((attrib) => {
+            if (attrib['@name'] === 'Color') {
+                this.color = attrib['#text'];
+            }
+        });
+
+        if (profile['@typeName'].includes('Activated')) {
             this.type = AbilityType.Active;
         } 
-        else if (profile['@typeName'] === 'Ability (Passive)') {
+        else if (profile['@typeName'].includes('Passive')) {
             this.type = AbilityType.Passive;
         }
-        else if (profile['@typeName'] === 'Ability (Spell)') {
+        else if (profile['@typeName'].includes('Spell')) {
             this.type = AbilityType.Spell;
             this.cost = profile.characteristics['Casting Value'];
         }
-        else if (profile['@typeName'] === 'Ability (Command)') {
+        else if (profile['@typeName'].includes('Command')) {
             this.type = AbilityType.Command;
         }
     }

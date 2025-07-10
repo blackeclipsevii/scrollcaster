@@ -1,3 +1,4 @@
+@import "../../lib/widgets/contextMenu.css";
 
 body {
     font-family: sans-serif;
@@ -62,36 +63,15 @@ header {
   position: relative;
 }
 
-.menu-wrapper {
-  position: relative;
-}
-
-.menu-btn {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  margin-left: 0.5rem;
-}
-
-.menu {
-  display: none;
-  list-style: none;
-  position: absolute;
-  right: 0;
-  top: 100%;
-  background: white;
-  border: 1px solid #ccc;
-  padding: 0;
-  margin: 0;
-  z-index: 1;
-}
-
-.menu li {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-.menu li:hover {
-  background: #eee;
-}
+#pointsOverlay {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      background-color: #333;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-shadow: 0 0 6px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }

@@ -182,6 +182,7 @@ const _newAbilityDiv = (ability) => {
 
     let color = '';
     if (ability.timing) {
+        // to-do just match to ability color
         if (ability.timing.includes('Hero')) {
             color = '#AD9B49';
         }
@@ -199,6 +200,8 @@ const _newAbilityDiv = (ability) => {
         }
         else if (ability.timing.includes('End')) {
             color = '#6D4784';
+        } else {
+            color = '#949494';
         }
     }
 
@@ -221,41 +224,6 @@ const _newAbilityDiv = (ability) => {
     addSection('p', 'casting value', '<b>Casting Value:</b> ')
     addSection('p', 'declare', '<b>Declare:</b> ');
     addSection('p', 'effect', '<b>Effect:</b> ');
-    if (0) {
-    const headers = Object.getOwnPropertyNames(ability);
-    const abilityTable = document.createElement('table');
-    abilityTable.style.border = '2px solid black';
-    const hdrRow = document.createElement("tr");
-    headers.forEach(cellData => {
-        if (cellData !== 'type' && cellData !== 'name' && 
-            cellData !== 'timing' && cellData !== 'keywords') {
-            const cell = document.createElement("th");
-            cell.style.border = "2px solid black";
-            cell.textContent = cellData;
-            hdrRow.appendChild(cell);
-        }
-    });
-    abilityTable.appendChild(hdrRow);
-
-    let dataRow = document.createElement("tr");
-    let cell = document.createElement("td");
-
-    dataRow = document.createElement("tr");
-    headers.forEach(cellData => {
-        if (cellData !== 'type' && cellData !== 'name'
-            && cellData !== 'timing' && cellData !== 'keywords') {
-            cell = document.createElement("td");
-            cell.style.border = "1px solid black";
-            cell.textContent = ability[cellData];
-            dataRow.appendChild(cell);
-        }
-    });
-
-    abilityTable.appendChild(dataRow);
-
-    div.appendChild(abilityTable);
-    }
-
     addSection('h5', 'keywords', 'Keywords: ');
     
     div.appendChild(abilityBody);

@@ -1,17 +1,20 @@
 
 const params = new URLSearchParams(window.location.search);
-const rosterName = params.get('roster');
+const rosterId = params.get('id');
 const regimentIndex = Number(params.get('regimentIndex'));
 const army = params.get('army');
 const type = params.get('type');
 
 async function loadUnits() {
+    const roster = await getRoster(rosterId);
     const unitList = document.getElementById('unitList');
     const armyName = encodeURI(army);
     await fetch(`${hostname}:${port}/units?army=${armyName}`).
     then(resp => resp.json()).
     then(units => {
-        units.forEach(unit => {
+        const unitIds = Object.getOwnPropertyNames(units);
+        unitIds.forEach(id => {
+            const unit = units[id];
             if (type && !unit.keywords.includes(type.toUpperCase()))
                 return;
 
@@ -34,18 +37,18 @@ async function loadUnits() {
             right.classList.add('unit-right');
 
             const points = document.createElement('span');
-            points.textContent = '150 pts'; //`${unit.points} pts`;
+            points.textContent = unit.points ? `${unit.points} pts` : '';
 
             const addBtn = document.createElement('button');
             addBtn.classList.add('add-btn');
             addBtn.textContent = '+';
             addBtn.addEventListener('click', async (e) => {
                 e.stopPropagation(); // Prevents click from triggering page change
-                const roster = await getRoster(rosterName);
                 const regiment = roster.regiments[regimentIndex];
                 regiment.units.push(unit);
                 await putRoster(roster);
                 goBack();
+                // window.location.href = `../army/army.html?id=${rosterId}`;
             });
 
             right.append(points, addBtn);

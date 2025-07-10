@@ -2,6 +2,7 @@
 
 export default class Roster {
     constructor() {
+        this.id = "";
         this.name = "";
         this.army = "";
         this.points = 2000;

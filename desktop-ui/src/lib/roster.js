@@ -11,12 +11,15 @@ async function getRoster(id) {
     let roster = null;
     await fetch(`${hostname}:${port}/roster?id=${id}`, {
         method: "GET" // default, so we can ignore
-    }).then(response => { roster = response.json() });
+    }).then(response => { 
+        console.log(response);
+        roster = response.json() 
+    });
     return roster;
 }
 
 async function putRoster(roster) {
-    await fetch(`${hostname}:${port}/roster?id=${roster.name}`, {
+    await fetch(`${hostname}:${port}/roster?id=${roster.id}`, {
         method: "PUT",
         body: JSON.stringify(roster),
         headers: { 'Content-Type': 'application/json' }
@@ -24,7 +27,8 @@ async function putRoster(roster) {
 }
 
 async function updateRoster(partialRoster) {
-  await fetch(`${hostname}:${port}/roster?id=${partialRoster.name}`,{
-      method: "POST" // default, so we can ignore
+  await fetch(`${hostname}:${port}/roster?id=${roster.id}`,{
+      method: "POST", // default, so we can ignore
+      body: JSON.stringify(partialRoster)
   });
 }
