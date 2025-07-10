@@ -1,18 +1,5 @@
 @import "lib/widgets/contextMenu.css";
-
-body {
-font-family: sans-serif;
-margin: 0;
-padding: 0;
-}
-
-header {
-background-color: #282c34;
-color: white;
-padding: 1rem;
-text-align: center;
-font-size: 1.5rem;
-}
+@import "lib/root.css";
 
 .fab {
 position: fixed;
@@ -65,3 +52,16 @@ color: white;
 border: none;
 cursor: pointer;
 }
+.army-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f9f9f9;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .army-card:hover {
+    background: #eef;
+  }

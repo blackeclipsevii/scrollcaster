@@ -1,10 +1,15 @@
-header {
-    background-color: #282c34;
-    color: white;
+@import "../../lib/root.css";
+
+.section {
+    gap: 1rem;
     padding: 1rem;
-    text-align: center;
-    font-size: 1.5rem;
-    position: relative;
+    border-bottom: 1px solid #ccc;
+}
+
+.section h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .back-btn {
@@ -22,12 +27,6 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
 }
 
 .unit-list {

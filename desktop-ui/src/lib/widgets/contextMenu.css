@@ -3,14 +3,17 @@
   position: absolute;
   z-index: 1000;
   display: none;
+  padding: 0;
+  margin: 0;
 }
 
 .menu-btn {
+  position: relative;
+  display: inline-block;
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  margin-left: 0.5rem;
 }
 
 .menu {

@@ -1,23 +1,27 @@
 
 function toggleOverlay() {
-    const overlay = document.getElementById("overlay");
-    if (overlay.style.display === "flex") {
-      overlay.style.display = "none";
-    } else {
-      overlay.style.display = "flex";
-      fetch(`${hostname}:${port}/armies`).
-      then(resp => resp.json()).
-      then(armies => {
-        let armySelect = document.getElementById("army");
-        armies.forEach((army)=> {
-          const option = document.createElement("option");
-          option.value = army;
-          option.textContent = army;
-          armySelect.appendChild(option);
-        });
+  const overlay = document.getElementById("overlay");
+  if (overlay.style.display === "flex") {
+    overlay.style.display = "none";
+  } else {
+    overlay.style.display = "flex";
+    fetch(`${hostname}:${port}/armies`).
+    then(resp => resp.json()).
+    then(armies => {
+      let armySelect = document.getElementById("army");
+      armies.forEach((army)=> {
+        const option = document.createElement("option");
+        option.value = army;
+        option.textContent = army;
+        armySelect.appendChild(option);
       });
-    }
+    });
   }
+}
+
+function goToRoster(roster) {
+  window.location.href = encodeURI(`./pages/army/army.html?id=${roster.id}`);
+}
 
 function displayRoster(roster) {
   if (!roster)
@@ -34,9 +38,7 @@ function displayRoster(roster) {
   <p>${roster.description}</p>
   <div style="display: hidden" class="roster-id" id="${roster.id}"></div>
   `;
-  entry.onclick = () => {
-      window.location.href = encodeURI(`./pages/army/army.html?id=${roster.id}`);
-  };
+  entry.onclick = () => goToRoster(roster);
   entry.style.float = "left";
 
   const menu = createContextMenu(roster.id, 'RosterCallback');
@@ -57,25 +59,25 @@ async function viewRosters() {
 }
 
 async function duplicateRosterCallback(e) {
-    const name = 'menu-wrapper';
-    const original = e.closest(`.${name}`);
-    const id = original.id.substring(name.length+1, original.id.length);
-    const originalRoster = await getRoster(id);
-    if (originalRoster.id !== id)
-      console.log(`Could not retrieve roster ${id}`)
-    const json = JSON.stringify(originalRoster);
-    const clone = JSON.parse(json);
-    clone.id = generateId(16);
-    await putRoster(clone);
-    displayRoster(clone);
+  const menuWrapper = e.closest(`.menu-wrapper`);
+  const idxDiv = menuWrapper.querySelector(".idx");
+  const id = idxDiv.textContent;
+  const originalRoster = await getRoster(id);
+  if (originalRoster.id !== id)
+    console.log(`Could not retrieve roster ${id}`)
+  const json = JSON.stringify(originalRoster);
+  const clone = JSON.parse(json);
+  clone.id = generateId(16);
+  await putRoster(clone);
+  displayRoster(clone);
 }
 
 async function deleteRosterCallback(e) {
-    const name = 'menu-wrapper';
-    const original = e.closest(`.${name}`);
-    const id = original.id.substring(name.length+1, original.id.length);
-    deleteRoster(id);
-    viewRosters();
+  const menuWrapper = e.closest(`.menu-wrapper`);
+  const idxDiv = menuWrapper.querySelector(".idx");
+  const id = idxDiv.textContent;
+  deleteRoster(id);
+  await viewRosters();
 }
 
   async function createArmy() {
@@ -107,6 +109,7 @@ async function deleteRosterCallback(e) {
     document.querySelector(".modal").reset?.(); // for future-proofing
     document.getElementById("overlay").style.display = "none";
 
-    console.log('view roster')
     await viewRosters();
+
+    goToRoster(roster);
   }

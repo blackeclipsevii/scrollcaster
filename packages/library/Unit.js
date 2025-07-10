@@ -31,7 +31,7 @@ export function strToUnitType(str) {
         return UnitType.WarMachine;
     } else if (upper === 'MANIFEST') {
         return UnitType.Manifestation;
-    } else if (upper === 'TERRAIN') {
+    } else if (upper === 'FACTION TERRAIN') {
         return UnitType.Terrain;
     }
     return UnitType.Unknown;
@@ -39,10 +39,17 @@ export function strToUnitType(str) {
 
 export default class Unit {
     constructor(selectionEntry) {
+        this.isGeneral = false;
+
         this.canHaveHeroicTrait = false;
+        this.heroicTrait = null;
+
         this.canHaveArtefact = false;
-        this.canBeGeneral = false;
+        this.artefact = null;
+        
         this.canBeReinforced = false;
+        this.isReinforced = false;
+
         this.abilities = [];
         this.points = 0;
         this._parse(selectionEntry);

@@ -1,19 +1,6 @@
 @import "../../lib/widgets/contextMenu.css";
+@import "../../lib/root.css";
 
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-header {
-    background-color: #282c34;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    font-size: 1.5rem;
-    position: relative;
-}
 
 .back-btn {
     position: absolute;
@@ -44,7 +31,7 @@ header {
     align-items: center;
 }
 
-.section button {
+.round-button {
     background-color: #007bff;
     color: white;
     border: none;
@@ -75,3 +62,84 @@ header {
       box-shadow: 0 0 6px rgba(0,0,0,0.3);
       z-index: 1000;
     }
+
+.arrow {
+    transition: transform 0.3s ease;
+}
+
+.unit-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    background: #fafafa;
+    padding: 0 10px;
+}
+
+.unit-details label, .unit-details button {
+    display: block;
+    margin: 10px 0;
+}
+
+.crown-icon {
+    margin-left: 5px;
+    color: goldenrod;
+}
+
+.unit-slot {
+    border: 1px solid #ccc;
+    width: 400px;
+    margin: 10px auto;
+    font-family: Arial, sans-serif;
+}
+
+.unit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f2f2f2;
+    cursor: pointer;
+}
+
+.unit-slot-name {
+    position: relative;
+    display: flex-start;
+    align-items: center;
+    max-width: 150px;
+}
+
+.unit-text {
+    flex-shrink: 0;
+}
+
+.unit-slot-points {
+    position: relative;
+    top: 20%;
+}
+
+.unit-label {
+    position: relative;
+    color: white;
+    right: 5%;
+    top: 15%;
+    font-size: 12px;
+    padding: 2px 6px;
+    margin-bottom: 0px;
+    border-radius: 6px;
+    white-space: nowrap;
+    display: none;
+}
+
+.unit-header-right {
+    display: flex;
+    gap: .5rem; 
+}
+
+.general-label {
+    background-color: green;
+}
+  
+.reinforced-label {
+    background-color: blue;
+}
+  

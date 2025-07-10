@@ -3,14 +3,15 @@ const params = new URLSearchParams(window.location.search);
 const rosterId = params.get('id');
 const auxiliary = params.get('auxiliary');
 const regimentIndex = auxiliary ? 0 : Number(params.get('regimentIndex'));
-const army = params.get('army');
-const type = params.get('type');
+
+let type = params.get('type');
+if (type)
+    type = decodeURI(type);
 
 async function loadUnits() {
+    let representedTypes = {};
     const roster = await getRoster(rosterId);
-    const unitList = document.getElementById('unitList');
-    const armyName = encodeURI(army);
-    await fetch(`${hostname}:${port}/units?army=${armyName}`).
+    await fetch(encodeURI(`${hostname}:${port}/units?army=${roster.army}`)).
     then(resp => resp.json()).
     then(units => {
         const unitIds = Object.getOwnPropertyNames(units);
@@ -19,7 +20,7 @@ async function loadUnits() {
             if (type && !unit.keywords.includes(type.toUpperCase()))
                 return;
 
-            if (unit.type > 5)
+            if (!type && unit.type > 5)
                 return;
 
             const item = document.createElement('div');
@@ -27,8 +28,33 @@ async function loadUnits() {
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
-                window.location.href = `../warscroll/warscroll.html?army=${armyName}&unit=${unit.name}`;
+                window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
             });
+
+            let unitList = null;
+            if (unit.type === 0) {
+                unitList = document.getElementById('hero-unit-list');
+            } else if (unit.type == 1) {
+                unitList = document.getElementById('infantry-unit-list');
+            } else if (unit.type == 2) {
+                unitList = document.getElementById('cavalry-unit-list');
+            } else if (unit.type == 3) {
+                unitList = document.getElementById('beast-unit-list');
+            } else if (unit.type == 4) {
+                unitList = document.getElementById('monster-unit-list');
+            } else if (unit.type == 5) {
+                unitList = document.getElementById('war-machine-unit-list');
+            } else if (unit.type == 6) {
+                unitList = document.getElementById('manifestation-unit-list');
+            } else if (unit.type == 7) {
+                unitList = document.getElementById('faction-terrain-unit-list');
+            } else {
+                console.log(`unit type unknown: ${unit.name}`);
+                return;
+            }
+
+            const section = unitList.closest('.section');
+            section.style.display = 'block';
 
             const left = document.createElement('div');
             left.classList.add('unit-left');
@@ -47,6 +73,8 @@ async function loadUnits() {
                 e.stopPropagation(); // Prevents click from triggering page change
                 if (auxiliary) {
                     roster.auxiliaryUnits.push(unit);
+                } else if (unit.type == 7) {
+                    roster.terrainFeature = unit;
                 } else {
                     const regiment = roster.regiments[regimentIndex];
                     regiment.units.push(unit);
@@ -61,5 +89,6 @@ async function loadUnits() {
             unitList.appendChild(item);
         });
     });
+    loadScrollData();
 }
 loadUnits();

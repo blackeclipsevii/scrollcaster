@@ -32,6 +32,7 @@ function createContextMenu(id, callbackPostfix) {
     const div = document.createElement('div');
     div.innerHTML = `
     <div id="menu-wrapper-${id}" class="menu-wrapper">
+        <div style="display: none;" class="idx">${id}</div>
         <ul class="menu">
             <li onclick="duplicate${callbackPostfix}(this)">Duplicate</li>
             <li onclick="delete${callbackPostfix}(this)">Delete</li>
