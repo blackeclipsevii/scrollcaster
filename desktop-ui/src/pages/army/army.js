@@ -38,12 +38,12 @@ function removeSection(section, className) {
     }
 }
 
-function createUnitSlot(parent, unit, id, callbackTag){
+function createUnitSlot(parent, unit, idx, callbackTag){
     const usPrototype = document.getElementById("unit-slot-prototype");
     const newUsItem = usPrototype.cloneNode(true);
     
     const hiddenIdx = newUsItem.querySelector('.unit-idx');
-    hiddenIdx.textContent = id;
+    hiddenIdx.textContent = idx;
 
     const usName = newUsItem.querySelector('.unit-text');
     // Find the crown icon
@@ -115,7 +115,7 @@ function createUnitSlot(parent, unit, id, callbackTag){
     newUsItem.style.marginBottom = "0.3rem";
     newUsItem.style.borderRadius = "4px";
 
-    const menu = createContextMenu(id, callbackTag);
+    const menu = createContextMenu(unit.id, unit.id, callbackTag);
     const unitHdr = newUsItem.querySelector(".unit-header-right");
     unitHdr.appendChild(menu);
     parent.appendChild(newUsItem);
@@ -137,8 +137,10 @@ function displayRegiment(index) {
     const content = newRegItem.querySelector('.regiment-content');
 
     let points = 0;
+    let uniqueId = roster.id;
     regiment.units.forEach((unit, idx) => {
         createUnitSlot(content, unit, idx, 'UnitCallback');
+        uniqueId += unit.id;
         const unitsPoints = unitTotalPoints(unit);
         points += unitsPoints;
     });
@@ -147,7 +149,7 @@ function displayRegiment(index) {
     pointsSpan.textContent = points > 0 ? `${points} pts` : '';
     totalPoints += points;
     
-    const menu = createContextMenu(index, 'Regiment');
+    const menu = createContextMenu(uniqueId, index, 'Regiment');
     const regHdr = newRegItem.querySelector(".regiment-header");
     regHdr.appendChild(menu);
 
@@ -354,6 +356,7 @@ async function deleteAuxUnitCallback(item) {
 }
 
 async function deleteTerrainCallback(item) {
+    console.log('terrain callback');
     const points = terrainFeature.points;
     roster.terrainFeature = null;
     await putRoster(roster);

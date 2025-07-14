@@ -48,7 +48,7 @@ function displayRoster(roster) {
   entry.onclick = () => goToRoster(roster);
   entry.style.float = "left";
 
-  const menu = createContextMenu(roster.id, 'RosterCallback');
+  const menu = createContextMenu(roster.id, roster.id, 'RosterCallback');
   container.appendChild(entry);
   container.appendChild(menu);
 
