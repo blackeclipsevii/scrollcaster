@@ -76,10 +76,14 @@ const widgetsAbilityNewAbilityDiv = (ability, parent) => {
 }
 
 const widgetAbilityInitializeAbilitiesDiv = (parent) => {
-    let div = parent.querySelector('.abilitiesDiv');
+    let _parent = parent;
+    if (!parent)
+        _parent = document;
+    let div = _parent.querySelector('.abilitiesDiv');
     if (!div) {
         div = document.createElement("div");
-        parent.appendChild(div);
+        if (parent)
+            parent.appendChild(div);
     }
     div.className = 'abilitiesDiv';
     
