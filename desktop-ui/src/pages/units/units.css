@@ -1,17 +1,5 @@
 @import "../../lib/root.css";
 
-.section {
-    gap: 1rem;
-    padding: 1rem;
-    border-bottom: 1px solid #ccc;
-}
-
-.section h2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .unit-list {
     display: flex;
     flex-direction: column;
@@ -42,14 +30,4 @@
     display: flex;
     gap: 1rem;
     align-items: center;
-}
-
-button.add-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
 }

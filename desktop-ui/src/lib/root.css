@@ -5,13 +5,38 @@ body {
 }
 
 header {
-    background-color: #282c34;
+    position: fixed;
+    top: 0;
+    left: 0;
+  
+    background-color: #1C1C1E;
     color: white;
     padding-bottom: 2rem;
     padding-top: 2rem;
     text-align: center;
     font-size: 1.5rem;
     width: 100%;
+    z-index: 1000;
+}
+
+.main {
+    margin-top: 6.5rem;
+}
+
+.section {
+    gap: 1rem;
+    padding: .5rem;
+    margin: .5rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: white;
+}
+
+.section h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: black;
 }
 
 .back-btn {
@@ -29,4 +54,26 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.rectangle-button {
+    background-color: #1976D2;
+    color: white;
+    border: none;
+    padding: 0.6rem 0.9rem;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.full-rectangle-button {
+    background-color: #1976D2;
+    color: white;
+    border: none;
+    margin-top: 0.3rem;
+    padding: 0.6rem 0.9rem;
+    width: 100%;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
 }

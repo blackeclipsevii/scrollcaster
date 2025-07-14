@@ -4,6 +4,7 @@ import url from 'url';
 import fs from 'fs'
 import express from 'express'
 
+import AgeOfSigmar from './packages/library/AgeOfSigmar.js';
 import Army from './packages/library/Army.js';
 import Roster from './packages/library/Roster.js';
 import Lores from './packages/library/Lores.js';
@@ -14,6 +15,7 @@ const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
 const saveData = "./saveData.json";
 var libraries = null;
+var ageOfSigmar = null;
 var lores = null;
 var armies = {};
 var rosters = {};
@@ -37,6 +39,10 @@ function loadRosters() {
 }
 
 function getArmy(armyValue) {
+  if (!ageOfSigmar) {
+    ageOfSigmar = new AgeOfSigmar(directoryPath);
+  }
+
   if (!lores) {
     lores = new Lores(directoryPath);
   }
@@ -53,7 +59,7 @@ function getArmy(armyValue) {
     }
     
     const library = libraries[i].split(' - ')[0] + '.cat';
-    army = new Army(lores, directoryPath, library);
+    army = new Army(ageOfSigmar, lores, directoryPath, library);
     armies[armyValue] = army;
   }
   return army;

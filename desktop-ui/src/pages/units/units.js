@@ -2,24 +2,59 @@
 const params = new URLSearchParams(window.location.search);
 const rosterId = params.get('id');
 const auxiliary = params.get('auxiliary');
+const hasRegimentIndex = params.has('regimentIndex');
 const regimentIndex = auxiliary ? 0 : Number(params.get('regimentIndex'));
 
 let type = params.get('type');
 if (type)
     type = decodeURI(type);
 
+function canFieldUnit(regimentOptions, unit) {
+    for (let i = 0; i < regimentOptions.units.length; ++i) {
+        if (regimentOptions.units[i] === unit.id) {
+            return true;
+        }
+    }
+
+    for (let i = 0; i < regimentOptions.keywords.length; ++i) {
+        if (unit.keywords.includes(regimentOptions.keywords[i]) &&
+            unit.type > 0) {
+            return true;
+        }
+    }
+
+    for (let i = 0; i < regimentOptions.armyKeywords.length; ++i) {
+        if (unit.keywords.includes(regimentOptions.armyKeywords[i])) {
+            return true;
+        }
+    }
+
+}
+
 async function loadUnits() {
     const roster = await getRoster(rosterId);
     await fetch(encodeURI(`${hostname}:${port}/units?army=${roster.army}`)).
     then(resp => resp.json()).
     then(units => {
-        const unitIds = Object.getOwnPropertyNames(units);
+        let leader = null;
+        let unitIds = Object.getOwnPropertyNames(units);
+        let useRegimentOptions = false;
+        if (hasRegimentIndex){
+            regiment = roster.regiments[regimentIndex];
+            if (regiment.units.length > 0 && regiment.units[0].regimentOptions) {
+                useRegimentOptions = true;
+                leader = regiment.units[0];
+            }
+        }
         unitIds.forEach(id => {
             const unit = units[id];
             if (type && !unit.keywords.includes(type.toUpperCase()))
                 return;
 
             if (!type && unit.type > 5)
+                return;
+
+            if (useRegimentOptions && !canFieldUnit(leader.regimentOptions, unit))
                 return;
 
             const item = document.createElement('div');
@@ -66,7 +101,7 @@ async function loadUnits() {
             points.textContent = unit.points ? `${unit.points} pts` : '';
 
             const addBtn = document.createElement('button');
-            addBtn.classList.add('add-btn');
+            addBtn.classList.add('rectangle-button');
             addBtn.textContent = '+';
             addBtn.addEventListener('click', async (e) => {
                 e.stopPropagation(); // Prevents click from triggering page change

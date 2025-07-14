@@ -63,7 +63,7 @@ async function loadUpgrades() {
                 points.textContent = upgrade.points ? `${upgrade.points} pts` : '';
 
                 const addBtn = document.createElement('button');
-                addBtn.classList.add('add-btn');
+                addBtn.classList.add('rectangle-button');
                 addBtn.textContent = '+';
                 addBtn.addEventListener('click', async (e) => {
                     e.stopPropagation(); // Prevents click from triggering page change

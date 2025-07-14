@@ -3,27 +3,29 @@
 @import "lib/modal.css";
 
 .fab {
-position: fixed;
-bottom: 20px;
-right: 20px;
-width: 60px;
-height: 60px;
-background-color: #007bff;
-color: white;
-border: none;
-border-radius: 50%;
-font-size: 2rem;
-cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 2rem;
+  cursor: pointer;
 }
 
 .army-card {
   border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: 5px;
+  padding: 0.5rem;
   margin-bottom: 1rem;
   background: #f9f9f9;
   cursor: pointer;
   transition: background 0.2s;
+  font-size: 14px;
+  width: 95%;
 }
 
 .army-card:hover {

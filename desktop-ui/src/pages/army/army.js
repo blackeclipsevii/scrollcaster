@@ -38,7 +38,7 @@ function removeSection(section, className) {
     }
 }
 
-function createUnitSlot(parent, unit, idx, callbackTag){
+function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent){
     const usPrototype = document.getElementById("unit-slot-prototype");
     const newUsItem = usPrototype.cloneNode(true);
     
@@ -117,9 +117,16 @@ function createUnitSlot(parent, unit, idx, callbackTag){
     newUsItem.style.marginBottom = "0.3rem";
     newUsItem.style.borderRadius = "4px";
 
-    const menu = createContextMenu(unit.id, unit.id, callbackTag);
-    const unitHdr = newUsItem.querySelector(".unit-header-right");
+    if (!menuIdxContent)
+        menuIdxContent = unit.id;
+
+    const menu = createContextMenu(menuIdxContent, menuIdxContent, callbackTag);
+    let unitHdr = newUsItem.querySelector(".unit-header-right");
     unitHdr.appendChild(menu);
+    unitHdr = newUsItem.querySelector(".unit-header-left");
+    unitHdr.onclick = () => {
+        window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
+    };
     parent.appendChild(newUsItem);
     newUsItem.style.display = "";
 }
@@ -141,7 +148,7 @@ function displayRegiment(index) {
     let points = 0;
     let uniqueId = roster.id;
     regiment.units.forEach((unit, idx) => {
-        createUnitSlot(content, unit, idx, 'UnitCallback');
+        createUnitSlot(content, unit, idx, 'UnitCallback', `${unit.id}:${index}:${idx}`);
         uniqueId += unit.id;
         const unitsPoints = unitTotalPoints(unit);
         points += unitsPoints;
@@ -229,7 +236,7 @@ async function loadArmy(doGet) {
         displayTerrain();
         const terrain = document.getElementById('terrain');
         const section = terrain.closest('.section');
-        const button = section.querySelector('.round-button');
+        const button = section.querySelector('.rectangle-button');
         button.disabled = true;
     }
 
@@ -247,12 +254,13 @@ async function loadArmy(doGet) {
 }
 
 function toggleUnit(header) {
-    const container = header.parentElement;
+    console.log('foo')
+    const container = header.closest('.unit-header').parentElement;
     const details = container.querySelector('.unit-details');
     if(!details)
         return;
     
-    const arrow = header.querySelector('.arrow');
+    const arrow = container.querySelector('.arrow');
     if (details.style.maxHeight) {
         details.style.maxHeight = null;
         arrow.style.transform = 'rotate(0deg)';
@@ -348,10 +356,33 @@ async function addItem(section) {
 }
 
 async function deleteUnitCallback(item) {
+    console.log('delete unit');
     const menu = item.closest(".menu-wrapper");
     menu.style.display = "none";
     const idxDiv = menu.querySelector(".idx");
-    
+    const idxItems = idxDiv.textContent.split(':');
+    const regiment = roster.regiments[idxItems[1]];
+    if (regiment.units.length > 1 && Number(idxItems[2]) === 0)
+        return; // to-do handle deleting the leader
+
+    regiment.units.splice(idxItems[2], 1);
+    await putRoster(roster);
+    loadArmy(false);
+}
+
+async function duplicateUnitCallback(item) {
+    console.log('duplicate unit');
+    const menu = item.closest(".menu-wrapper");
+    menu.style.display = "none";
+    const idxDiv = menu.querySelector(".idx");
+    const idxItems = idxDiv.textContent.split(':');
+    const regiment = roster.regiments[idxItems[1]];
+    if (Number(idxItems[2]) === 0)
+        return; // to-do handle deleting the leader
+    const json = JSON.stringify(regiment.units[idxItems[2]]);
+    regiment.units.push(JSON.parse(json));
+    await putRoster(roster);
+    loadArmy(false);
 }
 
 async function deleteAuxUnitCallback(item) {

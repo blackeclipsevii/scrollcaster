@@ -20,8 +20,9 @@
     <button class="export-btn" onclick="exportList()">^</button>
   </header>
   
+  <div class="main">
   <div class="section">
-    <h2>Regiments <button class="round-button" onclick="addItem('Regiments')">+</button></h2>
+    <h2>Regiments <button class="rectangle-button" onclick="addItem('Regiments')">+</button></h2>
 <!--
     <div style="display: none; overflow: hidden;" class="unit-slot" id="unit-slot-prototype">
       <span class="unit-slot-name" style="float: left;"></span>
@@ -30,9 +31,8 @@
   -->
   <div style="display: none;" class="unit-slot" id="unit-slot-prototype" unitIdx="">
     <span style="display: none;" class="unit-idx"></span>
-    <div class="unit-header" onclick="toggleUnit(this)">
-      
-      <span class="arrow">▶</span>
+    <div class="unit-header">
+      <span onclick="toggleUnit(this)" class="arrow">▶</span>
       <div class="unit-header-left">
         <span class="unit-slot-name">
           <span class="unit-text">Unit Name</span>
@@ -73,9 +73,7 @@
 
       <!-- Add button below content -->
       <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <span style="margin-left:auto; margin-right: auto;">
-          <button class="round-button" class="menu-btn" onclick="addEntry(this)">+</button>
-        </span>
+        <button class="full-rectangle-button" class="menu-btn" onclick="addEntry(this)">Add Unit +</button>
       </div>
     </div>
 
@@ -85,27 +83,27 @@
   </div>
 
   <div class="section">
-    <h2>Auxiliary Units <button class="round-button" onclick="addItem('Auxiliary Units')">+</button></h2>
+    <h2>Auxiliary Units <button class="rectangle-button" onclick="addItem('Auxiliary Units')">+</button></h2>
     <div id="auxiliary"></div>
   </div>
 
   <div class="section">
-    <h2>Battle Formation <button class="round-button" onclick="addItem('Battle Formation')">+</button></h2>
+    <h2>Battle Formation <button class="rectangle-button" onclick="addItem('Battle Formation')">+</button></h2>
     <div id="battleFormation"></div>
   </div>
 
   <div class="section">
-    <h2>Lores <button class="round-button" onclick="addItem('Lores')">+</button></h2>
+    <h2>Lores <button class="rectangle-button" onclick="addItem('Lores')">+</button></h2>
     <div id="lores"></div>
   </div>
 
   <div class="section">
-    <h2>Battle Tactics <button class="round-button" onclick="addItem('Battle Tactics')">+</button></h2>
+    <h2>Battle Tactics <button class="rectangle-button" onclick="addItem('Battle Tactics')">+</button></h2>
     <div id="tactics"></div>
   </div>
 
   <div class="section">
-    <h2>Faction Terrain <button class="round-button" onclick="addItem('Faction Terrain')">+</button></h2>
+    <h2>Faction Terrain <button class="rectangle-button" onclick="addItem('Faction Terrain')">+</button></h2>
     <div id="terrain"></div>
   </div>
   <!--
@@ -124,5 +122,6 @@
 
   
   <script>loadArmy(true);</script>
+  </div>
 </body>
 </html>

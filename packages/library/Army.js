@@ -3,9 +3,8 @@ import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from './Upgrade.js';
 
-
 export default class Army {
-    constructor(lores, dir, armyFilename) {
+    constructor(ageOfSigmar, lores, dir, armyFilename) {
         this.catalogues = {};
         this.upgrades = {
             artefacts: {},
@@ -19,7 +18,9 @@ export default class Army {
         this.battleTraits = {}
         this.points = {};
         this.units = {};
-        this._parse(lores, dir, armyFilename);
+        this.unitLUT = {};
+        this.keywordLUT = {};
+        this._parse(ageOfSigmar, lores, dir, armyFilename);
     }
 
     _readCatalogue(dir, name) {
@@ -34,7 +35,75 @@ export default class Army {
         });
     }
 
-    _parse(lores, dir, filename) {
+    _availableUnits(ageOfSigmar, entryLink) {
+        if (!entryLink.modifiers)
+            return;
+
+        const targetId = entryLink['@targetId'];
+       // const unitId = this.unitLUT[targetId];
+        const unit = this.units[targetId];
+        if (!unit)
+            return;
+
+        let isLeader = false;
+        entryLink.modifiers.forEach(modifier => {
+            if (modifier['@type'] === 'set-primary')
+                isLeader = true;
+        });
+
+        if (!isLeader)
+            return;
+
+        // not sure how to really parse these, so its TO-Do
+        const regimentOptions = {
+            units: [],
+            keywords: [],
+            armyKeywords: []
+        };
+
+        const getLUTID = (modifier) => {
+            const recursiveStr = 'self.entries.recursive.';
+            const lutId = modifier['@affects'];
+            if (lutId.startsWith(recursiveStr))
+                return lutId.substring(recursiveStr.length);
+            return lutId;
+        }
+
+        if (entryLink.modifierGroups) {
+            entryLink.modifierGroups.forEach(group => {
+                if (group['@type'] === 'and') {
+                    group.modifiers.forEach(modifier => {
+                        if (modifier['@type'] === 'add' &&
+                            modifier['@scope'] === 'force') {
+                            const lutId = getLUTID(modifier);
+                            const childId = this.unitLUT[lutId];
+                            const childUnit = this.units[this.unitLUT[lutId]];
+                            if (childUnit) {
+                                regimentOptions.units.push(childId);
+                            } else {
+                                let keyword = ageOfSigmar.keywordLUT[lutId];
+                                if (keyword) {
+                                    regimentOptions.keywords.push(keyword);
+                                } else {
+                                    keyword = this.keywordLUT[lutId];
+                                    if (keyword) {
+                                        regimentOptions.armyKeywords.push(keyword);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        if (regimentOptions.units.length > 0 ||
+            regimentOptions.keywords.length > 0 ||
+            regimentOptions.armyKeywords.length > 0)
+            unit.regimentOptions = regimentOptions;
+    }
+
+    _parse(ageOfSigmar, lores, dir, filename) {
         let catalogue = parseCatalog(`${dir}/${filename}`);
         if (!catalogue)
             return;
@@ -55,6 +124,10 @@ export default class Army {
             }
         });
 
+        catalogue.categoryEntries.forEach(category => {
+            this.keywordLUT[category['@id']] = category['@name'];
+        });
+
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
             let unit = this.units[link['@targetId']];
@@ -63,6 +136,8 @@ export default class Army {
                 console.log(`link :${JSON.stringify(link)}`);
                 return;
             }
+            this.unitLUT[link['@id']] = unit.id;
+
             if (link.entryLinks) {
                 link.entryLinks.forEach(ele => {
                     const lc = ele['@name'].toLowerCase();
@@ -91,8 +166,27 @@ export default class Army {
                     }
                 });
             }
+            if (link.modifierGroups) {
+                link.modifierGroups.forEach(group => {
+                    if (group['@type'] === 'and' && group.modifiers) {
+                        group.modifiers.forEach(modifier => {
+                            if (modifier['@type'] === 'add' && modifier['@field'] === 'category' &&
+                                modifier['@value'] && !modifier['@scope']) {
+                                const keyword = this.keywordLUT[modifier['@value']];
+                                if (keyword) {
+                                    unit.keywords.push(keyword);
+                                    console.log(`Add keyword ${keyword} to ${unit.name}`)
+                                }
+                            }
+                        });
+                    }
+                });
+            }
         });
-
+        // need the lut setup
+        catalogue.entryLinks.forEach(link => {
+            this._availableUnits(ageOfSigmar, link);
+        });
         
         const upgradeLUT = {
             'battle formation': {
