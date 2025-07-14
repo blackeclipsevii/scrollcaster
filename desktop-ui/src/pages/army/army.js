@@ -5,7 +5,7 @@ var totalPoints = 0;
 function unitTotalPoints(unit) {
     if (!unit.points)
         return 0;
-    
+
     let pts = unit.points;
     
     if (unit.isReinforced)
@@ -23,6 +23,10 @@ function unitTotalPoints(unit) {
 function refreshTotalPoints() {
     let pointsOverlay = document.getElementById('pointsOverlay');
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
+}
+
+function exportList() {
+
 }
 
 function removeSection(section, className) {

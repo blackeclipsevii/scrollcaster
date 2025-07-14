@@ -156,6 +156,13 @@ export default class Army {
                     }
                 }
             });
+
+            lores.universal.forEach(itr => {
+                const universalLore = lores.lores[itr.id];
+                universalLore.points = itr.points;
+                universalLore.type = itr.type;
+                this.upgrades.manifestationLores[universalLore.name] = universalLore;
+            });
         });
         
 

@@ -5,6 +5,7 @@ import Upgrade from "./Upgrade.js";
 
 export default class Lores {
     constructor(dir) {
+        this.universal = [];
         this.lores = {};
         this.catalogue = parseCatalog(`${dir}/Lores.cat`);
         if (!this.catalogue)
@@ -13,6 +14,10 @@ export default class Lores {
         this.catalogue.sharedSelectionEntryGroups.forEach(lore => {
             const spells = {};
             spells.name = lore['@name'];
+            if (spells.name === 'Manifestation Lores') {
+                this._doUniversalLores(lore);
+                return;
+            }
             spells.id = lore['@id'];
             spells.spells = [];
 
@@ -32,5 +37,26 @@ export default class Lores {
         });
 
        // console.log(JSON.stringify(this.lores, null, 2));
+    }
+
+    _doUniversalLores(group) {
+        group.selectionEntries.forEach(entry => {
+            const lu = {
+                id: '',
+                points: 0,
+                type: UpgradeType.ManifestationLore
+            };
+            entry.entryLinks.forEach(link =>{
+                lu.id = link['@targetId'];
+            });
+            if (entry.costs) {
+                entry.costs.forEach(cost => {
+                    if (cost['@name'] === 'pts') {
+                        lu.points = Number(cost['@value']);
+                    }
+                });
+            }
+            this.universal.push(lu);
+        });
     }
 }
