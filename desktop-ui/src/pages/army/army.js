@@ -137,7 +137,7 @@ function displayRegiment(index) {
     });
     
     const pointsSpan = newRegItem.querySelector('.regiment-item-points');
-    pointsSpan.textContent = points >`${points} pts`;
+    pointsSpan.textContent = points > 0 ? `${points} pts` : '';
     totalPoints += points;
     
     const menu = createContextMenu(index, 'Regiment');
