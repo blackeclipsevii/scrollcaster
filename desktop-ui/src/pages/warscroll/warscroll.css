@@ -1,22 +1,5 @@
 @import "../../lib/root.css";
 
-.back-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 40px;
-    height: 40px;
-    background: #ff5c5c;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .warscroll {
     display: flex;
     flex-direction: column;

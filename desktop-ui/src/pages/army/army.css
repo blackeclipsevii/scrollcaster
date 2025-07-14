@@ -1,28 +1,10 @@
 @import "../../lib/widgets/contextMenu.css";
 @import "../../lib/root.css";
 
-
-.back-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 40px;
-    height: 40px;
-    background: #ff5c5c;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .export-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 1.5rem;
+    right: 1.5rem;
     width: 40px;
     height: 40px;
     background: #ff5c5c;
@@ -65,31 +47,33 @@
   border-radius: 5px;
   margin-bottom: 0.5rem;
   position: relative;
+  width: 95%;
+  font-size: 14px;
 }
 
 #pointsOverlay {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background-color: #333;
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 6px;
-      font-size: 1rem;
-      box-shadow: 0 0 6px rgba(0,0,0,0.3);
-      z-index: 1000;
-    }
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: #333;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
 
 .arrow {
     transition: transform 0.3s ease;
 }
 
 .unit-details {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    background: #fafafa;
-    padding: 0 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  background: #fafafa;
+  padding: 0 10px;
 }
 
 .unit-details label, .unit-details button {
@@ -104,9 +88,10 @@
 
 .unit-slot {
     border: 1px solid #ccc;
-    width: 400px;
+    width: 95%;
     margin: 10px auto;
     font-family: Arial, sans-serif;
+  font-size: 14px;
 }
 
 .unit-header {
@@ -150,6 +135,10 @@
 .unit-header-right {
     display: flex;
     gap: .5rem; 
+}
+
+.unit-header-left {
+    max-width: 40%;
 }
 
 .general-label {
