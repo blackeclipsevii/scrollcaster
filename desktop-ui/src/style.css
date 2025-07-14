@@ -1,5 +1,6 @@
 @import "lib/widgets/contextMenu.css";
 @import "lib/root.css";
+@import "lib/modal.css";
 
 .fab {
 position: fixed;
@@ -15,53 +16,16 @@ font-size: 2rem;
 cursor: pointer;
 }
 
-.overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100vw;
-height: 100vh;
-background: rgba(0, 0, 0, 0.5);
-display: none;
-justify-content: center;
-align-items: center;
-}
-
-.modal {
-background: white;
-padding: 2rem;
-border-radius: 10px;
-width: 300px;
-display: flex;
-flex-direction: column;
-gap: 1rem;
-}
-
-.modal input,
-.modal select,
-.modal textarea,
-.modal button {
-width: 100%;
-padding: 0.5rem;
-font-size: 1rem;
-}
-
-.modal button {
-background-color: #28a745;
-color: white;
-border: none;
-cursor: pointer;
-}
 .army-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    background: #f9f9f9;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #f9f9f9;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 
-  .army-card:hover {
-    background: #eef;
-  }
+.army-card:hover {
+  background: #eef;
+}

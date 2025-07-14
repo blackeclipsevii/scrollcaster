@@ -11,7 +11,10 @@ export const UpgradeType = {
 export default class Upgrade {
     constructor (selectionEntry) {
         this.name = selectionEntry['@name'];
-        this.ability = new Ability(selectionEntry.profiles[0]);
+        this.abilities = [];
+        selectionEntry.profiles.forEach(profile => {
+            this.abilities.push(new Ability(profile));
+        })
         this.points = 0;
         if (selectionEntry.costs) {
             selectionEntry.costs.forEach((cost) => {

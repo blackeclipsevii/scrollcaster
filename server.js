@@ -34,6 +34,25 @@ function loadRosters() {
   }
 }
 
+function getArmy(armyValue) {
+  let army = null;
+  if (armies[armyValue]) {
+    army = armies[armyValue];
+  } else {
+    let i = 0;
+    for (; i < libraries.length; ++i) {
+      if (libraries[i].includes(armyValue)) {
+        break;
+      }
+    }
+    
+    const library = libraries[i].split(' - ')[0] + '.cat';
+    army = new Army(directoryPath, library);
+    armies[armyValue] = army;
+  }
+  return army;
+}
+
 const getLibraries = (directoryPath) => {
   let files = fs.readdirSync(directoryPath);
   return files.filter(file => file.includes(' - Library') && path.extname(file).toLowerCase() === '.cat');
@@ -56,6 +75,14 @@ server.get('/armies', (_, res) => {
   res.end(JSON.stringify(result));
 });
 
+server.get('/upgrades', (req, res) => {
+  const parsedUrl = url.parse(req.url, true);
+  const armyValue = decodeURI(parsedUrl.query.army);
+  const army = getArmy(armyValue);
+  res.end(JSON.stringify(army.upgrades));
+  res.status(200);
+});
+
 server.get('/units', (req, res) => {
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
   const armyValue = decodeURI(parsedUrl.query.army);
@@ -68,21 +95,7 @@ server.get('/units', (req, res) => {
     console.log(`Army requested: ${armyValue}`);
   }
 
-  let army = null;
-  if (armies[armyValue]) {
-    army = armies[armyValue];
-  } else {
-    let i = 0;
-    for (; i < libraries.length; ++i) {
-      if (libraries[i].includes(armyValue)) {
-        break;
-      }
-    }
-    
-    const library = libraries[i].split(' - ')[0] + '.cat';
-    army = new Army(directoryPath, library);
-    armies[armyValue] = army;
-  }
+  const army = getArmy(armyValue);
   
   if (unitName) {
     const unitIds = Object.getOwnPropertyNames(army.units);

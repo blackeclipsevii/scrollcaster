@@ -1,6 +1,6 @@
 
 const displayChars = (unit) => {
-    _clearDiv('char');
+    whClearDiv('char');
     _initializeCharDiv();
 
     const tbody = document.getElementById("characteristics");
@@ -34,7 +34,7 @@ const displayChars = (unit) => {
 
 const displayWeapons = (qualifier, unit) => {
     
-    _clearDiv(qualifier);
+    whClearDiv(qualifier);
 
     const weaponList = unit[qualifier];
 
@@ -92,22 +92,8 @@ const displayWeapons = (qualifier, unit) => {
     }
 }
 
-const displayAbilities = (unit) => {
-    _clearDiv('abilities');
-
-    if (unit.abilities.length === 0)
-        return;
-
-    const abilitiesDiv = _initializeAbilitiesDiv();
-
-    for (let i = 0; i < unit.abilities.length; ++i) {
-        const ability = unit.abilities[i];
-        _newAbilityDiv(ability);
-    }
-}
-
 const displayKeywords = (unit) => {
-    _clearDiv('keywords');
+    whClearDiv('keywords');
     _initializeKeywordsDiv();
     const keywords = document.getElementById("keywords");
     const title = document.getElementById("keywordTitle");
@@ -135,110 +121,12 @@ const _initializeWeaponsDiv = (qualifier) => {
     return div;
 }
 
-const _clearDiv = (qualifier) => {
-    const div = document.getElementById(qualifier + 'Div');
-    if (div) {
-        div.innerHTML = "";
-    }
-    return div;
-}
-
-const _newAbilityDiv = (ability) => {
-    const abilitiesDiv = document.getElementById('abilitiesDiv');
-    let div = document.createElement('div');
-    div.style.width = '333px';
-    div.style.padding = '0';
-    div.id = ability.name + 'Div';
-
-    let abilityBody = document.createElement('div');
-    abilityBody.style.marginTop = '0px';
-    abilityBody.style.border = '0px';
-    abilityBody.style.paddingTop = '0px';
-    abilityBody.style.paddingLeft = '5px';
-    abilityBody.style.paddingRight = '5px';
-    abilityBody.style.paddingBottom = '5px';
-    abilityBody.style.marginLeft = '5px';
-    abilityBody.style.marginRight = '5px';
-
-    const addSection = (htmlType, name, prefix, parent, color) => {
-        if (ability[name]) {
-            let element = document.createElement(htmlType);
-            element.class = 'ability' + name;
-            element.innerHTML = prefix + ability[name];
-            if (color) {
-                element.style.backgroundColor = color;
-            }
-            if (parent) {
-                element.style.marginTop = '0';
-                element.style.padding = '5px';
-                parent.appendChild(element);
-            } else {
-                abilityBody.appendChild(element);
-            }
-            return element;
-        }
-        return null;
-    }
-
-    let color = '';
-    if (ability.timing) {
-        // to-do just match to ability color
-        if (ability.timing.includes('Hero')) {
-            color = '#AD9B49';
-        }
-        else if (ability.timing.includes('Movement')) {
-            color = '#949494';
-        }
-        else if (ability.timing.includes('Shooting')) {
-            color = '#235D71';
-        }
-        else if (ability.timing.includes('Charge')) {
-            color = '#C47A33';
-        }
-        else if (ability.timing.includes('Combat')) {
-            color = '#892024';
-        }
-        else if (ability.timing.includes('End')) {
-            color = '#6D4784';
-        } else {
-            color = '#949494';
-        }
-    }
-
-    if (color !== '') {
-        div.style.border = '2px solid' + color;
-        
-        let titleBar = document.createElement('div');
-        titleBar.style.backgroundColor = color;
-        titleBar.style.margin = '0';
-        titleBar.style.padding = '0';
-        titleBar.style.border = 0;
-        addSection('h3', 'timing', '', titleBar, color);
-        div.appendChild(titleBar);
-    } else {
-        div.style.border = '2px solid black';
-    }
-
-    addSection('h4', 'name', '');
-    addSection('p', 'cost', '<b>Cost:</b> ')
-    addSection('p', 'casting value', '<b>Casting Value:</b> ')
-    addSection('p', 'declare', '<b>Declare:</b> ');
-    addSection('p', 'effect', '<b>Effect:</b> ');
-    addSection('h5', 'keywords', 'Keywords: ');
-    
-    div.appendChild(abilityBody);
-    abilitiesDiv.appendChild(div);
-    
-    const br = document.createElement('br');
-    abilitiesDiv.appendChild(br);
-}
-
 const _clear = () => {
-    _clearDiv('char');
-    _clearDiv('ranged');
-    _clearDiv('melee');
-    _clearDiv('abilities');
-    _clearDiv('keywords');
+    whClearDiv('char');
+    whClearDiv('ranged');
+    whClearDiv('melee');
+    whClearDiv('abilities');
+    whClearDiv('keywords');
 }
 
 const _initializeKeywordsDiv = () => {
@@ -255,20 +143,6 @@ const _initializeKeywordsDiv = () => {
 
     div.appendChild(kwTitle);
     div.appendChild(keywords);
-    return div;
-}
-
-const _initializeAbilitiesDiv = () => {
-    let div = document.getElementById('abilitiesDiv');
-    if (!div)
-        div = document.createElement("div");
-    div.id = 'abilitiesDiv';
-    
-    let title = document.createElement('h3');
-    title.id = 'abilitiesTitle';
-    title.innerHTML = 'Abilities';
-
-    div.appendChild(title);
     return div;
 }
 
@@ -291,7 +165,7 @@ const body = document.getElementById('warscroll');
 const charDiv = _initializeCharDiv();
 const rangedDiv = _initializeWeaponsDiv('ranged');
 const meleeDiv = _initializeWeaponsDiv('melee');
-const abilitiesDiv = _initializeAbilitiesDiv();
+const abilitiesDiv = widgetAbilityInitializeAbilitiesDiv();
 const keywordsDiv = _initializeKeywordsDiv();
 
 async function readUnit() {
@@ -313,7 +187,7 @@ async function readUnit() {
         displayChars(unit);
         displayWeapons('ranged', unit);
         displayWeapons('melee', unit);
-        displayAbilities(unit);
+        widgetAbilityDisplayAbilities(unit);
         displayKeywords(unit);
     });
 }

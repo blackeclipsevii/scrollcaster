@@ -5,7 +5,7 @@ export default class Roster {
         this.id = "";
         this.name = "";
         this.army = "";
-        this.subfaction = null;
+        this.battleFormation = null;
         this.points = 2000;
         this.regiments = []
         this.auxiliaryUnits = []

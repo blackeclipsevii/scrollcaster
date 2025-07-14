@@ -1,12 +1,20 @@
 import fs from 'fs'
 import Unit from './Unit.js';
+import Upgrade from './Upgrade.js'
 import { XMLParser, XMLValidator} from "fast-xml-parser"
 import { bsLayoutSmoother } from './BsSmoother.js';
 
 export default class Army {
     constructor(dir, armyFilename) {
         this.catalogues = {};
-        this.upgrades = {};
+        this.upgrades = {
+            artefacts: {},
+            battleFormations: {},
+            battleTraits: {}
+        };
+        this.subfactions = {};
+        this.artefacts = {};
+        this.battleTraits = {}
         this.points = {};
         this.units = {};
         this._parse(dir, armyFilename);
@@ -37,7 +45,6 @@ export default class Army {
             return;
 
         this.catalogues[name] = catalogue;
-        const entries = catalogue.sharedSelectionEntries;
         catalogue.sharedSelectionEntries.forEach(entry => {
             const unit = new Unit(entry);
             this.units[unit.id] = unit;
@@ -104,6 +111,36 @@ export default class Army {
         });
 
         
+        const upgradeLUT = {
+            'battle formation': 'battleFormations',
+            'artefact': 'artefacts',
+            'battle trait': 'battleTraits'
+        }
+
+        const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
+        catalogue.sharedSelectionEntryGroups.forEach(entry => {
+            const lc = entry['@name'].toLowerCase();
+            ulKeys.forEach(key => {
+                if (lc.includes(key)) {
+                   // console.log(entry, null, 2);
+                    if (entry.selectionEntryGroups) {
+                        entry.selectionEntryGroups.forEach(group => {
+                            group.selectionEntries.forEach(element => {
+                                const upgrade = new Upgrade(element);
+                                this.upgrades[upgradeLUT[key]][upgrade.name] = upgrade;
+                            });
+                        });
+                    } else {
+                        entry.selectionEntries.forEach(element => {
+                            const upgrade = new Upgrade(element);
+                            this.upgrades[upgradeLUT[key]][upgrade.name] = upgrade;
+                        });
+                    }
+                }
+            });
+        });
+        
+
         // sort the units by type
         // this.units.sort((a, b) => a.type - b.type);
     }

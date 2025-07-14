@@ -98,7 +98,11 @@ function createUnitSlot(parent, unit, id, callbackTag){
 
     const unitPoints = unitTotalPoints(unit);
     const usPoints = newUsItem.querySelector('.unit-slot-points');
-    usPoints.textContent = `${unitPoints} pts`;
+    if (unitPoints > 0) {
+        usPoints.textContent = `${unitPoints} pts`;
+    } else {
+        usPoints.textContent = '';
+    }
     newUsItem.style.padding = "0.5rem";
     newUsItem.style.background = "#ddd";
     newUsItem.style.marginBottom = "0.3rem";
@@ -133,7 +137,7 @@ function displayRegiment(index) {
     });
     
     const pointsSpan = newRegItem.querySelector('.regiment-item-points');
-    pointsSpan.textContent = `${points} pts`;
+    pointsSpan.textContent = points >`${points} pts`;
     totalPoints += points;
     
     const menu = createContextMenu(index, 'Regiment');
@@ -172,6 +176,18 @@ function displayTerrain() {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
+function displayBattleFormation() {
+    const parent = document.getElementById('battleFormation');
+    const unit = roster.battleFormation;
+
+    createUnitSlot(parent, unit, 0, 'FormationCallback');
+
+    const unitsPoints = unitTotalPoints(unit);
+    totalPoints += unitsPoints;
+    let pointsOverlay = document.getElementById('pointsOverlay');
+    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
+}
+
 async function loadArmy(doGet) {
     if (doGet) {
         const params = new URLSearchParams(window.location.search);
@@ -198,6 +214,10 @@ async function loadArmy(doGet) {
         const section = terrain.closest('.section');
         const button = section.querySelector('.round-button');
         button.disabled = true;
+    }
+
+    if (roster.battleFormation) {
+        displayBattleFormation();
     }
 
     document.getElementById('army-header').textContent = roster.name;
@@ -289,7 +309,10 @@ async function addItem(section) {
         window.location.href = encodeURI(url);
     }
     else if (lc.includes('lores')) {
-
+    }
+    else if (lc.includes('formation')) {
+        const url = `../upgrades/upgrades.html?id=${roster.id}&type=battleFormation&army=${roster.army}`;
+        window.location.href = encodeURI(url);
     }
     else if (lc.includes('terrain')) {
         const url = `../units/units.html?id=${roster.id}&army=${roster.army}`;

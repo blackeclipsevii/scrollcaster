@@ -11,8 +11,8 @@
     "windows": [
       {
         "title": "army-thing",
-        "width": 480,
-        "height": 720
+        "width": 450,
+        "height": 800
       }
     ],
     "security": {

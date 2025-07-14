@@ -23,3 +23,19 @@
     gap: 1rem;
     padding: 1rem;
 }
+
+.ability-body {
+    margin-top: '0px';
+    border: '0px';
+    padding-top: '0px';
+    padding-left:  '5px';
+    padding-right: '5px';
+    padding-bottom: '5px';
+    margin-left: '5px';
+    margin-right: '5px';
+}
+
+.ability-container {
+    width: '333px';
+    padding: 0;
+}

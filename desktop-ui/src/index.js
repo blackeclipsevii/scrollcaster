@@ -19,6 +19,13 @@ function toggleOverlay() {
   }
 }
 
+const overlay = document.getElementById('overlay');
+overlay.addEventListener('click', function(event) {
+  if (event.target === overlay) {
+    overlay.style.display = 'none';
+  }
+});
+
 function goToRoster(roster) {
   window.location.href = encodeURI(`./pages/army/army.html?id=${roster.id}`);
 }

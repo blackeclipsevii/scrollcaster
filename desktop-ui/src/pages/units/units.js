@@ -9,7 +9,6 @@ if (type)
     type = decodeURI(type);
 
 async function loadUnits() {
-    let representedTypes = {};
     const roster = await getRoster(rosterId);
     await fetch(encodeURI(`${hostname}:${port}/units?army=${roster.army}`)).
     then(resp => resp.json()).
