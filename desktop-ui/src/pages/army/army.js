@@ -3,6 +3,9 @@ var roster;
 var totalPoints = 0;
 
 function unitTotalPoints(unit) {
+    if (!unit.points)
+        return 0;
+    
     let pts = unit.points;
     
     if (unit.isReinforced)
