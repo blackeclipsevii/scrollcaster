@@ -71,6 +71,8 @@ function createUnitSlot(parent, unit, idx, callbackTag){
         // remove toggle
         // removeSection(newUsItem, "arrow");
         removeSection(newUsItem, "unit-details");
+        const arrow = newUsItem.querySelector('.arrow');
+        arrow.textContent = '\u2022'; //'\u29BF';
     }
 
     if (unit.isGeneral) {
@@ -345,6 +347,13 @@ async function addItem(section) {
     }
 }
 
+async function deleteUnitCallback(item) {
+    const menu = item.closest(".menu-wrapper");
+    menu.style.display = "none";
+    const idxDiv = menu.querySelector(".idx");
+    
+}
+
 async function deleteAuxUnitCallback(item) {
     const menu = item.closest(".menu-wrapper");
     menu.style.display = "none";
@@ -356,8 +365,9 @@ async function deleteAuxUnitCallback(item) {
 }
 
 async function deleteTerrainCallback(item) {
-    console.log('terrain callback');
-    const points = terrainFeature.points;
+    const menu = item.closest(".menu-wrapper");
+    menu.style.display = "none";
+    const points = roster.terrainFeature.points;
     roster.terrainFeature = null;
     await putRoster(roster);
     const terrain = document.getElementById('terrain');
