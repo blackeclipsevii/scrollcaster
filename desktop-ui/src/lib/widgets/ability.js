@@ -101,13 +101,21 @@ const widgetAbilityDisplayAbilities = (unit, parent) => {
 
     whClearDiv('.abilitiesDiv', parent);
 
-    if (unit.abilities.length === 0)
-        return;
+    const doIt = (singleUnit) => {
+        if (singleUnit.abilities.length === 0)
+            return;
 
-    const abilitiesDiv = widgetAbilityInitializeAbilitiesDiv(parent);
+        const abilitiesDiv = widgetAbilityInitializeAbilitiesDiv(parent);
 
-    for (let i = 0; i < unit.abilities.length; ++i) {
-        const ability = unit.abilities[i];
-        widgetsAbilityNewAbilityDiv(ability, parent);
+        for (let i = 0; i < singleUnit.abilities.length; ++i) {
+            const ability = singleUnit.abilities[i];
+            widgetsAbilityNewAbilityDiv(ability, parent);
+        }
+    };
+    
+    if (Array.isArray(unit)) {
+        unit.forEach(u => doIt(u))
+    } else {
+        doIt(unit);
     }
 }

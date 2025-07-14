@@ -151,41 +151,47 @@ function displayRegiment(index) {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
-function displayAux(idx) {
-    const parent = document.getElementById('auxiliary');
-    const unit = roster.auxiliaryUnits[idx];
+function displaySingleton(typename, callback, unit, idx) {
+    const parent = document.getElementById(typename);
     
-    createUnitSlot(parent, unit, idx, 'AuxUnitCallback');
+    createUnitSlot(parent, unit, idx, callback);
 
     const unitsPoints = unitTotalPoints(unit);
     totalPoints += unitsPoints;
 
     let pointsOverlay = document.getElementById('pointsOverlay');
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
+}
+
+function displayAux(idx) {
+    const typename = 'auxiliary';
+    const callback = 'AuxUnitCallback';
+    const unit = roster.auxiliaryUnits[idx];
+    displaySingleton(typename, callback, unit, idx);
 }
 
 function displayTerrain() {
-    const parent = document.getElementById('terrain');
-    const unit = roster.terrainFeature;
-
-    createUnitSlot(parent, unit, 0, 'TerrainCallback');
-
-    const unitsPoints = unitTotalPoints(unit);
-    totalPoints += unitsPoints;
-    let pointsOverlay = document.getElementById('pointsOverlay');
-    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
+    const typename = 'terrain';
+    const callback = 'TerrainCallback';
+    displaySingleton(typename, callback, roster.terrainFeature, 0);
 }
 
 function displayBattleFormation() {
-    const parent = document.getElementById('battleFormation');
-    const unit = roster.battleFormation;
+    const typename = 'battleFormation';
+    const callback = 'FormationCallback';
+    displaySingleton(typename, callback, roster.battleFormation, 0);
+}
 
-    createUnitSlot(parent, unit, 0, 'FormationCallback');
+function displaySpellLore() {
+    const typename = 'lores';
+    const callback = 'SpellLoreCallback';
+    displaySingleton(typename, callback, roster.spellLore, 0);
+}
 
-    const unitsPoints = unitTotalPoints(unit);
-    totalPoints += unitsPoints;
-    let pointsOverlay = document.getElementById('pointsOverlay');
-    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
+function displayManifestLore() {
+    const typename = 'lores';
+    const callback = 'ManifestLoreCallback';
+    displaySingleton(typename, callback, roster.manifestationLore, 0);
 }
 
 async function loadArmy(doGet) {
@@ -216,9 +222,14 @@ async function loadArmy(doGet) {
         button.disabled = true;
     }
 
-    if (roster.battleFormation) {
+    if (roster.battleFormation)
         displayBattleFormation();
-    }
+
+    if (roster.spellLore)
+        displaySpellLore();
+
+    if (roster.manifestationLore)
+        displayManifestLore();
 
     document.getElementById('army-header').textContent = roster.name;
     loadScrollData();
@@ -309,6 +320,8 @@ async function addItem(section) {
         window.location.href = encodeURI(url);
     }
     else if (lc.includes('lores')) {
+        const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
+        window.location.href = encodeURI(url);
     }
     else if (lc.includes('formation')) {
         const url = `../upgrades/upgrades.html?id=${roster.id}&type=battleFormation&army=${roster.army}`;

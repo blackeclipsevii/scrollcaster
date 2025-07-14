@@ -1,46 +1,29 @@
-import fs from 'fs'
+import parseCatalog from "./parseCatalog.js";
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
-import { XMLParser, XMLValidator} from "fast-xml-parser"
-import { bsLayoutSmoother } from './BsSmoother.js';
+import { UpgradeType } from './Upgrade.js';
+
 
 export default class Army {
-    constructor(dir, armyFilename) {
+    constructor(lores, dir, armyFilename) {
         this.catalogues = {};
         this.upgrades = {
             artefacts: {},
             battleFormations: {},
-            battleTraits: {}
+            heroicTraits: {},
+            manifestationLores: {},
+            spellLores: {}
         };
         this.subfactions = {};
         this.artefacts = {};
         this.battleTraits = {}
         this.points = {};
         this.units = {};
-        this._parse(dir, armyFilename);
-    }
-
-    _parseCatalogue(path) {
-        const xmlContent = fs.readFileSync(path, 'utf8');
-        const options = {
-            ignoreAttributes: false,
-            attributeNamePrefix : "@",
-            allowBooleanAttributes: true
-        };
-        
-        const result = XMLValidator.validate(xmlContent, options);
-        if (!result)
-            return null;
-
-        const parser = new XMLParser(options);
-        let root = parser.parse(xmlContent);
-        root = bsLayoutSmoother(root);
-        return root.catalogue;
+        this._parse(lores, dir, armyFilename);
     }
 
     _readCatalogue(dir, name) {
-        const path = `${dir}/${name}.cat`;
-        const catalogue = this._parseCatalogue(path);
+        const catalogue = parseCatalog(`${dir}/${name}.cat`);
         if (!catalogue)
             return;
 
@@ -51,8 +34,8 @@ export default class Army {
         });
     }
 
-    _parse(dir, filename) {
-        let catalogue = this._parseCatalogue(`${dir}/${filename}`);
+    _parse(lores, dir, filename) {
+        let catalogue = parseCatalog(`${dir}/${filename}`);
         if (!catalogue)
             return;
 
@@ -112,28 +95,63 @@ export default class Army {
 
         
         const upgradeLUT = {
-            'battle formation': 'battleFormations',
-            'artefact': 'artefacts',
-            'battle trait': 'battleTraits'
-        }
+            'battle formation': {
+                alias: 'battleFormations',
+                type: UpgradeType.BattleFormation
+            },
+            'artefact': {
+                alias: 'artefacts',
+                type: UpgradeType.Artifact
+            },
+            'heroic trait': {
+                alias: 'heroicTraits',
+                type: UpgradeType.HeroicTrait
+            },
+            'manifestation lore': {
+                alias: 'manifestationLores',
+                type: UpgradeType.ManifestationLore
+            },
+            'spell lore': {
+                alias: 'spellLores',
+                type: UpgradeType.SpellLore
+            }
+        };
 
         const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
         catalogue.sharedSelectionEntryGroups.forEach(entry => {
             const lc = entry['@name'].toLowerCase();
+
+            const addUpgrade = (upgrades, key, element) => {
+                const lu = upgradeLUT[key];
+                let upgrade = null
+                if (lu.type === UpgradeType.ManifestationLore ||
+                    lu.type === UpgradeType.SpellLore) {
+                    const targetId = element.entryLinks[0]['@targetId'];
+                    if (targetId) {
+                        upgrade = lores.lores[targetId];
+                    }
+                }
+
+                if (!upgrade) {
+                    upgrade = new Upgrade(element, lu.type);
+                } else {
+                    console.log(`Lore linked: ${upgrade.name}`);
+                }
+                upgrades[lu.alias][upgrade.name] = upgrade;
+            }
+
             ulKeys.forEach(key => {
                 if (lc.includes(key)) {
                    // console.log(entry, null, 2);
                     if (entry.selectionEntryGroups) {
                         entry.selectionEntryGroups.forEach(group => {
                             group.selectionEntries.forEach(element => {
-                                const upgrade = new Upgrade(element);
-                                this.upgrades[upgradeLUT[key]][upgrade.name] = upgrade;
+                                addUpgrade(this.upgrades, key, element);
                             });
                         });
                     } else {
                         entry.selectionEntries.forEach(element => {
-                            const upgrade = new Upgrade(element);
-                            this.upgrades[upgradeLUT[key]][upgrade.name] = upgrade;
+                            addUpgrade(this.upgrades, key, element);
                         });
                     }
                 }

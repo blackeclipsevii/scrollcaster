@@ -6,13 +6,15 @@ import express from 'express'
 
 import Army from './packages/library/Army.js';
 import Roster from './packages/library/Roster.js';
+import Lores from './packages/library/Lores.js';
 
 const server = express();
 const hostname = '127.0.0.1';
 const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
 const saveData = "./saveData.json";
-var libraries;
+var libraries = null;
+var lores = null;
 var armies = {};
 var rosters = {};
 
@@ -35,6 +37,10 @@ function loadRosters() {
 }
 
 function getArmy(armyValue) {
+  if (!lores) {
+    lores = new Lores(directoryPath);
+  }
+
   let army = null;
   if (armies[armyValue]) {
     army = armies[armyValue];
@@ -47,7 +53,7 @@ function getArmy(armyValue) {
     }
     
     const library = libraries[i].split(' - ')[0] + '.cat';
-    army = new Army(directoryPath, library);
+    army = new Army(lores, directoryPath, library);
     armies[armyValue] = army;
   }
   return army;
@@ -120,7 +126,7 @@ server.get('/roster', (req, res) => {
     if (!roster)
       roster = new Roster();
     let json = JSON.stringify(roster);
-    console.log('GET roster: '+ json);
+    console.log(`GET roster: ${roster.id}`);
     res.end(json);
   } else {
     let names = Object.getOwnPropertyNames(rosters);
