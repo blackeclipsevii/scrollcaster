@@ -220,7 +220,7 @@ async function loadArmy(doGet) {
         roster = await getRoster(rosterId);
     }
     
-    const divIds = ['regiments', 'auxiliary', 'lores', 'tactics', 'terrain'];
+    const divIds = ['regiments', 'auxiliary', 'lores', 'tactics', 'battleFormation', 'terrain'];
     divIds.forEach(id => {
         const div = document.getElementById(id);
         div.innerHTML = '';
