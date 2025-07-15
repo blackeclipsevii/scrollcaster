@@ -13,9 +13,6 @@ export default class Army {
             manifestationLores: {},
             spellLores: {}
         };
-        this.subfactions = {};
-        this.artefacts = {};
-        this.battleTraits = {}
         this.points = {};
         this.units = {};
         this.unitLUT = {};
@@ -228,8 +225,6 @@ export default class Army {
 
                 if (!upgrade) {
                     upgrade = new Upgrade(element, lu.type);
-                } else {
-                    console.log(`Lore linked: ${upgrade.name}`);
                 }
                 upgrades[lu.alias][upgrade.name] = upgrade;
             }

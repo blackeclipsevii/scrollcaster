@@ -1,0 +1,61 @@
+@import "root.css";
+@import "modal.css";
+
+.section {
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+}
+
+.section h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.selectable-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.selectable-item:hover {
+    background: #f0f0f0;
+}
+
+.selectable-item-left {
+    font-weight: bold;
+}
+
+.selectable-item-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+button.add-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.ability-container {
+    width: 100%;
+    padding: 0;
+}

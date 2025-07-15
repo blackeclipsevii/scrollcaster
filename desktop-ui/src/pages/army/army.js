@@ -1,7 +1,125 @@
 
-var roster;
 var totalPoints = 0;
 fixedPreviousUrl = '../../index.html';
+
+function updateValidationDisplay() {
+    const errors = validateRoster(roster);
+    const pointsOverlay = document.getElementById('pointsOverlay');
+    if (errors.length > 0) {
+        pointsOverlay.style.backgroundColor = 'red';
+    } else {
+        pointsOverlay.style.backgroundColor = 'green';
+    }
+
+    pointsOverlay.onclick = () => {
+        const overlay = document.getElementById("overlay");
+        const visibleStyle = 'block';
+        if (overlay.style.display === visibleStyle) {
+            overlay.style.display = "none";
+        } else {
+            overlay.style.display = visibleStyle;
+            const modal = document.querySelector(".modal");
+            modal.innerHTML = '';
+
+            const title = document.createElement('h3');
+            title.innerHTML = 'Validation Errors';
+            modal.appendChild(title);
+
+            const section = document.createElement('div');
+            section.style.height = '30em';
+            section.style.width = '95%';
+
+            errors.forEach(error => {
+                const p = document.createElement('p');
+                p.innerHTML = `* ${error}`;
+                section.appendChild(p);
+            });
+    
+            modal.appendChild(section);
+            const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
+            modal.style.marginLeft = `${offset}px`;
+        }
+    };
+}
+
+async function displayEnhancements(unit, newUsItem, type) {
+    const details = newUsItem.querySelector(`.available-${type}s`);
+    await fetch(encodeURI(`${hostname}:${port}/upgrades?army=${roster.army}`)).
+    then(resp => resp.json()).
+    then(allUpgrades => {
+        const upgrades = allUpgrades[`${type}s`];
+        const names = Object.getOwnPropertyNames(upgrades);
+        names.forEach(name => {
+            const upgrade = upgrades[name];
+            const upgradeDiv = document.createElement('div');
+            upgradeDiv.class = 'upgrade-group';
+
+            let displayText = name
+            const costsPoints = upgrade.points && upgrade.points > 0;
+            if (costsPoints)
+                displayText = `${name} (${upgrade.points} pts)`;
+
+            upgradeDiv.innerHTML = `
+            <div class='upgrade-group-left'>
+            <label class="upgrade-label">
+                <input type="checkbox" class="upgrade-checkbox">${displayText}
+            </label>
+            </div>
+            <div class='upgrade-group-right'>
+            <button class="rectangle-button-small upgrade-button">view</button>
+            </div>`;
+
+            const label = upgradeDiv.querySelector(`.upgrade-button`);
+            label.onclick = () => {
+                displayUpgradeOverlay(upgrade);
+            };
+
+            const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
+            if (unit[type] && unit[type].name === name) {
+                checkbox.checked = true;
+            }
+
+            checkbox.onchange = () => {
+                if (checkbox.checked) {
+                    if (!unit[type]) {
+                        unit[type] = upgrade;
+                        if (costsPoints) {
+                            const unitPoints = unitTotalPoints(unit);
+                            const usPoints = newUsItem.querySelector('.unit-slot-points');
+                            if (unitPoints > 0) {
+                                usPoints.textContent = `${unitPoints} pts`;
+                            } else {
+                                usPoints.textContent = '';
+                            }
+                            totalPoints += upgrade.points;
+                            refreshTotalPoints();
+                        }
+                        updateValidationDisplay();
+                    } else if (unit[type].name !== name) {
+                        checkbox.checked = false;
+                    }
+                } else {
+                    if (unit[type] && unit[type].name === name) {
+                        unit[type] = null;
+                        if (costsPoints) {
+                            const unitPoints = unitTotalPoints(unit);
+                            const usPoints = newUsItem.querySelector('.unit-slot-points');
+                            if (unitPoints > 0) {
+                                usPoints.textContent = `${unitPoints} pts`;
+                            } else {
+                                usPoints.textContent = '';
+                            }
+                            totalPoints -= upgrade.points;
+                            refreshTotalPoints();
+                        }
+                        updateValidationDisplay();
+                    }
+                }
+            };
+            details.appendChild(upgradeDiv);
+        });
+    });
+}
 
 function unitTotalPoints(unit) {
     if (!unit.points)
@@ -26,8 +144,35 @@ function refreshTotalPoints() {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
-function exportList() {
+function exportListAndDisplay() {
+    const text = exportRoster(roster);
 
+    const overlay = document.getElementById("overlay");
+    const visibleStyle = 'block';
+    if (overlay.style.display === visibleStyle) {
+        overlay.style.display = "none";
+    } else {
+        overlay.style.display = visibleStyle;
+        const modal = document.querySelector(".modal");
+        modal.innerHTML = '';
+
+        const section = document.createElement('textarea');
+        section.innerHTML = text;
+        section.style.height = '30em';
+        section.style.width = '95%';
+
+        const copyButton = document.createElement('button');
+        copyButton.className = 'full-rectangle-button';
+        copyButton.textContent = 'Copy to Clipboard';
+        copyButton.onclick = () => {
+            navigator.clipboard.writeText(text);
+        };
+
+        modal.appendChild(section);
+        modal.appendChild(copyButton);
+        const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
+        modal.style.marginLeft = `${offset}px`;
+    }
 }
 
 function removeSection(section, className) {
@@ -39,7 +184,7 @@ function removeSection(section, className) {
     }
 }
 
-function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent){
+async function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent, onclick){
     const usPrototype = document.getElementById("unit-slot-prototype");
     const newUsItem = usPrototype.cloneNode(true);
     
@@ -50,22 +195,29 @@ function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent){
     // Find the crown icon
     usName.textContent = unit.name;
 
-    numOptions = 4;
-    if (unit.type !== 0) {
+    let numOptions = 4;
+    if (unit.type !== 0 || !parent.className.includes('regiment')) {
         removeSection(newUsItem, 'is-general');
         -- numOptions;
     }
+
     if (!unit.canBeReinforced) {
         removeSection(newUsItem, 'is-reinforced');
         -- numOptions;
     }
+
     if (!unit.canHaveArtefact) {
-        removeSection(newUsItem, 'add-artifact');
+        removeSection(newUsItem, 'available-artefacts');
         -- numOptions;
+    } else {
+        await displayEnhancements(unit, newUsItem, 'artefact');
     }
+
     if (!unit.canHaveHeroicTrait) {
-        removeSection(newUsItem, 'add-trait');
+        removeSection(newUsItem, 'available-heroicTraits');
         -- numOptions;
+    } else {
+        await displayEnhancements(unit, newUsItem, 'heroicTrait');
     }
 
     if (numOptions < 1) {
@@ -125,9 +277,7 @@ function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent){
     let unitHdr = newUsItem.querySelector(".unit-header-right");
     unitHdr.appendChild(menu);
     unitHdr = newUsItem.querySelector(".unit-header-left");
-    unitHdr.onclick = () => {
-        window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
-    };
+    unitHdr.onclick = onclick;
     parent.appendChild(newUsItem);
     newUsItem.style.display = "";
 }
@@ -149,7 +299,9 @@ function displayRegiment(index) {
     let points = 0;
     let uniqueId = roster.id;
     regiment.units.forEach((unit, idx) => {
-        createUnitSlot(content, unit, idx, 'UnitCallback', `${unit.id}:${index}:${idx}`);
+        createUnitSlot(content, unit, idx, 'UnitCallback', `${unit.id}:${index}:${idx}`, () => {
+            window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
+        });
         uniqueId += unit.id;
         const unitsPoints = unitTotalPoints(unit);
         points += unitsPoints;
@@ -170,10 +322,10 @@ function displayRegiment(index) {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
-function displaySingleton(typename, callback, unit, idx) {
+function displaySingleton(typename, callback, unit, idx, menuIdxContent, onclick) {
     const parent = document.getElementById(typename);
     
-    createUnitSlot(parent, unit, idx, callback);
+    createUnitSlot(parent, unit, idx, callback, menuIdxContent, onclick);
 
     const unitsPoints = unitTotalPoints(unit);
     totalPoints += unitsPoints;
@@ -186,31 +338,58 @@ function displayAux(idx) {
     const typename = 'auxiliary';
     const callback = 'AuxUnitCallback';
     const unit = roster.auxiliaryUnits[idx];
-    displaySingleton(typename, callback, unit, idx);
+    const onclick = () => {
+        window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
+    };
+    displaySingleton(typename, callback, unit, idx, idx, onclick);
 }
 
 function displayTerrain() {
     const typename = 'terrain';
     const callback = 'TerrainCallback';
-    displaySingleton(typename, callback, roster.terrainFeature, 0);
+    const onclick = () => {
+        window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${roster.terrainFeature.name}`;
+    };
+    displaySingleton(typename, callback, roster.terrainFeature, 0, 0, onclick);
 }
 
 function displayBattleFormation() {
     const typename = 'battleFormation';
     const callback = 'FormationCallback';
-    displaySingleton(typename, callback, roster.battleFormation, 0);
+    const onclick = () => {
+        displayUpgradeOverlay(roster.battleFormation);
+    }
+    displaySingleton(typename, callback, roster.battleFormation, 0, 0, onclick);
 }
 
 function displaySpellLore() {
     const typename = 'lores';
     const callback = 'SpellLoreCallback';
-    displaySingleton(typename, callback, roster.spellLore, 0);
+    const onclick = () => {
+        displayUpgradeOverlay(roster.spellLore);
+    }
+    displaySingleton(typename, callback, roster.spellLore, 0, 0, onclick);
 }
 
 function displayManifestLore() {
     const typename = 'lores';
     const callback = 'ManifestLoreCallback';
-    displaySingleton(typename, callback, roster.manifestationLore, 0);
+    const onclick = () => {
+        displayUpgradeOverlay(roster.manifestationLore);
+    }
+    displaySingleton(typename, callback, roster.manifestationLore, 0, 0, onclick);
+}
+
+function displayTactics() {
+    const typename = 'tactics';
+    const callback = 'TacticsCallback';
+    const parent = document.getElementById(typename);
+    roster.battleTacticCards.forEach((tactic, index) => {
+        const onclick = () => {
+            displayTacticsOverlay(tactic);
+        }
+        createUnitSlot(parent, tactic, index, callback, index, onclick);
+    });
 }
 
 async function loadArmy(doGet) {
@@ -233,13 +412,8 @@ async function loadArmy(doGet) {
     for (let i = 0; i< roster.auxiliaryUnits.length; ++i)
         displayAux(i);
 
-    if (roster.terrainFeature) {
+    if (roster.terrainFeature)
         displayTerrain();
-        const terrain = document.getElementById('terrain');
-        const section = terrain.closest('.section');
-        const button = section.querySelector('.rectangle-button');
-        button.disabled = true;
-    }
 
     if (roster.battleFormation)
         displayBattleFormation();
@@ -250,8 +424,13 @@ async function loadArmy(doGet) {
     if (roster.manifestationLore)
         displayManifestLore();
 
+    if (roster.battleTacticCards.length > 0)
+        displayTactics();
+
     document.getElementById('army-header').textContent = roster.name;
     loadScrollData();
+    refreshTotalPoints();
+    updateValidationDisplay();
 }
 
 function toggleUnit(header) {
@@ -291,6 +470,7 @@ function toggleCrown(checkbox) {
 
     unit.isGeneral = checkbox.checked;
     putRoster(roster);
+    updateValidationDisplay();
 }
 
 function toggleReinforced(checkbox) {
@@ -320,6 +500,7 @@ function toggleReinforced(checkbox) {
     usPoints.textContent = `${ptsAfter} pts`;
     totalPoints = totalPoints - (ptsBefore - ptsAfter);
     refreshTotalPoints();
+    updateValidationDisplay();
 }
 
 
@@ -341,7 +522,8 @@ async function addItem(section) {
     }
     else if (lc.includes('lores')) {
         const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
-        window.location.href = encodeURI(url);
+        if(!roster.spellLore || !roster.manifestationLore)
+            window.location.href = encodeURI(url);
     }
     else if (lc.includes('formation')) {
         const url = `../upgrades/upgrades.html?id=${roster.id}&type=battleFormation&army=${roster.army}`;
@@ -349,17 +531,42 @@ async function addItem(section) {
     }
     else if (lc.includes('terrain')) {
         const url = `../units/units.html?id=${roster.id}&army=${roster.army}`;
-        window.location.href = encodeURI(`${url}&type=faction terrain`);
+        if (!roster.terrainFeature)
+            window.location.href = encodeURI(`${url}&type=faction terrain`);
+    }
+    else if (lc.includes('tactic')) {
+        const url = `../tactics/tactics.html?id=${roster.id}&army=${roster.army}`;
+        if (roster.battleTacticCards.length < 2)
+            window.location.href = encodeURI(url);
     }
     else {
         alert(`Add new item to ${section}`);
     }
 }
 
-async function deleteUnitCallback(item) {
-    console.log('delete unit');
+async function hideMenu(item) {
     const menu = item.closest(".menu-wrapper");
     menu.style.display = "none";
+}
+
+async function deleteSpellLoreCallback(item) {
+    hideMenu(item);
+    roster.spellLore = null;
+    await putRoster(roster);
+    loadArmy(false);
+}
+
+async function deleteManifestLoreCallback (item) {
+    hideMenu(item);
+    roster.manifestationLore = null;
+    await putRoster(roster);
+    loadArmy(false);
+}
+
+async function deleteUnitCallback(item) {
+    hideMenu(item);
+
+    const menu = item.closest(".menu-wrapper");
     const idxDiv = menu.querySelector(".idx");
     const idxItems = idxDiv.textContent.split(':');
     const regiment = roster.regiments[idxItems[1]];
@@ -372,9 +579,8 @@ async function deleteUnitCallback(item) {
 }
 
 async function duplicateUnitCallback(item) {
-    console.log('duplicate unit');
+    hideMenu(item);
     const menu = item.closest(".menu-wrapper");
-    menu.style.display = "none";
     const idxDiv = menu.querySelector(".idx");
     const idxItems = idxDiv.textContent.split(':');
     const regiment = roster.regiments[idxItems[1]];
@@ -387,8 +593,8 @@ async function duplicateUnitCallback(item) {
 }
 
 async function deleteAuxUnitCallback(item) {
+    hideMenu(item);
     const menu = item.closest(".menu-wrapper");
-    menu.style.display = "none";
     const idxDiv = menu.querySelector(".idx");
     const index = Number(idxDiv.textContent);
     roster.auxiliaryUnits.splice(index, 1);
@@ -396,9 +602,28 @@ async function deleteAuxUnitCallback(item) {
     loadArmy(false);
 }
 
-async function deleteTerrainCallback(item) {
+async function deleteTacticsCallback(item) {
+    hideMenu(item);
     const menu = item.closest(".menu-wrapper");
-    menu.style.display = "none";
+    const idxDiv = menu.querySelector(".idx");
+    const index = Number(idxDiv.textContent);
+    roster.battleTacticCards.splice(index, 1);
+    await putRoster(roster);
+    loadArmy(false);
+}
+
+async function deleteFormationCallback(item) {
+    hideMenu(item);
+    roster.battleFormation = null;
+    await putRoster(roster);
+    const formation = document.getElementById('battleFormation');
+    formation.innerHTML = '';
+    updateValidationDisplay();
+}
+
+
+async function deleteTerrainCallback(item) {
+    hideMenu(item);
     const points = roster.terrainFeature.points;
     roster.terrainFeature = null;
     await putRoster(roster);
@@ -409,8 +634,8 @@ async function deleteTerrainCallback(item) {
 }
 
 async function duplicateRegiment(item) {
+    hideMenu(item);
     const menu = item.closest(".menu-wrapper");
-    menu.style.display = "none";
     const idxDiv = menu.querySelector(".idx");
     const index = Number(idxDiv.textContent);
 
@@ -418,11 +643,12 @@ async function duplicateRegiment(item) {
     roster.regiments.push(JSON.parse(json));
     displayRegiment(roster.regiments.length - 1);
     await putRoster(roster);
+    updateValidationDisplay();
 }
 
 async function deleteRegiment(item) {
+    hideMenu(item);
     const menu = item.closest(".menu-wrapper");
-    menu.style.display = "none";
     const idxDiv = menu.querySelector(".idx");
     const index = Number(idxDiv.textContent);
 

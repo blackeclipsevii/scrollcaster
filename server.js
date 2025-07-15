@@ -10,7 +10,7 @@ import Roster from './packages/library/Roster.js';
 import Lores from './packages/library/Lores.js';
 
 const server = express();
-const hostname = '192.168.1.213';
+const hostname = '192.168.1.160';
 const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
 const saveData = "./saveData.json";
@@ -38,10 +38,15 @@ function loadRosters() {
   }
 }
 
-function getArmy(armyValue) {
+function getAgeOfSigmar() {
   if (!ageOfSigmar) {
     ageOfSigmar = new AgeOfSigmar(directoryPath);
   }
+  return ageOfSigmar;
+}
+
+function getArmy(armyValue) {
+  const aos = getAgeOfSigmar();
 
   if (!lores) {
     lores = new Lores(directoryPath);
@@ -59,7 +64,7 @@ function getArmy(armyValue) {
     }
     
     const library = libraries[i].split(' - ')[0] + '.cat';
-    army = new Army(ageOfSigmar, lores, directoryPath, library);
+    army = new Army(aos, lores, directoryPath, library);
     armies[armyValue] = army;
   }
   return army;
@@ -77,6 +82,12 @@ server.use(function(req, res, next) {
   next();
 });
 server.use(express.json());
+
+server.get('/tactics', (req, res) => {
+  const aos = getAgeOfSigmar();
+  res.end(JSON.stringify(aos.battleTacticCards));
+  res.status(200);
+});
 
 server.get('/armies', (_, res) => {
   let result = [];

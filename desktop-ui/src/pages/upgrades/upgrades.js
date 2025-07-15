@@ -1,6 +1,8 @@
 
 const params = new URLSearchParams(window.location.search);
 const rosterId = params.get('id');
+fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
+
 const auxiliary = params.get('auxiliary');
 const regimentIndex = auxiliary ? 0 : Number(params.get('regimentIndex'));
 
@@ -8,22 +10,29 @@ let type = params.get('type');
 if (type)
     type = decodeURI(type) + 's';
 
-const overlay = document.getElementById('overlay');
-overlay.addEventListener('click', function(event) {
-  if (event.target === overlay) {
-    overlay.style.display = 'none';
-  }
-});
-
 async function loadUpgrades() {
-    const roster = await getRoster(rosterId);
+    roster = await getRoster(rosterId);
+
+    let url = null;
+    if (type === 'tactics') {
+        url = `${hostname}:${port}/tactics`
+    } else {
+        url = `${hostname}:${port}/upgrades?army=${roster.army}`;
+    }
     await fetch(encodeURI(`${hostname}:${port}/upgrades?army=${roster.army}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
         let upgradeList = [];
         const isLore = type.toLowerCase().includes('lore');
         if (isLore) {
-            upgradeList = [allUpgrades.spellLores, allUpgrades.manifestationLores];
+            // to-do add a header to label these seperately
+            upgradeList = [];
+            if (!roster.manifestationLore)
+                upgradeList.push(allUpgrades.manifestationLores);
+
+            if (!roster.spellLore)
+                upgradeList.push(allUpgrades.spellLores);
+
         } else {
             upgradeList = [allUpgrades[type]];
         }
@@ -31,33 +40,36 @@ async function loadUpgrades() {
             const upgradeNames = Object.getOwnPropertyNames(upgrades);
             upgradeNames.forEach(upgradeName => {
                 const upgrade = upgrades[upgradeName];
+
+                let upgradeList = null;
+                if (upgrade.type === 2) {
+                    upgradeList = document.getElementById('formation-list');
+                } else if (upgrade.type === 3) {
+                    upgradeList = document.getElementById('spell-list');
+                } else if (upgrade.type === 4) {
+                    upgradeList = document.getElementById('manifestation-list');
+                } else {
+                    console.log(`type unknown: ${upgradeNames}`);
+                    document.querySelector('.item-list');
+                }
+    
+                const section = upgradeList.closest('.section');
+                section.style.display = 'block';
+
                 const item = document.createElement('div');
-                item.classList.add('upgrade-item');
+                item.classList.add('selectable-item');
 
                 // Clicking the container navigates to details
                 item.addEventListener('click', () => {
-                    const overlay = document.getElementById("overlay");
-                    const visibleStyle = 'block';
-                    if (overlay.style.display === visibleStyle) {
-                        overlay.style.display = "none";
-                    } else {
-                        overlay.style.display = visibleStyle;
-                        const modal = document.querySelector(".modal");
-                        modal.innerHTML = '';
-                        if (isLore) {
-                            widgetAbilityDisplayAbilities(upgrade.spells, modal);
-                        } else {
-                            widgetAbilityDisplayAbilities(upgrade, modal);
-                        }
-                    }
+                    displayUpgradeOverlay(upgrade);
                 });
 
                 const left = document.createElement('div');
-                left.classList.add('unit-left');
+                left.classList.add('selectable-item-left');
                 left.textContent = upgrade.name;
 
                 const right = document.createElement('div');
-                right.classList.add('unit-right');
+                right.classList.add('selectable-item-right');
 
                 const points = document.createElement('span');
                 points.textContent = upgrade.points ? `${upgrade.points} pts` : '';
@@ -69,7 +81,9 @@ async function loadUpgrades() {
                     e.stopPropagation(); // Prevents click from triggering page change
                     if (type.includes('battleFormation')) {
                         roster.battleFormation = upgrade;
-                    } else if (upgrade.type === 3) {
+                    } else if (type.includes('tactic')) {
+                        roster.battleTacticCards.push(upgrade);
+                    } else if (upgrade.type == 3) {
                         roster.spellLore = upgrade;   
                     } else if (upgrade.type == 4) {
                         roster.manifestationLore = upgrade;
@@ -81,8 +95,6 @@ async function loadUpgrades() {
 
                 right.append(points, addBtn);
                 item.append(left, right);
-
-                const upgradeList = document.querySelector('.upgrade-list');
                 upgradeList.appendChild(item);
             });
         });
@@ -100,3 +112,4 @@ if (type.includes('battleFormation')) {
 }
 
 loadUpgrades();
+addOverlayListener();

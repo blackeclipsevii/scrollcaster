@@ -1,6 +1,9 @@
 
 const params = new URLSearchParams(window.location.search);
 const rosterId = params.get('id');
+const displayLegends = params.get('legends');
+fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
+
 const auxiliary = params.get('auxiliary');
 const hasRegimentIndex = params.has('regimentIndex');
 const regimentIndex = auxiliary ? 0 : Number(params.get('regimentIndex'));
@@ -32,7 +35,8 @@ function canFieldUnit(regimentOptions, unit) {
 }
 
 async function loadUnits() {
-    const roster = await getRoster(rosterId);
+    roster = await getRoster(rosterId);
+
     await fetch(encodeURI(`${hostname}:${port}/units?army=${roster.army}`)).
     then(resp => resp.json()).
     then(units => {
@@ -48,6 +52,9 @@ async function loadUnits() {
         }
         unitIds.forEach(id => {
             const unit = units[id];
+            if (!displayLegends && unit.keywords.includes('Legends'))
+                return;
+
             if (type && !unit.keywords.includes(type.toUpperCase()))
                 return;
 
@@ -58,7 +65,7 @@ async function loadUnits() {
                 return;
 
             const item = document.createElement('div');
-            item.classList.add('unit-item');
+            item.classList.add('selectable-item');
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
@@ -91,11 +98,11 @@ async function loadUnits() {
             section.style.display = 'block';
 
             const left = document.createElement('div');
-            left.classList.add('unit-left');
+            left.classList.add('selectable-item-left');
             left.textContent = unit.name;
 
             const right = document.createElement('div');
-            right.classList.add('unit-right');
+            right.classList.add('selectable-item-right');
 
             const points = document.createElement('span');
             points.textContent = unit.points ? `${unit.points} pts` : '';
@@ -125,4 +132,5 @@ async function loadUnits() {
     });
     loadScrollData();
 }
+
 loadUnits();

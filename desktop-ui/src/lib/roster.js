@@ -48,3 +48,4 @@ async function deleteRoster(id) {
       method: "DELETE"
   });
 }
+

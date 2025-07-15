@@ -10,7 +10,15 @@
   <title>Army Detail</title>
   <link rel="stylesheet" href="./army.css">
   <script src="../../lib/host.js"></script>
+  <script src="../../lib/widgets/warscrollHelpers.js"></script>
   <script src="../../lib/widgets/contextMenu.js"></script>
+  <script src="../../lib/widgets/ability.js"></script>
+  <script src="../../lib/functions/validateRoster.js"></script>
+  <script src="../../lib/functions/exportRoster.js"></script>
+  <script src="../../lib/widgets/overlay.js"></script>
+  <script src="../../lib/widgets/getScrollbarWidth.js"></script>
+  <script src="../../lib/widgets/displayTacticsOverlay.js"></script>
+  <script src="../../lib/widgets/displayUpgradeOverlay.js"></script>
   <script src="../../lib/roster.js"></script>
   <script src="./army.js"></script>
 </head>
@@ -19,9 +27,16 @@
   <header>
     <button class="back-btn" onclick="goBack()">←</button>
     <span id="army-header">Army Name</span>
-    <button class="export-btn" onclick="exportList()">^</button>
+    <button class="export-btn" onclick="exportListAndDisplay()">^</button>
   </header>
   
+  <div class="main">
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      
+    </div>
+  </div>
+
   <div class="main">
   <div class="section">
     <h2>Regiments <button class="rectangle-button" onclick="addItem('Regiments')">+</button></h2>
@@ -46,14 +61,22 @@
     </div>
 
     <div class="unit-details">
-      <label class="is-general">
-        <input type="checkbox" class="general-checkbox" onchange="toggleCrown(this)"> General
-      </label>
-      <label class="is-reinforced">
-        <input type="checkbox" class="reinforced-checkbox" onchange="toggleReinforced(this)"> Reinforced
-      </label>
-      <button class="add-artifact">Add Artifact</button>
-      <button class="add-trait">Add Heroic Trait</button>
+      <div class="section">
+        <label class="upgrade-label is-general">
+          <input type="checkbox" class="upgrade-checkbox general-checkbox" onchange="toggleCrown(this)"> General
+        </label>
+        <label class="upgrade-label is-reinforced">
+          <input type="checkbox" class="upgrade-checkbox reinforced-checkbox" onchange="toggleReinforced(this)"> Reinforced
+        </label>
+      </div>
+      
+      <div class="section available-artefacts">
+        <h3>Available Artefacts:</h3>
+      </div>
+      
+      <div class="section available-heroicTraits">
+        <h3>Available Heroic Traits:</h3>
+      </div>
     </div>
   
   </div>
@@ -115,9 +138,14 @@
     <div id="renown"></div>
   </div>
 
-  <div id="pointsOverlay">0 / 2000 points</div>
+  <div id="pointsOverlay">
+
+  </div>
   </div>
   
-  <script>loadArmy(true);</script>
+  <script>
+    loadArmy(true);
+    addOverlayListener();
+  </script>
 </body>
 </html>

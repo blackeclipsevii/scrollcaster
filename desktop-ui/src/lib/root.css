@@ -56,6 +56,7 @@ header {
     justify-content: center;
 }
 
+.rectangle-button-small,
 .rectangle-button {
     background-color: #1976D2;
     color: white;
@@ -76,4 +77,10 @@ header {
     border-radius: 6px;
     font-size: 14px;
     cursor: pointer;
+}
+
+.rectangle-button-small {
+    font-size: .8rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
 }

@@ -76,7 +76,7 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
 }
 
 const widgetAbilityInitializeAbilitiesDiv = () => {
-    const section = document.getElementById('abilities-section');
+    let section = document.getElementById('abilities-section');
     
     let title = document.createElement('h3');
     title.className = 'abilitiesTitle';

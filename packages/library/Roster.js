@@ -7,11 +7,12 @@ export default class Roster {
         this.army = "";
         this.battleFormation = null;
         this.points = 2000;
-        this.regiments = []
-        this.auxiliaryUnits = []
+        this.regiments = [];
+        this.auxiliaryUnits = [];
         this.terrainFeature = null;
         this.manifestationLore = null;
         this.spellLore = null;
+        this.battleTacticCards = [];
     }
 
     general() {

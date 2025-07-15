@@ -3,48 +3,37 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upgrage Selection</title>
+  <title>Tactic Selection</title>
   <script src="../../lib/host.js"></script>
   <script src="../../lib/widgets/warscrollHelpers.js"></script>
   <script src="../../lib/widgets/ability.js"></script>
   <script src="../../lib/widgets/overlay.js"></script>
   <script src="../../lib/widgets/getScrollbarWidth.js"></script>
-  <script src="../../lib/widgets/displayUpgradeOverlay.js"></script>
+  <script src="../../lib/widgets/displayTacticsOverlay.js"></script>
   <script src="../../lib/roster.js"></script>
-  <link rel="stylesheet" href="./upgrades.css">
+  <link rel="stylesheet" href="./tactics.css">
 </head>
 <body>
     
   <header>
     <button class="back-btn" onclick="goBack()">←</button>
-    <span id="army-header">Upgrade Selection</span>
+    <span id="army-header">Tactic Selection</span>
   </header>
 
   <div class="main">
   <div class="overlay" id="overlay">
-    <div class="main modal">
+    <div class="modal">
+      
     </div>
   </div>
+
   
-  <div style="display: none" class="section">
-    <h2>Battle Formations</h2>
-    <div class="item-list" id="formation-list"></div>
-  </div>
-
-  <div style="display: none" class="section">
-    <h2>Spell Lore</h2>
-    <div class="item-list" id="spell-list"></div>
-  </div>
-
-  <div style="display: none" class="section">
-    <h2>Manifestation Lore</h2>
+  <div class="section">
+    <h2>Battle Tactic Cards</h2>
     <div class="item-list" id="manifestation-list"></div>
   </div>
   
-  <div style="display: none" class="section">
-  <div class="item-list"></div>
-  </div>
-  <script src="upgrades.js"></script>
+  <script src="tactics.js"></script>
   </div>
 </body>
 </html>

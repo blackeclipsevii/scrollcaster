@@ -1,5 +1,6 @@
-@import "../../lib/widgets/contextMenu.css";
 @import "../../lib/root.css";
+@import "../../lib/modal.css";
+@import "../../lib/widgets/contextMenu.css";
 
 .export-btn {
     position: absolute;
@@ -40,6 +41,7 @@
     font-size: 1rem;
     box-shadow: 0 0 6px rgba(0,0,0,0.3);
     z-index: 1000;
+    cursor: pointer;
 }
 
 .arrow {
@@ -126,4 +128,22 @@
 .reinforced-label {
     background-color: blue;
 }
-  
+
+.upgrade-label,
+.upgrade-group,
+.upgrade-group-left,
+.upgrade-group-right,
+.upgrade-checkbox,
+.upgrade-button {
+    display: inline-block;
+}
+
+.upgrade-label {
+    width: fit-content;
+    font-size: 1.2em;
+}
+
+.upgrade-checkbox {
+    width: 1.2em;
+    height: 1.2em;
+}
