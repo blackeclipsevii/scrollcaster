@@ -10,7 +10,7 @@ import Roster from './packages/library/Roster.js';
 import Lores from './packages/library/Lores.js';
 
 const server = express();
-const hostname = '127.0.0.1';
+const hostname = '192.168.1.213';
 const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
 const saveData = "./saveData.json";
