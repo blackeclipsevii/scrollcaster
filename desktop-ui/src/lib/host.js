@@ -1,9 +1,15 @@
 const hostname = "http://192.168.1.213";
 const port = 3000;
 var _loadScrollData = false;
+var fixedPreviousUrl = null;
+var previousUrl = document.referrer;
 
 function goBack() {
-    window.history.back();
+    if (fixedPreviousUrl) {
+        window.location.href = fixedPreviousUrl;
+    } else {
+        window.location.href = previousUrl;
+    }
 }
 
 function generateId(length) {

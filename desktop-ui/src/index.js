@@ -58,6 +58,7 @@ async function viewRosters() {
   
   const armies = document.getElementById("army-list");
   armies.innerHTML = '';
+
   const rosters = await getRosters();
   for (let i = 0; i < rosters.length; ++i) {
       const roster = await getRoster(rosters[i]);

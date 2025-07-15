@@ -1,6 +1,6 @@
 
-const widgetsAbilityNewAbilityDiv = (ability, parent) => {
-    const abilitiesDiv = parent.querySelector('.abilitiesDiv');
+const widgetsAbilityNewAbilityDiv = (ability) => {
+    const abilitiesDiv = document.getElementById('abilities-section');
     let div = document.createElement('div');
     div.className = 'ability-container';
     div.id = ability.name + 'Div';
@@ -75,41 +75,29 @@ const widgetsAbilityNewAbilityDiv = (ability, parent) => {
     abilitiesDiv.appendChild(br);
 }
 
-const widgetAbilityInitializeAbilitiesDiv = (parent) => {
-    let _parent = parent;
-    if (!parent)
-        _parent = document;
-    let div = _parent.querySelector('.abilitiesDiv');
-    if (!div) {
-        div = document.createElement("div");
-        if (parent)
-            parent.appendChild(div);
-    }
-    div.className = 'abilitiesDiv';
+const widgetAbilityInitializeAbilitiesDiv = () => {
+    const section = document.getElementById('abilities-section');
     
     let title = document.createElement('h3');
     title.className = 'abilitiesTitle';
     title.innerHTML = 'Abilities';
 
-    div.appendChild(title);
-    return div;
+    section.appendChild(title);
+    return section;
 }
 
-const widgetAbilityDisplayAbilities = (unit, parent) => {
-    if (!parent)
-        parent = document;
+const widgetAbilityDisplayAbilities = (unit) => {
+    whClearDiv('abilities-section');
 
-    whClearDiv('.abilitiesDiv', parent);
+    const abilitiesDiv = widgetAbilityInitializeAbilitiesDiv();
 
     const doIt = (singleUnit) => {
         if (singleUnit.abilities.length === 0)
             return;
 
-        const abilitiesDiv = widgetAbilityInitializeAbilitiesDiv(parent);
-
         for (let i = 0; i < singleUnit.abilities.length; ++i) {
             const ability = singleUnit.abilities[i];
-            widgetsAbilityNewAbilityDiv(ability, parent);
+            widgetsAbilityNewAbilityDiv(ability);
         }
     };
     

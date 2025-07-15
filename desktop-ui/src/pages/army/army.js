@@ -1,6 +1,7 @@
 
 var roster;
 var totalPoints = 0;
+fixedPreviousUrl = '../../index.html';
 
 function unitTotalPoints(unit) {
     if (!unit.points)

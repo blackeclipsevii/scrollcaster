@@ -8,17 +8,63 @@
 }
 
 .ability-body {
-    margin-top: '0px';
-    border: '0px';
-    padding-top: '0px';
-    padding-left:  '5px';
-    padding-right: '5px';
-    padding-bottom: '5px';
-    margin-left: '5px';
-    margin-right: '5px';
+    margin-top: 0px;
+    border: 0px;
+    padding-top: 0px;
+    padding-left:  5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .ability-container {
-    width: '333px';
+    width: 100%;
     padding: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td.melee-weapon,
+th.melee-weapon,
+td.ranged-weapon,
+th.ranged-weapon,
+td.characteristics,
+th.characteristics {
+  text-align: center;
+  vertical-align: middle;
+  /*border: 1px solid #ccc;*/
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+td.characteristics,
+th.characteristics {
+  width: 25%;
+}
+
+td.melee-weapon,
+th.melee-weapon {
+  width: 16.6%;
+}
+
+td.ranged-weapon,
+th.ranged-weapon {
+  width: 14.2%;
+}
+
+.ability-label {
+    position: relative;
+    color: white;
+    background-color: #999;
+    top: 15%;
+    font-size: 12px;
+    padding: 2px 6px;
+    margin: 2px;
+    border-radius: 6px;
+    white-space: nowrap;
+    display: inline;
 }

@@ -16,7 +16,7 @@ const displayChars = (unit) => {
     const hdrRow = document.createElement("tr");
     headers.forEach(cellData => {
         const cell = document.createElement("th");
-        cell.style.border = "2px solid black";
+        cell.className = 'characteristics';
         cell.textContent = cellData;
         hdrRow.appendChild(cell);
     });
@@ -25,7 +25,7 @@ const displayChars = (unit) => {
     const dataRow = document.createElement("tr");
     headers.forEach(cellData => {
         const cell = document.createElement("td");
-        cell.style.border = "1px solid black";
+        cell.className = 'characteristics';
         cell.textContent = unit[cellData];
         dataRow.appendChild(cell);
     });
@@ -38,15 +38,17 @@ const displayWeapons = (qualifier, unit) => {
 
     const weaponList = unit[qualifier];
 
+    const section = document.getElementById(`${qualifier}-weapons-section`);
     if (!weaponList || weaponList.length === 0) {
+        section.style.display = 'none';
         return;
     }
-    
+
+    section.style.display = '';
     _initializeWeaponsDiv(qualifier);
 
-    const weapons = document.getElementById(qualifier + "Weapons");
-    weapons.style.border = "2px solid black";
-    
+    const header = document.getElementById(qualifier + "WeaponsHeader");
+    const container = document.getElementById(qualifier + "Weapons");
     const title = document.getElementById(qualifier + "WeaponsTitle");
     let headers;
     const lut = {
@@ -56,39 +58,62 @@ const displayWeapons = (qualifier, unit) => {
         'HIT':'Hit',
         'W':'Wnd',
         'R':'Rnd',
-        'D':'Dmg',
-        'Ability': 'Ability'
+        'D':'Dmg'
     };
+
+    let className = null;
     if (qualifier === 'ranged') {
+        className = 'ranged-weapon';
         title.innerHTML = "Ranged Weapons";
-        headers = ['', 'RANGE', 'A', 'HIT', 'W', 'R', 'D', 'Ability'];
+        headers = ['RANGE', 'A', 'HIT', 'W', 'R', 'D'];
         
     } else {        
+        className = 'melee-weapon';
         title.innerHTML = "Melee Weapons";
-        headers = ['', 'A', 'HIT', 'W', 'R', 'D', 'Ability'];
+        headers = ['A', 'HIT', 'W', 'R', 'D'];
     }
 
     const hdrRow = document.createElement("tr");
     headers.forEach(cellData => {
         const cell = document.createElement("th");
-        cell.style.border = "2px solid black";
+        cell.className = className;
         cell.textContent = cellData;
         hdrRow.appendChild(cell);
     });
-    weapons.appendChild(hdrRow);
+    header.appendChild(hdrRow);
 
     for (let i = 0; i < weaponList.length; ++i) {
         let dataRow = document.createElement("tr");
         let cell = document.createElement("td");
 
+        const weaponNameH = document.createElement('h3');
+        weaponNameH.textContent = weaponList[i].name;
+        container.appendChild(weaponNameH);
+
+        const profileTable = document.createElement('table');
+        profileTable.className = className;
+
         dataRow = document.createElement("tr");
         headers.forEach(cellData => {
             cell = document.createElement("td");
-            cell.style.border = "1px solid black";
+            cell.className = className;
             cell.textContent = weaponList[i][lut[cellData]];
             dataRow.appendChild(cell);
         });
-        weapons.appendChild(dataRow);
+        profileTable.appendChild(dataRow);
+        container.appendChild(profileTable);
+
+        if (weaponList[i].Ability && weaponList[i].Ability !== '-') {
+            let abilities = weaponList[i].Ability;
+            abilities = abilities.split(",");
+            for (let i = 0; i < abilities.length; ++i) {
+                const abilityLabel = document.createElement('div');
+                abilityLabel.innerHTML = abilities[i].trim();
+                abilityLabel.className = 'ability-label';
+                container.appendChild(abilityLabel);
+            }
+        }
+
     }
 }
 
@@ -104,20 +129,20 @@ const displayKeywords = (unit) => {
 }
 
 const _initializeWeaponsDiv = (qualifier) => {
-    let div = document.getElementById(qualifier + 'Div');
-    if (!div)
-        div = document.createElement("div");
-    div.id = qualifier + 'Div';
+    const div = document.getElementById(qualifier + '-weapons-section');
     
     let title = document.createElement('h3');
     title.id = qualifier + 'WeaponsTitle';
 
-    let weapons = document.createElement('table');
-    weapons.id = qualifier + 'Weapons';
-    weapons.style.border = "2px solid black";
+    let header = document.createElement('table');
+    header.id = qualifier + 'WeaponsHeader';
+
+    let container = document.createElement('div');
+    container.id = qualifier + 'Weapons';
 
     div.appendChild(title);
-    div.appendChild(weapons);
+    div.appendChild(header);
+    div.appendChild(container);
     return div;
 }
 
@@ -130,10 +155,7 @@ const _clear = () => {
 }
 
 const _initializeKeywordsDiv = () => {
-    let div = document.getElementById('keywordsDiv');
-    if (!div)
-        div = document.createElement("div");
-    div.id = 'keywordsDiv';
+    const div = document.getElementById('keywords-section');
 
     let kwTitle = document.createElement('h3');
     kwTitle.id = 'keywordTitle';
@@ -147,26 +169,15 @@ const _initializeKeywordsDiv = () => {
 }
 
 const _initializeCharDiv = () => {
-    let div = document.getElementById('charDiv');
-    if (!div)
-        div = document.createElement("div");
-    div.id = 'charDiv';
+    let div = document.getElementById('characteristics-section');
 
     let characteristics = document.createElement('table');
     characteristics.id = 'characteristics';
-    characteristics.style.border = "2px solid black";
+    characteristics.className = 'characteristics';
 
     div.appendChild(characteristics);
     return div;
 }
-
-const body = document.getElementById('warscroll');
-
-const charDiv = _initializeCharDiv();
-const rangedDiv = _initializeWeaponsDiv('ranged');
-const meleeDiv = _initializeWeaponsDiv('melee');
-const abilitiesDiv = widgetAbilityInitializeAbilitiesDiv();
-const keywordsDiv = _initializeKeywordsDiv();
 
 async function readUnit() {
     const params = new URLSearchParams(window.location.search);
@@ -178,11 +189,6 @@ async function readUnit() {
     then(resp => resp.json()).
     then(unit => {
         console.log(JSON.stringify(unit));
-        body.appendChild(charDiv);
-        body.appendChild(rangedDiv);
-        body.appendChild(meleeDiv);
-        body.appendChild(abilitiesDiv);
-        body.appendChild(keywordsDiv);
 
         displayChars(unit);
         displayWeapons('ranged', unit);

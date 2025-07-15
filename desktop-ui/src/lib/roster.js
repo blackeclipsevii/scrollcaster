@@ -8,6 +8,13 @@ async function getRosters() {
 }
 
 async function getRoster(id) {
+    const json = localStorage.getItem(id);
+    if (json) {
+        console.log(`using local storage for ${id}`);
+        console.log(json);
+        return JSON.parse(json);
+    }
+
     let roster = null;
     await fetch(`${hostname}:${port}/roster?id=${id}`, {
         method: "GET" // default, so we can ignore
@@ -19,9 +26,11 @@ async function getRoster(id) {
 }
 
 async function putRoster(roster) {
+    const json = JSON.stringify(roster);
+    localStorage.setItem(roster.id, json);
     await fetch(`${hostname}:${port}/roster?id=${roster.id}`, {
         method: "PUT",
-        body: JSON.stringify(roster),
+        body: json,
         headers: { 'Content-Type': 'application/json' }
     });
 }
@@ -34,6 +43,7 @@ async function updateRoster(partialRoster) {
 }
 
 async function deleteRoster(id) {
+    localStorage.removeItem(id);
   await fetch(`${hostname}:${port}/roster?id=${id}`,{
       method: "DELETE"
   });
