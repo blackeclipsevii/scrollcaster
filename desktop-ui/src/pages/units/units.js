@@ -1,8 +1,8 @@
 
 const params = new URLSearchParams(window.location.search);
 const rosterId = params.get('id');
+const armyName = params.get('army');
 const displayLegends = params.get('legends');
-fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
 
 const auxiliary = params.get('auxiliary');
 const hasRegimentIndex = params.has('regimentIndex');
@@ -32,6 +32,71 @@ function canFieldUnit(regimentOptions, unit) {
         }
     }
 
+}
+
+function getUnitList(unit) {
+    let unitList = null;
+    if (unit.type === 0) {
+        unitList = document.getElementById('hero-unit-list');
+    } else if (unit.type == 1) {
+        unitList = document.getElementById('infantry-unit-list');
+    } else if (unit.type == 2) {
+        unitList = document.getElementById('cavalry-unit-list');
+    } else if (unit.type == 3) {
+        unitList = document.getElementById('beast-unit-list');
+    } else if (unit.type == 4) {
+        unitList = document.getElementById('monster-unit-list');
+    } else if (unit.type == 5) {
+        unitList = document.getElementById('war-machine-unit-list');
+    } else if (unit.type == 6) {
+        unitList = document.getElementById('manifestation-unit-list');
+    } else if (unit.type == 7) {
+        unitList = document.getElementById('faction-terrain-unit-list');
+    } else {
+        console.log(`unit type unknown: ${unit.name}`);
+    }
+    return unitList;
+}
+
+async function loadUnitsForCatalog() {
+    await fetch(encodeURI(`${hostname}:${port}/units?army=${armyName}`)).
+    then(resp => resp.json()).
+    then(units => {
+        let unitIds = Object.getOwnPropertyNames(units);
+        unitIds.forEach(id => {
+            const unit = units[id];
+
+            const item = document.createElement('div');
+            item.classList.add('selectable-item');
+
+            // Clicking the container navigates to details
+            item.addEventListener('click', () => {
+                window.location.href = `../warscroll/warscroll.html?army=${armyName}&unit=${unit.name}`;
+            });
+
+            const unitList = getUnitList(unit);
+            if (!unitList)
+                return;
+
+            const section = unitList.closest('.section');
+            section.style.display = 'block';
+
+            const left = document.createElement('div');
+            left.classList.add('selectable-item-left');
+            left.textContent = unit.name;
+
+            const right = document.createElement('div');
+            right.classList.add('selectable-item-right');
+
+            const points = document.createElement('span');
+            points.textContent = unit.points ? `${unit.points} pts` : '';
+
+            right.append(points);
+            item.append(left, right);
+            unitList.appendChild(item);
+        });
+    });
+    loadScrollData();
 }
 
 async function loadUnits() {
@@ -72,27 +137,9 @@ async function loadUnits() {
                 window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
             });
 
-            let unitList = null;
-            if (unit.type === 0) {
-                unitList = document.getElementById('hero-unit-list');
-            } else if (unit.type == 1) {
-                unitList = document.getElementById('infantry-unit-list');
-            } else if (unit.type == 2) {
-                unitList = document.getElementById('cavalry-unit-list');
-            } else if (unit.type == 3) {
-                unitList = document.getElementById('beast-unit-list');
-            } else if (unit.type == 4) {
-                unitList = document.getElementById('monster-unit-list');
-            } else if (unit.type == 5) {
-                unitList = document.getElementById('war-machine-unit-list');
-            } else if (unit.type == 6) {
-                unitList = document.getElementById('manifestation-unit-list');
-            } else if (unit.type == 7) {
-                unitList = document.getElementById('faction-terrain-unit-list');
-            } else {
-                console.log(`unit type unknown: ${unit.name}`);
+            const unitList = getUnitList(unit);
+            if (!unitList)
                 return;
-            }
 
             const section = unitList.closest('.section');
             section.style.display = 'block';
@@ -133,4 +180,10 @@ async function loadUnits() {
     loadScrollData();
 }
 
-loadUnits();
+if (rosterId) {
+    fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
+    loadUnits();
+} else {
+    fixedPreviousUrl = encodeURI(`../catalog/catalog.html`);
+    loadUnitsForCatalog();
+}

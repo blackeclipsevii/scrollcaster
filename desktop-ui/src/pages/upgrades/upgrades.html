@@ -11,6 +11,7 @@
   <script src="../../lib/widgets/getScrollbarWidth.js"></script>
   <script src="../../lib/widgets/displayUpgradeOverlay.js"></script>
   <script src="../../lib/roster.js"></script>
+  <script src="../../lib/widgets/footer.js"></script>
   <link rel="stylesheet" href="./upgrades.css">
 </head>
 <body>
@@ -51,7 +52,19 @@
   <div style="display: none" class="section">
   <div class="item-list"></div>
   </div>
+  
   <script src="upgrades.js"></script>
   </div>
+  <footer>
+    <div class='footer-left'>
+      <p id='catalog-button'>CLOG</p>
+    </div>
+    <div class='footer-right'>
+      <p id='army-button'>ARMY</p>
+    </div>
+  </footer>
+  <script>
+    initializeFooter('../..');
+</script>
 </body>
 </html>

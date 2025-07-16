@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <script src="lib/host.js"></script>
   <script src="lib/widgets/contextMenu.js"></script>
+  <script src="lib/widgets/footer.js"></script>
   <script src="lib/roster.js"></script>
   <script src="index.js"></script>
 </head>
@@ -47,12 +48,22 @@
     </div>
   </div>
 
+  <footer>
+    <div class='footer-left'>
+      <p id='catalog-button'>CLOG</p>
+    </div>
+    <div class='footer-right'>
+      <p id='army-button'>ARMY</p>
+    </div>
+  </footer>
+  
   <script>
       const ruleset = document.getElementById("ruleset");
       ruleset.selectedIndex = 1;
       // ruleset.disabled = true;
 
       viewRosters();
+      initializeFooter('.');
   </script>
   </div>
 </body>

@@ -6,6 +6,7 @@
   <title>Unit Selection</title>
   <script src="../../lib/host.js"></script>
   <script src="../../lib/roster.js"></script>
+  <script src="../../lib/widgets/footer.js"></script>
   <link rel="stylesheet" href="./units.css">
 </head>
 <body>
@@ -71,7 +72,21 @@
     <div class="item-list" id="faction-terrain-unit-list"></div>
   </div>
 
+  <div class="section"></div>
+  <div class="section"></div>
+  
+  <footer>
+    <div class='footer-left'>
+      <p id='catalog-button'>CLOG</p>
+    </div>
+    <div class='footer-right'>
+      <p id='army-button'>ARMY</p>
+    </div>
+  </footer>
   <script src="units.js"></script>
   </div>
+  <script>
+    initializeFooter('../..');
+</script>
 </body>
 </html>
