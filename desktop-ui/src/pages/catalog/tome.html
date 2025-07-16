@@ -3,25 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Catalog View</title>
+  <title>Tome View</title>
   <script src="../../lib/host.js"></script>
   <script src="../../lib/roster.js"></script>
-  <script src="../../lib/widgets/header.js"></script>
   <script src="../../lib/widgets/footer.js"></script>
   <link rel="stylesheet" href="./catalog.css">
 </head>
 <body>
+    
+  <header>
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">←</button>
+    </div>
+    <div class="header-center">
+      <span id="army-header">Catalog</span>
+    </div>
+    <div class="header-right">
+     
+    </div>
+  </header>
+
   <div class="main">
+
   <div class="section">
-    <h2>Army</h2>
-    <div class="item-list" id="army-list"></div>
+    <div class="item-list"></div>
   </div>
 
+  <script src="catalog.js"></script>
   <script>
-    initializeHeader({name:'Catalog'});
     initializeFooter('../..');
   </script>
-  <script src="catalog.js"></script>
   </div>
 </body>
 </html>

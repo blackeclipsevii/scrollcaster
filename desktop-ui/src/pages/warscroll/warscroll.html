@@ -6,22 +6,11 @@
   <script src="../../lib/host.js"></script>
   <script src="../../lib/widgets/warscrollHelpers.js"></script>
   <script src="../../lib/widgets/ability.js"></script>
+  <script src="../../lib/widgets/header.js"></script>
   <script src="../../lib/widgets/footer.js"></script>
 
 </head>
 <body>
-    
-  <header>
-    <div class="header-left">
-      <button class="back-btn" onclick="goBack()">←</button>
-    </div>
-    <div class="header-center">
-      <span id="army-header"></span>
-    </div>
-    <div class="header-right">
-      
-    </div>
-  </header>
 
   <div class="main">
     <div id="characteristics-section" class="section">
@@ -38,19 +27,10 @@
 
     <div id="keywords-section" class="section">
     </div>
-    <div class="section"></div>
-    <div class="section"></div>
-    <footer>
-      <div class='footer-left'>
-        <p id='catalog-button'>CLOG</p>
-      </div>
-      <div class='footer-right'>
-        <p id='army-button'>ARMY</p>
-      </div>
-    </footer>
     <script>
+      initializeHeader({name:'', leftButton: true});
       initializeFooter('../..');
-  </script>
+    </script>
     <script src="warscroll.js"></script>
   </div>
 </body>
