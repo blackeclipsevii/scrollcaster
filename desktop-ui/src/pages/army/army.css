@@ -53,7 +53,7 @@
 .unit-slot {
   border: 1px solid #ccc;
   width: 95%;
-  margin: 10px auto;
+  margin: 5px auto;
   font-family: Arial, sans-serif;
   font-size: 14px;
 }
@@ -90,7 +90,7 @@
     color: white;
     right: 5%;
     top: 15%;
-    font-size: 12px;
+    font-size: 10px;
     padding: 2px 6px;
     margin-bottom: 0px;
     border-radius: 6px;
