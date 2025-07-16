@@ -19,6 +19,7 @@ function validateRoster(roster) {
         if (reg.units.length === 0) {
             let errorMsg = `Regiment ${idx+1} is empty`;
             errors.push(errorMsg);
+            return;
         }
         
         if (reg.units[0].isGeneral) {
