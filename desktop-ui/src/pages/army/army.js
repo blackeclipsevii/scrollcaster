@@ -165,7 +165,7 @@ function exportListAndDisplay() {
         copyButton.className = 'full-rectangle-button';
         copyButton.textContent = 'Copy to Clipboard';
         copyButton.onclick = () => {
-            navigator.clipboard.writeText(text);
+            copyToClipboard(text);
         };
 
         modal.appendChild(section);
