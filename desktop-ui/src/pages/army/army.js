@@ -282,7 +282,7 @@ async function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent, on
     newUsItem.style.display = "";
 }
 
-function displayRegiment(index) {
+async function displayRegiment(index) {
     const regimentsDiv = document.getElementById('regiments');
     const prototype = document.getElementById('regiment-item-prototype');
     const regiment = roster.regiments[index];
@@ -298,14 +298,15 @@ function displayRegiment(index) {
 
     let points = 0;
     let uniqueId = roster.id;
-    regiment.units.forEach((unit, idx) => {
-        createUnitSlot(content, unit, idx, 'UnitCallback', `${unit.id}:${index}:${idx}`, () => {
+    for(let i = 0; i < regiment.units.length; ++i) {
+        const unit = regiment.units[i];
+        await createUnitSlot(content, unit, i, 'UnitCallback', `${unit.id}:${index}:${i}`, () => {
             window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
         });
         uniqueId += unit.id;
         const unitsPoints = unitTotalPoints(unit);
         points += unitsPoints;
-    });
+    };
     
     const pointsSpan = newRegItem.querySelector('.regiment-item-points');
     pointsSpan.textContent = points > 0 ? `${points} pts` : '';
@@ -407,7 +408,7 @@ async function loadArmy(doGet) {
     totalPoints = 0;
 
     for (let i = 0; i < roster.regiments.length; ++i)
-        displayRegiment(i);
+        await displayRegiment(i);
 
     for (let i = 0; i< roster.auxiliaryUnits.length; ++i)
         displayAux(i);

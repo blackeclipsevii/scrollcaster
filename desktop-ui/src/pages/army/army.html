@@ -25,9 +25,15 @@
 
 <body>
   <header>
-    <button class="back-btn" onclick="goBack()">←</button>
-    <span id="army-header">Army Name</span>
-    <button class="export-btn" onclick="exportListAndDisplay()">^</button>
+    <div class="header-left">
+      <button class="back-btn" onclick="goBack()">←</button>
+    </div>
+    <div class="header-center">
+      <span id="army-header"></span>
+    </div>
+    <div class="header-right">
+      <button class="export-btn" onclick="exportListAndDisplay()">^</button>
+    </div>
   </header>
   
   <div class="main">

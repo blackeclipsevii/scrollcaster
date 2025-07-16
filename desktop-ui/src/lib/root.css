@@ -16,7 +16,39 @@ header {
     text-align: center;
     font-size: 1.5rem;
     width: 100%;
+    height: 4%;
+    z-index: 5;
+}
+
+.header-left,
+.header-right,
+.header-center {
+    top: 25%;
+    width: 10%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+    display: inline-block;
     z-index: 1000;
+}
+
+.header-left {
+    position: absolute;
+    left: 5%;
+}
+
+.header-right {
+    position: absolute;
+    right: 5%;
+}
+
+.header-center {
+    left: 15%;
+    width: 55%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 
 .main {
@@ -39,10 +71,8 @@ header {
     color: black;
 }
 
-.back-btn {
-    position: absolute;
-    top: 1.5rem;
-    left: 1.5rem;
+.back-btn,
+.export-btn {
     width: 40px;
     height: 40px;
     background: #ff5c5c;
@@ -51,9 +81,16 @@ header {
     border-radius: 50%;
     font-size: 1.5rem;
     cursor: pointer;
-    display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.back-btn {
+    left: 1.5rem;
+}
+
+.export-btn {
+    right: 1.5rem;
 }
 
 .rectangle-button-small,
