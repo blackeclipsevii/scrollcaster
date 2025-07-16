@@ -42,6 +42,7 @@ function displayRoster(roster) {
   entry.style.float = "left";
 
   const menu = createContextMenu(roster.id, roster.id, 'RosterCallback');
+  menu.className = 'menu-blob';
   container.appendChild(entry);
   container.appendChild(menu);
 

@@ -16,8 +16,8 @@
 .item-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
+    gap: .5em;
+    padding: .5em;
 }
 
 .selectable-item {
@@ -25,7 +25,8 @@
     justify-content: space-between;
     align-items: center;
     border: 1px solid #ccc;
-    padding: 1rem;
+    padding: 1em;
+    margin: 0px;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s ease;

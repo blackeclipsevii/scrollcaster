@@ -2,7 +2,8 @@
 function exportRoster(roster) {
     let text = `${roster.name} (${totalPoints} points) - GHB 2025-26\n\n`
     text += `${roster.army}\n`;
-    text += `${roster.battleFormation.name}\n`;
+    if (roster.battleFormation)
+        text += `${roster.battleFormation.name}\n`;
     text += `Auxiliaries: ${roster.auxiliaryUnits.length}\n`;
 
     const drops = roster.auxiliaryUnits.length + roster.regiments.length;

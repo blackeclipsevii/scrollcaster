@@ -11,7 +11,7 @@ header {
   
     background-color: #1C1C1E;
     color: white;
-    padding-bottom: 2rem;
+    padding-bottom: 1rem;
     padding-top: 2rem;
     text-align: center;
     font-size: 1.5rem;
@@ -65,6 +65,7 @@ header {
 }
 
 .section h2 {
+    margin: .5em;
     display: flex;
     justify-content: space-between;
     align-items: center;
