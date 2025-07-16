@@ -4,10 +4,10 @@ function initializeFooter(root) {
     const footer = document.createElement('footer');
     footer.innerHTML = `
       <div class='footer-left'>
-        <p id='catalog-button'>CLOG</p>
+        <div class='footer-button' id='catalog-button'>Catalog 🕮</div>
       </div>
       <div class='footer-right'>
-        <p id='army-button'>ARMY</p>
+        <div class='footer-button' id='army-button'>Army ⚔️</div>
       </div>
     `;
     main.appendChild(footer);
