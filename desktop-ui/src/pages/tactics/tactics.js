@@ -55,7 +55,5 @@ async function loadTactics() {
     loadScrollData();
 }
 
-const header = document.getElementById('army-header');
-header.textContent = 'Choose a Battle Tactic';
 loadTactics();
 addOverlayListener();
