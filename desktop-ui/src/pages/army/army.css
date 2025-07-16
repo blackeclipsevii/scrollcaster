@@ -45,6 +45,7 @@
 }
 
 .arrow {
+    font-size: large;
     transition: transform 0.3s ease;
 }
 

@@ -17,7 +17,10 @@ function exportRoster(roster) {
 
     if (roster.manifestationLore) {
         text += '\nManifestation Lore: \n'
-        text += `  * ${roster.manifestationLore.name} (${roster.manifestationLore.points} points)\n`;
+        if (roster.manifestationLore.points && roster.manifestationLore.points > 0)
+            text += `  * ${roster.manifestationLore.name} (${roster.manifestationLore.points} points)\n`;
+        else
+            text += `  * ${roster.manifestationLore.name}\n`;
     }
 
     if (roster.spellLore) {
@@ -48,7 +51,9 @@ function exportRoster(roster) {
         });
     });
 
-    text += `\nAuxiliary Units: \n`;
+    if (roster.auxiliaryUnits.length > 0)
+        text += `\nAuxiliary Units: \n`;
+
     roster.auxiliaryUnits.forEach(unit => {
         unitToText(unit, '  ');
     });
