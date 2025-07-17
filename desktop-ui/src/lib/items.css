@@ -30,6 +30,7 @@
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .15);
 }
 
 .selectable-item:hover {

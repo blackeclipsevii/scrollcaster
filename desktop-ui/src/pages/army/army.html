@@ -10,6 +10,7 @@
   <title>Army Detail</title>
   <link rel="stylesheet" href="./army.css">
   <script src="../../lib/host.js"></script>
+  <script src="../../lib/functions/uniqueIdentifier.js"></script>
   <script src="../../lib/widgets/warscrollHelpers.js"></script>
   <script src="../../lib/widgets/contextMenu.js"></script>
   <script src="../../lib/widgets/ability.js"></script>
@@ -28,20 +29,15 @@
 
 <body>
   <div class="main">
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      
-    </div>
-  </div>
 
   <div class="main">
   <div class="section">
-    <h2>Regiments <button class="rectangle-button" onclick="addItem('Regiments')">+</button></h2>
+    <h2>Regiments <button class="clickable-style rectangle-button" onclick="addItem('Regiments')">+</button></h2>
 
   <div style="display: none;" class="unit-slot" id="unit-slot-prototype" unitIdx="">
     <span style="display: none;" class="unit-idx"></span>
     <div class="unit-header">
-      <span onclick="toggleUnit(this)" class="arrow">></span>
+      <span onclick="toggleUnit(this)" class="arrow">›</span>
       <div class="unit-header-left">
         <span class="unit-slot-name">
           <span class="unit-text">Unit Name</span>
@@ -88,7 +84,7 @@
       <div class="regiment-content" style="margin-top: 0.5rem;"></div>
 
       <!-- Add button below content -->
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <div class="clickable-style" style="display: flex; align-items: center; gap: 0.5rem;">
         <button class="full-rectangle-button" class="menu-btn" onclick="addEntry(this)">Add Unit +</button>
       </div>
     </div>

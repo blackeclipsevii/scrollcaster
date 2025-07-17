@@ -22,6 +22,7 @@ export default class Roster {
             canHavePrayer: true,
             prayer: null
         }
+        this.regimentOfRenown = null;
         this.terrainFeature = null;
         this.isArmyOfRenown = army.isArmyOfRenown;
         this._setDefaultValues(army);        

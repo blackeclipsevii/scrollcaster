@@ -1,7 +1,21 @@
 
 const addOverlayListener = () => {
-    const overlay = document.getElementById('overlay');
-        overlay.addEventListener('click', function(event) {
+    let overlay = document.getElementById('overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'overlay';
+        overlay.id = 'overlay';
+        let modal = document.createElement('div');
+        modal.className = 'modal';
+        overlay.appendChild(modal);
+
+        let main = document.querySelector('.main');
+        if (!main)
+            main = document.querySelector('body');
+        main.appendChild(overlay);
+    }
+
+    overlay.addEventListener('click', function(event) {
         if (event.target === overlay) {
             disableOverlay();
         }

@@ -6,6 +6,7 @@
   <title>My Rosters</title>
   <link rel="stylesheet" href="style.css">
   <script src="lib/host.js"></script>
+  <script src="lib/functions/uniqueIdentifier.js"></script>
   <script src="lib/widgets/contextMenu.js"></script>
   <script src="lib/widgets/overlay.js"></script>
   <script src="lib/widgets/header.js"></script>
@@ -15,38 +16,49 @@
 </head>
 <body>
   <div class="main">
-  <!-- Container for created armies -->
-  <div id="army-list" style="padding: 1em;"></div>
+    <div id="army-list" style="padding: 1em;"></div>
 
-  <button class="fab" onclick="toggleOverlay()">+</button>
+    <button class="clickable-style fab" onclick="toggleOverlay()">+</button>
 
-  <div class="overlay" id="overlay">
-    <div class="modal">
-      <select id="army">
-      </select>
+    <div class="overlay" id="overlay">
+      <div class="modal">
+        <select id="army">
+        </select>
 
-      <select id="ror">
-      </select>
+        <select style='display: none;' id="ror">
+        </select>
 
-      <select id="ruleset">
-        <option value="">Select Ruleset</option>
-        <option>GHB 2025-26</option>
-      </select>
+        <select id="ruleset">
+          <option value="">Select Ruleset</option>
+          <option>GHB 2025-26</option>
+        </select>
 
-      <input value="2000" type="number" id="points" placeholder="Points" />
-      <input type="text" id="name" placeholder="Name" />
-      <textarea id="description" placeholder="Description"></textarea>
+        <input value="2000" type="number" id="points" placeholder="Points" />
+        <input type="text" id="name" placeholder="Name" />
+        <textarea id="description" placeholder="Description"></textarea>
 
-      <button onclick="createArmy()">Create</button>
+        <button class="clickable-style" onclick="createArmy()">Create</button>
+      </div>
     </div>
-  </div>
 
-  <script>
-    initializeHeader({name:'Rosters'});
-    const ruleset = document.getElementById("ruleset");
-    ruleset.selectedIndex = 1;
-    viewRosters();
-    initializeFooter('.');
-  </script>
+    <p id="version">v0.0.0</p>
+
+    <script>
+      initializeHeader({name:'Rosters'});
+      /*
+      const right = document.querySelector('.header-right');
+      const menu = createContextMenu(0, 0, 'HeaderCallback');
+      const btn = menu.querySelector('.menu-btn');
+      btn.style.color = 'white';
+      btn.style.top = '.5em';
+      menu.style.zIndex = '1000';
+      right.appendChild(menu);
+      */
+      const ruleset = document.getElementById("ruleset");
+      ruleset.selectedIndex = 1;
+      viewRosters();
+      initializeFooter('.');
+    </script>
+
   </div>
 </body>

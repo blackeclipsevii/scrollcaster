@@ -1,10 +1,14 @@
 
 const params = new URLSearchParams(window.location.search);
 const rosterId = params.get('id');
-fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
 
 async function loadTactics() {
-    roster = await getRoster(rosterId);
+    if (rosterId) {
+        fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
+        roster = await getRoster(rosterId);
+    } else {
+        fixedPreviousUrl = encodeURI(`../catalog/tome.html`);
+    }
 
     let url = `${hostname}:${port}/tactics`;
     await fetch(encodeURI(url)).
@@ -12,13 +16,15 @@ async function loadTactics() {
     then(tactics => {
         tactics.forEach(tacticCard => {
             let skipTactic = false;
-            roster.battleTacticCards.forEach(bt => {
-                if (tacticCard.name === bt.name) {
-                    skipTactic = true;
-                }
-            });
-            if (skipTactic)
-                return;
+            if (roster) {
+                roster.battleTacticCards.forEach(bt => {
+                    if (tacticCard.name === bt.name) {
+                        skipTactic = true;
+                    }
+                });
+                if (skipTactic)
+                    return;
+            }
 
             const item = document.createElement('div');
             item.classList.add('selectable-item');
@@ -35,17 +41,19 @@ async function loadTactics() {
             const right = document.createElement('div');
             right.classList.add('selectable-item-right');
 
-            const addBtn = document.createElement('button');
-            addBtn.classList.add('rectangle-button');
-            addBtn.textContent = '+';
-            addBtn.addEventListener('click', async (e) => {
-                e.stopPropagation(); // Prevents click from triggering page change
-                roster.battleTacticCards.push(tacticCard);
-                await putRoster(roster);
-                goBack();
-            });
+            if (roster) {
+                const addBtn = document.createElement('button');
+                addBtn.classList.add('rectangle-button');
+                addBtn.textContent = '+';
+                addBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation(); // Prevents click from triggering page change
+                    roster.battleTacticCards.push(tacticCard);
+                    await putRoster(roster);
+                    goBack();
+                });
 
-            right.append(addBtn);
+                right.append(addBtn);
+            }
             item.append(left, right);
 
             const tacticList = document.querySelector('.item-list');

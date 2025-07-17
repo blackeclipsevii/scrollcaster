@@ -84,6 +84,7 @@ async function displayEnhancements(unit, newUsItem, type) {
                             refreshTotalPoints();
                         }
                         updateValidationDisplay();
+                        putRoster(roster);
                     } else if (unit[type].name !== name) {
                         checkbox.checked = false;
                     }
@@ -102,6 +103,7 @@ async function displayEnhancements(unit, newUsItem, type) {
                             refreshTotalPoints();
                         }
                         updateValidationDisplay();
+                        putRoster(roster);
                     }
                 }
             };
@@ -335,40 +337,6 @@ async function getManifestationUnits() {
     return { units: manifestations, armyUnits: armySpecific };
 }
 
-async function displayManifestations() {
-    const lore = roster.lores.manifestation;
-
-    const loresDiv = document.getElementById('lores');
-    const prototype = document.getElementById('regiment-item-prototype');
-    const newRegItem = prototype.cloneNode(true);
-    newRegItem.id = lore.id;
-
-    const title = newRegItem.querySelector('.regiment-item-title');
-    title.innerHTML = lore.name;
-
-    const content = newRegItem.querySelector('.regiment-content');
-
-    const result = await getManifestationUnits();
-
-    for(let i = 0; i < result.units.length; ++i) {
-        const unit = result.units[i];
-        await createUnitSlot(content, unit, i, 'NO_CALLBACK_ALLOWED', `manifestation-${unit.id}`, () => {
-            let url = `../warscroll/warscroll.html?id=${unit.id}`;
-            if (result.armyUnits) {
-                url = `${url}&army=${roster.army}`
-            }
-            window.location.href = url;
-        });
-    };
-    
-    const pointsSpan = newRegItem.querySelector('.regiment-item-points');
-    pointsSpan.textContent = lore.points > 0 ? `${lore.points} pts` : '';
-    // totalPoints += points;
-
-    newRegItem.removeAttribute('style');
-    loresDiv.appendChild(newRegItem);
-}
-
 function displaySingleton(typename, callback, unit, idx, menuIdxContent, onclick) {
     const parent = document.getElementById(typename);
     
@@ -459,13 +427,97 @@ function displayPrayerLore() {
     displaySingleton(typename, callback, roster.lores.prayer, 0, 0, onclick);
 }
 
-function displayManifestLore() {
-    const typename = 'lores';
-    const callback = 'ManifestLoreCallback';
-    const onclick = () => {
+async function displayManifestLore() {
+    const lore = roster.lores.manifestation;
+    const parent = document.getElementById('lores');
+    const usPrototype = document.getElementById("unit-slot-prototype");
+    const newUsItem = usPrototype.cloneNode(true);
+    
+    async function displayManifestations() {
+        const result = await getManifestationUnits();
+
+        const details = newUsItem.querySelector('.unit-details');
+        const detailSection = details.querySelector('.section');
+        const title = document.createElement('p');
+        title.textContent = 'Manifestations';
+        detailSection.appendChild(title);
+
+        const createManifestSlot = async (unit, onclick) => {
+            const usPrototype = document.getElementById("unit-slot-prototype");
+            const subUsItem = usPrototype.cloneNode(true);
+            
+            const usName = subUsItem.querySelector('.unit-text');
+            // Find the crown icon
+            usName.textContent = unit.name;
+            removeSection(subUsItem, 'is-general');
+            removeSection(subUsItem, 'is-reinforced');
+            removeSection(subUsItem, 'available-artefacts');
+            removeSection(subUsItem, 'available-heroicTraits');
+            const arrow = subUsItem.querySelector('.arrow');
+            arrow.textContent = '\u2022'; //'\u29BF';
+
+            const unitPoints = unitTotalPoints(unit);
+            usPoints.textContent = '';
+
+            subUsItem.style.padding = "0.5rem";
+            subUsItem.style.background = "#ddd";
+            subUsItem.style.marginBottom = "0.3rem";
+            subUsItem.style.borderRadius = "4px";
+
+            let unitHdr = subUsItem.querySelector(".unit-header-right");
+            unitHdr = subUsItem.querySelector(".unit-header-left");
+            unitHdr.onclick = onclick;
+            detailSection.appendChild(subUsItem);
+            subUsItem.style.display = "";
+        }
+
+        for(let i = 0; i < result.units.length; ++i) {
+            const unit = result.units[i];
+            await createManifestSlot(unit, () => {
+                let url = `../warscroll/warscroll.html?id=${unit.id}`;
+                if (result.armyUnits) {
+                    url = `${url}&army=${roster.army}`
+                }
+                window.location.href = url;
+            });
+        }
+    }
+
+    
+    const usName = newUsItem.querySelector('.unit-text');
+    // Find the crown icon
+    usName.textContent = lore.name;
+
+    // these are all for units
+    removeSection(newUsItem, 'is-general');
+    removeSection(newUsItem, 'is-reinforced');
+    removeSection(newUsItem, 'available-artefacts');
+    removeSection(newUsItem, 'available-heroicTraits');
+
+    const unitPoints = unitTotalPoints(lore);
+    const usPoints = newUsItem.querySelector('.unit-slot-points');
+    if (unitPoints > 0) {
+        usPoints.textContent = `${unitPoints} pts`;
+        totalPoints += unitPoints;
+        refreshTotalPoints();
+    } else {
+        usPoints.textContent = '';
+    }
+    newUsItem.style.padding = "0.5rem";
+    newUsItem.style.background = "#ddd";
+    newUsItem.style.marginBottom = "0.3rem";
+    newUsItem.style.borderRadius = "4px";
+
+    const menu = createContextMenu(lore.id, lore.id, "ManifestLoreCallback");
+    let unitHdr = newUsItem.querySelector(".unit-header-right");
+    unitHdr.appendChild(menu);
+    unitHdr = newUsItem.querySelector(".unit-header-left");
+    unitHdr.onclick = () => {
         displayUpgradeOverlay(roster.lores.manifestation);
     }
-    displaySingleton(typename, callback, roster.lores.manifestation, 0, 0, onclick);
+    parent.appendChild(newUsItem);
+    newUsItem.style.display = "";
+
     displayManifestations();
 }
 

@@ -125,7 +125,7 @@ export default class Unit {
         for (let i = 0; i < selectionEntry.profiles.length; ++i) {
             const profile = selectionEntry.profiles[i];
             const typeName = profile['@typeName'];
-            if (typeName === 'Unit') {
+            if (typeName === 'Unit' || typeName === 'Manifestation') {
                 this._parseCharacteristics(profile.characteristics);
             }
             else if (typeName.includes('Ability')) {

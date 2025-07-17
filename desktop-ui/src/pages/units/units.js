@@ -53,13 +53,19 @@ function getUnitList(unit) {
     } else if (unit.type == 7) {
         unitList = document.getElementById('faction-terrain-unit-list');
     } else {
-        console.log(`unit type unknown: ${unit.name}`);
+        // to-do fix manifestation unit type
+        unitList = document.getElementById('manifestation-unit-list');
+        // console.log(`unit type unknown: ${unit.name}`);
     }
     return unitList;
 }
 
 async function loadUnitsForCatalog() {
-    await fetch(encodeURI(`${hostname}:${port}/units?army=${armyName}`)).
+    let url = `${hostname}:${port}/units`;
+    if (armyName) {
+        url = `${url}?army=${armyName}`
+    }
+    await fetch(encodeURI(url)).
     then(resp => resp.json()).
     then(units => {
         let unitIds = Object.getOwnPropertyNames(units);
@@ -71,7 +77,10 @@ async function loadUnitsForCatalog() {
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
-                window.location.href = `../warscroll/warscroll.html?army=${armyName}&unit=${unit.name}`;
+                let url = `../warscroll/warscroll.html?unit=${unit.name}`;
+                if (armyName)
+                    url = `${url}&army=${armyName}`
+                window.location.href = encodeURI(url);
             });
 
             const unitList = getUnitList(unit);
@@ -184,6 +193,10 @@ if (rosterId) {
     fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
     loadUnits();
 } else {
-    fixedPreviousUrl = encodeURI(`../catalog/catalog.html`);
+    let url = `../catalog/tome.html`;
+    if (armyName) {
+        url = `${url}?army=${armyName}`
+    }
+    fixedPreviousUrl = encodeURI(url);
     loadUnitsForCatalog();
 }

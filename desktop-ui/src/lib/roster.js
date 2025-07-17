@@ -1,16 +1,39 @@
+var _storageName = 'rosters';
+
+function rosterEndpoint() {
+    const user = getUniqueIdentifier();
+    return `${hostname}:${port}/roster?uuid=${user}`;
+}
+
+function _getRosters() {
+    const json = localStorage.getItem(_storageName);
+    if (!json)
+        return {};
+    return JSON.parse(json);
+}
+
+function _storeRosters(rosters) {
+    json = JSON.stringify(rosters);
+    localStorage.setItem('rosters', json);
+}
 
 async function getRosters() {
+    /*
     let rosters = null;
-    await fetch(`${hostname}:${port}/roster`,{
+    const endpoint = rosterEndpoint();
+    await fetch(encodeURI(endpoint),{
         method: "GET" // default, so we can ignore
     }).then(response => { rosters = response.json() });
     return rosters;
+    */
+    const rosters = _getRosters();
+    return Object.getOwnPropertyNames(rosters);
 }
 
 async function getNewRoster(army) {
-    // to-do this should just be an endpoint
     let roster = null;
-    await fetch(encodeURI(`${hostname}:${port}/roster?army=${army}`), {
+    const endpoint = rosterEndpoint();
+    await fetch(encodeURI(`${endpoint}&army=${army}`), {
         method: "GET" // default, so we can ignore
     }).then(response => { 
         console.log(response);
@@ -20,44 +43,46 @@ async function getNewRoster(army) {
 }
 
 async function getRoster(id) {
-    const json = localStorage.getItem(id);
-    if (json) {
-        console.log(`using local storage for ${id}`);
-        console.log(json);
-        return JSON.parse(json);
-    }
-
+    const rosters = _getRosters();
+    return rosters[id];
+/*
+    const endpoint = rosterEndpoint();
     let roster = null;
-    await fetch(`${hostname}:${port}/roster?id=${id}`, {
+    await fetch(`${endpoint}&id=${id}`, {
         method: "GET" // default, so we can ignore
     }).then(response => { 
         console.log(response);
         roster = response.json() 
     });
     return roster;
+    */
 }
 
 async function putRoster(roster) {
-    const json = JSON.stringify(roster);
-    localStorage.setItem(roster.id, json);
-    await fetch(`${hostname}:${port}/roster?id=${roster.id}`, {
+    const rosters = _getRosters();
+    rosters[roster.id] = roster;
+    _storeRosters(rosters);
+    /*
+    const endpoint = rosterEndpoint();
+    await fetch(`${endpoint}&id=${roster.id}`, {
         method: "PUT",
         body: json,
         headers: { 'Content-Type': 'application/json' }
     });
-}
-
-async function updateRoster(partialRoster) {
-  await fetch(`${hostname}:${port}/roster?id=${roster.id}`,{
-      method: "POST",
-      body: JSON.stringify(partialRoster)
-  });
+    */
 }
 
 async function deleteRoster(id) {
+    const rosters = _getRosters();
+    if (rosters[id])
+        delete rosters[id];
+    _storeRosters(rosters);
+    /*
+    const endpoint = rosterEndpoint();
     localStorage.removeItem(id);
-  await fetch(`${hostname}:${port}/roster?id=${id}`,{
+  await fetch(`${endpoint}&id=${id}`,{
       method: "DELETE"
   });
+  */
 }
 

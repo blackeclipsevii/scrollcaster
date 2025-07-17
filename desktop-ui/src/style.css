@@ -46,6 +46,14 @@
   height: 2em;
 }
 
+#version {
+  position: absolute;
+  color: rgba(0,0,0,.1);
+  font-weight: bold;
+  bottom: 3em;
+  left: .5em;
+}
+
 input, select, textarea {
   width: 85%; /* Choose any width that suits your design */
   padding: 8px;

@@ -159,9 +159,11 @@ export default class Army {
             }
         });
 
-        catalogue.categoryEntries.forEach(category => {
-            this.keywordLUT[category['@id']] = category['@name'];
-        });
+        if (catalogue.catalogEntries) {
+            catalogue.categoryEntries.forEach(category => {
+                this.keywordLUT[category['@id']] = category['@name'];
+            });
+        }
 
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
@@ -235,7 +237,7 @@ export default class Army {
                 const targetId = element.entryLinks[0]['@targetId'];
                 if (targetId) {
                     upgrade = lores.lores[lu.alias][targetId];
-                    if (upgrade.unitIds) {
+                    if (upgrade && upgrade.unitIds) {
                         upgrade.unitIds.forEach(uuid => {
                             this.units[uuid] = this._libraryUnits[uuid];
                         });

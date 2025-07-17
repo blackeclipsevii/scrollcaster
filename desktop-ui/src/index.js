@@ -8,7 +8,7 @@ const toggleOverlay = overlayToggleFactory('flex', () =>{
     let armySelect = document.getElementById("army");
     armies.forEach((army)=> {
       console.log(army);
-      if (!army.includes('-')) {
+      if (!army.includes(' - ')) {
         const option = document.createElement("option");
         option.value = army;
         option.textContent = army;
@@ -28,9 +28,10 @@ const toggleOverlay = overlayToggleFactory('flex', () =>{
     
     armySelect.onchange = () => {
       const values = _ror[armySelect.value.trim()]
-      console.log(values);
-      if (values) {
-        let rorSelect = document.getElementById("ror");
+      const rorSelect = document.getElementById("ror");
+      if (values && values.length > 0) {
+        rorSelect.disabled = false;
+        rorSelect.style.display = '';
         rorSelect.innerHTML = '';
         values.forEach(value => {
           const option = document.createElement("option");
@@ -38,6 +39,9 @@ const toggleOverlay = overlayToggleFactory('flex', () =>{
           option.textContent = value;
           rorSelect.appendChild(option);
         });
+      } else {
+        rorSelect.innerHTML = '';
+        rorSelect.style.display = 'none';
       }
     };
   });
@@ -53,7 +57,7 @@ function displayRoster(roster) {
   
   const armies = document.getElementById("army-list");
   const container = document.createElement("div");
-  container.className = "army-card";
+  container.className = "clickable-style army-card";
   container.style.overflow = "hidden";
   const entry = document.createElement("div");
   entry.innerHTML = `
@@ -73,7 +77,13 @@ function displayRoster(roster) {
   armies.appendChild(container);
 }
 
+function setupVersion() {
+  const version = document.getElementById('version');
+  version.textContent = `0.0.1:${getUniqueIdentifier()}`;
+}
+
 async function viewRosters() {
+  setupVersion();
   addOverlayListener();
 
   const armies = document.getElementById("army-list");
@@ -95,7 +105,7 @@ async function duplicateRosterCallback(e) {
     console.log(`Could not retrieve roster ${id}`)
   const json = JSON.stringify(originalRoster);
   const clone = JSON.parse(json);
-  clone.id = generateId(16);
+  clone.id = generateId();
   await putRoster(clone);
   displayRoster(clone);
 }
@@ -108,40 +118,40 @@ async function deleteRosterCallback(e) {
   await viewRosters();
 }
 
-  async function createArmy() {
-    let army = document.getElementById("army").value;
-    const ror = document.getElementById("ror").value;
-    if (ror && !ror.includes('Optional')) {
-      army = ror;
-    }
-  
-    const ruleset = document.getElementById("ruleset").value;
-    const points = document.getElementById("points").value;
-    let name = document.getElementById("name").value;
-    const description = document.getElementById("description").value;
-
-    if (!army || !ruleset || !points) {
-      alert("Please fill in all required fields.");
-      return;
-    }
-
-    if (!name)
-      name = army;
-
-    let roster = await getNewRoster(army);
-    console.log(JSON.stringify(roster));
-    roster.name = name;
-    roster.id = generateId(16);
-    roster.ruleset = ruleset;
-    roster.points = points;
-    roster.description = description
-    await putRoster(roster);
-
-    // Reset and close modal
-    document.querySelector(".modal").reset?.(); // for future-proofing
-    document.getElementById("overlay").style.display = "none";
-
-    await viewRosters();
-
-    goToRoster(roster);
+async function createArmy() {
+  let army = document.getElementById("army").value;
+  const ror = document.getElementById("ror").value;
+  if (ror && !ror.includes('Optional')) {
+    army = ror;
   }
+
+  const ruleset = document.getElementById("ruleset").value;
+  const points = document.getElementById("points").value;
+  let name = document.getElementById("name").value;
+  const description = document.getElementById("description").value;
+
+  if (!army || !ruleset || !points) {
+    alert("Please fill in all required fields.");
+    return;
+  }
+
+  if (!name)
+    name = army;
+
+  let roster = await getNewRoster(army);
+  console.log(JSON.stringify(roster));
+  roster.name = name;
+  roster.id = generateId();
+  roster.ruleset = ruleset;
+  roster.points = points;
+  roster.description = description
+  await putRoster(roster);
+
+  // Reset and close modal
+  document.querySelector(".modal").reset?.(); // for future-proofing
+  document.getElementById("overlay").style.display = "none";
+
+  await viewRosters();
+
+  goToRoster(roster);
+}

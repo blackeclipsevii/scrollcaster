@@ -1,4 +1,4 @@
-const hostname = "http://192.168.1.213";
+const hostname = "http://192.168.1.160";
 const port = 3000;
 var _loadScrollData = false;
 var roster = null;
@@ -13,14 +13,16 @@ function goBack() {
     }
 }
 
-function generateId(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+function generateId() {
+    if (crypto) {
+        return crypto.randomUUID();
     }
-    return result;
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
 
 window.addEventListener("beforeunload", () => {
