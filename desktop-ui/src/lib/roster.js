@@ -7,6 +7,18 @@ async function getRosters() {
     return rosters;
 }
 
+async function getNewRoster(army) {
+    // to-do this should just be an endpoint
+    let roster = null;
+    await fetch(encodeURI(`${hostname}:${port}/roster?army=${army}`), {
+        method: "GET" // default, so we can ignore
+    }).then(response => { 
+        console.log(response);
+        roster = response.json();
+    });
+    return roster;
+}
+
 async function getRoster(id) {
     const json = localStorage.getItem(id);
     if (json) {

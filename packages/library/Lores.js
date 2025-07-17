@@ -6,7 +6,11 @@ import Upgrade from "./Upgrade.js";
 export default class Lores {
     constructor(dir) {
         this.universal = [];
-        this.lores = {};
+        this.lores = {
+            spell: {},
+            prayer: {},
+            manifestation: {}
+        };
         this.catalogue = parseCatalog(`${dir}/Lores.cat`);
         if (!this.catalogue)
             return;
@@ -18,24 +22,38 @@ export default class Lores {
                 this._doUniversalLores(lore);
                 return;
             }
+
             spells.id = lore['@id'];
-            spells.spells = [];
+            spells.abilities = [];
 
             if (lore.selectionEntries) {
-                const type = lore['@name'].includes('Manifestation') ? UpgradeType.ManifestationLore : UpgradeType.SpellLore;
                 lore.selectionEntries.forEach(selectionEntry => {
-                    spells.spells.push(new Upgrade(selectionEntry, type))
-                    spells.type = type;
+                    const typename = selectionEntry.profiles[0]['@typeName'].toLowerCase();
+                    let type = UpgradeType.SpellLore;
+                    if (typename.includes('prayer'))
+                        type = UpgradeType.PrayerLore;
+                    else if (selectionEntry['@name'].includes('Summon'))
+                        type = UpgradeType.ManifestationLore;
+                    const upgrade = new Upgrade(selectionEntry, type);
+
+                    spells.abilities.push(upgrade);
                 });
+                spells.type = spells.abilities[0].type;
             } 
 
             if (!spells) {
                 console.log (`No profiles found for ${lore['@name']}`);
                 console.log (JSON.stringify(lore, null, 2));
             }
-            this.lores[lore['@id']] = spells;
-        });
+            
+            let typeText = 'spell';
+            if (spells.type === UpgradeType.ManifestationLore)
+                typeText = 'manifestation';
+            else if (spells.type === UpgradeType.PrayerLore)
+                typeText = 'prayer';
 
+            this.lores[typeText][lore['@id']] = spells;
+        });
        // console.log(JSON.stringify(this.lores, null, 2));
     }
 
@@ -56,6 +74,7 @@ export default class Lores {
                     }
                 });
             }
+            console.log(`added universal lore : ${entry['@name']} ${lu.id}`);
             this.universal.push(lu);
         });
     }

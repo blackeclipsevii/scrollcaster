@@ -10,7 +10,7 @@ import Roster from './packages/library/Roster.js';
 import Lores from './packages/library/Lores.js';
 
 const server = express();
-const hostname = '192.168.1.213';
+const hostname = '192.168.1.160';
 const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
 const saveData = "./saveData.json";
@@ -58,21 +58,34 @@ function getArmy(armyValue) {
   } else {
     let i = 0;
     for (; i < libraries.length; ++i) {
-      if (libraries[i].includes(armyValue)) {
+      if (libraries[i].includes(`${armyValue}.cat`)) {
         break;
       }
     }
     
-    const library = libraries[i].split(' - ')[0] + '.cat';
-    army = new Army(aos, lores, directoryPath, library);
+    army = new Army(aos, lores, directoryPath, libraries[i]);
+    army.name = armyValue;
     armies[armyValue] = army;
   }
   return army;
 }
 
 const getLibraries = (directoryPath) => {
-  let files = fs.readdirSync(directoryPath);
-  return files.filter(file => file.includes(' - Library') && path.extname(file).toLowerCase() === '.cat');
+  const catFiles = fs.readdirSync(directoryPath)
+  .filter(file => {
+    const lc = file.toLowerCase();
+    console.log(lc);
+    return (
+      path.extname(lc) === '.cat' &&
+      !lc.includes('- library') &&
+      !lc.includes('legends]') &&
+      !lc.includes('path to glory') &&
+      !lc.includes('lores.cat') &&
+      !lc.includes('regiments of renown')
+    );
+  });
+  console.log (catFiles);
+  return catFiles;
 }
 
 server.use(function(req, res, next) {
@@ -93,7 +106,7 @@ server.get('/armies', (_, res) => {
   let result = [];
   libraries.forEach((_, index) => {
     let lib =  libraries[index];
-    result.push(lib.split(' - ')[0]);
+    result.push(lib.split('.')[0]);
   });
   res.end(JSON.stringify(result));
 });
@@ -145,7 +158,21 @@ server.get('/roster', (req, res) => {
     let json = JSON.stringify(roster);
     console.log(`GET roster: ${roster.id}`);
     res.end(json);
-  } else {
+  } 
+  else if (parsedUrl.query.army) {
+    const armyValue = decodeURI(parsedUrl.query.army);
+    console.log(`army value: ${armyValue}`)
+    const army = getArmy(armyValue);
+    if (!army) {
+      res.status(404);
+      res.end();
+      return;
+    }
+    let roster = new Roster(army);
+    let json = JSON.stringify(roster);
+    console.log(`GET new roster: ${json}`);
+    res.end(json);
+  }else {
     let names = Object.getOwnPropertyNames(rosters);
     let result = [];
     for (let i = 0; i < names.length; ++i) {

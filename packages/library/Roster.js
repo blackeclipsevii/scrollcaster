@@ -1,56 +1,55 @@
-
+import { UnitType } from "./Unit.js";
 
 export default class Roster {
-    constructor() {
+    constructor(army) {
+        this.army = army.name;
+        this.battleTraits = army.upgrades.battleTraits;
+        
         this.id = "";
         this.name = "";
-        this.army = "";
         this.battleFormation = null;
         this.points = 2000;
         this.regiments = [];
         this.auxiliaryUnits = [];
-        this.terrainFeature = null;
-        this.manifestationLore = null;
-        this.spellLore = null;
         this.battleTacticCards = [];
-    }
+        this.lores = {
+            canHaveManifestation: true,
+            manifestation: null,
 
-    general() {
-        for (let i = 0; i < this.regiments.length; ++i) {
-            const regiment = this.regiments[i];
-            for (let j = 0; j < regiment.units.length; ++j) {
-                const unit = regiment.units[j];
-                if (unit.isGeneral)
-                    return unit;
-            }
+            canHaveSpell: true,
+            spell: null,
+
+            canHavePrayer: true,
+            prayer: null
         }
-
-        return null;
+        this.terrainFeature = null;
+        this.isArmyOfRenown = army.isArmyOfRenown;
+        this._setDefaultValues(army);        
     }
 
-    totalPoints() {
-        let total = 0;
-        
-        // to-do calculate this number
-        this.regiments.forEach(regiment => {
-            regiment.units.forEach(unit => {
-                total += unit.totalPoints();
-            });
-        })
-
-        this.auxiliaryUnits.forEach(unit => {
-            total += unit.totalPoints();
+    _setDefaultValues(army) {
+        // setup defaults for army
+        // MOST armies have one terrain feature, so just find it
+        const unitIds = Object.getOwnPropertyNames(army.units);
+        unitIds.forEach(id => {
+            const unit = army.units[id];
+            if (unit.type === UnitType.Terrain) {
+                if (!unit.points || unit.points === 0) {
+                    this.terrainFeature = unit;
+                }
+            }
         });
 
-        if (this.terrainFeature)
-            total += this.terrainFeature.totalPoints();
+        let names = Object.getOwnPropertyNames(army.upgrades.lores.spell);
+        if (names.length === 1)
+            this.lores.spell = army.upgrades.lores.spell[names[0]];
+        else if (names.length === 0)
+            this.lores.canHaveSpell = false;
 
-        if (this.manifestationLore)
-            total += this.manifestationLore.totalPoints();
-            
-        if (0 && this.spellLore)
-            total += this.spellLore.totalPoints();
-
-        return total;
+        names = Object.getOwnPropertyNames(army.upgrades.lores.prayer);
+        if (names.length === 1)
+            this.lores.prayer = army.upgrades.lores.prayer[names[0]];
+        else if (names.length === 0)
+            this.lores.canHavePrayer = false;
     }
 }

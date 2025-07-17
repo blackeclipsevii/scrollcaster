@@ -16,17 +16,22 @@ function exportRoster(roster) {
         });
     }
 
-    if (roster.manifestationLore) {
+    if (roster.lores.manifestation) {
         text += '\nManifestation Lore: \n'
-        if (roster.manifestationLore.points && roster.manifestationLore.points > 0)
-            text += `  * ${roster.manifestationLore.name} (${roster.manifestationLore.points} points)\n`;
+        if (roster.lores.manifestation.points && roster.lores.manifestation.points > 0)
+            text += `  * ${roster.lores.manifestation.name} (${roster.lores.manifestation.points} points)\n`;
         else
-            text += `  * ${roster.manifestationLore.name}\n`;
+            text += `  * ${roster.lores.manifestation.name}\n`;
     }
 
-    if (roster.spellLore) {
+    if (roster.lores.spell) {
         text += '\nSpell Lore: \n'
-        text += `  * ${roster.spellLore.name}\n`;
+        text += `  * ${roster.lores.spell.name}\n`;
+    }
+
+    if (roster.lores.prayer) {
+        text += '\nPrayer Lore: \n'
+        text += `  * ${roster.lores.prayer.name}\n`;
     }
 
     const unitToText = (unit, indent) => {

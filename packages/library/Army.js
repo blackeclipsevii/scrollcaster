@@ -3,20 +3,58 @@ import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from './Upgrade.js';
 
+const upgradeLUT = {
+    'battle formation': {
+        alias: 'battleFormations',
+        type: UpgradeType.BattleFormation
+    },
+    'battle traits': {
+        alias: 'battleTraits',
+        type: UpgradeType.BattleTraits
+    },
+    'artefact': {
+        alias: 'artefacts',
+        type: UpgradeType.Artifact
+    },
+    'heroic trait': {
+        alias: 'heroicTraits',
+        type: UpgradeType.HeroicTrait
+    },
+    'manifestation lore': {
+        alias: 'manifestation',
+        type: UpgradeType.ManifestationLore
+    },
+    'spell lore': {
+        alias: 'spell',
+        type: UpgradeType.SpellLore
+    },
+    'prayer lore': {
+        alias: 'prayer',
+        type: UpgradeType.PrayerLore
+    }
+};
+
 export default class Army {
     constructor(ageOfSigmar, lores, dir, armyFilename) {
+        this.name = '';
         this.catalogues = {};
         this.upgrades = {
             artefacts: {},
             battleFormations: {},
+            battleTraits: {},
             heroicTraits: {},
-            manifestationLores: {},
-            spellLores: {}
+            lores: {
+                manifestation: {},
+                spell: {},
+                prayer: {}
+            }
         };
         this.points = {};
         this.units = {};
+        this._libraryUnits = {};
         this.unitLUT = {};
         this.keywordLUT = {};
+        this.isArmyOfRenown = armyFilename.includes(' - ');
         this._parse(ageOfSigmar, lores, dir, armyFilename);
     }
 
@@ -28,7 +66,7 @@ export default class Army {
         this.catalogues[name] = catalogue;
         catalogue.sharedSelectionEntries.forEach(entry => {
             const unit = new Unit(entry);
-            this.units[unit.id] = unit;
+            this._libraryUnits[unit.id] = unit;
         });
     }
 
@@ -127,12 +165,15 @@ export default class Army {
 
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
-            let unit = this.units[link['@targetId']];
+            // this is the global library for the faction
+            let unit = this._libraryUnits[link['@targetId']];
             if (!unit) {
                 console.log (`unable to find unitid: ${link['@targetId']}`);
                 console.log(`link :${JSON.stringify(link)}`);
                 return;
             }
+            // these are the units this army can use
+            this.units[unit.id] = unit;
             this.unitLUT[link['@id']] = unit.id;
 
             if (link.entryLinks) {
@@ -185,53 +226,45 @@ export default class Army {
             this._availableUnits(ageOfSigmar, link);
         });
         
-        const upgradeLUT = {
-            'battle formation': {
-                alias: 'battleFormations',
-                type: UpgradeType.BattleFormation
-            },
-            'artefact': {
-                alias: 'artefacts',
-                type: UpgradeType.Artifact
-            },
-            'heroic trait': {
-                alias: 'heroicTraits',
-                type: UpgradeType.HeroicTrait
-            },
-            'manifestation lore': {
-                alias: 'manifestationLores',
-                type: UpgradeType.ManifestationLore
-            },
-            'spell lore': {
-                alias: 'spellLores',
-                type: UpgradeType.SpellLore
+        const addUpgrade = (upgrades, key, element) => {
+            const lu = upgradeLUT[key];
+            let upgrade = null
+            if (lu.type === UpgradeType.ManifestationLore ||
+                lu.type === UpgradeType.SpellLore ||
+                lu.type === UpgradeType.PrayerLore) {
+                const targetId = element.entryLinks[0]['@targetId'];
+                if (targetId) {
+                    upgrade = lores.lores[lu.alias][targetId];
+                }
             }
-        };
+
+            if (!upgrade) {
+                upgrade = new Upgrade(element, lu.type);
+            }
+
+            if (key.includes('lore'))
+                upgrades.lores[lu.alias][upgrade.name] = upgrade;
+            else
+                upgrades[lu.alias][upgrade.name] = upgrade;
+        }
 
         const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
-        catalogue.sharedSelectionEntryGroups.forEach(entry => {
+
+        catalogue.sharedSelectionEntries.forEach(entry => {
             const lc = entry['@name'].toLowerCase();
-
-            const addUpgrade = (upgrades, key, element) => {
-                const lu = upgradeLUT[key];
-                let upgrade = null
-                if (lu.type === UpgradeType.ManifestationLore ||
-                    lu.type === UpgradeType.SpellLore) {
-                    const targetId = element.entryLinks[0]['@targetId'];
-                    if (targetId) {
-                        upgrade = lores.lores[targetId];
-                    }
-                }
-
-                if (!upgrade) {
-                    upgrade = new Upgrade(element, lu.type);
-                }
-                upgrades[lu.alias][upgrade.name] = upgrade;
-            }
-
             ulKeys.forEach(key => {
                 if (lc.includes(key)) {
-                   // console.log(entry, null, 2);
+                    // console.log(entry, null, 2);
+                    addUpgrade(this.upgrades, key, entry);
+                }
+            });
+        })
+
+        catalogue.sharedSelectionEntryGroups.forEach(entry => {
+            const lc = entry['@name'].toLowerCase();
+            ulKeys.forEach(key => {
+                if (lc.includes(key)) {
+                    // console.log(entry, null, 2);
                     if (entry.selectionEntryGroups) {
                         entry.selectionEntryGroups.forEach(group => {
                             group.selectionEntries.forEach(element => {
@@ -247,10 +280,10 @@ export default class Army {
             });
 
             lores.universal.forEach(itr => {
-                const universalLore = lores.lores[itr.id];
+                const universalLore = lores.lores.manifestation[itr.id];
                 universalLore.points = itr.points;
                 universalLore.type = itr.type;
-                this.upgrades.manifestationLores[universalLore.name] = universalLore;
+                this.upgrades.lores.manifestation[`UNIVERSAL-${universalLore.name}`] = universalLore;
             });
         });
         

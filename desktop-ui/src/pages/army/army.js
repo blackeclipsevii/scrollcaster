@@ -5,42 +5,31 @@ fixedPreviousUrl = '../../index.html';
 function updateValidationDisplay() {
     const errors = validateRoster(roster);
     const pointsOverlay = document.getElementById('pointsOverlay');
-    if (errors.length > 0) {
-        pointsOverlay.style.backgroundColor = 'red';
-    } else {
-        pointsOverlay.style.backgroundColor = 'green';
-    }
+    pointsOverlay.style.backgroundColor = errors.length > 0 ? 'red' : 'green';
 
-    pointsOverlay.onclick = () => {
-        const overlay = document.getElementById("overlay");
-        const visibleStyle = 'block';
-        if (overlay.style.display === visibleStyle) {
-            overlay.style.display = "none";
-        } else {
-            overlay.style.display = visibleStyle;
-            const modal = document.querySelector(".modal");
-            modal.innerHTML = '';
-
-            const title = document.createElement('h3');
-            title.innerHTML = 'Validation Errors';
-            modal.appendChild(title);
-
-            const section = document.createElement('div');
-            section.style.height = '30em';
-            section.style.width = '95%';
-
-            errors.forEach(error => {
-                const p = document.createElement('p');
-                p.innerHTML = `* ${error}`;
-                section.appendChild(p);
-            });
+    pointsOverlay.onclick = overlayToggleFactory('block', () =>{
+        const modal = document.querySelector(".modal");
+        modal.innerHTML = '';
     
-            modal.appendChild(section);
-            const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
-            modal.style.marginLeft = `${offset}px`;
-        }
-    };
-}
+        const title = document.createElement('h3');
+        title.innerHTML = 'Validation Errors';
+        modal.appendChild(title);
+    
+        const section = document.createElement('div');
+        section.style.height = '30em';
+        section.style.width = '95%';
+    
+        errors.forEach(error => {
+            const p = document.createElement('p');
+            p.innerHTML = `* ${error}`;
+            section.appendChild(p);
+        });
+    
+        modal.appendChild(section);
+        const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
+        modal.style.marginLeft = `${offset}px`;
+    });
+};
 
 async function displayEnhancements(unit, newUsItem, type) {
     const details = newUsItem.querySelector(`.available-${type}s`);
@@ -144,36 +133,28 @@ function refreshTotalPoints() {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
-function exportListAndDisplay() {
+const exportListAndDisplay = overlayToggleFactory('block', () =>{
     const text = exportRoster(roster);
+    const modal = document.querySelector(".modal");
+    modal.innerHTML = '';
 
-    const overlay = document.getElementById("overlay");
-    const visibleStyle = 'block';
-    if (overlay.style.display === visibleStyle) {
-        overlay.style.display = "none";
-    } else {
-        overlay.style.display = visibleStyle;
-        const modal = document.querySelector(".modal");
-        modal.innerHTML = '';
+    const section = document.createElement('textarea');
+    section.innerHTML = text;
+    section.style.height = '30em';
+    section.style.width = '95%';
 
-        const section = document.createElement('textarea');
-        section.innerHTML = text;
-        section.style.height = '30em';
-        section.style.width = '95%';
+    const copyButton = document.createElement('button');
+    copyButton.className = 'full-rectangle-button';
+    copyButton.textContent = 'Copy to Clipboard';
+    copyButton.onclick = () => {
+        copyToClipboard(text);
+    };
 
-        const copyButton = document.createElement('button');
-        copyButton.className = 'full-rectangle-button';
-        copyButton.textContent = 'Copy to Clipboard';
-        copyButton.onclick = () => {
-            copyToClipboard(text);
-        };
-
-        modal.appendChild(section);
-        modal.appendChild(copyButton);
-        const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
-        modal.style.marginLeft = `${offset}px`;
-    }
-}
+    modal.appendChild(section);
+    modal.appendChild(copyButton);
+    const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
+    modal.style.marginLeft = `${offset}px`;
+});
 
 function removeSection(section, className) {
     const child = section.querySelector(`.${className}`);
@@ -311,7 +292,7 @@ async function displayRegiment(index) {
     const pointsSpan = newRegItem.querySelector('.regiment-item-points');
     pointsSpan.textContent = points > 0 ? `${points} pts` : '';
     totalPoints += points;
-    
+
     const menu = createContextMenu(uniqueId, index, 'Regiment');
     const regHdr = newRegItem.querySelector(".regiment-header");
     regHdr.appendChild(menu);
@@ -354,6 +335,38 @@ function displayTerrain() {
     displaySingleton(typename, callback, roster.terrainFeature, 0, 0, onclick);
 }
 
+function displayBattleTraits() {
+    const typename = 'battleTraits';
+    const traitNames = Object.getOwnPropertyNames(roster.battleTraits);
+    const trait = roster.battleTraits[traitNames[0]];
+    const onclick = () => {
+        displayUpgradeOverlay(trait);
+    };
+    const usPrototype = document.getElementById("unit-slot-prototype");
+    const newUsItem = usPrototype.cloneNode(true);
+    
+    const usName = newUsItem.querySelector('.unit-text');
+    usName.textContent = trait.name.replace("Battle Traits: ", "");
+    newUsItem.style.padding = "0.5rem";
+    newUsItem.style.background = "#ddd";
+    newUsItem.style.marginBottom = "0.3rem";
+    newUsItem.style.borderRadius = "4px";
+
+    const usPoints = newUsItem.querySelector('.unit-slot-points');
+    usPoints.innerHTML = '';
+
+    removeSection(newUsItem, "unit-details");
+    const arrow = newUsItem.querySelector('.arrow');
+    arrow.textContent = '\u2022'; //'\u29BF';
+    
+    let unitHdr = newUsItem.querySelector(".unit-header-right");
+    unitHdr = newUsItem.querySelector(".unit-header-left");
+    unitHdr.onclick = onclick;
+    const parent = document.getElementById(typename);
+    parent.appendChild(newUsItem);
+    newUsItem.style.display = "";
+}
+
 function displayBattleFormation() {
     const typename = 'battleFormation';
     const callback = 'FormationCallback';
@@ -367,18 +380,27 @@ function displaySpellLore() {
     const typename = 'lores';
     const callback = 'SpellLoreCallback';
     const onclick = () => {
-        displayUpgradeOverlay(roster.spellLore);
+        displayUpgradeOverlay(roster.lores.spell);
     }
-    displaySingleton(typename, callback, roster.spellLore, 0, 0, onclick);
+    displaySingleton(typename, callback, roster.lores.spell, 0, 0, onclick);
+}
+
+function displayPrayerLore() {
+    const typename = 'lores';
+    const callback = 'PrayerLoreCallback';
+    const onclick = () => {
+        displayUpgradeOverlay(roster.lores.prayer);
+    }
+    displaySingleton(typename, callback, roster.lores.prayer, 0, 0, onclick);
 }
 
 function displayManifestLore() {
     const typename = 'lores';
     const callback = 'ManifestLoreCallback';
     const onclick = () => {
-        displayUpgradeOverlay(roster.manifestationLore);
+        displayUpgradeOverlay(roster.lores.manifestation);
     }
-    displaySingleton(typename, callback, roster.manifestationLore, 0, 0, onclick);
+    displaySingleton(typename, callback, roster.lores.manifestation, 0, 0, onclick);
 }
 
 function displayTactics() {
@@ -398,13 +420,19 @@ async function loadArmy(doGet) {
         const params = new URLSearchParams(window.location.search);
         const rosterId = params.get('id');
         roster = await getRoster(rosterId);
+        if (roster.isArmyOfRenown) {
+            const formationEle = document.getElementById('battleFormation');
+            if (formationEle) {
+                const section = formationEle.closest('.section');
+                if (section)
+                    section.parentElement.removeChild(section);
+            }
+        }
     }
-    
-    const divIds = ['regiments', 'auxiliary', 'lores', 'tactics', 'battleFormation', 'terrain'];
-    divIds.forEach(id => {
-        const div = document.getElementById(id);
-        div.innerHTML = '';
-    });
+
+    const sections = document.querySelectorAll('.section-container');
+    sections.forEach(section => section.innerHTML = '');
+
     totalPoints = 0;
 
     for (let i = 0; i < roster.regiments.length; ++i)
@@ -416,13 +444,18 @@ async function loadArmy(doGet) {
     if (roster.terrainFeature)
         displayTerrain();
 
+    displayBattleTraits();
+
     if (roster.battleFormation)
         displayBattleFormation();
 
-    if (roster.spellLore)
+    if (roster.lores.spell)
         displaySpellLore();
 
-    if (roster.manifestationLore)
+    if (roster.lores.prayer)
+        displayPrayerLore();
+
+    if (roster.lores.manifestation)
         displayManifestLore();
 
     if (roster.battleTacticCards.length > 0)
@@ -523,7 +556,9 @@ async function addItem(section) {
     }
     else if (lc.includes('lores')) {
         const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
-        if(!roster.spellLore || !roster.manifestationLore)
+        if((!roster.lores.spell && roster.lores.canHaveSpell) || 
+            (!roster.lores.manifestation && roster.lores.canHaveManifestation) || 
+            (!roster.lores.prayer && roster.lores.canHavePrayer))
             window.location.href = encodeURI(url);
     }
     else if (lc.includes('formation')) {
@@ -552,14 +587,21 @@ async function hideMenu(item) {
 
 async function deleteSpellLoreCallback(item) {
     hideMenu(item);
-    roster.spellLore = null;
+    roster.lores.spell = null;
+    await putRoster(roster);
+    loadArmy(false);
+}
+
+async function deletePrayerLoreCallback(item) {
+    hideMenu(item);
+    roster.lores.prayer = null;
     await putRoster(roster);
     loadArmy(false);
 }
 
 async function deleteManifestLoreCallback (item) {
     hideMenu(item);
-    roster.manifestationLore = null;
+    roster.lores.manifestation = null;
     await putRoster(roster);
     loadArmy(false);
 }

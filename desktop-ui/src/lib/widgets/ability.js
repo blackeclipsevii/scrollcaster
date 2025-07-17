@@ -64,6 +64,7 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     addSection('h4', 'name', '');
     addSection('p', 'cost', '<b>Cost:</b> ')
     addSection('p', 'casting value', '<b>Casting Value:</b> ')
+    addSection('p', 'chanting value', '<b>Chanting Value:</b> ')
     addSection('p', 'declare', '<b>Declare:</b> ');
     addSection('p', 'effect', '<b>Effect:</b> ');
     addSection('h5', 'keywords', 'Keywords: ');

@@ -10,7 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "army-thing",
+        "title": "scribecaster",
         "width": 450,
         "height": 800
       }

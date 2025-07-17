@@ -27,7 +27,8 @@ export const AbilityType = {
     Active: 0,
     Passive: 1,
     Spell: 2,
-    Command: 3
+    Command: 3,
+    Prayer: 4
 }
 
 export default class Ability {
@@ -56,6 +57,10 @@ export default class Ability {
         else if (profile['@typeName'].includes('Spell')) {
             this.type = AbilityType.Spell;
             this.cost = profile.characteristics['Casting Value'];
+        }
+        else if (profile['@typeName'].includes('Prayer')) {
+            this.type = AbilityType.Prayer;
+            this.cost = profile.characteristics['Chanting Value'];
         }
         else if (profile['@typeName'].includes('Command')) {
             this.type = AbilityType.Command;

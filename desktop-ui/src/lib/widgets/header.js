@@ -16,14 +16,14 @@ function initializeHeader(options) {
     if (options.leftButton) {
         const left = header.querySelector('.header-left');
         left.innerHTML = `
-        <button class="back-btn" onclick="goBack()">←</button>
+        <button class="back-btn" onclick="goBack()">‹</button>
         `;
     }
 
     if (options.rightButton) {
         const right = header.querySelector('.header-right');
         right.innerHTML = `
-        <button class="export-btn" onclick="exportListAndDisplay()">^</button>
+        <button class="export-btn" onclick="exportListAndDisplay()">⤴</button>
         `;
     }
 }

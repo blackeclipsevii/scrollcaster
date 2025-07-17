@@ -27,29 +27,47 @@ async function loadUpgrades() {
         if (isLore) {
             // to-do add a header to label these seperately
             upgradeList = [];
-            if (!roster.manifestationLore)
-                upgradeList.push(allUpgrades.manifestationLores);
 
-            if (!roster.spellLore)
-                upgradeList.push(allUpgrades.spellLores);
+            const loreNames = Object.getOwnPropertyNames(roster.lores);
+            loreNames.forEach(loreName => {
+                if (!roster.lores[loreName])
+                    upgradeList.push(allUpgrades.lores[loreName]);
+            });
 
         } else {
             upgradeList = [allUpgrades[type]];
         }
         upgradeList.forEach(upgrades => {
-            const upgradeNames = Object.getOwnPropertyNames(upgrades);
+            let upgradeNames = Object.getOwnPropertyNames(upgrades);
+            upgradeNames = upgradeNames
+                            .map(str => ({
+                                original: str,
+                                isUniversal: str.startsWith("UNIVERSAL-"),
+                                value: str.startsWith("UNIVERSAL-") ? str.slice(10) : str
+                            }))
+                            .sort((a, b) => {
+                                // Prioritize non-UNIVERSAL strings
+                                if (a.isUniversal !== b.isUniversal) {
+                                    return a.isUniversal ? 1 : -1;
+                                }
+                                // Sort alphabetically within each group
+                                return a.value.localeCompare(b.value);
+                            });
+
             upgradeNames.forEach(upgradeName => {
-                const upgrade = upgrades[upgradeName];
+                const upgrade = upgrades[upgradeName.original];
 
                 let upgradeList = null;
                 if (upgrade.type === 2) {
                     upgradeList = document.getElementById('formation-list');
                 } else if (upgrade.type === 3) {
                     upgradeList = document.getElementById('spell-list');
-                } else if (upgrade.type === 4) {
+                } else if (upgrade.type === 6) {
+                    upgradeList = document.getElementById('prayer-list');
+                }else if (upgrade.type === 4) {
                     upgradeList = document.getElementById('manifestation-list');
                 } else {
-                    console.log(`type unknown: ${upgradeNames}`);
+                    console.log(`type unknown: ${upgrade.name}`);
                     document.querySelector('.item-list');
                 }
     
@@ -84,9 +102,11 @@ async function loadUpgrades() {
                     } else if (type.includes('tactic')) {
                         roster.battleTacticCards.push(upgrade);
                     } else if (upgrade.type == 3) {
-                        roster.spellLore = upgrade;   
+                        roster.lores.spell = upgrade;   
                     } else if (upgrade.type == 4) {
-                        roster.manifestationLore = upgrade;
+                        roster.lores.manifestation = upgrade;
+                    } else if (upgrade.type == 6) {
+                        roster.lores.prayer = upgrade;
                     }
                     await putRoster(roster);
                     goBack();
@@ -104,11 +124,7 @@ async function loadUpgrades() {
 
 const header = document.getElementById('army-header');
 if (type.includes('battleFormation')) {
-    header.textContent = 'Choose a Battle Formation';
-}else if (type.includes('artefact')) {
-    header.textContent = 'Choose an Artifact';
-} else if (type.includes('battleTrait')) {
-    header.textContent = 'Choose a Battle Trait';
+    header.textContent = 'Battle Formations';
 }
 
 loadUpgrades();

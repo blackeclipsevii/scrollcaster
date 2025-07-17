@@ -1,23 +1,47 @@
+var _ror = {};
 
-function toggleOverlay() {
-  const overlay = document.getElementById("overlay");
-  if (overlay.style.display === "flex") {
-    overlay.style.display = "none";
-  } else {
-    overlay.style.display = "flex";
-    fetch(`${hostname}:${port}/armies`).
-    then(resp => resp.json()).
-    then(armies => {
-      let armySelect = document.getElementById("army");
-      armies.forEach((army)=> {
+const toggleOverlay = overlayToggleFactory('flex', () =>{
+  fetch(`${hostname}:${port}/armies`).
+  then(resp => resp.json()).
+  then(armies => {
+    _ror = {};
+    let armySelect = document.getElementById("army");
+    armies.forEach((army)=> {
+      console.log(army);
+      if (!army.includes('-')) {
         const option = document.createElement("option");
         option.value = army;
         option.textContent = army;
         armySelect.appendChild(option);
-      });
+      } else {
+        const parts = army.split('-');
+        const faction = parts[0].trim();
+        const subfaction = parts[1].trim();
+        if (_ror[faction]) {
+          _ror[faction].push(subfaction);
+        } else {
+          const l = ['Army of Renown (Optional)', subfaction];
+          _ror[faction] = l;
+        }
+      }
     });
-  }
-}
+    
+    armySelect.onchange = () => {
+      const values = _ror[armySelect.value.trim()]
+      console.log(values);
+      if (values) {
+        let rorSelect = document.getElementById("ror");
+        rorSelect.innerHTML = '';
+        values.forEach(value => {
+          const option = document.createElement("option");
+          option.value = `${armySelect.value} - ${value}`;
+          option.textContent = value;
+          rorSelect.appendChild(option);
+        });
+      }
+    };
+  });
+});
 
 function goToRoster(roster) {
   window.location.href = encodeURI(`./pages/army/army.html?id=${roster.id}`);
@@ -50,13 +74,8 @@ function displayRoster(roster) {
 }
 
 async function viewRosters() {
-  const overlay = document.getElementById('overlay');
-  overlay.addEventListener('click', function(event) {
-    if (event.target === overlay) {
-      overlay.style.display = 'none';
-    }
-  });
-  
+  addOverlayListener();
+
   const armies = document.getElementById("army-list");
   armies.innerHTML = '';
 
@@ -85,12 +104,17 @@ async function deleteRosterCallback(e) {
   const menuWrapper = e.closest(`.menu-wrapper`);
   const idxDiv = menuWrapper.querySelector(".idx");
   const id = idxDiv.textContent;
-  deleteRoster(id);
+  await deleteRoster(id);
   await viewRosters();
 }
 
   async function createArmy() {
-    const army = document.getElementById("army").value;
+    let army = document.getElementById("army").value;
+    const ror = document.getElementById("ror").value;
+    if (ror && !ror.includes('Optional')) {
+      army = ror;
+    }
+  
     const ruleset = document.getElementById("ruleset").value;
     const points = document.getElementById("points").value;
     let name = document.getElementById("name").value;
@@ -104,14 +128,13 @@ async function deleteRosterCallback(e) {
     if (!name)
       name = army;
 
-    let roster = await getRoster('this is a bad roster');
+    let roster = await getNewRoster(army);
     console.log(JSON.stringify(roster));
     roster.name = name;
     roster.id = generateId(16);
-    roster.army = army;
     roster.ruleset = ruleset;
     roster.points = points;
-    roster.description = description;
+    roster.description = description
     await putRoster(roster);
 
     // Reset and close modal

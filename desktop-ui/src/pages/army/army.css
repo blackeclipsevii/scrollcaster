@@ -13,20 +13,6 @@
   font-size: 14px;
 }
 
-#pointsOverlay {
-    position: fixed;
-    bottom: 6em;
-    left: 2em;
-    background-color: #333;
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-size: 1rem;
-    box-shadow: 0 0 6px rgba(0,0,0,0.3);
-    z-index: 500;
-    cursor: pointer;
-}
-
 .arrow {
     font-size: large;
     transition: transform 0.3s ease;

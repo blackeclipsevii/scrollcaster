@@ -79,7 +79,7 @@ function validateRoster(roster) {
         errors.push(errorMsg);
     }
 
-    if (!roster.battleFormation) {
+    if (!roster.isArmyOfRenown && !roster.battleFormation) {
         let errorMsg = `A Battle Formation must be chosen.`;
         errors.push(errorMsg);
     }
