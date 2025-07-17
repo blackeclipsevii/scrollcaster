@@ -10,7 +10,7 @@ import Roster from './packages/library/Roster.js';
 import Lores from './packages/library/Lores.js';
 
 const server = express();
-const hostname = '192.168.1.160';
+const hostname = '192.168.1.213';
 const port = 3000;
 const directoryPath = "../age-of-sigmar-4th";
 const saveData = "./saveData.json";
@@ -121,31 +121,51 @@ server.get('/upgrades', (req, res) => {
 
 server.get('/units', (req, res) => {
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
-  const armyValue = decodeURI(parsedUrl.query.army);
-  let unitName = null;
+  let units = null;
+  if (parsedUrl.query.army) {
+    const armyValue = decodeURI(parsedUrl.query.army);
+    console.log(`Army requested: ${armyValue}`);
+
+    const army = getArmy(armyValue);
+    if (!army) {
+      res.status(404);
+      return;
+    }
+
+    units = army.units;
+  } else {
+    const aos = getAgeOfSigmar();
+    units = aos.units;
+  }
   
   if (parsedUrl.query.name) {
-    unitName = decodeURI(parsedUrl.query.name);
-    console.log(`Unit requested: ${armyValue} ${unitName}`);
-  } else {
-    console.log(`Army requested: ${armyValue}`);
-  }
-
-  const army = getArmy(armyValue);
-  
-  if (unitName) {
-    const unitIds = Object.getOwnPropertyNames(army.units);
+    const unitName = decodeURI(parsedUrl.query.name);
+    console.log(`Unit requested: ${unitName}`);
+    const unitIds = Object.getOwnPropertyNames(units);
     for (let i = 0; i < unitIds.length; ++i) {
-      const unit = army.units[unitIds[i]];
+      const unit = units[unitIds[i]];
       if (unit.name === unitName) {
         res.end(JSON.stringify(unit));
-        res.status(200);
         return;
       }
     }
+  } 
+  
+  if (parsedUrl.query.id) {
+    console.log(`Unit requested: ${parsedUrl.query.id}`);
+    const unit = units[parsedUrl.query.id];
+    if (unit) {
+      console.log(`Unit found.`);
+      res.end(JSON.stringify(unit));
+    } else {
+      console.log(`Unit not found.`);
+      res.status(404);
+      res.end();
+    }
+    return;
   }
 
-  res.end(JSON.stringify(army.units));
+  res.end(JSON.stringify(units));
 });
 
 server.get('/roster', (req, res) => {
@@ -165,7 +185,6 @@ server.get('/roster', (req, res) => {
     const army = getArmy(armyValue);
     if (!army) {
       res.status(404);
-      res.end();
       return;
     }
     let roster = new Roster(army);
@@ -208,7 +227,6 @@ server.post('/roster', (req, res) => {
 server.put('/roster', (req, res) => {
   console.log(`PUT roster ${req.body.id}`)
   rosters[req.body.id] = req.body;
-  res.status(200);
   res.end();
   saveRosters();
 });

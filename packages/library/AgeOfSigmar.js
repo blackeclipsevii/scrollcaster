@@ -3,6 +3,7 @@ import { XMLParser, XMLValidator} from "fast-xml-parser"
 import { bsLayoutSmoother } from './BsSmoother.js';
 
 import BattleTacticCard from './BattleTacticCard.js';
+import Unit from './Unit.js';
 
 function parseGameSystem(path) {
     const xmlContent = fs.readFileSync(path, 'utf8');
@@ -27,6 +28,7 @@ export default class AgeOfSigmar {
         this.gameSystem = parseGameSystem(`${path}/Age of Sigmar 4.0.gst`);
         this.keywordLUT = {};
         this.battleTacticCards = [];
+        this.units = {};
         this._parseKeywords();
     }
 
@@ -47,6 +49,20 @@ export default class AgeOfSigmar {
                         this.battleTacticCards.push(btCard);
                     });
                 });
+            }
+            if (entry['@type'] === 'unit') {
+                const unit = new Unit(entry);
+                console.log(`${unit.name} ${unit.id}`);
+                this.units[unit.id] = unit;
+            }
+        });
+
+        
+        this.gameSystem.sharedSelectionEntries.forEach(entry => {
+            if (entry['@type'] === 'unit') {
+                const unit = new Unit(entry);
+                console.log(`${unit.name} ${unit.id}`);
+                this.units[unit.id] = unit;
             }
         });
     }

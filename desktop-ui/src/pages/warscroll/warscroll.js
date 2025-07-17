@@ -183,13 +183,24 @@ async function readUnit() {
     const params = new URLSearchParams(window.location.search);
     const armyName = params.get('army');
     const unitName = params.get('unit');
+    const unitId = params.get('id');
     const hdr = document.getElementById('army-header');
-    hdr.innerHTML = decodeURI(unitName);
-    fetch(`${hostname}:${port}/units?army=${armyName}&name=${unitName}`).
+    let url = `${hostname}:${port}/units?`
+    if (unitId) {
+        url = `${url}id=${unitId}`
+    } else {
+        url = `${url}name=${unitName}`
+    }
+    if (armyName) {
+        url = `${url}&army=${armyName}`
+    }
+    console.log(url);
+    await fetch(url).
     then(resp => resp.json()).
     then(unit => {
         console.log(JSON.stringify(unit));
 
+        hdr.innerHTML = decodeURI(unit.name);
         displayChars(unit);
         displayWeapons('ranged', unit);
         displayWeapons('melee', unit);

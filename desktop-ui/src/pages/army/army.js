@@ -304,6 +304,71 @@ async function displayRegiment(index) {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
+async function getSpecificUnit(id, useArmy) {
+    let url = `${hostname}:${port}/units?id=${id}`;
+    if (useArmy) {
+        url = `${url}&army=${roster.army}`;
+    }
+
+    try {
+        const result = await fetch(encodeURI(url));
+        return result.status === 200 ? result.json() : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+async function getManifestationUnits() {
+    const ids = roster.lores.manifestation.unitIds;
+    let manifestations = [];
+    let armySpecific = false;
+    for (let i = 0; i < ids.length; ++i) {
+        let unit = await getSpecificUnit(ids[i], armySpecific);
+        if (!unit) {
+            armySpecific = !armySpecific;
+            unit = await getSpecificUnit(ids[i], armySpecific);
+        }
+
+        if (unit)
+            manifestations.push(unit);
+    }
+    return { units: manifestations, armyUnits: armySpecific };
+}
+
+async function displayManifestations() {
+    const lore = roster.lores.manifestation;
+
+    const loresDiv = document.getElementById('lores');
+    const prototype = document.getElementById('regiment-item-prototype');
+    const newRegItem = prototype.cloneNode(true);
+    newRegItem.id = lore.id;
+
+    const title = newRegItem.querySelector('.regiment-item-title');
+    title.innerHTML = lore.name;
+
+    const content = newRegItem.querySelector('.regiment-content');
+
+    const result = await getManifestationUnits();
+
+    for(let i = 0; i < result.units.length; ++i) {
+        const unit = result.units[i];
+        await createUnitSlot(content, unit, i, 'NO_CALLBACK_ALLOWED', `manifestation-${unit.id}`, () => {
+            let url = `../warscroll/warscroll.html?id=${unit.id}`;
+            if (result.armyUnits) {
+                url = `${url}&army=${roster.army}`
+            }
+            window.location.href = url;
+        });
+    };
+    
+    const pointsSpan = newRegItem.querySelector('.regiment-item-points');
+    pointsSpan.textContent = lore.points > 0 ? `${lore.points} pts` : '';
+    // totalPoints += points;
+
+    newRegItem.removeAttribute('style');
+    loresDiv.appendChild(newRegItem);
+}
+
 function displaySingleton(typename, callback, unit, idx, menuIdxContent, onclick) {
     const parent = document.getElementById(typename);
     
@@ -401,6 +466,7 @@ function displayManifestLore() {
         displayUpgradeOverlay(roster.lores.manifestation);
     }
     displaySingleton(typename, callback, roster.lores.manifestation, 0, 0, onclick);
+    displayManifestations();
 }
 
 function displayTactics() {

@@ -235,6 +235,11 @@ export default class Army {
                 const targetId = element.entryLinks[0]['@targetId'];
                 if (targetId) {
                     upgrade = lores.lores[lu.alias][targetId];
+                    if (upgrade.unitIds) {
+                        upgrade.unitIds.forEach(uuid => {
+                            this.units[uuid] = this._libraryUnits[uuid];
+                        });
+                    }
                 }
             }
 
