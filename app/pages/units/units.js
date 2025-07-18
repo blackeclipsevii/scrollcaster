@@ -113,6 +113,9 @@ async function loadUnitsForCatalog() {
 
 async function loadUnits() {
     roster = await getRoster(rosterId);
+    displayPointsOverlay(rosterId);
+    refreshPointsOverlay(rosterId);
+    updateValidationDisplay();
 
     await fetch(encodeURI(`${endpoint}/units?army=${roster.army}`)).
     then(resp => resp.json()).
@@ -191,6 +194,8 @@ async function loadUnits() {
     });
     loadScrollData();
 }
+
+addOverlayListener();
 
 if (rosterId) {
     fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);

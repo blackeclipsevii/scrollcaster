@@ -7,8 +7,13 @@ const displayTacticsOverlay = overlayToggleFactory('block', (tacticCard) =>{
 
     let ele = document.createElement('h3');
     ele.innerHTML = tacticCard.name;
-
     section.appendChild(ele);
+
+    if (tacticCard.text.length > 0) {
+        ele = document.createElement('p');
+        ele.innerHTML = tacticCard.text;
+        section.appendChild(ele);
+    }
 
     tacticCard.tactics.forEach(tactic => {
         const section2 = document.createElement('div');

@@ -157,6 +157,9 @@ async function loadUniversalLores() {
 async function loadUpgrades() {
     fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
     roster = await getRoster(rosterId);
+    displayPointsOverlay(rosterId);
+    refreshPointsOverlay(rosterId);
+    updateValidationDisplay();
 
     await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
     then(resp => resp.json()).
@@ -186,11 +189,11 @@ if (type.includes('battleFormation')) {
     header.textContent = 'Battle Formations';
 }
 
+addOverlayListener();
+
 if (rosterId)
     loadUpgrades();
 else if (armyName)
     loadUpgradesCatalog();
 else
     loadUniversalLores();
-
-addOverlayListener();

@@ -14,9 +14,13 @@ export class BattleTactic {
 export default class BattleTacticCard {
     constructor(entry) {
         this.name = entry['@name'];
+        this.text = '';
         this.tactics = [null, null, null];
         entry.profiles[0].characteristics.forEach(phase => {
-            if (phase['@name'] === BattleTacticType.Affray.name) {
+            if (phase['@name'] === 'Card') {
+                const text = phase['#text'];
+                this.text = text ? bsTextSmoother(text) : '';
+            } else if (phase['@name'] === BattleTacticType.Affray.name) {
                 this.tactics[BattleTacticType.Affray.index] = 
                     new BattleTactic(BattleTacticType.Affray, phase['#text']);
             } else if (phase['@name'] === BattleTacticType.Strike.name) {

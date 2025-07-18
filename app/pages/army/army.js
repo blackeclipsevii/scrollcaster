@@ -2,35 +2,6 @@
 var totalPoints = 0;
 fixedPreviousUrl = '../../index.html';
 
-function updateValidationDisplay() {
-    const errors = validateRoster(roster);
-    const pointsOverlay = document.getElementById('pointsOverlay');
-    pointsOverlay.style.backgroundColor = errors.length > 0 ? 'red' : 'green';
-
-    pointsOverlay.onclick = overlayToggleFactory('block', () =>{
-        const modal = document.querySelector(".modal");
-        modal.innerHTML = '';
-    
-        const title = document.createElement('h3');
-        title.innerHTML = 'Validation Errors';
-        modal.appendChild(title);
-    
-        const section = document.createElement('div');
-        section.style.height = '30em';
-        section.style.width = '95%';
-    
-        errors.forEach(error => {
-            const p = document.createElement('p');
-            p.innerHTML = `* ${error}`;
-            section.appendChild(p);
-        });
-    
-        modal.appendChild(section);
-        const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
-        modal.style.marginLeft = `${offset}px`;
-    });
-};
-
 async function displayEnhancements(unit, newUsItem, type) {
     const details = newUsItem.querySelector(`.available-${type}s`);
     await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
@@ -81,7 +52,7 @@ async function displayEnhancements(unit, newUsItem, type) {
                                 usPoints.textContent = '';
                             }
                             totalPoints += upgrade.points;
-                            refreshTotalPoints();
+                            refreshPointsOverlay(roster.id);
                         }
                         updateValidationDisplay();
                         putRoster(roster);
@@ -100,7 +71,7 @@ async function displayEnhancements(unit, newUsItem, type) {
                                 usPoints.textContent = '';
                             }
                             totalPoints -= upgrade.points;
-                            refreshTotalPoints();
+                            refreshPointsOverlay(roster.id);
                         }
                         updateValidationDisplay();
                         putRoster(roster);
@@ -110,29 +81,6 @@ async function displayEnhancements(unit, newUsItem, type) {
             details.appendChild(upgradeDiv);
         });
     });
-}
-
-function unitTotalPoints(unit) {
-    if (!unit.points)
-        return 0;
-
-    let pts = unit.points;
-    
-    if (unit.isReinforced)
-        pts += unit.points;
-
-    if ( unit.heroicTrait && unit.heroicTrait.points)
-        pts += unit.heroicTrait.points;
-    
-    if (unit.artefact && unit.artefact.points)
-        pts += unit.artefact.points;
-    
-    return pts;
-}
-
-function refreshTotalPoints() {
-    let pointsOverlay = document.getElementById('pointsOverlay');
-    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
 }
 
 const exportListAndDisplay = overlayToggleFactory('block', () =>{
@@ -516,7 +464,7 @@ async function displayManifestLore() {
     if (unitPoints > 0) {
         usPoints.textContent = `${unitPoints} pts`;
         totalPoints += unitPoints;
-        refreshTotalPoints();
+        refreshPointsOverlay(roster.id);
     } else {
         usPoints.textContent = '';
     }
@@ -563,6 +511,8 @@ async function loadArmy(doGet) {
                     section.parentElement.removeChild(section);
             }
         }
+        displayPointsOverlay(rosterId);
+        refreshPointsOverlay(rosterId);
     }
 
     const sections = document.querySelectorAll('.section-container');
@@ -598,7 +548,7 @@ async function loadArmy(doGet) {
 
     document.getElementById('army-header').textContent = roster.name;
     loadScrollData();
-    refreshTotalPoints();
+    refreshPointsOverlay(roster.id);
     updateValidationDisplay();
 }
 
@@ -651,7 +601,7 @@ function toggleReinforced(checkbox) {
     const usPoints = unitContainer.querySelector('.unit-slot-points');
     usPoints.textContent = `${ptsAfter} pts`;
     totalPoints = totalPoints - (ptsBefore - ptsAfter);
-    refreshTotalPoints();
+    refreshPointsOverlay(roster.id);
     updateValidationDisplay();
 }
 
@@ -659,14 +609,17 @@ function toggleReinforced(checkbox) {
 async function addItem(section) {
     const lc = section.toLowerCase() ;
     if (lc === 'regiments') {
-        roster.regiments.push({ units: [] });
-        const idx = roster.regiments.length - 1;
-        // displayRegiment(idx);
-        await putRoster(roster);
+        let nRegiments = (roster.regimentOfRenown ? 0 : 1) + roster.regiments.length;
+        if (nRegiments < 5) {
+            roster.regiments.push({ units: [] });
+            const idx = roster.regiments.length - 1;
+            // displayRegiment(idx);
+            await putRoster(roster);
 
-        // automatically go to adding a leader
-        const url = `../units/units.html?id=${roster.id}&regimentIndex=${idx}&army=${roster.army}`;
-        window.location.href = encodeURI(`${url}&type=hero`);
+            // automatically go to adding a leader
+            const url = `../units/units.html?id=${roster.id}&regimentIndex=${idx}&army=${roster.army}`;
+            window.location.href = encodeURI(`${url}&type=hero`);
+        }
     } 
     else if (lc.includes('auxiliary')) {   
         const url = `../units/units.html?id=${roster.id}&auxiliary=true&army=${roster.army}`;
@@ -791,7 +744,7 @@ async function deleteTerrainCallback(item) {
     const terrain = document.getElementById('terrain');
     terrain.innerHTML = '';
     totalPoints -= points;
-    refreshTotalPoints();
+    refreshPointsOverlay(roster.id);
 }
 
 async function duplicateRegiment(item) {

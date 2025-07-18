@@ -14,12 +14,18 @@ export function replaceAlternatingItalicMarkers(str) {
   });
 }
 
+export function makeBulletPointsBulletPoint(str) {
+  return str.replace(/•/g, '<br>•');
+
+}
+
 export default function bsTextSmoother(text) {
     if (!text)
         return text;
     let newText = text.toString();
     newText = replaceAlternatingBoldMarkers(newText);
     newText = replaceAlternatingItalicMarkers(newText);
+    newText = makeBulletPointsBulletPoint(newText);
     return newText;
 }
 
