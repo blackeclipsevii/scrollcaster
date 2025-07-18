@@ -135,9 +135,60 @@ export default class Army {
         const names = Object.getOwnPropertyNames(data.libraries);
         names.forEach(name => {
             data.libraries[name].sharedSelectionEntries.forEach(entry => {
+                if (entry['@type'] === 'unit') {
+                    const unit = new Unit(entry);
+                    this._libraryUnits[unit.id] = unit;
+                }
+            });
+        })
+
+        const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
+
+        const addUpgrade = (upgrades, key, element) => {
+            const lu = upgradeLUT[key];
+            let upgrade = null
+            if (lu.type === UpgradeType.ManifestationLore ||
+                lu.type === UpgradeType.SpellLore ||
+                lu.type === UpgradeType.PrayerLore) {
+                const targetId = element.entryLinks[0]['@targetId'];
+                if (targetId) {
+                    upgrade = ageOfSigmar.lores.lores[lu.alias][targetId];
+                    if (upgrade && upgrade.unitIds) {
+                        upgrade.unitIds.forEach(uuid => {
+                            const unit = this._libraryUnits[uuid];
+                            if (!unit) {
+                                console.log(`WARNING: Unable to find unit link in library: ${uuid}`);
+                                return;
+                            }
+                            this.units[uuid] = unit;
+                        });
+                    }
+                }
+            }
+
+            if (!upgrade) {
+                upgrade = new Upgrade(element, lu.type);
+            }
+
+            if (key.includes('lore'))
+                upgrades.lores[lu.alias][upgrade.name] = upgrade;
+            else
+                upgrades[lu.alias][upgrade.name] = upgrade;
+        }
+
+        catalogue.sharedSelectionEntries.forEach(entry => {
+            const lc = entry['@name'].toLowerCase();
+            if (entry['@type'] === 'unit') {
                 const unit = new Unit(entry);
                 this._libraryUnits[unit.id] = unit;
-            });
+            } else {
+                ulKeys.forEach(key => {
+                    if (lc.includes(key)) {
+                        // console.log(entry, null, 2);
+                        addUpgrade(this.upgrades, key, entry);
+                    }
+                });
+            }
         })
 
         if (catalogue.catalogEntries) {
@@ -152,7 +203,7 @@ export default class Army {
             let unit = this._libraryUnits[link['@targetId']];
             if (!unit) {
                 console.log (`unable to find unitid: ${link['@targetId']}`);
-                console.log(`link :${JSON.stringify(link)}`);
+                console.log(`name :${link['@name']}`);
                 return;
             }
 
@@ -211,45 +262,6 @@ export default class Army {
             this._availableUnits(ageOfSigmar, link);
         });
         
-        const addUpgrade = (upgrades, key, element) => {
-            const lu = upgradeLUT[key];
-            let upgrade = null
-            if (lu.type === UpgradeType.ManifestationLore ||
-                lu.type === UpgradeType.SpellLore ||
-                lu.type === UpgradeType.PrayerLore) {
-                const targetId = element.entryLinks[0]['@targetId'];
-                if (targetId) {
-                    upgrade = ageOfSigmar.lores.lores[lu.alias][targetId];
-                    if (upgrade && upgrade.unitIds) {
-                        upgrade.unitIds.forEach(uuid => {
-                            this.units[uuid] = this._libraryUnits[uuid];
-                        });
-                    }
-                }
-            }
-
-            if (!upgrade) {
-                upgrade = new Upgrade(element, lu.type);
-            }
-
-            if (key.includes('lore'))
-                upgrades.lores[lu.alias][upgrade.name] = upgrade;
-            else
-                upgrades[lu.alias][upgrade.name] = upgrade;
-        }
-
-        const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
-
-        catalogue.sharedSelectionEntries.forEach(entry => {
-            const lc = entry['@name'].toLowerCase();
-            ulKeys.forEach(key => {
-                if (lc.includes(key)) {
-                    // console.log(entry, null, 2);
-                    addUpgrade(this.upgrades, key, entry);
-                }
-            });
-        })
-
         catalogue.sharedSelectionEntryGroups.forEach(entry => {
             const lc = entry['@name'].toLowerCase();
             ulKeys.forEach(key => {

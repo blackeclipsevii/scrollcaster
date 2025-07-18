@@ -1,9 +1,11 @@
 var _ror = {};
-
+var _armies = []
 const toggleOverlay = overlayToggleFactory('flex', () =>{
-  fetch(`${hostname}/armies`).
+  if (_armies.length === 0)
+  fetch(`${endpoint}/armies`).
   then(resp => resp.json()).
   then(armies => {
+    _armies = armies;
     _ror = {};
     let armySelect = document.getElementById("army");
     armies.forEach((army)=> {

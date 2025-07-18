@@ -5,7 +5,7 @@ var _loadScrollData = false;
 var roster = null;
 var fixedPreviousUrl = null;
 var previousUrl = document.referrer;
-var version = '0.1.1beta';
+var version = '0.1.2beta';
 
 function goBack() {
     if (fixedPreviousUrl) {

@@ -99,7 +99,8 @@ export default class AgeOfSigmar {
                 const name = link['@name'].toLowerCase();
                 // lores we handle seperately
                 // don't tackle narrative right now
-                if (!name.includes(' lores') && !name.includes('path to glory')) {
+                if (!name.includes(' lores') &&
+                    !name.includes('path to glory')) {
                     const targetId = link['@targetId'];
                     const library = libraries[targetId];
                     if (library) {
