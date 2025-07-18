@@ -10,7 +10,7 @@ import installCatalog from './server/lib/installCatalog.js'
 
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
-const port = process.env.SCROLLCASTER_PORT || 8080;
+const port = process.env.SCROLLCASTER_PORT || 3000;
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 // const saveData = "./saveData.json";
 

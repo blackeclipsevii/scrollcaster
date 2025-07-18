@@ -35,5 +35,5 @@ FROM base
 COPY --from=build /scrollcaster /scrollcaster
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 8080
+EXPOSE 3000
 CMD [ "node", "server.js" ]
