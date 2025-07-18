@@ -1,23 +1,24 @@
 
-import path from 'path';
 import url from 'url';
-import fs from 'fs'
 import express from 'express'
 
-import AgeOfSigmar from './packages/library/AgeOfSigmar.js';
-import Army from './packages/library/Army.js';
-import Roster from './packages/library/Roster.js';
-import Lores from './packages/library/Lores.js';
+import AgeOfSigmar from './server/AgeOfSigmar.js';
+import Roster from './server/Roster.js';
+import Lores from './server/Lores.js';
 
 const server = express();
-const hostname = '192.168.1.160';
-const port = 3000;
+const hostname = process.env.SCROLLSCRIBE_SERVER_HOSTNAME;
+const port = process.env.SCROLLSCRIBE_SERVER_PORT;
 const directoryPath = "../age-of-sigmar-4th";
-const saveData = "./saveData.json";
-var libraries = null;
+// const saveData = "./saveData.json";
+
 var ageOfSigmar = null;
-var lores = null;
-var armies = {};
+var version = {
+  major: 1,
+  minor: 0,
+  patch: 0
+};
+
 /*
 var rosters = {};
 
@@ -46,53 +47,6 @@ function getAgeOfSigmar() {
   return ageOfSigmar;
 }
 
-function getLores() {
-  if (!lores) {
-    lores = new Lores(directoryPath);
-  }
-  return lores;
-}
-
-function getArmy(armyValue) {
-  const aos = getAgeOfSigmar();
-  const lores = getLores();
-
-  let army = null;
-  if (armies[armyValue]) {
-    army = armies[armyValue];
-  } else {
-    let i = 0;
-    for (; i < libraries.length; ++i) {
-      if (libraries[i].includes(`${armyValue}.cat`)) {
-        break;
-      }
-    }
-    
-    army = new Army(aos, lores, directoryPath, libraries[i]);
-    army.name = armyValue;
-    armies[armyValue] = army;
-  }
-  return army;
-}
-
-const getLibraries = (directoryPath) => {
-  const catFiles = fs.readdirSync(directoryPath)
-  .filter(file => {
-    const lc = file.toLowerCase();
-    console.log(lc);
-    return (
-      path.extname(lc) === '.cat' &&
-      !lc.includes('- library') &&
-      !lc.includes('legends]') &&
-      !lc.includes('path to glory') &&
-      !lc.includes('lores.cat') &&
-      !lc.includes('regiments of renown')
-    );
-  });
-  console.log (catFiles);
-  return catFiles;
-}
-
 server.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS");
@@ -108,7 +62,8 @@ server.get('/tactics', (req, res) => {
 });
 
 server.get('/lores', (_, res) => {
-  const lores = getLores();
+  const aos = getAgeOfSigmar();
+  const lores = aos.lores;
   const foo = {
     lores: lores.lores,
     universal: lores.universal
@@ -118,38 +73,47 @@ server.get('/lores', (_, res) => {
 });
 
 server.get('/armies', (req, res) => {
+  const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); 
   if (parsedUrl.query.army) {
     const armyName = decodeURI(parsedUrl.query.army);
-    const army = getArmy(armyName);
+    const army = aos.getArmy(armyName);
     res.end(JSON.stringify(army));
     return;
   }
-  
-  let result = [];
-  libraries.forEach((_, index) => {
-    let lib =  libraries[index];
-    result.push(lib.split('.')[0]);
-  });
+
+  const result = aos.getArmyNames();
   res.end(JSON.stringify(result));
 });
 
+server.get('/libraries', (req, res) => {
+  const aos = getAgeOfSigmar();
+  const result = aos.getLibraryNames();
+  res.end(JSON.stringify(result));
+});
+
+server.get('/version', (_, res) => {
+  res.end(JSON.stringify(version));
+});
+
 server.get('/upgrades', (req, res) => {
+  const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true);
   const armyValue = decodeURI(parsedUrl.query.army);
-  const army = getArmy(armyValue);
+  const army = aos.getArmy(armyValue);
   res.end(JSON.stringify(army.upgrades));
   res.status(200);
 });
 
 server.get('/units', (req, res) => {
+  const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
   let units = null;
   if (parsedUrl.query.army) {
     const armyValue = decodeURI(parsedUrl.query.army);
     console.log(`Army requested: ${armyValue}`);
 
-    const army = getArmy(armyValue);
+    const army = aos.getArmy(armyValue);
     if (!army) {
       res.status(404);
       return;
@@ -157,7 +121,6 @@ server.get('/units', (req, res) => {
 
     units = army.units;
   } else {
-    const aos = getAgeOfSigmar();
     units = aos.units;
   }
   
@@ -192,12 +155,13 @@ server.get('/units', (req, res) => {
 });
 
 server.get('/roster', (req, res) => {
+  const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true);
 
   if (parsedUrl.query.army) {
     const armyValue = decodeURI(parsedUrl.query.army);
     console.log(`army value: ${armyValue}`)
-    const army = getArmy(armyValue);
+    const army = aos.getArmy(armyValue);
     if (!army) {
       res.status(404);
       res.end();
@@ -333,7 +297,7 @@ server.delete('/roster', (req, res) => {
 */
 server.listen(port, hostname, () => {
   console.log(`Loading libraries...`);
-  libraries = getLibraries(directoryPath);
+  getAgeOfSigmar();
   console.log(`Loading save data...`);
   // loadRosters();
   console.log(`Server running at http://${hostname}:${port}/`);
