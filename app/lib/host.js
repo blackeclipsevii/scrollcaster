@@ -1,11 +1,11 @@
-const hostname = "http://localhost";
-const port = 3000;
+const hostname = "https://army-thing.fly.dev";
+const port = null;
 const endpoint = port ? `${hostname}:${port}` : hostname;
 var _loadScrollData = false;
 var roster = null;
 var fixedPreviousUrl = null;
 var previousUrl = document.referrer;
-var version = '0.1.2beta';
+var version = '0.1.3beta';
 
 function goBack() {
     if (fixedPreviousUrl) {
