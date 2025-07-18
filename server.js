@@ -9,8 +9,8 @@ import Roster from './server/Roster.js';
 import installCatalog from './server/lib/installCatalog.js'
 
 const server = express();
-const hostname = '66.241.124.80';
-const port = 8080;
+const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
+const port = process.env.SCROLLCASTER_PORT || 8080;
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 // const saveData = "./saveData.json";
 
