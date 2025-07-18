@@ -1,15 +1,17 @@
 
 import url from 'url';
+import path from 'path'
 import express from 'express'
 
 import AgeOfSigmar from './server/AgeOfSigmar.js';
 import Roster from './server/Roster.js';
-import Lores from './server/Lores.js';
+
+import installCatalog from './server/lib/installCatalog.js'
 
 const server = express();
-const hostname = process.env.SCROLLSCRIBE_SERVER_HOSTNAME;
-const port = process.env.SCROLLSCRIBE_SERVER_PORT;
-const directoryPath = "../age-of-sigmar-4th";
+const hostname = 'localhost';
+const port = 3000;
+const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 // const saveData = "./saveData.json";
 
 var ageOfSigmar = null;
@@ -295,10 +297,15 @@ server.delete('/roster', (req, res) => {
   return res.status(200);
 });
 */
-server.listen(port, hostname, () => {
+
+async function start() {
+  console.log(`Downloading catalog...`);
+  await installCatalog();
   console.log(`Loading libraries...`);
-  getAgeOfSigmar();
-  console.log(`Loading save data...`);
-  // loadRosters();
+  await getAgeOfSigmar();
   console.log(`Server running at http://${hostname}:${port}/`);
+}
+
+server.listen(port, hostname, () => {
+  start();
 });

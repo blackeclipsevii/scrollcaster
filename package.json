@@ -6,7 +6,9 @@
   },
   "dependencies": {
     "fast-xml-parser": "^5.0.4",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "axios": "^1.10.0",
+    "extract-zip": "^2.0.1"
   },
   "type":"module"
 }
