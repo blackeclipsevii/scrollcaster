@@ -2,6 +2,21 @@
 var totalPoints = 0;
 fixedPreviousUrl = '../../index.html';
 
+function arrowOnClick(arrow) {
+    const container = arrow.closest('.unit-header').parentElement;
+    const details = container.querySelector('.unit-details');
+    if(!details)
+        return;
+    
+    if (details.style.maxHeight) {
+        details.style.maxHeight = null;
+        arrow.style.transform = 'rotate(0deg)';
+    } else {
+        details.style.maxHeight = details.scrollHeight + "px";
+        arrow.style.transform = 'rotate(90deg)';
+    }
+}
+
 async function displayEnhancements(unit, newUsItem, type) {
     const details = newUsItem.querySelector(`.available-${type}s`);
     await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
@@ -161,18 +176,7 @@ async function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent, on
         const arrow = newUsItem.querySelector('.arrow');
         arrow.onclick = (event) => {
             event.stopPropagation();
-            const container = arrow.closest('.unit-header').parentElement;
-            const details = container.querySelector('.unit-details');
-            if(!details)
-                return;
-            
-            if (details.style.maxHeight) {
-                details.style.maxHeight = null;
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                details.style.maxHeight = details.scrollHeight + "px";
-                arrow.style.transform = 'rotate(90deg)';
-            }
+            arrowOnClick(arrow);
         }
     }
 
@@ -397,6 +401,12 @@ async function displayManifestLore() {
     const parent = document.getElementById('lores');
     const usPrototype = document.getElementById("unit-slot-prototype");
     const newUsItem = usPrototype.cloneNode(true);
+    
+    const arrow = newUsItem.querySelector('.arrow');
+    arrow.onclick = (event) => {
+        event.stopPropagation();
+        arrowOnClick(arrow);
+    }
     
     async function displayManifestations() {
         const result = await getManifestationUnits();
