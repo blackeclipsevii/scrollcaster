@@ -1,4 +1,4 @@
-const hostname = "https://army-thing.fly.dev";
+const hostname = "http://localhost";
 const port = 8080;
 var _loadScrollData = false;
 var roster = null;
