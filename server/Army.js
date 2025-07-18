@@ -63,7 +63,6 @@ export default class Army {
             return;
 
         const targetId = entryLink['@targetId'];
-       // const unitId = this.unitLUT[targetId];
         const unit = this.units[targetId];
         if (!unit)
             return;
@@ -77,11 +76,11 @@ export default class Army {
         if (!isLeader)
             return;
 
-        // not sure how to really parse these, so its TO-Do
+        // TO-DO not sure how to parse these correctly
         const regimentOptions = {
             units: [],
             keywords: [],
-            armyKeywords: []
+            _tags: []
         };
 
         const getLUTID = (modifier) => {
@@ -110,7 +109,7 @@ export default class Army {
                                 } else {
                                     keyword = this.keywordLUT[lutId];
                                     if (keyword) {
-                                        regimentOptions.armyKeywords.push(keyword);
+                                        regimentOptions._tags.push(keyword);
                                     }
                                 }
                             }
@@ -122,7 +121,7 @@ export default class Army {
 
         if (regimentOptions.units.length > 0 ||
             regimentOptions.keywords.length > 0 ||
-            regimentOptions.armyKeywords.length > 0)
+            regimentOptions._tags.length > 0)
             unit.regimentOptions = regimentOptions;
     }
 
@@ -239,16 +238,19 @@ export default class Army {
                     }
                 });
             }
+
             if (link.modifierGroups) {
                 link.modifierGroups.forEach(group => {
                     if (group['@type'] === 'and' && group.modifiers) {
                         group.modifiers.forEach(modifier => {
-                            if (modifier['@type'] === 'add' && modifier['@field'] === 'category' &&
-                                modifier['@value'] && !modifier['@scope']) {
+                            if (modifier['@type'] === 'add' && 
+                                modifier['@field'] === 'category' &&
+                                modifier['@value'] && 
+                                !modifier['@scope']) {
                                 const keyword = this.keywordLUT[modifier['@value']];
                                 if (keyword) {
-                                    unit.keywords.push(keyword);
-                                    console.log(`Add keyword ${keyword} to ${unit.name}`)
+                                    // the keywords isn't technically on the warscroll
+                                    unit._tags.push(keyword);
                                 }
                             }
                         });

@@ -5,14 +5,17 @@ function validateRoster(roster) {
         errors.push(errorMsg);
     }
 
-    if (roster.regiments.length > 5) {
-        let errorMsg = `Too many regiments exist: ${roster.regiments.length} (max: 5)`;
+    const regCount = (roster.regimentOfRenown ? 1 : 0) + roster.regiments.length; 
+    if (regCount > 5) {
+        let errorMsg = `Too many regiments exist: ${regCount} (max: 5)`;
         errors.push(errorMsg);
     }
 
     let numArtefacts = 0;
     let numTraits = 0;
     let numGenerals = 0;
+    let warmasterIsGeneral = false;
+    let warmasters = [];
     let uniqueUnits = {};
     roster.regiments.forEach((reg, idx) => {
         const nunits = reg.units.length;
@@ -22,7 +25,16 @@ function validateRoster(roster) {
             return;
         }
         
-        if (reg.units[0].isGeneral) {
+        const leader = reg.units[0];
+        if (leader.isWarmaster) {
+            // keep track of the forced generals
+            warmasters.push(leader.name);
+        }
+
+        if (leader.isGeneral) {
+            if (!warmasterIsGeneral) {
+                warmasterIsGeneral = leader.isWarmaster;
+            }
             numGenerals += 1;
         }
 
@@ -61,6 +73,9 @@ function validateRoster(roster) {
         errors.push(errorMsg);
     } else if (numGenerals > 1) {
         let errorMsg = `More than one unit is selected as your General.`;
+        errors.push(errorMsg);
+    } else if (warmasters.length > 0 && !warmasterIsGeneral) {
+        let errorMsg = `If you include any <b>WARMASTER</b> units in your roster, one of them must be your general: ${warmasters.join(', ')}`;
         errors.push(errorMsg);
     }
 

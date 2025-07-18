@@ -7,6 +7,7 @@ import { WeaponType } from "../shared/WeaponType.js";
 export default class Unit {
     constructor(selectionEntry) {
         this.isGeneral = false;
+        this.isWarmaster = false; // must be general if able
 
         this.canHaveHeroicTrait = false;
         this.heroicTrait = null;
@@ -26,13 +27,20 @@ export default class Unit {
             if (type < this.type)
                 this.type = type;
         });
+
+        // tags used for logic, like Leader or Lumineth Paragon
+        this._tags = [];
     }
 
     _parseKeywords(categoryLinks) {
         this.keywords = [];
         for (let i = 0; i < categoryLinks.length; ++i) {
             let link = categoryLinks[i];
-            this.keywords.push(link['@name']);
+            const keyword = link['@name'];
+            if (keyword === 'WARMASTER') {
+                this.isWarmaster = true;
+            }
+            this.keywords.push(keyword);
         }
     }
 

@@ -1,5 +1,5 @@
-const hostname = "https://army-thing.fly.dev";
-const port = null;
+const hostname = "http://localhost";
+const port = 3000;
 const endpoint = port ? `${hostname}:${port}` : hostname;
 var _loadScrollData = false;
 var roster = null;

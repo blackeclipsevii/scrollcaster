@@ -13,12 +13,14 @@ if (type)
     type = decodeURI(type);
 
 function canFieldUnit(regimentOptions, unit) {
+    // is the unit literally called out?
     for (let i = 0; i < regimentOptions.units.length; ++i) {
         if (regimentOptions.units[i] === unit.id) {
             return true;
         }
     }
 
+    // does the unit match keywords?
     for (let i = 0; i < regimentOptions.keywords.length; ++i) {
         if (unit.keywords.includes(regimentOptions.keywords[i]) &&
             unit.type > 0) {
@@ -26,8 +28,9 @@ function canFieldUnit(regimentOptions, unit) {
         }
     }
 
-    for (let i = 0; i < regimentOptions.armyKeywords.length; ++i) {
-        if (unit.keywords.includes(regimentOptions.armyKeywords[i])) {
+    // does the unit match some kind of logic keyword?
+    for (let i = 0; i < regimentOptions._tags.length; ++i) {
+        if (unit._tags.includes(regimentOptions._tags[i])) {
             return true;
         }
     }
