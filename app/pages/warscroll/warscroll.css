@@ -26,6 +26,8 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 td.melee-weapon,
@@ -37,8 +39,8 @@ th.characteristics {
   text-align: center;
   vertical-align: middle;
   /*border: 1px solid #ccc;*/
-  padding: 20px;
-  font-family: sans-serif;
+  /*padding: 20px;
+  font-family: sans-serif;*/
 }
 
 td.characteristics,
