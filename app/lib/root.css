@@ -188,6 +188,13 @@ footer {
     border-radius: 6px;
 }
 
+#pointsOverlay:active,
+.rectangle-button:active,
+.full-rectangle-button:active,
+.rectangle-button-small:active {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translateY(2px);
+}
 #pointsOverlay {
     position: fixed;
     bottom: 6em;

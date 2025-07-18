@@ -166,8 +166,8 @@ async function loadUnits() {
             const addBtn = document.createElement('button');
             addBtn.classList.add('rectangle-button');
             addBtn.textContent = '+';
-            addBtn.addEventListener('click', async (e) => {
-                e.stopPropagation(); // Prevents click from triggering page change
+            addBtn.addEventListener('click', async (event) => {
+                event.stopPropagation(); // Prevents click from triggering page change
                 if (auxiliary) {
                     roster.auxiliaryUnits.push(unit);
                 } else if (unit.type == 7) {

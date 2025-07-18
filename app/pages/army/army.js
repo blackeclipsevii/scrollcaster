@@ -209,6 +209,23 @@ async function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent, on
         removeSection(newUsItem, "unit-details");
         const arrow = newUsItem.querySelector('.arrow');
         arrow.textContent = '\u2022'; //'\u29BF';
+    } else {
+        const arrow = newUsItem.querySelector('.arrow');
+        arrow.onclick = (event) => {
+            event.stopPropagation();
+            const container = arrow.closest('.unit-header').parentElement;
+            const details = container.querySelector('.unit-details');
+            if(!details)
+                return;
+            
+            if (details.style.maxHeight) {
+                details.style.maxHeight = null;
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                details.style.maxHeight = details.scrollHeight + "px";
+                arrow.style.transform = 'rotate(90deg)';
+            }
+        }
     }
 
     if (unit.isGeneral) {
@@ -583,23 +600,6 @@ async function loadArmy(doGet) {
     loadScrollData();
     refreshTotalPoints();
     updateValidationDisplay();
-}
-
-function toggleUnit(header) {
-    console.log('foo')
-    const container = header.closest('.unit-header').parentElement;
-    const details = container.querySelector('.unit-details');
-    if(!details)
-        return;
-    
-    const arrow = container.querySelector('.arrow');
-    if (details.style.maxHeight) {
-        details.style.maxHeight = null;
-        arrow.style.transform = 'rotate(0deg)';
-    } else {
-        details.style.maxHeight = details.scrollHeight + "px";
-        arrow.style.transform = 'rotate(90deg)';
-    }
 }
 
 function toggleCrown(checkbox) {

@@ -33,6 +33,11 @@
     box-shadow: 0 3px 6px rgba(0, 0, 0, .15);
 }
 
+.selectable-item:active:not(:focus-within) {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translateY(2px);
+}
+
 .selectable-item:hover {
     background: #f0f0f0;
 }
