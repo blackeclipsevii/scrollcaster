@@ -609,7 +609,7 @@ function toggleReinforced(checkbox) {
 async function addItem(section) {
     const lc = section.toLowerCase() ;
     if (lc === 'regiments') {
-        let nRegiments = (roster.regimentOfRenown ? 0 : 1) + roster.regiments.length;
+        let nRegiments = (roster.regimentOfRenown ? 1 : 0) + roster.regiments.length;
         if (nRegiments < 5) {
             roster.regiments.push({ units: [] });
             const idx = roster.regiments.length - 1;
