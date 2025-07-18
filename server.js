@@ -9,7 +9,7 @@ import Roster from './server/Roster.js';
 import installCatalog from './server/lib/installCatalog.js'
 
 const server = express();
-const hostname = 'localhost';
+const hostname = '66.241.124.80';
 const port = 3000;
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 // const saveData = "./saveData.json";
