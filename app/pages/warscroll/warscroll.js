@@ -185,7 +185,7 @@ async function readUnit() {
     const unitName = params.get('unit');
     const unitId = params.get('id');
     const hdr = document.getElementById('army-header');
-    let url = `${hostname}:${port}/units?`
+    let url = `${endpoint}/units?`
     if (unitId) {
         url = `${url}id=${unitId}`
     } else {

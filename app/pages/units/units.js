@@ -61,7 +61,7 @@ function getUnitList(unit) {
 }
 
 async function loadUnitsForCatalog() {
-    let url = `${hostname}:${port}/units`;
+    let url = `${endpoint}/units`;
     if (armyName) {
         url = `${url}?army=${armyName}`
     }
@@ -111,7 +111,7 @@ async function loadUnitsForCatalog() {
 async function loadUnits() {
     roster = await getRoster(rosterId);
 
-    await fetch(encodeURI(`${hostname}:${port}/units?army=${roster.army}`)).
+    await fetch(encodeURI(`${endpoint}/units?army=${roster.army}`)).
     then(resp => resp.json()).
     then(units => {
         let leader = null;

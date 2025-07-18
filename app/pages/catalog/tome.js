@@ -41,7 +41,7 @@ async function loadCore() {
 
 async function loadTome() {
     fixedPreviousUrl = encodeURI(`catalog.html`);
-    const url = `${hostname}:${port}/armies?army=${armyName}`;
+    const url = `${endpoint}/armies?army=${armyName}`;
     await fetch(encodeURI(url)).
     then(resp => resp.json()).
     then(army => {

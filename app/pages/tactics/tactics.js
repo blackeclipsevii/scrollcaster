@@ -10,7 +10,7 @@ async function loadTactics() {
         fixedPreviousUrl = encodeURI(`../catalog/tome.html`);
     }
 
-    let url = `${hostname}:${port}/tactics`;
+    let url = `${endpoint}/tactics`;
     await fetch(encodeURI(url)).
     then(resp => resp.json()).
     then(tactics => {

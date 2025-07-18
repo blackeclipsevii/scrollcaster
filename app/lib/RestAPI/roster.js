@@ -2,7 +2,7 @@ var _storageName = 'rosters';
 
 function rosterEndpoint() {
     const user = getUniqueIdentifier();
-    return `${hostname}:${port}/roster?uuid=${user}`;
+    return `${endpoint}/roster?uuid=${user}`;
 }
 
 function _getRosters() {

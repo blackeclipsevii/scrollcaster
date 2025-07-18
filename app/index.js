@@ -1,7 +1,7 @@
 var _ror = {};
 
 const toggleOverlay = overlayToggleFactory('flex', () =>{
-  fetch(`${hostname}:${port}/armies`).
+  fetch(`${hostname}/armies`).
   then(resp => resp.json()).
   then(armies => {
     _ror = {};

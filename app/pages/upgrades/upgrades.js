@@ -119,7 +119,7 @@ function displayUpgrades(upgradeList) {
 
 async function loadUpgradesCatalog() {
     fixedPreviousUrl = encodeURI(`../catalog/tome.html?army=${armyName}`);
-    await fetch(encodeURI(`${hostname}:${port}/upgrades?army=${armyName}`)).
+    await fetch(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
         let upgradeList = [];
@@ -143,7 +143,7 @@ async function loadUpgradesCatalog() {
 
 async function loadUniversalLores() {
     fixedPreviousUrl = encodeURI(`../catalog/tome.html`);
-    await fetch(encodeURI(`${hostname}:${port}/lores`)).
+    await fetch(encodeURI(`${endpoint}/lores`)).
     then(resp => resp.json()).
     then(loreObject => {
         loreObject.universal.forEach(ulut => {
@@ -158,7 +158,7 @@ async function loadUpgrades() {
     fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
     roster = await getRoster(rosterId);
 
-    await fetch(encodeURI(`${hostname}:${port}/upgrades?army=${roster.army}`)).
+    await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
         let upgradeList = [];

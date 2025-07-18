@@ -33,7 +33,7 @@ function updateValidationDisplay() {
 
 async function displayEnhancements(unit, newUsItem, type) {
     const details = newUsItem.querySelector(`.available-${type}s`);
-    await fetch(encodeURI(`${hostname}:${port}/upgrades?army=${roster.army}`)).
+    await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
         const upgrades = allUpgrades[`${type}s`];
@@ -307,7 +307,7 @@ async function displayRegiment(index) {
 }
 
 async function getSpecificUnit(id, useArmy) {
-    let url = `${hostname}:${port}/units?id=${id}`;
+    let url = `${endpoint}/units?id=${id}`;
     if (useArmy) {
         url = `${url}&army=${roster.army}`;
     }

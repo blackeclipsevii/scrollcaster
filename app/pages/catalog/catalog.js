@@ -26,7 +26,7 @@ async function loadArmies() {
     });
 
 
-    const url = `${hostname}:${port}/armies`;
+    const url = `${endpoint}/armies`;
     await fetch(encodeURI(url)).
     then(resp => resp.json()).
     then(allArmies => {
