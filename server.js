@@ -337,7 +337,7 @@ server.delete('/roster', (req, res) => {
 
 async function start() {
   console.log(`Downloading catalog...`);
-  // await installCatalog();
+  await installCatalog();
   console.log(`Loading libraries...`);
   await getAgeOfSigmar();
   console.log(`Server running at http://${hostname}:${port}/`);
