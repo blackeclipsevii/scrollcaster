@@ -13,6 +13,7 @@ import parseCatalog from './lib/parseCatalog.js';
 import path from 'path';
 import Upgrade from './Upgrade.js';
 import { UpgradeType } from '../shared/UpgradeType.js';
+import BsConstraint, { Scope, BsModifier, ConstraintType } from './lib/BsConstraint.js';
 
 function parseGameSystem(path) {
     const xmlContent = fs.readFileSync(path, 'utf8');
@@ -147,20 +148,18 @@ export default class AgeOfSigmar {
                 const constraintLUT = [];
                 const unitConstraints = {};
                 entryLink.constraints.forEach(constraint => {
-                    if (constraint['@scope'] === 'force') {
-                        const id = constraint['@id'];
-                        constraintLUT.push(id);
-                        unitConstraints[id] = {
-                            type: constraint['@type'],
-                            value: constraint['@value']
-                        };
+                    const cObj = new BsConstraint(constraint);
+                    if (cObj.scope === Scope.force) {
+                        constraintLUT.push(cObj.id);
+                        unitConstraints[cObj.id] = cObj;
                     }
                 });
                 
                 modGroup.modifiers.forEach(mod => {
-                    if (mod['@type'] === 'set' && mod['@field'] !== 'hidden') {
-                        const constraint = unitConstraints[mod['@field']];
-                        constraint.value = mod['@value'];
+                    const cObj = unitConstraints[mod['@field']];
+                    if (cObj) {
+                        const mObj = new BsModifier(mod);
+                        cObj.applyModifier(mObj);
                     }
                 });
 
@@ -183,9 +182,9 @@ export default class AgeOfSigmar {
 
                         constraintLUT.forEach(id => {
                             const constraint = unitConstraints[id];
-                            if (constraint.type === 'min') {
+                            if (constraint.type === ConstraintType.min) {
                                 obj.min = Number(constraint.value);
-                            } else if (constraint.type === 'max') {
+                            } else if (constraint.type === ConstraintType.max) {
                                 obj.max = Number(constraint.value);
                             } else {
                                 console.log(`WARNING: constraint not honored: ${constraint.type}`);

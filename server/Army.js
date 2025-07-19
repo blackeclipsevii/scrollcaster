@@ -2,6 +2,10 @@
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from "../shared/UpgradeType.js";
+import BsConstraint, { BsCondition, BsModifier, ModifierType, Scope } from './lib/BsConstraint.js';
+import BsAttrObj from './lib/BsAttribObj.js';
+
+const LeaderId = "d1f3-921c-b403-1106";
 
 const upgradeLUT = {
     'battle formation': {
@@ -53,12 +57,13 @@ export default class Army {
         this.unitLUT = {};
         this.keywordLUT = {};
         this.regimentsOfRenown = [];
+        this._tags = {};
         // TO-DO what about big waaagh!s
         this.isArmyOfRenown = armyName.includes(' - ') && !armyName.includes('Library');
         this._parse(ageOfSigmar, armyName);
     }
 
-    _availableUnits(ageOfSigmar, entryLink) {
+    _availableUnits(ageOfSigmar, catalogue, entryLink) {
         if (!entryLink.modifiers)
             return;
 
@@ -78,10 +83,61 @@ export default class Army {
 
         // TO-DO not sure how to parse these correctly
         const regimentOptions = {
+            constraints: {},
             units: [],
             keywords: [],
             _tags: []
         };
+
+        if (catalogue.categoryEntries) {
+            catalogue.categoryEntries.forEach(catEntry => {
+                if (!catEntry.constraints) {
+                    // console.log(`Skipping catalog entry ${catEntry['@name']} - no constraints`);
+                    return;
+                }
+                let constraints = {};
+                catEntry.constraints.forEach(constraintXml => {
+                    const cObj = new BsConstraint(constraintXml);
+                    constraints[cObj.id] = cObj;
+                });
+
+                catEntry.modifiers.forEach(modXml =>{
+                    const mObj = new BsModifier(modXml);
+                    let meetsConditions = false;
+
+                    modXml.conditionGroups.forEach(condGroup =>{
+                        condGroup.localConditionGroups.forEach(lcg => {
+                            let localMeetsCondition = true;
+                            // TO-DO correctly local condition group
+                            lcg.conditions.forEach(conditionXml =>{
+                                const condObj = new BsCondition(conditionXml);
+                                if (condObj.childId === LeaderId)
+                                    return;
+                                localMeetsCondition &= condObj.meetsCondition(entryLink);
+                            });
+
+                            if (localMeetsCondition) {
+                                console.log(`${entryLink['@name']} meets conditions for ${catEntry['@name']}`);
+                                meetsConditions = true;
+                            }
+                        });
+                    });
+
+                    if (meetsConditions) {
+                        const constraint = constraints[mObj.field];
+                        constraint.applyModifier(mObj);
+                        let myConstraints = regimentOptions.constraints[catEntry['@id']];
+                        if (!myConstraints) {
+                            myConstraints = {
+                                name: catEntry['@name']
+                            };
+                            regimentOptions.constraints[entryLink['@id']] = myConstraints;
+                        }
+                        myConstraints[constraint.type] = constraint.value;
+                    }
+                });
+            });
+        }
 
         const getLUTID = (modifier) => {
             const recursiveStr = 'self.entries.recursive.';
@@ -95,8 +151,8 @@ export default class Army {
             entryLink.modifierGroups.forEach(group => {
                 if (group['@type'] === 'and') {
                     group.modifiers.forEach(modifier => {
-                        if (modifier['@type'] === 'add' &&
-                            modifier['@scope'] === 'force') {
+                        if (modifier['@type'] === ModifierType.add &&
+                            modifier['@scope'] === Scope.force) {
                             const lutId = getLUTID(modifier);
                             const childId = this.unitLUT[lutId];
                             const childUnit = this.units[this.unitLUT[lutId]];
@@ -142,6 +198,12 @@ export default class Army {
                 }
             });
         })
+        
+        if (catalogue.categoryEntries) {
+            catalogue.categoryEntries.forEach(category => {
+                this.keywordLUT[category['@id']] = category['@name'];
+            });
+        }
 
         const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
 
@@ -191,12 +253,6 @@ export default class Army {
                 });
             }
         })
-
-        if (catalogue.catalogEntries) {
-            catalogue.categoryEntries.forEach(category => {
-                this.keywordLUT[category['@id']] = category['@name'];
-            });
-        }
 
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
@@ -252,6 +308,7 @@ export default class Army {
                                 const keyword = this.keywordLUT[modifier['@value']];
                                 if (keyword) {
                                     // the keywords isn't technically on the warscroll
+                                    console.log(`${unit.name} tag added : ${keyword}`);
                                     unit._tags.push(keyword);
                                 }
                             }
@@ -263,7 +320,7 @@ export default class Army {
 
         // need the lut setup
         catalogue.entryLinks.forEach(link => {
-            this._availableUnits(ageOfSigmar, link);
+            this._availableUnits(ageOfSigmar, catalogue, link);
         });
         
         catalogue.sharedSelectionEntryGroups.forEach(entry => {

@@ -94,8 +94,20 @@ server.get('/libraries', (req, res) => {
   res.end(JSON.stringify(result));
 });
 
-server.get('/version', (_, res) => {
+server.get('/version', (req, res) => {
+  const parsedUrl = url.parse(req.url, true);
+  if (parsedUrl.query.of) {
+    if (parsedUrl.query.of.toLowerCase() === 'bsdata') {
+      const aos = getAgeOfSigmar();
+      const revision = aos.gameSystem['@revision'];
+      console.log (`BSData Revision ${revision}`);
+      res.end(revision);
+      return;
+    }
+  };
+
   res.end(JSON.stringify(version));
+  return;
 });
 
 server.get('/upgrades', (req, res) => {
@@ -208,7 +220,6 @@ server.get('/roster', (req, res) => {
     }
     const roster = new Roster(army);
     const json = JSON.stringify(roster);
-    console.log(`GET new roster: ${json}`);
     res.end(json);
     res.status(200);
     return;

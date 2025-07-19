@@ -12,7 +12,7 @@ let type = params.get('type');
 if (type)
     type = decodeURI(type);
 
-function canFieldUnit(regimentOptions, unit) {
+function canFieldUnit(regiment, regimentOptions, unit) {
     // is the unit literally called out?
     for (let i = 0; i < regimentOptions.units.length; ++i) {
         if (regimentOptions.units[i] === unit.id) {
@@ -29,12 +29,36 @@ function canFieldUnit(regimentOptions, unit) {
     }
 
     // does the unit match some kind of logic keyword?
-    for (let i = 0; i < regimentOptions._tags.length; ++i) {
-        if (unit._tags.includes(regimentOptions._tags[i])) {
-            return true;
-        }
-    }
+    const constraintIds = Object.getOwnPropertyNames(regimentOptions.constraints);
+    let allowed = false;
+    constraintIds.forEach(constraintId => {
+        if (allowed) return true;
 
+        const constraint = regimentOptions.constraints[constraintId];
+        if (unit._tags.includes(constraint.name)) {
+            if (constraint.max < 0) {
+                allowed = true;
+                return allowed;
+            }
+            
+            let currentCount = (()=>{
+            let count = 0;
+            regiment.units.forEach(regUnit => {
+                if (regUnit._tags.includes(constraint.name)) {
+                    count += 1;
+                }
+            });
+                return count;
+            })();
+
+            if (currentCount < constraint.max) {
+                allowed = true;
+                return allowed;
+            }
+        } 
+    });
+
+    return allowed;
 }
 
 function getUnitList(unit) {
@@ -189,6 +213,9 @@ async function loadUnits() {
         }
         unitIds.forEach(id => {
             const unit = units[id];
+            if (unit._tags.length > 0) {
+                console.log (`${unit.name} has tags: ${unit._tags.join(', ')}`);
+            }
             if (!displayLegends && unit.keywords.includes('Legends'))
                 return;
 
@@ -198,7 +225,7 @@ async function loadUnits() {
             if (!type && unit.type > 5)
                 return;
 
-            if (useRegimentOptions && !canFieldUnit(leader.regimentOptions, unit))
+            if (useRegimentOptions && !canFieldUnit(regiment, leader.regimentOptions, unit))
                 return;
 
             const item = document.createElement('div');

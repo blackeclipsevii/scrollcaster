@@ -72,6 +72,10 @@ async function putRoster(roster) {
     */
 }
 
+async function deleteRosters() {
+  _storeRosters({});
+}
+
 async function deleteRoster(id) {
     const rosters = _getRosters();
     if (rosters[id])

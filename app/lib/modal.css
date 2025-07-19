@@ -19,13 +19,6 @@
   font-size: 1rem;
 }
 
-.modal button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
 .overlay {
   position: fixed;
   top: 0;

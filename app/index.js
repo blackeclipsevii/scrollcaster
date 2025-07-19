@@ -1,6 +1,33 @@
 var _ror = {};
 var _armies = []
+
+const setOverlayContents = () => {
+  const modal = document.querySelector(".modal");
+  modal.innerHTML = `
+    <select id="army">
+    </select>
+
+    <select style='display: none;' id="ror">
+    </select>
+
+    <select id="ruleset">
+      <option value="">Select Ruleset</option>
+      <option>GHB 2025-26</option>
+    </select>
+
+    <input value="2000" type="number" id="points" placeholder="Points" />
+    <input type="text" id="name" placeholder="Name" />
+    <textarea id="description" placeholder="Description"></textarea>
+
+    <button class="clickable-style full-rectangle-button" onclick="createArmy()">Create</button>
+  `;
+  
+  const ruleset = document.getElementById("ruleset");
+  ruleset.selectedIndex = 1;
+}
+
 const toggleOverlay = overlayToggleFactory('flex', () =>{
+  setOverlayContents();
   if (_armies.length === 0)
   fetch(`${endpoint}/armies`).
   then(resp => resp.json()).
@@ -93,14 +120,82 @@ function displayRoster(roster) {
   armies.appendChild(container);
 }
 
-function setupVersion() {
-  const element = document.getElementById('version');
-  element.textContent = `${version}`
+async function createHeaderMenu() {
+  const serverVersion = await getServerVersion();
+  const bsdataRevision = await getBsDataVersion();
+  const right = document.querySelector('.header-right');
+  const callbackMap = {
+    'About': () => {
+        const toggle = overlayToggleFactory('block', () => {
+          const modal = document.querySelector(".modal");
+          modal.innerHTML = '';
+
+          const section = document.createElement('p');
+          section.innerHTML = `
+            <b>Client Version:</b> ${version} <br/>
+            <b>Server Version:</b> ${serverVersion} <br/>
+            <b>BSData:</b> Game System Revision ${bsdataRevision} <br/>
+          `;
+          
+          const link = document.createElement("a");
+          link.textContent = "Contribute to Age of Sigmar 4th BSData (github)";
+          link.href = "https://github.com/BSData/age-of-sigmar-4th";
+          link.target = "_blank";
+          section.appendChild(link);
+
+          const button = document.createElement('button');
+          button.className = 'full-rectangle-button';
+          button.textContent = 'Close';
+          button.onclick = () => {
+              disableOverlay();
+          };
+
+          modal.appendChild(section);
+          modal.appendChild(button);
+          const offset = (window.innerWidth - modal.clientWidth) / 2.0;
+          modal.style.marginLeft = `${offset}px`;
+      });
+      toggle();
+    },
+    'Delete All Rosters': () => {
+        const toggle = overlayToggleFactory('block', () => {
+          const modal = document.querySelector(".modal");
+          modal.innerHTML = '';
+
+          const section = document.createElement('p');
+          section.innerHTML = 'Do you want to delete every roster?<br/><br/><strong>This cannot be undone.</strong>';
+
+          const button = document.createElement('button');
+          button.className = 'full-rectangle-button';
+          button.textContent = 'Delete All Rosters';
+          button.style.backgroundColor = 'red';
+          button.onclick = () => {
+              deleteRosters();
+              const armies = document.getElementById("army-list");
+              armies.innerHTML = '';
+              disableOverlay();
+          };
+
+          modal.appendChild(section);
+          modal.appendChild(button);
+          const offset = (window.innerWidth - modal.clientWidth) / 2.0;
+          modal.style.marginLeft = `${offset}px`;
+      });
+      toggle();
+    }
+  };
+  const menu = createContextMenu(456, 2345, callbackMap);
+  const btn = menu.querySelector('.menu-btn');
+  btn.style.color = 'white';
+  btn.style.top = '.5em';
+  menu.style.zIndex = '1000';
+  right.appendChild(menu);
+
 }
 
 async function viewRosters() {
-  setupVersion();
-  addOverlayListener();
+  if (!document.querySelector('.menu'))
+    createHeaderMenu();
 
   const armies = document.getElementById("army-list");
   armies.innerHTML = '';
