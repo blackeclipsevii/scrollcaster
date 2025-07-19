@@ -1,4 +1,4 @@
-function createContextMenu(uniqueId, id, callbackPostfix) {
+function createContextMenu(uniqueId, id, callbackMap) {
     const ele = document.createElement('div');
     ele.innerHTML = `<button class="menu-btn">⋯</button>`;
     const button = ele.querySelector('.menu-btn');
@@ -35,11 +35,18 @@ function createContextMenu(uniqueId, id, callbackPostfix) {
         <div style="display: none;" class="idx">${id}</div>
         <div style="display: none;" class="uniqueId">${uniqueId}</div>
         <ul class="menu">
-            <li onclick="duplicate${callbackPostfix}(this)">Duplicate</li>
-            <li onclick="delete${callbackPostfix}(this)">Delete</li>
         </ul>
     </div>
     `;
+
+    const menu = div.querySelector('.menu');
+    const entryNames = Object.getOwnPropertyNames(callbackMap);
+    entryNames.forEach(entryName => {
+        const li = document.createElement('li');
+        li.onclick = callbackMap[entryName];
+        li.textContent = entryName;
+        menu.appendChild(li);
+    });
     ele.appendChild(div);
     return ele;
 }

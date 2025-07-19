@@ -181,31 +181,41 @@ const _initializeCharDiv = () => {
 
 async function readUnit() {
     const params = new URLSearchParams(window.location.search);
-    const armyName = params.get('army');
-    const unitName = params.get('unit');
-    const unitId = params.get('id');
     const hdr = document.getElementById('army-header');
-    let url = `${endpoint}/units?`
-    if (unitId) {
-        url = `${url}id=${unitId}`
-    } else {
-        url = `${url}name=${unitName}`
-    }
-    if (armyName) {
-        url = `${url}&army=${armyName}`
-    }
-    console.log(url);
-    await fetch(url).
-    then(resp => resp.json()).
-    then(unit => {
-        console.log(JSON.stringify(unit));
+    const local = params.get('local');
 
-        hdr.innerHTML = decodeURI(unit.name);
+    const _display = (unit) => {
+        hdr.innerHTML = unit.name;
         displayChars(unit);
         displayWeapons('ranged', unit);
         displayWeapons('melee', unit);
         widgetAbilityDisplayAbilities(unit);
         displayKeywords(unit);
-    });
+    }
+
+    if (local) {
+        const json = localStorage.getItem(local);
+        const unit = JSON.parse(json);
+        _display(unit);
+    } else {
+        const armyName = params.get('army');
+        const unitName = params.get('unit');
+        const unitId = params.get('id');
+        let url = `${endpoint}/units?`
+        if (unitId) {
+            url = `${url}id=${unitId}`
+        } else {
+            url = `${url}name=${unitName}`
+        }
+        if (armyName) {
+            url = `${url}&army=${armyName}`
+        }
+        await fetch(url).
+        then(resp => resp.json()).
+        then(unit => {
+            console.log(JSON.stringify(unit));
+            _display(unit);
+        });
+    }
 }
 readUnit();

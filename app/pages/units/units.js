@@ -80,10 +80,9 @@ async function loadUnitsForCatalog() {
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
-                let url = `../warscroll/warscroll.html?unit=${unit.name}`;
-                if (armyName)
-                    url = `${url}&army=${armyName}`
-                window.location.href = encodeURI(url);
+                const key = 'readMyScroll';
+                localStorage.setItem(key, JSON.stringify(unit));
+                window.location.href = `../warscroll/warscroll.html?local=${key}`;
             });
 
             const unitList = getUnitList(unit);
@@ -117,6 +116,64 @@ async function loadUnits() {
     refreshPointsOverlay(rosterId);
     updateValidationDisplay();
 
+    const isNewRegiment = hasRegimentIndex && roster.regiments[regimentIndex].units.length === 0;
+
+    const loadRor = async () => {
+        await fetch(encodeURI(`${endpoint}/regimentsOfRenown?army=${roster.army}`)).
+        then(resp => resp.json()).
+        then(units => {
+            units.forEach(regimentOfRenown => {
+                const item = document.createElement('div');
+                item.classList.add('selectable-item');
+
+                // Clicking the container navigates to details
+                item.addEventListener('click', () => {
+                    displayUpgradeOverlay(regimentOfRenown.upgrades);
+                });
+
+                const unitList = document.getElementById('ror-unit-list');
+                if (!unitList)
+                    return;
+
+                const section = unitList.closest('.section');
+                section.style.display = 'block';
+
+                const left = document.createElement('div');
+                left.classList.add('selectable-item-left');
+                left.textContent = regimentOfRenown.name;
+
+                const right = document.createElement('div');
+                right.classList.add('selectable-item-right');
+
+                const points = document.createElement('span');
+                points.textContent = regimentOfRenown.points ? `${regimentOfRenown.points} pts` : '';
+
+                const addBtn = document.createElement('button');
+                addBtn.classList.add('rectangle-button');
+                addBtn.textContent = '+';
+                addBtn.addEventListener('click', async (event) => {
+                    event.stopPropagation(); // Prevents click from triggering page change
+                    if (isNewRegiment) {
+                        // we were making a new regiment but chose a ror
+                        roster.regiments.splice(regimentIndex, 1);
+                    }
+                    roster.regimentOfRenown = regimentOfRenown;
+                    await putRoster(roster);
+                    goBack();
+                });
+
+                right.append(points, addBtn);
+                item.append(left, right);
+                unitList.appendChild(item);
+            });
+        });
+    }
+
+    if (isNewRegiment && !roster.regimentOfRenown && !roster.isArmyOfRenown) {
+        // we could make the regiment a ror
+        await loadRor();
+    }
+
     await fetch(encodeURI(`${endpoint}/units?army=${roster.army}`)).
     then(resp => resp.json()).
     then(units => {
@@ -149,7 +206,9 @@ async function loadUnits() {
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
-                window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
+                const key = 'readMyScroll';
+                localStorage.setItem(key, JSON.stringify(unit));
+                window.location.href = `../warscroll/warscroll.html?local=${key}`;
             });
 
             const unitList = getUnitList(unit);

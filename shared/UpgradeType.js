@@ -6,5 +6,6 @@ export const UpgradeType = {
     SpellLore: 3,
     ManifestationLore: 4,
     BattleTraits: 5,
-    PrayerLore: 6
+    PrayerLore: 6,
+    RegimentOfRenown: 7
 }

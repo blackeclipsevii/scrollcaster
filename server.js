@@ -107,6 +107,43 @@ server.get('/upgrades', (req, res) => {
   res.status(200);
 });
 
+server.get('/regimentsOfRenown', (req, res) =>{
+  const aos = getAgeOfSigmar();
+  const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
+  if (parsedUrl.query.army) {
+    const armyValue = decodeURI(parsedUrl.query.army);
+    console.log(`Army requested: ${armyValue}`);
+
+    const army = aos.getArmy(armyValue);
+    if (!army) {
+      res.status(404);
+      res.end();
+      return;
+    }
+
+    res.end(JSON.stringify(army.regimentsOfRenown));
+    res.status(200);
+    return;
+  }
+
+  if (parsedUrl.query.id) {
+    const regiment = aos.regimentsOfRenown[parsedUrl.query.id];
+    if (!regiment) {
+      res.status(404);
+      res.end();
+      return;
+    }
+    
+    res.end(JSON.stringify(regiment));
+    res.status(200);
+    return;
+  }
+
+  res.end(JSON.stringify(aos.regimentsOfRenown));
+  res.status(200);
+  return;
+});
+
 server.get('/units', (req, res) => {
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
@@ -300,7 +337,7 @@ server.delete('/roster', (req, res) => {
 
 async function start() {
   console.log(`Downloading catalog...`);
-  await installCatalog();
+  // await installCatalog();
   console.log(`Loading libraries...`);
   await getAgeOfSigmar();
   console.log(`Server running at http://${hostname}:${port}/`);

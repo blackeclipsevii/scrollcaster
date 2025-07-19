@@ -130,7 +130,7 @@ function removeSection(section, className) {
     }
 }
 
-async function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent, onclick){
+async function createUnitSlot(parent, unit, idx, callbackMap, menuIdxContent, onclick){
     const usPrototype = document.getElementById("unit-slot-prototype");
     const newUsItem = usPrototype.cloneNode(true);
     
@@ -225,13 +225,140 @@ async function createUnitSlot(parent, unit, idx, callbackTag, menuIdxContent, on
     if (!menuIdxContent)
         menuIdxContent = unit.id;
 
-    const menu = createContextMenu(menuIdxContent, menuIdxContent, callbackTag);
+    const menu = createContextMenu(menuIdxContent, menuIdxContent, callbackMap);
     let unitHdr = newUsItem.querySelector(".unit-header-right");
     unitHdr.appendChild(menu);
     unitHdr = newUsItem.querySelector(".unit-header-left");
     unitHdr.onclick = onclick;
     parent.appendChild(newUsItem);
     newUsItem.style.display = "";
+}
+
+async function displayRegimentOfRenown() {
+    const regimentsDiv = document.getElementById('regiments');
+    const prototype = document.getElementById('regiment-item-prototype');
+    const regiment = roster.regimentOfRenown;
+    const newRegItem = prototype.cloneNode(true);
+    newRegItem.id = `regiment-item-of-renown`;
+
+    const deadButton = newRegItem.querySelector('.full-rectangle-button');
+    deadButton.parentElement.removeChild(deadButton);
+
+    const title = newRegItem.querySelector('.regiment-item-title');
+    title.innerHTML = `Regiment of Renown`;
+
+    const content = newRegItem.querySelector('.regiment-content');
+    
+    // slot for the ability
+    const addRorAbility = () => {
+        const usPrototype = document.getElementById("unit-slot-prototype");
+        const newUsItem = usPrototype.cloneNode(true);
+        newUsItem.style.padding = "0.5rem";
+        newUsItem.style.background = "#ddd";
+        newUsItem.style.marginBottom = "0.3rem";
+        newUsItem.style.borderRadius = "4px";
+        
+        const arrow = newUsItem.querySelector('.arrow');
+        arrow.textContent = '\u2022'; //'\u29BF';
+        //arrow.onclick = (event) => {
+        //    event.stopPropagation();
+        //    arrowOnClick(arrow);
+        //}
+        
+        const usName = newUsItem.querySelector('.unit-text');
+        // Find the crown icon
+        usName.textContent = regiment.name;
+
+        // these are all for units
+        removeSection(newUsItem, 'is-general');
+        removeSection(newUsItem, 'is-reinforced');
+        removeSection(newUsItem, 'available-artefacts');
+        removeSection(newUsItem, 'available-heroicTraits');
+
+        const usPoints = newUsItem.querySelector('.unit-slot-points');
+        if (regiment.points > 0) {
+            usPoints.textContent = `${regiment.points} pts`;
+        } else {
+            usPoints.textContent = '';
+        }
+
+        let unitHdr = newUsItem.querySelector(".unit-header-right");
+        unitHdr = newUsItem.querySelector(".unit-header-left");
+        unitHdr.onclick = () => {
+            displayUpgradeOverlay(roster.regimentOfRenown.upgrades);
+        }
+        content.appendChild(newUsItem);
+        newUsItem.style.display = "";
+        const details = newUsItem.querySelector('.unit-details');
+        const detailSection = details.querySelector('.section');
+        const title = document.createElement('p');
+        title.textContent = 'Units';
+        detailSection.appendChild(title);
+        return detailSection;
+    }
+
+    const detailsSection = addRorAbility();
+
+    const _createUnitSlot = async (unit) => {
+        const usPrototype = document.getElementById("unit-slot-prototype");
+        const newUsItem = usPrototype.cloneNode(true);
+        
+        const usName = newUsItem.querySelector('.unit-text');
+        // Find the crown icon
+        usName.textContent = unit.name;
+
+        // remove toggle
+        removeSection(newUsItem, "unit-details");
+        const arrow = newUsItem.querySelector('.arrow');
+        arrow.textContent = '\u2022'; //'\u29BF';
+   
+        const usPoints = newUsItem.querySelector('.unit-slot-points');
+        usPoints.textContent = '';
+
+        newUsItem.style.padding = "0.5rem";
+        newUsItem.style.background = "#ddd";
+        newUsItem.style.marginBottom = "0.3rem";
+        newUsItem.style.borderRadius = "4px";
+
+        let unitHdr = newUsItem.querySelector(".unit-header-right");
+        unitHdr = newUsItem.querySelector(".unit-header-left");
+        unitHdr.onclick = () => {
+            const key = 'readMyScroll';
+            localStorage.setItem(key, JSON.stringify(unit));
+            window.location.href = `../warscroll/warscroll.html?local=${key}`;
+        };
+       // detailsSection.appendChild(newUsItem);
+        content.appendChild(newUsItem);
+        newUsItem.style.display = "";
+    }
+
+    for (let i = 0; i < regiment.unitContainers.length; ++i) {
+        const unitContainer = regiment.unitContainers[i];
+        for (let j = 0; j < unitContainer.min; ++j)
+            await _createUnitSlot(unitContainer.unit);
+    }
+
+    const pointsSpan = newRegItem.querySelector('.regiment-item-points');
+    pointsSpan.textContent = regiment.points > 0 ? `${regiment.points} pts` : '';
+    totalPoints += regiment.points;
+
+    const callbackMap = {
+        Delete: async (e) => {
+            totalPoints -= regiment.points;
+            roster.regimentOfRenown = null;
+            refreshPointsOverlay();
+            putRoster(roster);
+            regimentsDiv.removeChild(newRegItem);
+        }
+    };
+
+    const menu = createContextMenu(regiment.id, 0, callbackMap);
+    const regHdr = newRegItem.querySelector(".regiment-header");
+    regHdr.appendChild(menu);
+
+    newRegItem.removeAttribute('style');
+    regimentsDiv.appendChild(newRegItem);
+    refreshPointsOverlay(roster.id);
 }
 
 async function displayRegiment(index) {
@@ -252,8 +379,29 @@ async function displayRegiment(index) {
     let uniqueId = roster.id;
     for(let i = 0; i < regiment.units.length; ++i) {
         const unit = regiment.units[i];
-        await createUnitSlot(content, unit, i, 'UnitCallback', `${unit.id}:${index}:${i}`, () => {
-            window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
+        
+        const callbackMap = {
+            Duplicate: async (e) => {
+                const json = JSON.stringify(unit);
+                const clone = JSON.parse(json);
+                regiment.units.push(clone);
+                putRoster(roster);
+                // meh is easy
+                loadArmy(false);
+            },
+
+            Delete: async (e) => {
+                regiment.units.splice(i, 1);
+                putRoster(roster);
+                // meh is easy
+                loadArmy(false);
+            }
+        };
+
+        await createUnitSlot(content, unit, i, callbackMap, `${unit.id}:${index}:${i}`, () => {
+            const key = 'readMyScroll';
+            localStorage.setItem(key, JSON.stringify(unit));
+            window.location.href = `../warscroll/warscroll.html?local=${key}`;
         });
         uniqueId += unit.id;
         const unitsPoints = unitTotalPoints(unit);
@@ -264,15 +412,31 @@ async function displayRegiment(index) {
     pointsSpan.textContent = points > 0 ? `${points} pts` : '';
     totalPoints += points;
 
-    const menu = createContextMenu(uniqueId, index, 'Regiment');
+    const callbackMap = {
+        Duplicate: async (e) => {
+            const json = JSON.stringify(roster.regiment[index]);
+            const clone = JSON.parse(json);
+            roster.regiments.push(clone);
+            displayRegiment(roster.regiments.length-1);
+            updateValidationDisplay();
+        },
+
+        Delete: async (e) => {
+            roster.regiments.splice(index, 1);
+            putRoster(roster);
+            // refresh order
+            loadArmy(false);
+        }
+    };
+
+    const menu = createContextMenu(uniqueId, index, callbackMap);
     const regHdr = newRegItem.querySelector(".regiment-header");
     regHdr.appendChild(menu);
 
     newRegItem.removeAttribute('style');
     regimentsDiv.appendChild(newRegItem);
 
-    let pointsOverlay = document.getElementById('pointsOverlay');
-    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
+    refreshPointsOverlay(roster.id);
 }
 
 async function getSpecificUnit(id, useArmy) {
@@ -306,10 +470,10 @@ async function getManifestationUnits() {
     return { units: manifestations, armyUnits: armySpecific };
 }
 
-function displaySingleton(typename, callback, unit, idx, menuIdxContent, onclick) {
+function displaySingleton(typename, callbackMap, unit, idx, menuIdxContent, onclick) {
     const parent = document.getElementById(typename);
     
-    createUnitSlot(parent, unit, idx, callback, menuIdxContent, onclick);
+    createUnitSlot(parent, unit, idx, callbackMap, menuIdxContent, onclick);
 
     const unitsPoints = unitTotalPoints(unit);
     totalPoints += unitsPoints;
@@ -320,21 +484,62 @@ function displaySingleton(typename, callback, unit, idx, menuIdxContent, onclick
 
 function displayAux(idx) {
     const typename = 'auxiliary';
-    const callback = 'AuxUnitCallback';
     const unit = roster.auxiliaryUnits[idx];
     const onclick = () => {
-        window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${unit.name}`;
+        const key = 'readMyScroll';
+        localStorage.setItem(key, JSON.stringify(unit));
+        window.location.href = `../warscroll/warscroll.html?local=${key}`;
     };
-    displaySingleton(typename, callback, unit, idx, idx, onclick);
+    
+    const callbackMap = {
+        Duplicate: async (e) => {
+            const json = JSON.stringify(unit);
+            const clone = JSON.parse(json);
+            roster.auxiliaryUnits.push(clone);
+            putRoster(roster);
+            // meh is easy
+            loadArmy(false);
+        },
+
+        Delete: async (e) => {
+            roster.auxiliaryUnits.splice(i, 1);
+            putRoster(roster);
+            // meh is easy
+            loadArmy(false);
+        }
+    };
+
+    displaySingleton(typename, callbackMap, unit, idx, idx, onclick);
 }
 
 function displayTerrain() {
     const typename = 'terrain';
-    const callback = 'TerrainCallback';
     const onclick = () => {
-        window.location.href = `../warscroll/warscroll.html?army=${roster.army}&unit=${roster.terrainFeature.name}`;
+        const key = 'readMyScroll';
+        localStorage.setItem(key, JSON.stringify(roster.terrainFeature));
+        window.location.href = `../warscroll/warscroll.html?local=${key}`;
     };
-    displaySingleton(typename, callback, roster.terrainFeature, 0, 0, onclick);
+
+    const callbackMap = {
+        Replace: async (e) => {
+            roster.terrainFeature = null;
+            putRoster(roster);
+            const url = `../units/units.html?id=${roster.id}&army=${roster.army}`;
+            window.location.href = encodeURI(`${url}&type=faction terrain`);
+        },
+
+        Delete: async (e) => {
+            const points = roster.terrainFeature.points;
+            roster.terrainFeature = null;
+            await putRoster(roster);
+            const terrain = document.getElementById('terrain');
+            terrain.innerHTML = '';
+            totalPoints -= points;
+            refreshPointsOverlay(roster.id);
+        }
+    };
+
+    displaySingleton(typename, callbackMap, roster.terrainFeature, 0, 0, onclick);
 }
 
 function displayBattleTraits() {
@@ -371,29 +576,67 @@ function displayBattleTraits() {
 
 function displayBattleFormation() {
     const typename = 'battleFormation';
-    const callback = 'FormationCallback';
     const onclick = () => {
         displayUpgradeOverlay(roster.battleFormation);
     }
-    displaySingleton(typename, callback, roster.battleFormation, 0, 0, onclick);
+    
+    const callbackMap = {
+        Replace: async (e) => {
+            roster.battleFormation = null;
+            putRoster(roster);
+            const url = `../upgrades/upgrades.html?id=${roster.id}&type=battleFormation&army=${roster.army}`;
+            window.location.href = encodeURI(url);
+        }
+    };
+    displaySingleton(typename, callbackMap, roster.battleFormation, 900, 900, onclick);
 }
 
 function displaySpellLore() {
     const typename = 'lores';
-    const callback = 'SpellLoreCallback';
     const onclick = () => {
         displayUpgradeOverlay(roster.lores.spell);
     }
-    displaySingleton(typename, callback, roster.lores.spell, 0, 0, onclick);
+    
+    const callbackMap = {
+        Replace: async (e) => {
+            roster.lores.spell = null;
+            putRoster(roster);
+            const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
+            window.location.href = encodeURI(url);
+        },
+
+        Delete: async (e) => {
+            roster.lores.spell = null;
+            await putRoster(roster);
+            loadArmy(false);
+        }
+    };
+
+    displaySingleton(typename, callbackMap, roster.lores.spell, 0, 0, onclick);
 }
 
 function displayPrayerLore() {
     const typename = 'lores';
-    const callback = 'PrayerLoreCallback';
     const onclick = () => {
         displayUpgradeOverlay(roster.lores.prayer);
     }
-    displaySingleton(typename, callback, roster.lores.prayer, 0, 0, onclick);
+
+    const callbackMap = {
+        Replace: async (e) => {
+            roster.lores.prayer = null;
+            putRoster(roster);
+            const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
+            window.location.href = encodeURI(url);
+        },
+
+        Delete: async (e) => {
+            roster.lores.prayer = null;
+            await putRoster(roster);
+            loadArmy(false);
+        }
+    };
+
+    displaySingleton(typename, callbackMap, roster.lores.prayer, 0, 0, onclick);
 }
 
 async function displayManifestLore() {
@@ -449,11 +692,9 @@ async function displayManifestLore() {
         for(let i = 0; i < result.units.length; ++i) {
             const unit = result.units[i];
             await createManifestSlot(unit, () => {
-                let url = `../warscroll/warscroll.html?id=${unit.id}`;
-                if (result.armyUnits) {
-                    url = `${url}&army=${roster.army}`
-                }
-                window.location.href = url;
+                const key = 'readMyScroll';
+                localStorage.setItem(key, JSON.stringify(unit));
+                window.location.href = `../warscroll/warscroll.html?local=${key}`;
             });
         }
     }
@@ -483,7 +724,15 @@ async function displayManifestLore() {
     newUsItem.style.marginBottom = "0.3rem";
     newUsItem.style.borderRadius = "4px";
 
-    const menu = createContextMenu(lore.id, lore.id, "ManifestLoreCallback");
+    const callbackMap = {
+        Delete: async (e) => {
+            roster.lores.manifestation = null;
+            putRoster(roster);
+            parent.removeChild(newUsItem);
+        }
+    };
+
+    const menu = createContextMenu(lore.id, lore.id, callbackMap);
     let unitHdr = newUsItem.querySelector(".unit-header-right");
     unitHdr.appendChild(menu);
     unitHdr = newUsItem.querySelector(".unit-header-left");
@@ -498,13 +747,28 @@ async function displayManifestLore() {
 
 function displayTactics() {
     const typename = 'tactics';
-    const callback = 'TacticsCallback';
     const parent = document.getElementById(typename);
     roster.battleTacticCards.forEach((tactic, index) => {
         const onclick = () => {
             displayTacticsOverlay(tactic);
         }
-        createUnitSlot(parent, tactic, index, callback, index, onclick);
+        
+        const callbackMap = {
+            Replace: async (e) => {
+                roster.battleTacticCards.splice(index, 1);
+                putRoster(roster);
+                const url = `../tactics/tactics.html?id=${roster.id}&army=${roster.army}`;
+                window.location.href = encodeURI(url);
+            },
+
+            Delete: async (e) => {
+                roster.battleTacticCards.splice(index, 1);
+                await putRoster(roster);
+                loadArmy(false);
+            }
+        };
+
+        createUnitSlot(parent, tactic, index, callbackMap, index, onclick);
     });
 }
 
@@ -532,6 +796,9 @@ async function loadArmy(doGet) {
 
     for (let i = 0; i < roster.regiments.length; ++i)
         await displayRegiment(i);
+
+    if (roster.regimentOfRenown)
+        displayRegimentOfRenown();
 
     for (let i = 0; i< roster.auxiliaryUnits.length; ++i)
         displayAux(i);
@@ -664,121 +931,6 @@ async function addItem(section) {
 async function hideMenu(item) {
     const menu = item.closest(".menu-wrapper");
     menu.style.display = "none";
-}
-
-async function deleteSpellLoreCallback(item) {
-    hideMenu(item);
-    roster.lores.spell = null;
-    await putRoster(roster);
-    loadArmy(false);
-}
-
-async function deletePrayerLoreCallback(item) {
-    hideMenu(item);
-    roster.lores.prayer = null;
-    await putRoster(roster);
-    loadArmy(false);
-}
-
-async function deleteManifestLoreCallback (item) {
-    hideMenu(item);
-    roster.lores.manifestation = null;
-    await putRoster(roster);
-    loadArmy(false);
-}
-
-async function deleteUnitCallback(item) {
-    hideMenu(item);
-
-    const menu = item.closest(".menu-wrapper");
-    const idxDiv = menu.querySelector(".idx");
-    const idxItems = idxDiv.textContent.split(':');
-    const regiment = roster.regiments[idxItems[1]];
-    if (regiment.units.length > 1 && Number(idxItems[2]) === 0)
-        return; // to-do handle deleting the leader
-
-    regiment.units.splice(idxItems[2], 1);
-    await putRoster(roster);
-    loadArmy(false);
-}
-
-async function duplicateUnitCallback(item) {
-    hideMenu(item);
-    const menu = item.closest(".menu-wrapper");
-    const idxDiv = menu.querySelector(".idx");
-    const idxItems = idxDiv.textContent.split(':');
-    const regiment = roster.regiments[idxItems[1]];
-    if (Number(idxItems[2]) === 0)
-        return; // to-do handle deleting the leader
-    const json = JSON.stringify(regiment.units[idxItems[2]]);
-    regiment.units.push(JSON.parse(json));
-    await putRoster(roster);
-    loadArmy(false);
-}
-
-async function deleteAuxUnitCallback(item) {
-    hideMenu(item);
-    const menu = item.closest(".menu-wrapper");
-    const idxDiv = menu.querySelector(".idx");
-    const index = Number(idxDiv.textContent);
-    roster.auxiliaryUnits.splice(index, 1);
-    await putRoster(roster);
-    loadArmy(false);
-}
-
-async function deleteTacticsCallback(item) {
-    hideMenu(item);
-    const menu = item.closest(".menu-wrapper");
-    const idxDiv = menu.querySelector(".idx");
-    const index = Number(idxDiv.textContent);
-    roster.battleTacticCards.splice(index, 1);
-    await putRoster(roster);
-    loadArmy(false);
-}
-
-async function deleteFormationCallback(item) {
-    hideMenu(item);
-    roster.battleFormation = null;
-    await putRoster(roster);
-    const formation = document.getElementById('battleFormation');
-    formation.innerHTML = '';
-    updateValidationDisplay();
-}
-
-
-async function deleteTerrainCallback(item) {
-    hideMenu(item);
-    const points = roster.terrainFeature.points;
-    roster.terrainFeature = null;
-    await putRoster(roster);
-    const terrain = document.getElementById('terrain');
-    terrain.innerHTML = '';
-    totalPoints -= points;
-    refreshPointsOverlay(roster.id);
-}
-
-async function duplicateRegiment(item) {
-    hideMenu(item);
-    const menu = item.closest(".menu-wrapper");
-    const idxDiv = menu.querySelector(".idx");
-    const index = Number(idxDiv.textContent);
-
-    const json = JSON.stringify(roster.regiments[index]);
-    roster.regiments.push(JSON.parse(json));
-    displayRegiment(roster.regiments.length - 1);
-    await putRoster(roster);
-    updateValidationDisplay();
-}
-
-async function deleteRegiment(item) {
-    hideMenu(item);
-    const menu = item.closest(".menu-wrapper");
-    const idxDiv = menu.querySelector(".idx");
-    const index = Number(idxDiv.textContent);
-
-    roster.regiments.splice(index, 1);
-    await putRoster(roster);
-    loadArmy(false);
 }
 
 function addEntry(button) {

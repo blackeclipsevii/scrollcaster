@@ -71,7 +71,21 @@ function displayRoster(roster) {
   entry.onclick = () => goToRoster(roster);
   entry.style.float = "left";
 
-  const menu = createContextMenu(roster.id, roster.id, 'RosterCallback');
+  const callbackMap = {
+    Duplicate: async (e) => {
+      const json = JSON.stringify(roster);
+      const clone = JSON.parse(json);
+      clone.id = generateId();
+      await putRoster(clone);
+      displayRoster(clone);
+    },
+
+    Delete: async (e) => {
+      await deleteRoster(roster.id);
+      await viewRosters();
+    }
+  };
+  const menu = createContextMenu(roster.id, roster.id, callbackMap);
   menu.className = 'menu-blob';
   container.appendChild(entry);
   container.appendChild(menu);
@@ -96,28 +110,6 @@ async function viewRosters() {
       const roster = await getRoster(rosters[i]);
       displayRoster(roster);
   }
-}
-
-async function duplicateRosterCallback(e) {
-  const menuWrapper = e.closest(`.menu-wrapper`);
-  const idxDiv = menuWrapper.querySelector(".idx");
-  const id = idxDiv.textContent;
-  const originalRoster = await getRoster(id);
-  if (originalRoster.id !== id)
-    console.log(`Could not retrieve roster ${id}`)
-  const json = JSON.stringify(originalRoster);
-  const clone = JSON.parse(json);
-  clone.id = generateId();
-  await putRoster(clone);
-  displayRoster(clone);
-}
-
-async function deleteRosterCallback(e) {
-  const menuWrapper = e.closest(`.menu-wrapper`);
-  const idxDiv = menuWrapper.querySelector(".idx");
-  const id = idxDiv.textContent;
-  await deleteRoster(id);
-  await viewRosters();
 }
 
 async function createArmy() {

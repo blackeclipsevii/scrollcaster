@@ -50,9 +50,9 @@ export default class Army {
         };
         this.points = {};
         this.units = {};
-        this._libraryUnits = {};
         this.unitLUT = {};
         this.keywordLUT = {};
+        this.regimentsOfRenown = [];
         // TO-DO what about big waaagh!s
         this.isArmyOfRenown = armyName.includes(' - ') && !armyName.includes('Library');
         this._parse(ageOfSigmar, armyName);
@@ -130,13 +130,15 @@ export default class Army {
         const catalogue = data.catalog;
         this.id = catalogue['@id'];
 
+        const _libraryUnits = {};
+
         // read all the units out of the libraries
         const names = Object.getOwnPropertyNames(data.libraries);
         names.forEach(name => {
             data.libraries[name].sharedSelectionEntries.forEach(entry => {
                 if (entry['@type'] === 'unit') {
                     const unit = new Unit(entry);
-                    this._libraryUnits[unit.id] = unit;
+                    _libraryUnits[unit.id] = unit;
                 }
             });
         })
@@ -154,7 +156,7 @@ export default class Army {
                     upgrade = ageOfSigmar.lores.lores[lu.alias][targetId];
                     if (upgrade && upgrade.unitIds) {
                         upgrade.unitIds.forEach(uuid => {
-                            const unit = this._libraryUnits[uuid];
+                            const unit = _libraryUnits[uuid];
                             if (!unit) {
                                 console.log(`WARNING: Unable to find unit link in library: ${uuid}`);
                                 return;
@@ -179,7 +181,7 @@ export default class Army {
             const lc = entry['@name'].toLowerCase();
             if (entry['@type'] === 'unit') {
                 const unit = new Unit(entry);
-                this._libraryUnits[unit.id] = unit;
+                _libraryUnits[unit.id] = unit;
             } else {
                 ulKeys.forEach(key => {
                     if (lc.includes(key)) {
@@ -199,7 +201,7 @@ export default class Army {
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
             // this is the global library for the faction
-            let unit = this._libraryUnits[link['@targetId']];
+            let unit = _libraryUnits[link['@targetId']];
             if (!unit) {
                 console.log (`unable to find unitid: ${link['@targetId']}`);
                 console.log(`name :${link['@name']}`);
@@ -290,7 +292,19 @@ export default class Army {
                 this.upgrades.lores.manifestation[`UNIVERSAL-${universalLore.name}`] = universalLore;
             });
         });
-        
+
+        // get this armies regiments
+        // to-do maybe this can be an endpoint that we only present if asked
+        const rorIds = Object.getOwnPropertyNames(ageOfSigmar.regimentsOfRenown);
+        rorIds.forEach(rorId => {
+            const ror = ageOfSigmar.regimentsOfRenown[rorId];
+            ror.selectableIn.forEach(id => {
+                const name = ageOfSigmar._database.armyLUT[id];
+                if (armyName === name) {
+                    this.regimentsOfRenown.push(ror);
+                }
+            });
+        });
 
         // sort the units by type
         // this.units.sort((a, b) => a.type - b.type);
