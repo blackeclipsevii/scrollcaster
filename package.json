@@ -2,7 +2,8 @@
   "name": "scribecaster",
   "version": "1.0.0",
   "directories": {
-    "aos": "packages/age-of-sigmar/src"
+    "server": "server",
+    "test": "test"
   },
   "dependencies": {
     "fast-xml-parser": "^5.0.4",
@@ -10,5 +11,16 @@
     "axios": "^1.10.0",
     "extract-zip": "^2.0.1"
   },
-  "type":"module"
+  "type":"module",
+  "devDependencies": {
+    "jest": "^30.0.4"
+  },
+  "scripts": {
+    "test":"node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "jest": {
+    "testMatch": [
+      "**/*.test.js"
+    ]
+  }
 }
