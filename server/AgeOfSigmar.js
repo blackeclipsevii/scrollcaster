@@ -13,7 +13,7 @@ import parseCatalog from './lib/parseCatalog.js';
 import path from 'path';
 import Upgrade from './Upgrade.js';
 import { UpgradeType } from '../shared/UpgradeType.js';
-import BsConstraint, { Scope, BsModifier, ConstraintType } from './lib/BsConstraint.js';
+import BsConstraint, { Scope, BsModifier, ConstraintType, getConstraints } from './lib/BsConstraint.js';
 
 function parseGameSystem(path) {
     const xmlContent = fs.readFileSync(path, 'utf8');
@@ -44,11 +44,14 @@ export default class AgeOfSigmar {
         this.lores = new Lores(path);
 
         this.gameSystem = parseGameSystem(`${path}/Age of Sigmar 4.0.gst`);
+
         this._populateLibraries(path);
-        this.keywordLUT = {};
         this.battleTacticCards = [];
         this.units = {};
+
+        this.keywordLUT = {};
         this._parseKeywords();
+        this._parseBattleProfiles();
     }
 
     getArmyNames() {
@@ -70,6 +73,104 @@ export default class AgeOfSigmar {
 
         data.army = new Army(this, armyName);
         return data.army;
+    }
+
+    // get all the units available to a leader's regiment
+    getRegimentOptions(army, leaderId) {
+        const leader = army.units[leaderId];
+        if (!leader) {
+            console.log(`where are you ${leaderId}`)
+            return;
+        }
+        // aos keywords
+        let keywords = Object.values(this.keywordLUT);
+        // army keywords
+        keywords.join(Object.values(army.keywordLUT));
+
+        const sortKeywords = (inKeywords) => {
+            return inKeywords.sort((a, b) => {
+                const countSpaces = str => (str.match(/ /g) || []).length;
+
+                const spaceDiff = countSpaces(a) - countSpaces(b);
+                if (spaceDiff !== 0) return spaceDiff;
+
+                // Same number of spaces — longer string goes first
+                return b.length - a.length;
+            });
+        }
+
+        const hasNonPrefix = (haystack, needle) => {
+            const index = haystack.indexOf(needle);
+            if (index === -1) 
+                return false; // needle not found
+
+            if (haystack.length < (needle.length + 4))
+                return false;
+
+            // Check if the 4 characters before the needle are 'non-'
+            return haystack.slice(index - 4, index) === 'non-';
+        }
+
+        console.log(`${leader.name} ${leader.battleProfile}`);
+        const options = leader.battleProfile.regimentOptions.toUpperCase().split(',');
+
+        // sort on spaces so we don't hit any keywords that match substrings of other keywords
+        // longer keywords also take presidence
+        //const sortedKeywords = sortKeywords(keywords);
+        const canFieldUnit = (unit) => {
+            let allTags = unit._tags;    
+            allTags.push(unit.name);
+
+            // only look at every keyword if it's not a hero
+            if (unit.type !== 0) {
+                allTags = allTags.concat(unit.keywords);
+            }
+
+            // normalize on uppercase and sort
+            allTags = sortKeywords(allTags.join(',').toUpperCase().split(','));
+            const requiredStr = '(REQUIRED)';
+            let ok = false;
+            options.forEach(option => {
+                if (ok) return ok;
+
+                option = option.trim();
+                const subOptions = [];
+
+                if (option.includes(requiredStr)) {
+                    option = option.replace(requiredStr, '').trim();
+                    subOptions.push(option);
+                } else {
+                    // any, 0-1, etc
+                    // qualifier shouldn't matter here were not verifying the regiment
+                    // just reducing the number of units available for selection
+                    const qualifier = option.split(' ')[0];
+                    option = option.substring(qualifier.length).trim()
+                    if (option.includes(' or ')){
+                        subOptions.concat(option.split(' or '));
+                    } else {
+                        subOptions.push(option);
+                    }
+                }
+                allTags.forEach(tag => {
+                    subOptions.forEach(so => {
+                        if (so.includes(tag)) {
+                            ok = !hasNonPrefix(so, tag);
+                        }
+                    })
+                });
+            });
+
+            return ok;
+        }
+
+        let units = [];
+        const armyUnits = Object.values(army.units);
+        armyUnits.forEach(unit => {
+            if (canFieldUnit(unit)) {
+                units.push(unit);
+            }
+        });
+        return units;
     }
 
     _loadRegimentsOfRenown(rorData) {
@@ -143,20 +244,13 @@ export default class AgeOfSigmar {
                 return;
             }
 
+            const myConstraints = getConstraints(entryLink);
+
             // this is probably wildly overkill as most (all?) ror are fixed in size
             entryLink.modifierGroups.forEach(modGroup => {
-                const constraintLUT = [];
-                const unitConstraints = {};
-                entryLink.constraints.forEach(constraint => {
-                    const cObj = new BsConstraint(constraint);
-                    if (cObj.scope === Scope.force) {
-                        constraintLUT.push(cObj.id);
-                        unitConstraints[cObj.id] = cObj;
-                    }
-                });
                 
                 modGroup.modifiers.forEach(mod => {
-                    const cObj = unitConstraints[mod['@field']];
+                    const cObj = myConstraints.constraints[mod['@field']];
                     if (cObj) {
                         const mObj = new BsModifier(mod);
                         cObj.applyModifier(mObj);
@@ -180,8 +274,8 @@ export default class AgeOfSigmar {
                             max : 0
                         };
 
-                        constraintLUT.forEach(id => {
-                            const constraint = unitConstraints[id];
+                        myConstraints.LUT.forEach(id => {
+                            const constraint = myConstraints.constraints[id];
                             if (constraint.type === ConstraintType.min) {
                                 obj.min = Number(constraint.value);
                             } else if (constraint.type === ConstraintType.max) {
@@ -229,6 +323,34 @@ export default class AgeOfSigmar {
         this.regimentsOfRenown = parsedForces;
     }
 
+    _parseBattleProfiles() {
+        // relative to server.js
+        const profileDir = './server/resources/battle profiles';
+        const profileFiles = fs.readdirSync(profileDir);
+        const armyCatNames = Object.getOwnPropertyNames(this._database.armies);
+        // populate the armies and seperate the libraries
+        profileFiles.forEach(file => {
+            const lc = file.toLowerCase();
+            console.log(lc);
+
+            if (path.extname(lc) === '.json') {
+                const json = fs.readFileSync(path.join(profileDir, file));
+                const profileList = JSON.parse(json);
+                const profiles = {};
+                profileList.forEach(profile => {
+                    profiles[profile.name] = profile;
+                });
+                const armyName = file.replace('.json','').trim();
+                armyCatNames.forEach(armyCatName => {
+                    if (armyCatName.trim().toLowerCase().startsWith((armyName.toLowerCase()))) {
+                        console.log(`adding battle profile to ${armyCatName}`)
+                        this._database.armies[armyCatName].battleProfiles = profiles;
+                    }
+                });
+            }
+        });
+    }
+
     _populateLibraries(dir) {
         const catFiles = fs.readdirSync(dir);
         const libraries = {}
@@ -247,6 +369,7 @@ export default class AgeOfSigmar {
                         if ((rorData === null) && data['@name'].includes('Regiments of Renown')) {
                             rorData = {
                                 catalog: data,
+                                battleProfiles: null,
                                 librariesLUT: {},
                                 libraries: {}
                             };
@@ -254,6 +377,7 @@ export default class AgeOfSigmar {
                             this._database.armyLUT[data['@id']] = data['@name'];
                             this._database.armies[data['@name']] = {
                                 catalog: data,
+                                battleProfiles: null,
                                 librariesLUT: {},
                                 libraries: {},
                                 army: null

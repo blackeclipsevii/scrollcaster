@@ -1,0 +1,119 @@
+[
+  {
+    "type": "Hero",
+    "name": "Auric Flamekeeper",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "Any Fyreslayers",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runefather",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Grimnir’s Chosen, Any Fyreslayers",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runefather on Magmadroth",
+    "unitSize": 1,
+    "points": 320,
+    "regimentOptions": "0-1 Grimnir’s Chosen, 0-1 Vulcatrix’s Chosen, Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Vulcatrix’s Chosen.",
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runemaster",
+    "unitSize": 1,
+    "points": 180,
+    "regimentOptions": "0-1 Grimnir’s Chosen, Any Fyreslayers",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runesmiter",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "Any Fyreslayers",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runesmiter on Magmadroth",
+    "unitSize": 1,
+    "points": 280,
+    "regimentOptions": "Any Fyreslayers",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runeson",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "0-1 Grimnir’s Chosen, Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Grimnir’s Chosen.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runeson on Magmadroth",
+    "unitSize": 1,
+    "points": 260,
+    "regimentOptions": "0-1 Grimnir’s Chosen, Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Vulcatrix’s Chosen.",
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Battlesmith",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Grimnir’s Chosen.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Doomseeker",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Grimnir’s Chosen.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Grimhold Exile",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Grimnir’s Chosen.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Grimwrath Berzerker",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Grimnir’s Chosen.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Auric Runeson on Magmadroth (Scourge of Ghyran)",
+    "unitSize": 1,
+    "points": 310,
+    "regimentOptions": "0-1 Grimnir’s Chosen, Any Fyreslayers",
+    "notes": "This Hero can join an eligible regiment as Vulcatrix’s Chosen. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "120 × 92mm"
+  }
+]

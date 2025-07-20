@@ -1,0 +1,82 @@
+[
+  { 
+    "name": "Bloodpelt Hunter",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "Any GUTBUSTERS",
+    "notes": "This HERO can join a Tyrant's regiment.",
+    "baseSize": "40mm"
+  },
+  {
+    "name": "Butcher",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "Any OGOR MAWTRIBES",
+    "notes": "This HERO can join an eligible regiment as a Gutbuster Tyrant.",
+    "baseSize": "40mm"
+  },
+  {
+    "name": "Firebelly",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "Any GUTBUSTERS, Any Gnoblars, Any Gorger Mawpack",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "name": "Frostlord on Stonehorn",
+    "unitSize": 1,
+    "points": 330,
+    "regimentOptions": "0-1 Voice of the Everwinter, Any OGOR MAWTRIBES",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "name": "Frostlord on Thundertusk",
+    "unitSize": 1,
+    "points": 300,
+    "regimentOptions": "0-1 Voice of the Everwinter, Any OGOR MAWTRIBES",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "name": "Huskard on Stonehorn",
+    "unitSize": 1,
+    "points": 300,
+    "regimentOptions": "Any BEASTCLAW RAIDERS",
+    "notes": "This HERO can join an eligible regiment as a Voice of the Everwinter.",
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "name": "Huskard on Thundertusk",
+    "unitSize": 1,
+    "points": 270,
+    "regimentOptions": "Any BEASTCLAW RAIDERS",
+    "notes": "This HERO can join an eligible regiment as a Voice of the Everwinter.",
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "name": "Icebrow Hunter",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "Any BEASTCLAW RAIDERS",
+    "notes": "This HERO can join an eligible regiment as a Voice of the Everwinter.",
+    "baseSize": "50mm"
+  },
+  {
+    "name": "Slaughtermaster",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "Any GUTBUSTERS, Any Gnoblars, Any Gorger Mawpack",
+    "notes": null,
+    "baseSize": "105 x 70mm"
+  },
+  {
+    "name": "Tyrant",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Bloodpelt Hunter, Any OGOR MAWTRIBES",
+    "notes": null,
+    "baseSize": "40mm"
+  }
+]

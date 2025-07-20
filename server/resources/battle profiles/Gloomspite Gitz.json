@@ -1,0 +1,146 @@
+[
+  {
+    "type": "Hero",
+    "name": "Dankhold Troggboss",
+    "unitSize": 1,
+    "points": 240,
+    "regimentOptions": "Any Troggoth",
+    "notes": "This Hero can join Trugg’s regiment.",
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Droggz Da Sunchompa",
+    "unitSize": 1,
+    "points": 180,
+    "regimentOptions": "0-1 Top Dog, 0-1 Moonclan, 0-1 Troggoth, Any Gitmob",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Frazzlegit Shaman on War-Wheela",
+    "unitSize": 1,
+    "points": 170,
+    "regimentOptions": "Any Gitmob",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Fungoid Cave-Shaman",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "0-1 Moonclan Agitator, Any Moonclan",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Kragnos, the End of Empires",
+    "unitSize": 1,
+    "points": 580,
+    "regimentOptions": "0-1 Top Dog, 0-1 Moonclan Agitator, Any Gloomspite Gitz",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Loonboss",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "0-1 Doom Diver Catapult, Any Moonclan",
+    "notes": "This Hero can join an eligible regiment as a Moonclan Agitator.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Loonboss on Giant Cave Squig",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "0-1 Moonclan Agitator, Any Moonclan",
+    "notes": "This Hero can join an eligible regiment as a Moonclan Agitator.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Loonboss on Mangler Squigs",
+    "unitSize": 1,
+    "points": 190,
+    "regimentOptions": "0-1 Moonclan Agitator, Any Moonclan",
+    "notes": null,
+    "baseSize": "80mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Rabble-Rowza",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Monster, Any Moonclan Infantry",
+    "notes": "This Hero can join an eligible regiment as a Moonclan Agitator.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Skragrott, the Loonking",
+    "unitSize": 1,
+    "points": 230,
+    "regimentOptions": "0-1 Top Dog, 0-1 Moonclan Agitator, Any Gloomspite Gitz",
+    "notes": null,
+    "baseSize": "60 × 35mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Snarlboss",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "Any Gitmob",
+    "notes": "This Hero can join an eligible regiment as a Top Dog.",
+    "baseSize": "Use model"
+  },
+  {
+    "type": "Hero",
+    "name": "Snarlboss on War-Wheela",
+    "unitSize": 1,
+    "points": 180,
+    "regimentOptions": "Any Gitmob",
+    "notes": "This Hero can join an eligible regiment as a Top Dog.",
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Squigboss with Gnasha-squig",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Moonclan Agitator, Any Moonclan",
+    "notes": "This Hero can join an eligible regiment as a Moonclan Agitator.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Trugg, the Troggoth King",
+    "unitSize": 1,
+    "points": 380,
+    "regimentOptions": "0-1 Dankhold Troggboss, Any Gloomspite Gitz",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Webspinner Shaman",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "Any Spiderfang",
+    "notes": null,
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Webspinner Shaman on Arachnarok Spider",
+    "unitSize": 1,
+    "points": 250,
+    "regimentOptions": "Any Spiderfang",
+    "notes": null,
+    "baseSize": "160mm"
+  }
+]

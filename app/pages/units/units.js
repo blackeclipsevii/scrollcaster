@@ -12,55 +12,6 @@ let type = params.get('type');
 if (type)
     type = decodeURI(type);
 
-function canFieldUnit(regiment, regimentOptions, unit) {
-    // is the unit literally called out?
-    for (let i = 0; i < regimentOptions.units.length; ++i) {
-        if (regimentOptions.units[i] === unit.id) {
-            return true;
-        }
-    }
-
-    // does the unit match keywords?
-    for (let i = 0; i < regimentOptions.keywords.length; ++i) {
-        if (unit.keywords.includes(regimentOptions.keywords[i]) &&
-            unit.type > 0) {
-            return true;
-        }
-    }
-
-    // does the unit match some kind of logic keyword?
-    const constraintIds = Object.getOwnPropertyNames(regimentOptions.constraints);
-    let allowed = false;
-    constraintIds.forEach(constraintId => {
-        if (allowed) return true;
-
-        const constraint = regimentOptions.constraints[constraintId];
-        if (unit._tags.includes(constraint.name)) {
-            if (constraint.max < 0) {
-                allowed = true;
-                return allowed;
-            }
-            
-            let currentCount = (()=>{
-            let count = 0;
-            regiment.units.forEach(regUnit => {
-                if (regUnit._tags.includes(constraint.name)) {
-                    count += 1;
-                }
-            });
-                return count;
-            })();
-
-            if (currentCount < constraint.max) {
-                allowed = true;
-                return allowed;
-            }
-        } 
-    });
-
-    return allowed;
-}
-
 function getUnitList(unit) {
     let unitList = null;
     if (unit.type === 0) {
@@ -193,26 +144,22 @@ async function loadUnits() {
         });
     }
 
-    if (isNewRegiment && !roster.regimentOfRenown && !roster.isArmyOfRenown) {
+    if (isNewRegiment && !roster.regimentOfRenown) {
         // we could make the regiment a ror
         await loadRor();
     }
 
-    await fetch(encodeURI(`${endpoint}/units?army=${roster.army}`)).
+    let url = `${endpoint}/units?army=${roster.army}`;
+    if (hasRegimentIndex){
+        regiment = roster.regiments[regimentIndex];
+        if (regiment.units.length > 0)
+            url = `${url}&leaderId=${regiment.units[0].id}`;
+    }
+    await fetch(encodeURI(url)).
     then(resp => resp.json()).
     then(units => {
-        let leader = null;
-        let unitIds = Object.getOwnPropertyNames(units);
-        let useRegimentOptions = false;
-        if (hasRegimentIndex){
-            regiment = roster.regiments[regimentIndex];
-            if (regiment.units.length > 0 && regiment.units[0].regimentOptions) {
-                useRegimentOptions = true;
-                leader = regiment.units[0];
-            }
-        }
-        unitIds.forEach(id => {
-            const unit = units[id];
+        const availableUnits = Object.values(units);
+        availableUnits.forEach(unit => {
             if (unit._tags.length > 0) {
                 console.log (`${unit.name} has tags: ${unit._tags.join(', ')}`);
             }
@@ -223,9 +170,6 @@ async function loadUnits() {
                 return;
 
             if (!type && unit.type > 5)
-                return;
-
-            if (useRegimentOptions && !canFieldUnit(regiment, leader.regimentOptions, unit))
                 return;
 
             const item = document.createElement('div');

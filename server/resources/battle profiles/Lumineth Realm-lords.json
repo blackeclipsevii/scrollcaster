@@ -1,0 +1,146 @@
+[
+  {
+    "type": "Hero",
+    "name": "Alarith Stonemage",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Ydrilan Riverblades, Any Vanari Auralan Wardens, Any Alarith",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Archmage Teclis and Celennar, Spirit of Hysh",
+    "unitSize": 1,
+    "points": 580,
+    "regimentOptions": "0-1 Lumineth Paragon, Any Lumineth Realm-lords",
+    "notes": null,
+    "baseSize": "160mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Avalenor, the Stoneheart King",
+    "unitSize": 1,
+    "points": 410,
+    "regimentOptions": "0-1 Lumineth Paragon, Any Vanari, Any Alarith",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Ellania and Ellathor, Eclipsian Warsages",
+    "unitSize": 1,
+    "points": 280,
+    "regimentOptions": "0-1 Lumineth Paragon, Any Lumineth Realm-lords",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Hurakan Windmage",
+    "unitSize": 1,
+    "points": 150,
+    "regimentOptions": "0-1 Ydrilan Riverblades, Any Vanari Auralan Wardens, Any Hurakan",
+    "notes": null,
+    "baseSize": "60 × 35mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Lyrior Uthralle, Warden of Ymetrica",
+    "unitSize": 1,
+    "points": 220,
+    "regimentOptions": "0-1 Lumineth Paragon, Any Lumineth Realm-lords",
+    "notes": null,
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scinari Calligrave",
+    "unitSize": 1,
+    "points": 160,
+    "regimentOptions": "0-1 Ydrilan Riverblades, Any Vanari Auralan Wardens, Any Vanari Bladelords",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scinari Cathallar",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "0-1 Ydrilan Riverblades, Any Vanari Auralan Wardens, Any Vanari Bladelords",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scinari Enlightener",
+    "unitSize": 1,
+    "points": 180,
+    "regimentOptions": "0-1 Ydrilan Riverblades, Any Vanari Auralan Wardens, Any Vanari Bladelords",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scinari Loreseeker",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Ydrilan Riverblades, Any Vanari Auralan Wardens, Any Vanari Bladelords",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Sevireth, Lord of the Seventh Wind",
+    "unitSize": 1,
+    "points": 330,
+    "regimentOptions": "0-1 Lumineth Paragon, Any Vanari, Any Hurakan",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "The Light of Eltharion",
+    "unitSize": 1,
+    "points": 210,
+    "regimentOptions": "0-1 Lumineth Paragon, Any Lumineth Realm-lords",
+    "notes": "This Hero can join an eligible regiment as a Lumineth Paragon.",
+    "baseSize": "50mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Vanari Bannerblade",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "Any Vanari",
+    "notes": "This Hero can join an eligible regiment as a Lumineth Paragon.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Vanari Lord Regent",
+    "unitSize": 1,
+    "points": 230,
+    "regimentOptions": "0-1 Lumineth Paragon, 0-1 Ydrilan Riverblades, Any Vanari",
+    "notes": null,
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "The Light of Eltharion (Scourge of Ghyran)",
+    "unitSize": 1,
+    "points": 250,
+    "regimentOptions": "0-1 Lumineth Paragon, Any Lumineth Realm-lords",
+    "notes": "This Hero can join an eligible regiment as a Lumineth Paragon. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "50mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Vanari Bannerblade (Scourge of Ghyran)",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "Any Vanari",
+    "notes": "This Hero can join an eligible regiment as a Lumineth Paragon. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "40mm"
+  }
+]

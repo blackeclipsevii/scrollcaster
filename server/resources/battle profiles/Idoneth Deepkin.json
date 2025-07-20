@@ -1,0 +1,92 @@
+[
+  {
+    "type": "Hero",
+    "name": "Akhelian King",
+    "unitSize": 1,
+    "points": 160,
+    "regimentOptions": "0-1 Akhelian Raidmaster or Isharann Emissary, Any Idoneth Deepkin",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Akhelian Thrallmaster",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "Any Namarti",
+    "notes": "This Hero can join an eligible regiment as an Akhelian Raidmaster.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Eidolon of Mathlann, Aspect of the Sea",
+    "unitSize": 1,
+    "points": 350,
+    "regimentOptions": "0-1 Isharann Emissary, Any Idoneth Deepkin",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Eidolon of Mathlann, Aspect of the Storm",
+    "unitSize": 1,
+    "points": 320,
+    "regimentOptions": "0-1 Isharann Emissary, Any Idoneth Deepkin",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Isharann Soulrender",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "0-1 Isharann Emissary, Any Namarti",
+    "notes": "This Hero can join an eligible regiment as an Isharann Emissary.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Isharann Soulscryer",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "0-1 Isharann Emissary, Any Namarti",
+    "notes": "This Hero can join an eligible regiment as an Isharann Emissary.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Isharann Tidecaster",
+    "unitSize": 1,
+    "points": 150,
+    "regimentOptions": "0-1 Isharann Emissary, Any Namarti",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Lotann, Warden of the Soul Ledgers",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "Any Idoneth Deepkin",
+    "notes": "This Hero can join an eligible regiment as an Isharann Emissary.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Volturnos, High King of the Deep",
+    "unitSize": 1,
+    "points": 250,
+    "regimentOptions": "0-1 Akhelian Raidmaster or Isharann Emissary, Any Idoneth Deepkin",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Akhelian Thrallmaster (Scourge of Ghyran)",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "Any Namarti",
+    "notes": "This Hero can join an eligible regiment as an Akhelian Raidmaster. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "32mm"
+  }
+]

@@ -19,7 +19,8 @@ function displayPointsOverlay(id) {
 function updateValidationDisplay() {
     const errors = validateRoster(roster);
     const pointsOverlay = document.getElementById('pointsOverlay');
-    pointsOverlay.style.backgroundColor = errors.length > 0 ? 'red' : 'green';
+    const hasErrors = errors.length > 0;
+    pointsOverlay.style.backgroundColor = hasErrors ? 'red' : 'green';
 
     pointsOverlay.onclick = overlayToggleFactory('block', () =>{
         const modal = document.querySelector(".modal");
@@ -30,17 +31,22 @@ function updateValidationDisplay() {
         modal.appendChild(title);
     
         const section = document.createElement('div');
-        section.style.height = '30em';
         section.style.width = '95%';
     
-        errors.forEach(error => {
+        if (hasErrors) {
+            errors.forEach(error => {
+                const p = document.createElement('p');
+                p.innerHTML = `* ${error}`;
+                section.appendChild(p);
+            });
+        } else {
             const p = document.createElement('p');
-            p.innerHTML = `* ${error}`;
+            p.innerHTML = `Basic validation has passed!<br/><br/><strong>Warning: Regiment option validation is not implemented.</string>`;
             section.appendChild(p);
-        });
+        }
     
         modal.appendChild(section);
-        const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
+        const offset = (window.innerWidth - modal.clientWidth) / 2.0;
         modal.style.marginLeft = `${offset}px`;
     });
 };
