@@ -100,7 +100,7 @@
   },
   {
     "type": "Hero",
-    "name": "Scourge of Ghyran Bloodwrack Shrine",
+    "name": "Bloodwrack Shrine (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 230,
     "regimentOptions": "0-1 Coven Matriarch, Any Daughters of Khaine",
@@ -109,7 +109,7 @@
   },
   {
     "type": "Hero",
-    "name": "Scourge of Ghyran Krethusa the Croneseer",
+    "name": "Krethusa the Croneseer (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 240,
     "regimentOptions": "0-1 Coven Matriarch, Any Aelf",

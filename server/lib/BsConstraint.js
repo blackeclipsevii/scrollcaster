@@ -42,6 +42,23 @@ export class BsCondition extends BsAttrObj {
     }
 }
 
+export const getConstraints = (xml) => {
+    const constraintLUT = [];
+    const constraints = {};
+    xml.constraints.forEach(constraint => {
+        const cObj = new BsConstraint(constraint);
+        if (cObj.scope === Scope.force) {
+            constraintLUT.push(cObj.id);
+            constraints[cObj.id] = cObj;
+        }
+    });
+    
+    return {
+        LUT: constraintLUT,
+        constraints: constraints
+    };
+}
+
 // <constraint type="max" value="0" field="selections" scope="force" shared="true" id="636c-961d-8d72-c7d4" includeChildSelections="true"/>
 export default class BsConstraint extends BsAttrObj {
     constructor(bsXml) {

@@ -100,7 +100,7 @@
   },
   {
     "type": "Hero",
-    "name": "Scourge of Ghyran Killaboss on Great Gnashtoof",
+    "name": "Killaboss on Great Gnashtoof (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 160,
     "regimentOptions": "0-1 Mob Wrangler, Any Kruleboyz",
@@ -109,7 +109,7 @@
   },
   {
     "type": "Hero",
-    "name": "Scourge of Ghyran Swampboss Skumdrekk",
+    "name": "Swampboss Skumdrekk (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 250,
     "regimentOptions": "0-1 Mob Wrangler, 0-1 Swamp Beast, Any Kruleboyz",

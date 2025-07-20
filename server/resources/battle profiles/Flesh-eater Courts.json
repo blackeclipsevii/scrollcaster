@@ -127,7 +127,7 @@
   },
   {
     "type": "Hero",
-    "name": "Scourge of Ghyran Abhorrant Ghoul King",
+    "name": "Abhorrant Ghoul King (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 120,
     "regimentOptions": "Any Flesh-eater Noble, Any Flesh-eater Courts",
@@ -136,7 +136,7 @@
   },
   {
     "type": "Hero",
-    "name": "Scourge of Ghyran Abhorrant Gorewarden",
+    "name": "Abhorrant Gorewarden (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 140,
     "regimentOptions": "0-1 Flesh-eater Noble, 0-1 Serfs, Any Knights",

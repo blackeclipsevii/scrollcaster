@@ -169,6 +169,12 @@ server.get('/units', (req, res) => {
       res.status(404);
       return;
     }
+    
+    if (parsedUrl.query.leaderId) {
+      units = aos.getRegimentOptions(army, parsedUrl.query.leaderId);
+      res.end(JSON.stringify(units));
+      return;
+    }
 
     units = army.units;
   } else {

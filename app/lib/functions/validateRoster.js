@@ -38,12 +38,14 @@ function validateRoster(roster) {
             numGenerals += 1;
         }
 
-        if (nunits > 3 && !reg.units[0].isGeneral) {
+        if (nunits > 4 && !reg.units[0].isGeneral) {
+            // 3 excluding leader
             let errorMsg = `Regiment ${idx+1} contains more than 3 units.`;
             errors.push(errorMsg);
         }
         
-        if (nunits > 5 && reg.units[0].isGeneral) {
+        if (nunits > 6 && reg.units[0].isGeneral) {
+            // 5 excluding leader
             let errorMsg = `The general's regiment contains more than 5 units.`;
             errors.push(errorMsg);
         }

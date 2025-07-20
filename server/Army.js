@@ -2,7 +2,7 @@
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from "../shared/UpgradeType.js";
-import BsConstraint, { BsCondition, BsModifier, ModifierType, Scope } from './lib/BsConstraint.js';
+import BsConstraint, { BsCondition, BsModifier, getConstraints, ModifierType, Scope } from './lib/BsConstraint.js';
 import BsAttrObj from './lib/BsAttribObj.js';
 
 const LeaderId = "d1f3-921c-b403-1106";
@@ -63,7 +63,7 @@ export default class Army {
         this._parse(ageOfSigmar, armyName);
     }
 
-    _availableUnits(ageOfSigmar, catalogue, entryLink) {
+    _unitConditionals(ageOfSigmar, catalogue, entryLink) {
         if (!entryLink.modifiers)
             return;
 
@@ -78,6 +78,7 @@ export default class Army {
                 isLeader = true;
         });
 
+        // to-do WHAT IF A UNIT CAN BE BOTH A LEADER AND A UNIT
         if (!isLeader)
             return;
 
@@ -268,6 +269,18 @@ export default class Army {
             this.units[unit.id] = unit;
             this.unitLUT[link['@id']] = unit.id;
 
+            if (data.battleProfiles) {
+                const bpNames = Object.getOwnPropertyNames(data.battleProfiles);
+                bpNames.forEach(bpName => {
+                    if (bpName.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '') === 
+                        unit.name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')) {
+                        console.log (`Profile Found ${unit.name}`);
+                        const profile = data.battleProfiles[bpName];
+                        unit.battleProfile = profile;
+                    }
+                });
+            }
+
             if (link.entryLinks) {
                 link.entryLinks.forEach(ele => {
                     const lc = ele['@name'].toLowerCase();
@@ -318,11 +331,6 @@ export default class Army {
             }
         });
 
-        // need the lut setup
-        catalogue.entryLinks.forEach(link => {
-            this._availableUnits(ageOfSigmar, catalogue, link);
-        });
-        
         catalogue.sharedSelectionEntryGroups.forEach(entry => {
             const lc = entry['@name'].toLowerCase();
             ulKeys.forEach(key => {
