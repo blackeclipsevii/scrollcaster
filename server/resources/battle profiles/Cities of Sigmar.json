@@ -1,0 +1,218 @@
+[
+  {
+    "type": "Hero",
+    "name": "Alchemite Warforger",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "Any Human Infantry",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Assassin",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "None",
+    "notes": "This Hero can join an eligible regiment as a Shadow Agent.",
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Battlemage",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "Any Human Infantry",
+    "notes": null,
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Battlemage on Celestial Hurricanum",
+    "unitSize": 1,
+    "points": 220,
+    "regimentOptions": "Any Human Infantry, Any Human Cavalry",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Battlemage on Griffon",
+    "unitSize": 1,
+    "points": 260,
+    "regimentOptions": "Any Human",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Battlemage on Luminark of Hysh",
+    "unitSize": 1,
+    "points": 260,
+    "regimentOptions": "Any Human Infantry, Any Human Cavalry",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Black Ark Fleetmaster",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "Any Aelf",
+    "notes": "This Hero can join an eligible regiment as a Shadow Agent.",
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Callis and Toll",
+    "unitSize": 2,
+    "points": 210,
+    "regimentOptions": "Toll’s Companions (required), Any Human Infantry",
+    "notes": "This unit cannot be reinforced.",
+    "baseSize": "28.5mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Cogsmith",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "Any Duardin",
+    "notes": "This Hero can join a Warden King’s regiment.",
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Dreadlord on Black Dragon",
+    "unitSize": 1,
+    "points": 270,
+    "regimentOptions": "0-1 Shadow Agent, Any Aelf",
+    "notes": null,
+    "baseSize": "105 × 70mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Freeguild Cavalier-Marshal",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
+    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "baseSize": "75 × 42mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Freeguild Marshal and Relic Envoy",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
+    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "baseSize": "32mm [1], 28.5mm [1]"
+  },
+  {
+    "type": "Hero",
+    "name": "Freeguild Marshal on Griffon",
+    "unitSize": 1,
+    "points": 230,
+    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
+    "notes": null,
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Fusil-Major on Ogor Warhulk",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "Any Human",
+    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "baseSize": "50mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Galen ven Denst",
+    "unitSize": 1,
+    "points": 170,
+    "regimentOptions": "Doralia ven Denst (required), Any Human Infantry",
+    "notes": null,
+    "baseSize": "28.5mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Doralia ven Denst",
+    "unitSize": 1,
+    "points": 0,
+    "regimentOptions": "None",
+    "notes": "This unit can only be taken in Galen ven Denst’s regiment.",
+    "baseSize": "28.5mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Pontifex Zenestra, Matriarch of the Great Wheel",
+    "unitSize": 1,
+    "points": 170,
+    "regimentOptions": "Any Human Infantry, Any Human Cavalry",
+    "notes": null,
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Runelord",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "Any Duardin",
+    "notes": null,
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Sorceress",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Shadow Agent, Any Aelf",
+    "notes": null,
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Sorceress on Black Dragon",
+    "unitSize": 1,
+    "points": 280,
+    "regimentOptions": "0-1 Shadow Agent, Any Aelf",
+    "notes": null,
+    "baseSize": "105 × 70mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Steam Tank Commander",
+    "unitSize": 1,
+    "points": 250,
+    "regimentOptions": "Any Steam Tank",
+    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Tahlia Vedra, Lioness of the Parch",
+    "unitSize": 1,
+    "points": 280,
+    "regimentOptions": "0-1 Freeguild Veteran, Any Cities of Sigmar",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Warden King",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Cogsmith, Any Duardin",
+    "notes": null,
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scourge of Ghyran Pontifex Zenestra, Matriarch of the Great Wheel",
+    "unitSize": 1,
+    "points": 250,
+    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
+    "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "90 × 52mm"
+  }
+]

@@ -1,0 +1,65 @@
+[
+  {
+    
+    "name": "Beast-smasher Mega-Gargant",
+    "unitSize": 1,
+    "points": 470,
+    "regimentOptions": "0-1 Eager Lout, Any SONS OF BEHEMAT",
+    "notes": "This HERO can join an eligible regiment as an Eager Lout",
+    "baseSize": "160mm"
+  },
+  {
+    
+    "name": "Gatebreaker Mega-Gargant",
+    "unitSize": 1,
+    "points": 520,
+    "regimentOptions": "0-1 Eager Lout, Any SONS OF BEHEMAT",
+    "notes": "This HERO can join an eligible regiment as an Eager Lout",
+    "baseSize": "160mm"
+  },
+  {
+    
+    "name": "Kragnos, the End of Empires",
+    "unitSize": 1,
+    "points": 580,
+    "regimentOptions": "0-1 Eager Lout, Any SONS OF BEHEMAT",
+    "notes": null,
+    "baseSize": "160mm"
+  },
+  {
+    
+    "name": "Kraken-eater Mega-Gargant",
+    "unitSize": 1,
+    "points": 490,
+    "regimentOptions": "0-1 Eager Lout, Any SONS OF BEHEMAT",
+    "notes": "This HERO can join an eligible regiment as an Eager Lout",
+    "baseSize": "160mm"
+  },
+  {
+    
+    "name": "King Brodd",
+    "unitSize": 1,
+    "points": 600,
+    "regimentOptions": "0-1 Eager Lout, Any SONS OF BEHEMAT",
+    "notes": null,
+    "baseSize": "160mm"
+  },
+  {
+    
+    "name": "Warstomper Mega-Gargant",
+    "unitSize": 1,
+    "points": 470,
+    "regimentOptions": "0-1 Eager Lout, Any SONS OF BEHEMAT",
+    "notes": "This HERO can join an eligible regiment as an Eager Lout",
+    "baseSize": "160mm"
+  },
+  {
+    
+    "name": "Scourge of Ghyran Kraken-eater Mega-Gargant",
+    "unitSize": 1,
+    "points": 520,
+    "regimentOptions": "0-1 Eager Lout, Any SONS OF BEHEMAT",
+    "notes": "This unit is legal for Matched Play for battles fought using the General's Handbook 2025-26 battlepack.",
+    "baseSize": "160mm"
+  }
+]

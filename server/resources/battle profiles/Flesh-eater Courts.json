@@ -1,0 +1,146 @@
+[
+  {
+    "type": "Hero",
+    "name": "Abhorrant Archregent",
+    "unitSize": 1,
+    "points": 180,
+    "regimentOptions": "0-1 Flesh-eater Noble, Any Flesh-eater Courts",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Abhorrant Cardinal",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Flesh-eater Noble, 0-1 Knights, Any Serfs",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Abhorrant Ghoul King",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Flesh-eater Noble, Any Flesh-eater Courts",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Abhorrant Ghoul King on Royal Terrorgheist",
+    "unitSize": 1,
+    "points": 320,
+    "regimentOptions": "0-1 Flesh-eater Noble, Any Flesh-eater Courts",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Abhorrant Ghoul King on Royal Zombie Dragon",
+    "unitSize": 1,
+    "points": 320,
+    "regimentOptions": "0-1 Flesh-eater Noble, Any Flesh-eater Courts",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Abhorrant Gorewarden",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Flesh-eater Noble, 0-1 Serfs, Any Knights",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Crypt Haunter Courtier",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Serfs, Any Crypt Horrors",
+    "notes": "This Hero can join an eligible regiment as a Flesh-eater Noble.",
+    "baseSize": "50mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Crypt Infernal Courtier",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Serfs, Any Crypt Flayers",
+    "notes": "This Hero can join an eligible regiment as a Flesh-eater Noble.",
+    "baseSize": "50mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Grand Justice Gormayne",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "0-1 Knights, Any Serfs",
+    "notes": "This Hero can join an eligible regiment as a Flesh-eater Noble.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Marrowscroll Herald",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "Any Serfs",
+    "notes": "This Hero can join an eligible regiment as a Flesh-eater Noble.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Nagash, Supreme Lord of the Undead",
+    "unitSize": 1,
+    "points": 840,
+    "regimentOptions": "0-1 Flesh-eater Noble, Any Flesh-eater Courts",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Royal Decapitator",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "Any Serfs",
+    "notes": "This Hero can join an eligible regiment as a Flesh-eater Noble.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Ushoran, Mortarch of Delusion",
+    "unitSize": 1,
+    "points": 460,
+    "regimentOptions": "0-1 Flesh-eater Noble, Any Flesh-eater Courts",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Varghulf Courtier",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "Any Knights, Any Serfs",
+    "notes": "This Hero can join an eligible regiment as a Flesh-eater Noble.",
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scourge of Ghyran Abhorrant Ghoul King",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "Any Flesh-eater Noble, Any Flesh-eater Courts",
+    "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scourge of Ghyran Abhorrant Gorewarden",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Flesh-eater Noble, 0-1 Serfs, Any Knights",
+    "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "40mm"
+  }
+]

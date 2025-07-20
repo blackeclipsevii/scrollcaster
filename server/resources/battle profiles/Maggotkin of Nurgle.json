@@ -1,0 +1,155 @@
+[
+  {
+    "type": "Hero",
+    "name": "Bloab Rotspawned",
+    "unitSize": 1,
+    "points": 300,
+    "regimentOptions": "0-1 Rotbringer Lord, Any Maggotkin of Nurgle",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Great Unclean One",
+    "unitSize": 1,
+    "points": 480,
+    "regimentOptions": "0-1 Plague Scion, Any Maggotkin of Nurgle",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Gutrot Spume",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Rotbringer Lord, Any Rotbringers",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Harbinger of Decay",
+    "unitSize": 1,
+    "points": 150,
+    "regimentOptions": "0-1 Rotbringer Lord, Any Rotbringers",
+    "notes": null,
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Horticulous Slimux",
+    "unitSize": 1,
+    "points": 150,
+    "regimentOptions": "Any Daemon",
+    "notes": null,
+    "baseSize": "105 × 70mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Lord of Afflictions",
+    "unitSize": 1,
+    "points": 180,
+    "regimentOptions": "Any Plague Drones, Any Pusgoyle Blightlords",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Lord of Blights",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "Any Rotbringers Infantry",
+    "notes": "This Hero can join an eligible regiment as a Rotbringer Lord.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Lord of Plagues",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "Any Rotbringers Infantry",
+    "notes": "This Hero can join an eligible regiment as a Rotbringer Lord.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Morbidex Twiceborn",
+    "unitSize": 1,
+    "points": 280,
+    "regimentOptions": "0-1 Rotbringer Lord, Any Maggotkin of Nurgle",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Orghotts Daemonspew",
+    "unitSize": 1,
+    "points": 280,
+    "regimentOptions": "0-1 Rotbringer Lord, Any Maggotkin of Nurgle",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Poxbringer, Herald of Nurgle",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "Any Daemon",
+    "notes": "This Hero can join an eligible regiment as a Plague Scion.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Rotbringer Sorcerer",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Rotbringer Lord, Any Rotbringers",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Rotigus",
+    "unitSize": 1,
+    "points": 430,
+    "regimentOptions": "0-1 Plague Scion, Any Maggotkin of Nurgle",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Sloppity Bilepiper, Herald of Nurgle",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "Any Daemon",
+    "notes": "This Hero can join an eligible regiment as a Plague Scion.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Spoilpox Scrivener, Herald of Nurgle",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "Any Daemon",
+    "notes": "This Hero can join an eligible regiment as a Plague Scion.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "The Glottkin",
+    "unitSize": 1,
+    "points": 510,
+    "regimentOptions": "0-1 Rotbringer Lord, Any Maggotkin of Nurgle",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scourge of Ghyran Rotigus",
+    "unitSize": 1,
+    "points": 430,
+    "regimentOptions": "0-1 Plague Scion, Any Maggotkin of Nurgle",
+    "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "130mm"
+  }
+]

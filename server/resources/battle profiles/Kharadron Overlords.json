@@ -1,0 +1,83 @@
+[
+  {
+    "type": "Hero",
+    "name": "Aether-Khemist",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Skyvessel, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Guild Officer.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Aetheric Navigator",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Skyvessel, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Guild Officer.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Arkanaut Admiral",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Guild Officer, Any Kharadron Overlords",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Brokk Grungsson, Lord-Magnate of Barak-Nar",
+    "unitSize": 1,
+    "points": 260,
+    "regimentOptions": "0-1 Guild Officer, Any Kharadron Overlords",
+    "notes": null,
+    "baseSize": "50mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Codewright",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "0-1 Skyvessel, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Guild Officer.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Drekki Flynt",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Guild Officer, 0-1 Arkanaut Frigate, Any Infantry",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Endrinmaster with Dirigible Suit",
+    "unitSize": 1,
+    "points": 150,
+    "regimentOptions": "0-1 Skyvessel, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Guild Officer.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Endrinmaster with Endrinharness",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "0-1 Skyvessel, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Guild Officer.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scourge of Ghyran Codewright",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "0-1 Skyvessel, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Guild Officer. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "32mm"
+  }
+]

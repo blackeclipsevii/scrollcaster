@@ -1,0 +1,137 @@
+[
+  {
+    "type": "Hero",
+    "name": "Awlrach the Drowner",
+    "unitSize": 1,
+    "points": 170,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": null,
+    "baseSize": "80mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Cairn Wraith",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Black Coach, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Cursed Soul.",
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Guardian of Souls",
+    "unitSize": 1,
+    "points": 150,
+    "regimentOptions": "0-1 Black Coach, Any Infantry",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Knight of Shrouds",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Knight of Shrouds on Ethereal Steed",
+    "unitSize": 1,
+    "points": 170,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": null,
+    "baseSize": "75 × 42mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Krulghast Cruciator",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Black Coach, Any Infantry",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Kurdoss Valentian, the Craven King",
+    "unitSize": 1,
+    "points": 190,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Lady Olynder, Mortarch of Grief",
+    "unitSize": 1,
+    "points": 300,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Lord Executioner",
+    "unitSize": 1,
+    "points": 170,
+    "regimentOptions": "0-1 Black Coach, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Cursed Soul.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Nagash, Supreme Lord of the Undead",
+    "unitSize": 1,
+    "points": 840,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": null,
+    "baseSize": "130mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Reikenor the Grimhailer",
+    "unitSize": 1,
+    "points": 240,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": null,
+    "baseSize": "75 × 42mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scriptor Mortis",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "0-1 Black Coach, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Cursed Soul.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Spirit Torment",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Black Coach, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Cursed Soul.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Tomb Banshee",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Black Coach, Any Infantry",
+    "notes": "This Hero can join an eligible regiment as a Cursed Soul.",
+    "baseSize": "25mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scourge of Ghyran Kurdoss Valentian, the Craven King",
+    "unitSize": 1,
+    "points": 190,
+    "regimentOptions": "0-1 Cursed Soul, Any Nighthaunt",
+    "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "60mm"
+  }
+]

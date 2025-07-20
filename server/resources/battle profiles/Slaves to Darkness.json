@@ -1,0 +1,182 @@
+[
+  {
+    "type": "Hero",
+    "name": "Abraxia, Spear of the Everchosen",
+    "unitSize": 1,
+    "points": 300,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Archaon, the Everchosen",
+    "unitSize": 1,
+    "points": 840,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": null,
+    "baseSize": "160mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Be’lakor, the Dark Master",
+    "unitSize": 1,
+    "points": 460,
+    "regimentOptions": "0-1 Eternus or Ruinous Champion, Any Slaves to Darkness",
+    "notes": null,
+    "baseSize": "100mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Centaurion Marshal",
+    "unitSize": 1,
+    "points": 130,
+    "regimentOptions": "0-1 Monster, Any Chaos Legionnaires, Any Daemon",
+    "notes": "This Hero can join an eligible regiment as a Ruinous Champion.",
+    "baseSize": "80mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Chaos Lord",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": "This Hero can join an eligible regiment as a Ruinous Champion.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Chaos Lord on Daemonic Mount",
+    "unitSize": 1,
+    "points": 140,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": "This Hero can join an eligible regiment as a Ruinous Champion.",
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Chaos Lord on Karkadrak",
+    "unitSize": 1,
+    "points": 210,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": "This Hero can join an eligible regiment as a Ruinous Champion.",
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Chaos Sorcerer Lord",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "0-1 Ruinous Champion, 0-1 Monster, Any Warriors of Chaos",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Daemon Prince",
+    "unitSize": 1,
+    "points": 260,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": null,
+    "baseSize": "60mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Darkoath Chieftain",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "0-1 Monster, Any Darkoath",
+    "notes": "This Hero can join an eligible regiment as an Oathsworn.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Darkoath Chieftain on Warsteed",
+    "unitSize": 1,
+    "points": 110,
+    "regimentOptions": "0-1 Oathsworn, 0-1 Monster, Any Darkoath",
+    "notes": "This Hero can join an eligible regiment as an Oathsworn.",
+    "baseSize": "75 × 42mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Darkoath Warqueen",
+    "unitSize": 1,
+    "points": 100,
+    "regimentOptions": "0-1 Oathsworn, 0-1 Monster, Any Darkoath",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Eternus, Blade of the First Prince",
+    "unitSize": 1,
+    "points": 200,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": "This Hero can join Be’lakor’s regiment.",
+    "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Exalted Hero of Chaos",
+    "unitSize": 1,
+    "points": 80,
+    "regimentOptions": "0-1 Monster, Any Warriors of Chaos",
+    "notes": "This Hero can join an eligible regiment as a Ruinous Champion.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Gaunt Summoner",
+    "unitSize": 1,
+    "points": 190,
+    "regimentOptions": "Any Slaves to Darkness",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Gaunt Summoner on Disc of Tzeentch",
+    "unitSize": 1,
+    "points": 210,
+    "regimentOptions": "Any Slaves to Darkness",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Gunnar Brand",
+    "unitSize": 1,
+    "points": 210,
+    "regimentOptions": "Singri Brand (required), The Oathsworn Kin (required), Any Darkoath",
+    "notes": null,
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Singri Brand",
+    "unitSize": 1,
+    "points": 0,
+    "regimentOptions": "None",
+    "notes": "This unit can only be taken in Gunnar Brand’s regiment.",
+    "baseSize": "60 × 35mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Ogroid Myrmidon",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "Any Ogroid Theridons, Any Monster, Any Daemon",
+    "notes": "This Hero can join an eligible regiment as a Ruinous Champion.",
+    "baseSize": "50mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Scourge of Ghyran Abraxia, Spear of the Everchosen",
+    "unitSize": 1,
+    "points": 360,
+    "regimentOptions": "0-1 Ruinous Champion, Any Slaves to Darkness",
+    "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "baseSize": "100mm"
+  }
+]
