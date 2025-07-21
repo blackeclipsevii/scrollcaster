@@ -101,6 +101,46 @@ test('Morathi regiment options', () =>{
     ]);
 });
 
+test('Lord Kroak regiment options', () =>{
+    // 0-1 Skink Starpriest or Favoured Spawning
+    const aos = getAos();
+    const army = aos.getArmy('Seraphon');
+    expect(army).toBeTruthy();
+
+    const leaderId = "df01-5aa1-a502-7a0c";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Lord Kroak")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "Saurus Astrolith Bearer",
+        "Skink Starpriest",
+        "Aggradon Lancers",
+        "Bastiladon with Ark of Sotek",
+        "Bastiladon with Solar Engine",
+        "Engine of the Gods",
+        "Hunters of Huanchi with Dartpipes",
+        "Hunters of Huanchi with Starstone Bolas",
+        "Kroxigor",
+        "Kroxigor Warspawned",
+        "Raptadon Chargers",
+        "Raptadon Hunters",
+        "Ripperdactyl Riders",
+        "Saurus Guard",
+        "Saurus Warriors",
+        "Skinks",
+        "Spawn of Chotec",
+        "Stegadon",
+        "Terradon Riders",
+        "Terrawings",
+    ]);
+});
+
 test('Skink Starpriest regiment options', () =>{
     // non-MONSTER Skink
     const aos = getAos();
@@ -192,4 +232,35 @@ test('Scinari Enlightener regiment options', () =>{
         "Vanari Bladelords",
         "Vanari Auralan Wardens"
     ]);
+});
+
+test('Vanari Lord Regent regiment options', () =>{
+    // hero via faction catagory (lumineth paragon)
+    // keyword that is also in unit names
+    const aos = getAos();
+    const army = aos.getArmy('Lumineth Realm-lords');
+    expect(army).toBeTruthy();
+
+    const leaderId = "2e0b-1a0a-3d2b-8fef";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Vanari Lord Regent")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "The Light of Eltharion",
+        "Vanari Bannerblade",
+        "Ydrilan Riverblades",
+        "Vanari Bladelords",
+        "Vanari Dawnriders",
+        "Vanari Auralan Sentinels",
+        "Vanari Auralan Wardens",
+        "Vanari Starshard Ballista",
+        "The Light of Eltharion (Scourge of Ghyran)",
+        "Vanari Bannerblade (Scourge of Ghyran)",
+      ]);
 });
