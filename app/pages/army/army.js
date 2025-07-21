@@ -225,9 +225,11 @@ async function createUnitSlot(parent, unit, idx, callbackMap, menuIdxContent, on
     if (!menuIdxContent)
         menuIdxContent = unit.id;
 
-    const menu = createContextMenu(menuIdxContent, menuIdxContent, callbackMap);
     let unitHdr = newUsItem.querySelector(".unit-header-right");
-    unitHdr.appendChild(menu);
+    if (callbackMap) {
+        const menu = createContextMenu(menuIdxContent, menuIdxContent, callbackMap);
+        unitHdr.appendChild(menu);
+    }
     unitHdr = newUsItem.querySelector(".unit-header-left");
     unitHdr.onclick = onclick;
     parent.appendChild(newUsItem);
@@ -388,15 +390,16 @@ async function displayRegiment(index) {
                 putRoster(roster);
                 // meh is easy
                 loadArmy(false);
-            },
-
-            Delete: async (e) => {
+            }
+        };
+        if (i > 0) {
+            callbackMap.Delete = async (e) => {
                 regiment.units.splice(i, 1);
                 putRoster(roster);
                 // meh is easy
                 loadArmy(false);
             }
-        };
+        } // to-do add replace to unit 0
 
         await createUnitSlot(content, unit, i, callbackMap, `${unit.id}:${index}:${i}`, () => {
             const key = 'readMyScroll';
@@ -414,7 +417,7 @@ async function displayRegiment(index) {
 
     const callbackMap = {
         Duplicate: async (e) => {
-            const json = JSON.stringify(roster.regiment[index]);
+            const json = JSON.stringify(roster.regiments[index]);
             const clone = JSON.parse(json);
             roster.regiments.push(clone);
             displayRegiment(roster.regiments.length-1);
@@ -502,7 +505,7 @@ function displayAux(idx) {
         },
 
         Delete: async (e) => {
-            roster.auxiliaryUnits.splice(i, 1);
+            roster.auxiliaryUnits.splice(idx, 1);
             putRoster(roster);
             // meh is easy
             loadArmy(false);

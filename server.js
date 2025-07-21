@@ -17,7 +17,7 @@ const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 var ageOfSigmar = null;
 var version = {
   major: 1,
-  minor: 0,
+  minor: 1,
   patch: 0
 };
 
@@ -156,6 +156,37 @@ server.get('/regimentsOfRenown', (req, res) =>{
   return;
 });
 
+server.get('/validate', (req, res) => {
+  const aos = getAgeOfSigmar();
+  const parsedUrl = url.parse(req.url, true);
+  
+  if (parsedUrl.query.leader && parsedUrl.query.army) {
+    const regiment = [decodeURI(parsedUrl.query.leader)];
+    for (let i = 0; i < 10; ++i) {
+      const arg = `unit${i}`;
+      if (!(parsedUrl.query[arg]))
+        break;
+      regiment.push(decodeURI(parsedUrl.query[arg]));
+    }
+    
+    const armyName = decodeURI(parsedUrl.query.army);
+    const army = aos.getArmy(armyName);
+    if (!army) {
+      res.status(404);
+      res.end();
+      return;
+    }
+
+    const errors = aos.validateRegiment(army, regiment);
+    res.end(JSON.stringify(errors));
+    res.status(200);
+    return;
+  }
+
+  res.status(400);
+  res.end();
+})
+
 server.get('/units', (req, res) => {
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
@@ -167,6 +198,7 @@ server.get('/units', (req, res) => {
     const army = aos.getArmy(armyValue);
     if (!army) {
       res.status(404);
+      res.end();
       return;
     }
     

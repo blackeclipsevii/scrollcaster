@@ -4,7 +4,7 @@
     "name": "Lord Kroak",
     "unitSize": 1,
     "points": 450,
-    "regimentOptions": "0-1 Skink Starpriest or Favoured Spawning, Any SERAPHON",
+    "regimentOptions": "0-1 <Skink Starpriest> or <Favoured Spawning>, Any <SERAPHON>",
     "notes": null,
     "baseSize": "80mm"
   },
@@ -13,7 +13,7 @@
     "name": "Ripperdactyl Chief",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 MONSTER, 0-1 BEAST, Any SKINK CAVALRY",
+    "regimentOptions": "0-1 <MONSTER>, 0-1 <BEAST>, Any <SKINK> <CAVALRY>",
     "notes": null,
     "baseSize": "50mm"
   },
@@ -22,8 +22,8 @@
     "name": "Saurus Astrolith Bearer",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "Any SAURUS",
-    "notes": "This HERO can join an eligible regiment as a Favoured Spawning.",
+    "regimentOptions": "Any <SAURUS>",
+    "notes": "This HERO can join an eligible regiment as a <Favoured Spawning>.",
     "baseSize": "40mm"
   },
   {
@@ -31,7 +31,7 @@
     "name": "Saurus Oldblood",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Favoured Spawning, Any SERAPHON",
+    "regimentOptions": "0-1 <Favoured Spawning>, Any <SERAPHON>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -40,7 +40,7 @@
     "name": "Saurus Oldblood on Carnosaur",
     "unitSize": 1,
     "points": 270,
-    "regimentOptions": "0-1 Favoured Spawning, Any SERAPHON",
+    "regimentOptions": "0-1 <Favoured Spawning>, Any <SERAPHON>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -49,7 +49,7 @@
     "name": "Saurus Scar-Veteran on Aggradon",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "0-1 Favoured Spawning, Any SAURUS",
+    "regimentOptions": "0-1 <Favoured Spawning>, Any <SAURUS>",
     "notes": null,
     "baseSize": "90 × 52mm"
   },
@@ -58,7 +58,7 @@
     "name": "Saurus Scar-Veteran on Carnosaur",
     "unitSize": 1,
     "points": 230,
-    "regimentOptions": "0-1 Favoured Spawning, 0-1 MONSTER, Any SAURUS",
+    "regimentOptions": "0-1 <Favoured Spawning>, 0-1 <MONSTER>, Any <SAURUS>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -67,7 +67,7 @@
     "name": "Skink Oracle on Troglodon",
     "unitSize": 1,
     "points": 240,
-    "regimentOptions": "0-1 MONSTER, Any BEAST, Any KROXIGOR, Any non-MONSTER SKINK",
+    "regimentOptions": "0-1 <MONSTER>, Any <BEAST>, Any <KROXIGOR>, Any non-<MONSTER> <SKINK>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -76,7 +76,7 @@
     "name": "Skink Starpriest",
     "unitSize": 1,
     "points": 100,
-    "regimentOptions": "0-1 MONSTER, Any BEAST, Any KROXIGOR, Any non-MONSTER SKINK",
+    "regimentOptions": "0-1 <MONSTER>, Any <BEAST>, Any <KROXIGOR>, Any non-<MONSTER> <SKINK>",
     "notes": "This HERO can join Lord Kroak's or a Slann Starmaster's regiment.",
     "baseSize": "25mm"
   },
@@ -85,7 +85,7 @@
     "name": "Skink Starseer",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "0-1 MONSTER, Any BEAST, Any KROXIGOR, Any non-MONSTER SKINK",
+    "regimentOptions": "0-1 <MONSTER>, Any <BEAST>, Any <KROXIGOR>, Any non-<MONSTER> <SKINK>",
     "notes": null,
     "baseSize": "50mm"
   },
@@ -94,7 +94,7 @@
     "name": "Slann Starmaster",
     "unitSize": 1,
     "points": 280,
-    "regimentOptions": "0-1 Skink Starpriest or Favoured Spawning, Any SERAPHON",
+    "regimentOptions": "0-1 <Skink Starpriest> or <Favoured Spawning>, Any <SERAPHON>",
     "notes": null,
     "baseSize": "80mm"
   },
@@ -103,7 +103,7 @@
     "name": "Stegadon Chief",
     "unitSize": 1,
     "points": 200,
-    "regimentOptions": "0-1 MONSTER, Any BEAST, Any KROXIGOR, Any non-MONSTER SKINK",
+    "regimentOptions": "0-1 <MONSTER>, Any <BEAST>, Any <KROXIGOR>, Any non-<MONSTER> <SKINK>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -112,7 +112,7 @@
     "name": "Terradon Chief",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 MONSTER, 0-1 BEAST, Any SKINK CAVALRY",
+    "regimentOptions": "0-1 <MONSTER>, 0-1 <BEAST>, Any <SKINK> <CAVALRY>",
     "notes": null,
     "baseSize": "50mm"
   },
@@ -121,7 +121,7 @@
     "name": "Saurus Oldblood on Carnosaur (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 340,
-    "regimentOptions": "0-1 Favoured Spawning, Any SERAPHON",
+    "regimentOptions": "0-1 <Favoured Spawning>, Any <SERAPHON>",
     "notes": "This unit is legal for Matched Play for battles fought using the General's Handbook 2025-26 battlepack.",
     "baseSize": "120 × 92mm"
   }

@@ -4,7 +4,7 @@
     "name": "Arch-Warlock",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "0-1 Clanrats, Any Skryre",
+    "regimentOptions": "0-1 <Clanrats>, Any <Skryre>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -13,8 +13,8 @@
     "name": "Clawlord",
     "unitSize": 1,
     "points": 70,
-    "regimentOptions": "Any Verminus",
-    "notes": "This Hero can join an eligible regiment as a Skaven Overclaw.",
+    "regimentOptions": "Any <Verminus>",
+    "notes": "This Hero can join an eligible regiment as a <Skaven Overclaw>.",
     "baseSize": "32mm"
   },
   {
@@ -22,8 +22,8 @@
     "name": "Clawlord on Gnaw-beast",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "Any Verminus",
-    "notes": "This Hero can join an eligible regiment as a Skaven Overclaw.",
+    "regimentOptions": "Any <Verminus>",
+    "notes": "This Hero can join an eligible regiment as a <Skaven Overclaw>.",
     "baseSize": "90 × 52mm"
   },
   {
@@ -31,8 +31,8 @@
     "name": "Deathmaster",
     "unitSize": 1,
     "points": 100,
-    "regimentOptions": "0-1 Clanrats, Any Eshin",
-    "notes": "This Hero can join an eligible regiment as a Skaven Overclaw.",
+    "regimentOptions": "0-1 <Clanrats>, Any <Eshin>",
+    "notes": "This Hero can join an eligible regiment as a <Skaven Overclaw>.",
     "baseSize": "32mm"
   },
   {
@@ -40,7 +40,7 @@
     "name": "Grey Seer",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -49,7 +49,7 @@
     "name": "Grey Seer on Screaming Bell",
     "unitSize": 1,
     "points": 350,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -58,7 +58,7 @@
     "name": "Krittok Foulblade",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -67,7 +67,7 @@
     "name": "Lord Skreech Verminking",
     "unitSize": 1,
     "points": 380,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -76,8 +76,8 @@
     "name": "Master Moulder",
     "unitSize": 1,
     "points": 80,
-    "regimentOptions": "0-1 Clanrats, Any Moulder",
-    "notes": "This Hero can join an eligible regiment as a Skaven Overclaw.",
+    "regimentOptions": "0-1 <Clanrats>, Any <Moulder>",
+    "notes": "This Hero can join an eligible regiment as a <Skaven Overclaw>.",
     "baseSize": "32mm"
   },
   {
@@ -85,7 +85,7 @@
     "name": "Plague Priest on Plague Furnace",
     "unitSize": 1,
     "points": 310,
-    "regimentOptions": "0-1 Clanrats, Any Pestilens",
+    "regimentOptions": "0-1 <Clanrats>, Any <Pestilens>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -94,7 +94,7 @@
     "name": "Thanquol on Boneripper",
     "unitSize": 1,
     "points": 360,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
@@ -103,7 +103,7 @@
     "name": "Verminlord Corruptor",
     "unitSize": 1,
     "points": 320,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -112,7 +112,7 @@
     "name": "Verminlord Deceiver",
     "unitSize": 1,
     "points": 390,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -121,7 +121,7 @@
     "name": "Verminlord Warbringer",
     "unitSize": 1,
     "points": 310,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -130,7 +130,7 @@
     "name": "Verminlord Warpseer",
     "unitSize": 1,
     "points": 320,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -139,7 +139,7 @@
     "name": "Vizzik Skour, Prophet of the Horned Rat",
     "unitSize": 1,
     "points": 380,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": null,
     "baseSize": "130mm"
   },
@@ -148,8 +148,8 @@
     "name": "Warlock Bombardier",
     "unitSize": 1,
     "points": 90,
-    "regimentOptions": "0-1 Clanrats, Any Skryre",
-    "notes": "This Hero can join an eligible regiment as a Skaven Overclaw.",
+    "regimentOptions": "0-1 <Clanrats>, Any <Skryre>",
+    "notes": "This Hero can join an eligible regiment as a <Skaven Overclaw>.",
     "baseSize": "32mm"
   },
   {
@@ -157,8 +157,8 @@
     "name": "Warlock Engineer",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Clanrats, Any Skryre",
-    "notes": "This Hero can join an eligible regiment as a Skaven Overclaw.",
+    "regimentOptions": "0-1 <Clanrats>, Any <Skryre>",
+    "notes": "This Hero can join an eligible regiment as a <Skaven Overclaw>.",
     "baseSize": "32mm"
   },
   {
@@ -166,8 +166,8 @@
     "name": "Warlock Galvaneer",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "0-1 Clanrats, Any Skryre",
-    "notes": "This Hero can join an eligible regiment as a Skaven Overclaw.",
+    "regimentOptions": "0-1 <Clanrats>, Any <Skryre>",
+    "notes": "This Hero can join an eligible regiment as a <Skaven Overclaw>.",
     "baseSize": "32mm"
   },
   {
@@ -175,7 +175,7 @@
     "name": "Grey Seer on Screaming Bell (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 310,
-    "regimentOptions": "0-1 Skaven Overclaw, Any Skaven",
+    "regimentOptions": "0-1 <Skaven Overclaw>, Any <Skaven>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "120 × 92mm"
   }

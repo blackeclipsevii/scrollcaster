@@ -4,7 +4,7 @@
     "name": "Alarielle the Everqueen",
     "unitSize": 1,
     "points": 680,
-    "regimentOptions": "0-1 Forest Sentinel, Any Sylvaneth",
+    "regimentOptions": "0-1 <Forest Sentinel>, Any <Sylvaneth>",
     "notes": null,
     "baseSize": "160mm"
   },
@@ -13,8 +13,8 @@
     "name": "Arch-Revenant",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Gossamid Archers, Any Kurnothi",
-    "notes": "This Hero can join an eligible regiment as a Forest Sentinel.",
+    "regimentOptions": "Any <Gossamid Archers>, Any <Kurnothi>",
+    "notes": "This Hero can join an eligible regiment as a <Forest Sentinel>.",
     "baseSize": "40mm"
   },
   {
@@ -22,7 +22,7 @@
     "name": "Belthanos, First Thorn of Kurnoth",
     "unitSize": 1,
     "points": 350,
-    "regimentOptions": "0-1 Forest Sentinel, Any Sylvaneth",
+    "regimentOptions": "0-1 <Forest Sentinel>, Any <Sylvaneth>",
     "notes": null,
     "baseSize": "150 × 95mm"
   },
@@ -31,7 +31,7 @@
     "name": "Branchwych",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "Any Infantry",
+    "regimentOptions": "Any <Infantry>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -40,7 +40,7 @@
     "name": "Drycha Hamadreth",
     "unitSize": 1,
     "points": 240,
-    "regimentOptions": "0-1 Forest Sentinel, Any Sylvaneth",
+    "regimentOptions": "0-1 <Forest Sentinel>, Any <Sylvaneth>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
@@ -49,7 +49,7 @@
     "name": "Spirit of Durthu",
     "unitSize": 1,
     "points": 330,
-    "regimentOptions": "0-1 Forest Sentinel, Any Sylvaneth",
+    "regimentOptions": "0-1 <Forest Sentinel>, Any <Sylvaneth>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
@@ -58,7 +58,7 @@
     "name": "The Lady of Vines",
     "unitSize": 1,
     "points": 250,
-    "regimentOptions": "0-1 Forest Sentinel, Any Sylvaneth",
+    "regimentOptions": "0-1 <Forest Sentinel>, Any <Sylvaneth>",
     "notes": null,
     "baseSize": "80mm"
   },
@@ -67,8 +67,8 @@
     "name": "Treelord",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "Any Sylvaneth",
-    "notes": "This Hero can join an eligible regiment as a Forest Sentinel.",
+    "regimentOptions": "Any <Sylvaneth>",
+    "notes": "This Hero can join an eligible regiment as a <Forest Sentinel>.",
     "baseSize": "105 × 70mm"
   },
   {
@@ -76,7 +76,7 @@
     "name": "Treelord Ancient",
     "unitSize": 1,
     "points": 240,
-    "regimentOptions": "0-1 Forest Sentinel, Any Sylvaneth",
+    "regimentOptions": "0-1 <Forest Sentinel>, Any <Sylvaneth>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
@@ -85,7 +85,7 @@
     "name": "Warsong Revenant",
     "unitSize": 1,
     "points": 200,
-    "regimentOptions": "Any Sylvaneth",
+    "regimentOptions": "Any <Sylvaneth>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
@@ -94,7 +94,7 @@
     "name": "Drycha Hamadreth (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 320,
-    "regimentOptions": "0-1 Forest Sentinel, Any Sylvaneth",
+    "regimentOptions": "0-1 <Forest Sentinel>, Any <Sylvaneth>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "105 × 70mm"
   }

@@ -4,7 +4,7 @@
     "name": "Alchemite Warforger",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "Any Human Infantry",
+    "regimentOptions": "Any <Human Infantry>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -14,7 +14,7 @@
     "unitSize": 1,
     "points": 90,
     "regimentOptions": "None",
-    "notes": "This Hero can join an eligible regiment as a Shadow Agent.",
+    "notes": "This Hero can join an eligible regiment as a <Shadow Agent>.",
     "baseSize": "25mm"
   },
   {
@@ -22,7 +22,7 @@
     "name": "Battlemage",
     "unitSize": 1,
     "points": 90,
-    "regimentOptions": "Any Human Infantry",
+    "regimentOptions": "Any <Human Infantry>",
     "notes": null,
     "baseSize": "25mm"
   },
@@ -31,7 +31,7 @@
     "name": "Battlemage on Celestial Hurricanum",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "Any Human Infantry, Any Human Cavalry",
+    "regimentOptions": "Any <Human Infantry>, Any <Human Cavalry>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -40,7 +40,7 @@
     "name": "Battlemage on Griffon",
     "unitSize": 1,
     "points": 260,
-    "regimentOptions": "Any Human",
+    "regimentOptions": "Any <Human>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -49,7 +49,7 @@
     "name": "Battlemage on Luminark of Hysh",
     "unitSize": 1,
     "points": 260,
-    "regimentOptions": "Any Human Infantry, Any Human Cavalry",
+    "regimentOptions": "Any <Human Infantry>, Any <Human Cavalry>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -58,8 +58,8 @@
     "name": "Black Ark Fleetmaster",
     "unitSize": 1,
     "points": 90,
-    "regimentOptions": "Any Aelf",
-    "notes": "This Hero can join an eligible regiment as a Shadow Agent.",
+    "regimentOptions": "Any <Aelf>",
+    "notes": "This Hero can join an eligible regiment as a <Shadow Agent>.",
     "baseSize": "25mm"
   },
   {
@@ -67,7 +67,7 @@
     "name": "Callis and Toll",
     "unitSize": 2,
     "points": 210,
-    "regimentOptions": "Toll’s Companions (required), Any Human Infantry",
+    "regimentOptions": "<Toll’s Companions> (required), Any <Human Infantry>",
     "notes": "This unit cannot be reinforced.",
     "baseSize": "28.5mm"
   },
@@ -76,8 +76,8 @@
     "name": "Cogsmith",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "Any Duardin",
-    "notes": "This Hero can join a Warden King’s regiment.",
+    "regimentOptions": "Any <Duardin>",
+    "notes": "This Hero can join a <Warden King>’s regiment.",
     "baseSize": "25mm"
   },
   {
@@ -85,7 +85,7 @@
     "name": "Dreadlord on Black Dragon",
     "unitSize": 1,
     "points": 270,
-    "regimentOptions": "0-1 Shadow Agent, Any Aelf",
+    "regimentOptions": "0-1 <Shadow Agent>, Any <Aelf>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
@@ -94,8 +94,8 @@
     "name": "Freeguild Cavalier-Marshal",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
-    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "regimentOptions": "0-1 <Freeguild Veteran>, Any <Human>",
+    "notes": "This Hero can join an eligible regiment as a <Freeguild Veteran>.",
     "baseSize": "75 × 42mm"
   },
   {
@@ -103,8 +103,8 @@
     "name": "Freeguild Marshal and Relic Envoy",
     "unitSize": 1,
     "points": 90,
-    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
-    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "regimentOptions": "0-1 <Freeguild Veteran>, Any <Human>",
+    "notes": "This Hero can join an eligible regiment as a <Freeguild Veteran>.",
     "baseSize": "32mm [1], 28.5mm [1]"
   },
   {
@@ -112,7 +112,7 @@
     "name": "Freeguild Marshal on Griffon",
     "unitSize": 1,
     "points": 230,
-    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
+    "regimentOptions": "0-1 <Freeguild Veteran>, Any <Human>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -121,8 +121,8 @@
     "name": "Fusil-Major on Ogor Warhulk",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "Any Human",
-    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "regimentOptions": "Any <Human>",
+    "notes": "This Hero can join an eligible regiment as a <Freeguild Veteran>.",
     "baseSize": "50mm"
   },
   {
@@ -130,7 +130,7 @@
     "name": "Galen ven Denst",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "Doralia ven Denst (required), Any Human Infantry",
+    "regimentOptions": "<Doralia ven Denst> (required), Any <Human Infantry>",
     "notes": null,
     "baseSize": "28.5mm"
   },
@@ -140,7 +140,7 @@
     "unitSize": 1,
     "points": 0,
     "regimentOptions": "None",
-    "notes": "This unit can only be taken in Galen ven Denst’s regiment.",
+    "notes": "This unit can only be taken in <Galen ven Denst>’s regiment.",
     "baseSize": "28.5mm"
   },
   {
@@ -148,7 +148,7 @@
     "name": "Pontifex Zenestra, Matriarch of the Great Wheel",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "Any Human Infantry, Any Human Cavalry",
+    "regimentOptions": "Any <Human Infantry>, Any <Human Cavalry>",
     "notes": null,
     "baseSize": "90 × 52mm"
   },
@@ -157,7 +157,7 @@
     "name": "Runelord",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "Any Duardin",
+    "regimentOptions": "Any <Duardin>",
     "notes": null,
     "baseSize": "25mm"
   },
@@ -166,7 +166,7 @@
     "name": "Sorceress",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "0-1 Shadow Agent, Any Aelf",
+    "regimentOptions": "0-1 <Shadow Agent>, Any <Aelf>",
     "notes": null,
     "baseSize": "25mm"
   },
@@ -175,7 +175,7 @@
     "name": "Sorceress on Black Dragon",
     "unitSize": 1,
     "points": 280,
-    "regimentOptions": "0-1 Shadow Agent, Any Aelf",
+    "regimentOptions": "0-1 <Shadow Agent>, Any <Aelf>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
@@ -184,8 +184,8 @@
     "name": "Steam Tank Commander",
     "unitSize": 1,
     "points": 250,
-    "regimentOptions": "Any Steam Tank",
-    "notes": "This Hero can join an eligible regiment as a Freeguild Veteran.",
+    "regimentOptions": "Any <Steam Tank>",
+    "notes": "This Hero can join an eligible regiment as a <Freeguild Veteran>.",
     "baseSize": "120 × 92mm"
   },
   {
@@ -193,7 +193,7 @@
     "name": "Tahlia Vedra, Lioness of the Parch",
     "unitSize": 1,
     "points": 280,
-    "regimentOptions": "0-1 Freeguild Veteran, Any Cities of Sigmar",
+    "regimentOptions": "0-1 <Freeguild Veteran>, Any <Cities of Sigmar>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -202,7 +202,7 @@
     "name": "Warden King",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 Cogsmith, Any Duardin",
+    "regimentOptions": "0-1 <Cogsmith>, Any <Duardin>",
     "notes": null,
     "baseSize": "25mm"
   },
@@ -211,7 +211,7 @@
     "name": "Pontifex Zenestra, Matriarch of the Great Wheel (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 250,
-    "regimentOptions": "0-1 Freeguild Veteran, Any Human",
+    "regimentOptions": "0-1 <Freeguild Veteran>, Any <Human>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "90 × 52mm"
   }

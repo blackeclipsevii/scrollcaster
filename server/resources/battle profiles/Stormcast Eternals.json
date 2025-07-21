@@ -4,7 +4,7 @@
     "name": "Celestant-Prime, Hammer of Sigmar",
     "unitSize": 1,
     "points": 290,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -13,7 +13,7 @@
     "name": "Drakesworn Templar",
     "unitSize": 1,
     "points": 440,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Extremis Chamber, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Extremis Chamber>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "170 × 105mm"
   },
@@ -22,8 +22,8 @@
     "name": "Gardus Steel Soul",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "0-1 Stormcast Exemplar, 0-1 Gryph-hounds, Any Warrior Chamber",
-    "notes": "This Hero can join an eligible regiment as a Stormcast Exemplar.",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, 0-1 <Gryph-hounds>, Any <Warrior Chamber>",
+    "notes": "This Hero can join an eligible regiment as a <Stormcast Exemplar>.",
     "baseSize": "50mm"
   },
   {
@@ -31,7 +31,7 @@
     "name": "Ionus Cryptborn, Warden of Lost Souls",
     "unitSize": 1,
     "points": 400,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -40,7 +40,7 @@
     "name": "Karazai the Scarred",
     "unitSize": 1,
     "points": 480,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "160mm"
   },
@@ -49,7 +49,7 @@
     "name": "Knight-Arcanum",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 Gryph-hounds, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Gryph-hounds>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -58,8 +58,8 @@
     "name": "Knight-Azyros",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "0-1 Warrior Chamber, Any Ruination Chamber",
-    "notes": "This Hero can join an eligible regiment as a Stormcast Exemplar.",
+    "regimentOptions": "0-1 <Warrior Chamber>, Any <Ruination Chamber>",
+    "notes": "This Hero can join an eligible regiment as a <Stormcast Exemplar>.",
     "baseSize": "50mm"
   },
   {
@@ -67,17 +67,17 @@
     "name": "Knight-Draconis",
     "unitSize": 1,
     "points": 230,
-    "regimentOptions": "Any Extremis Chamber",
+    "regimentOptions": "Any <Extremis Chamber>",
     "notes": null,
     "baseSize": "105 × 70mm"
   },
   {
     "type": "Hero",
-    "name": "Knight-Judicator with Gryph-hounds",
+    "name": "Knight-Judicator with <Gryph-hounds>",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "Any Gryph-hounds, Any Warrior Chamber",
-    "notes": "This Hero can join an eligible regiment as a Stormcast Exemplar.",
+    "regimentOptions": "Any <Gryph-hounds>, Any <Warrior Chamber>",
+    "notes": "This Hero can join an eligible regiment as a <Stormcast Exemplar>.",
     "baseSize": "90 × 52mm [1], 40mm [2]"
   },
   {
@@ -85,8 +85,8 @@
     "name": "Knight-Questor",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Questor Soulsworn, 0-1 Gryph-hounds, Any Ruination Chamber",
-    "notes": "This Hero can join an eligible regiment as a Stormcast Exemplar.",
+    "regimentOptions": "0-1 <Questor Soulsworn>, 0-1 <Gryph-hounds>, Any <Ruination Chamber>",
+    "notes": "This Hero can join an eligible regiment as a <Stormcast Exemplar>.",
     "baseSize": "40mm"
   },
   {
@@ -94,7 +94,7 @@
     "name": "Knight-Relictor",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 Gryph-hounds, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Gryph-hounds>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -103,8 +103,8 @@
     "name": "Knight-Vexillor",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Gryph-hounds, Any Warrior Chamber",
-    "notes": "This Hero can join an eligible regiment as a Stormcast Exemplar.",
+    "regimentOptions": "0-1 <Gryph-hounds>, Any <Warrior Chamber>",
+    "notes": "This Hero can join an eligible regiment as a <Stormcast Exemplar>.",
     "baseSize": "40mm"
   },
   {
@@ -112,7 +112,7 @@
     "name": "Krondys, Son of Dracothion",
     "unitSize": 1,
     "points": 560,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "160mm"
   },
@@ -121,7 +121,7 @@
     "name": "Lord-Aquilor",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "Any Gryph-hounds, Any Vanguard Chamber",
+    "regimentOptions": "Any <Gryph-hounds>, Any <Vanguard Chamber>",
     "notes": null,
     "baseSize": "90 × 52mm"
   },
@@ -130,7 +130,7 @@
     "name": "Lord-Celestant",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Stormcast Exemplar, 0-1 Gryph-hounds, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, 0-1 <Gryph-hounds>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -139,7 +139,7 @@
     "name": "Lord-Celestant on Dracoth",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Extremis Chamber, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Extremis Chamber>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "90 × 52mm"
   },
@@ -148,7 +148,7 @@
     "name": "Lord-Celestant on Stardrake",
     "unitSize": 1,
     "points": 480,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "170 × 105mm"
   },
@@ -157,7 +157,7 @@
     "name": "Lord-Commander Bastian Carthalos",
     "unitSize": 1,
     "points": 250,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "50mm"
   },
@@ -166,8 +166,8 @@
     "name": "Lord-Imperatant",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Stormcast Exemplar, 0-1 Gryph-hounds, Any Warrior Chamber",
-    "notes": "This Hero can join an eligible regiment as a Stormcast Exemplar.",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, 0-1 <Gryph-hounds>, Any <Warrior Chamber>",
+    "notes": "This Hero can join an eligible regiment as a <Stormcast Exemplar>.",
     "baseSize": "40mm [1], 32mm [1]"
   },
   {
@@ -175,7 +175,7 @@
     "name": "Lord-Relictor",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "0-1 Stormcast Exemplar, 0-1 Gryph-hounds, Any Ruination Chamber, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, 0-1 <Gryph-hounds>, Any <Ruination Chamber>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -184,8 +184,8 @@
     "name": "Lord-Terminos",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "0-1 Stormcast Exemplar, 0-1 Gryph-hounds, Any Ruination Chamber, Any Warrior Chamber",
-    "notes": "This Hero can join an eligible regiment as a Stormcast Exemplar.",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, 0-1 <Gryph-hounds>, Any <Ruination Chamber>, Any <Warrior Chamber>",
+    "notes": "This Hero can join an eligible regiment as a <Stormcast Exemplar>.",
     "baseSize": "40mm [1], 25mm [1]"
   },
   {
@@ -193,7 +193,7 @@
     "name": "Lord-Veritant",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Stormcast Exemplar, 0-1 Gryph-hounds, Any Ruination Chamber, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, 0-1 <Gryph-hounds>, Any <Ruination Chamber>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -202,7 +202,7 @@
     "name": "Lord-Vigilant on Gryph-stalker",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "0-1 Stormcast Exemplar, 0-1 Gryph-hounds, Any Ruination Chamber, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, 0-1 <Gryph-hounds>, Any <Ruination Chamber>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "90 × 52mm"
   },
@@ -211,7 +211,7 @@
     "name": "Lord-Vigilant on Morrgryph",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "Any Ruination Chamber, Any Warrior Chamber",
+    "regimentOptions": "Any <Ruination Chamber>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -220,7 +220,7 @@
     "name": "Iridan the Witness",
     "unitSize": 1,
     "points": 290,
-    "regimentOptions": "Any Stormcast Eternals, 0-1 Stormcast Exemplar",
+    "regimentOptions": "Any <Stormcast Eternals>, 0-1 <Stormcast Exemplar>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -229,7 +229,7 @@
     "name": "Neave Blacktalon",
     "unitSize": 1,
     "points": 310,
-    "regimentOptions": "Neave’s Companions (required), Lorai (required), Any Vanguard Chamber",
+    "regimentOptions": "Neave’s Companions (required), Lorai (required), Any <Vanguard Chamber>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -239,7 +239,7 @@
     "unitSize": 1,
     "points": 0,
     "regimentOptions": "None",
-    "notes": "This unit can only be taken in Neave Blacktalon’s regiment.",
+    "notes": "This unit can only be taken in <Neave Blacktalon>’s regiment.",
     "baseSize": "40mm"
   },
   {
@@ -247,7 +247,7 @@
     "name": "Tornus the Redeemed",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "50mm"
   },
@@ -256,7 +256,7 @@
     "name": "Vandus Hammerhand",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Extremis Chamber, Any Warrior Chamber",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Extremis Chamber>, Any <Warrior Chamber>",
     "notes": null,
     "baseSize": "90 × 52mm"
   },
@@ -265,7 +265,7 @@
     "name": "Yndrasta, the Celestial Spear",
     "unitSize": 1,
     "points": 310,
-    "regimentOptions": "0-1 Stormcast Exemplar, Any Stormcast Eternals",
+    "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",
     "notes": null,
     "baseSize": "60mm"
   },
@@ -274,7 +274,7 @@
     "name": "Iridan the Witness (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 320,
-    "regimentOptions": "Any Stormcast Eternals, 0-1 Stormcast Exemplar",
+    "regimentOptions": "Any <Stormcast Eternals>, 0-1 <Stormcast Exemplar>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "120 × 92mm"
   }

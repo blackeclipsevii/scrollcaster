@@ -4,7 +4,7 @@
     "name": "Bladebringer, Herald on Exalted Chariot",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "0-1 Slaaneshi Beguiler, Any War Machine",
+    "regimentOptions": "0-1 <Slaaneshi Beguiler>, Any <War Machine>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -13,7 +13,7 @@
     "name": "Contorted Epitome",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "0-1 Slaaneshi Beguiler, Any Daemon",
+    "regimentOptions": "0-1 <Slaaneshi Beguiler>, Any <Daemon>",
     "notes": null,
     "baseSize": "75 × 42mm"
   },
@@ -22,8 +22,8 @@
     "name": "Dexcessa, the Talon of Slaanesh",
     "unitSize": 1,
     "points": 180,
-    "regimentOptions": "0-1 Synessa or Slaaneshi Beguiler, Any Hedonites of Slaanesh",
-    "notes": "This Hero can join Synessa’s regiment.",
+    "regimentOptions": "0-1 <Synessa> or <Slaaneshi Beguiler>, Any <Hedonites of Slaanesh>",
+    "notes": "This Hero can join <Synessa>’s regiment.",
     "baseSize": "105 × 70mm"
   },
   {
@@ -31,7 +31,7 @@
     "name": "Glutos Orscollion, Lord of Gluttony",
     "unitSize": 1,
     "points": 470,
-    "regimentOptions": "0-1 Dark Egotist, Any Hedonites of Slaanesh",
+    "regimentOptions": "0-1 <Dark Egotist>, Any <Hedonites of Slaanesh>",
     "notes": null,
     "baseSize": "170 × 105mm"
   },
@@ -40,8 +40,8 @@
     "name": "Infernal Enrapturess, Herald of Slaanesh",
     "unitSize": 1,
     "points": 90,
-    "regimentOptions": "Any Daemon",
-    "notes": "This Hero can join an eligible regiment as a Slaaneshi Beguiler.",
+    "regimentOptions": "Any <Daemon>",
+    "notes": "This Hero can join an eligible regiment as a <Slaaneshi Beguiler>.",
     "baseSize": "60 × 35mm"
   },
   {
@@ -49,7 +49,7 @@
     "name": "Keeper of Secrets",
     "unitSize": 1,
     "points": 420,
-    "regimentOptions": "0-1 Slaaneshi Beguiler, Any Hedonites of Slaanesh",
+    "regimentOptions": "0-1 <Slaaneshi Beguiler>, Any <Hedonites of Slaanesh>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -58,8 +58,8 @@
     "name": "Lord of Hubris",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Sybarite",
-    "notes": "This Hero can join an eligible regiment as a Dark Egotist.",
+    "regimentOptions": "Any <Sybarite>",
+    "notes": "This Hero can join an eligible regiment as a <Dark Egotist>.",
     "baseSize": "40mm"
   },
   {
@@ -67,8 +67,8 @@
     "name": "Lord of Pain",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Sybarite",
-    "notes": "This Hero can join an eligible regiment as a Dark Egotist.",
+    "regimentOptions": "Any <Sybarite>",
+    "notes": "This Hero can join an eligible regiment as a <Dark Egotist>.",
     "baseSize": "40mm"
   },
   {
@@ -76,7 +76,7 @@
     "name": "Shalaxi Helbane",
     "unitSize": 1,
     "points": 460,
-    "regimentOptions": "0-1 Slaaneshi Beguiler, Any Hedonites of Slaanesh",
+    "regimentOptions": "0-1 <Slaaneshi Beguiler>, Any <Hedonites of Slaanesh>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -85,7 +85,7 @@
     "name": "Shardspeaker of Slaanesh",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "0-1 Dark Egotist, Any Sybarite",
+    "regimentOptions": "0-1 <Dark Egotist>, Any <Sybarite>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -94,8 +94,8 @@
     "name": "Sigvald, Prince of Slaanesh",
     "unitSize": 1,
     "points": 200,
-    "regimentOptions": "0-1 Dark Egotist, Any Hedonites of Slaanesh",
-    "notes": "This Hero can join an eligible regiment as a Dark Egotist.",
+    "regimentOptions": "0-1 <Dark Egotist>, Any <Hedonites of Slaanesh>",
+    "notes": "This Hero can join an eligible regiment as a <Dark Egotist>.",
     "baseSize": "60mm"
   },
   {
@@ -103,7 +103,7 @@
     "name": "Syll’Esske, the Vengeful Allegiance",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "0-1 Slaaneshi Beguiler or Dark Egotist, Any Hedonites of Slaanesh",
+    "regimentOptions": "0-1 <Slaaneshi Beguiler> or <Dark Egotist>, Any <Hedonites of Slaanesh>",
     "notes": null,
     "baseSize": "50mm"
   },
@@ -112,7 +112,7 @@
     "name": "Synessa, the Voice of Slaanesh",
     "unitSize": 1,
     "points": 210,
-    "regimentOptions": "0-1 Dexcessa or Slaaneshi Beguiler, Any Hedonites of Slaanesh",
+    "regimentOptions": "0-1 <Dexcessa> or <Slaaneshi Beguiler>, Any <Hedonites of Slaanesh>",
     "notes": "This Hero can join Dexcessa’s regiment.",
     "baseSize": "105 × 70mm"
   },
@@ -121,8 +121,8 @@
     "name": "The Masque",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "Any Daemon",
-    "notes": "This Hero can join an eligible regiment as a Slaaneshi Beguiler.",
+    "regimentOptions": "Any <Daemon>",
+    "notes": "This Hero can join an eligible regiment as a <Slaaneshi Beguiler>.",
     "baseSize": "32mm"
   },
   {
@@ -130,7 +130,7 @@
     "name": "Syll’Esske, the Vengeful Allegiance (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 230,
-    "regimentOptions": "0-1 Slaaneshi Beguiler or Dark Egotist, Any Hedonites of Slaanesh",
+    "regimentOptions": "0-1 <Slaaneshi Beguiler> or <Dark Egotist>, Any <Hedonites of Slaanesh>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "50mm"
   }
