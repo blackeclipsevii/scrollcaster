@@ -29,7 +29,7 @@ const setOverlayContents = () => {
 const toggleOverlay = overlayToggleFactory('flex', () =>{
   setOverlayContents();
   if (_armies.length === 0)
-  fetch(`${endpoint}/armies`).
+  fetchWithRetry(`${endpoint}/armies`).
   then(resp => resp.json()).
   then(armies => {
     _armies = armies;

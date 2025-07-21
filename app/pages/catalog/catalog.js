@@ -27,7 +27,7 @@ async function loadArmies() {
 
 
     const url = `${endpoint}/armies`;
-    await fetch(encodeURI(url)).
+    await fetchWithRetry(encodeURI(url)).
     then(resp => resp.json()).
     then(allArmies => {
         allArmies.forEach(army => {

@@ -210,7 +210,7 @@ async function readUnit() {
         if (armyName) {
             url = `${url}&army=${armyName}`
         }
-        await fetch(url).
+        await fetchWithRetry(url).
         then(resp => resp.json()).
         then(unit => {
             console.log(JSON.stringify(unit));

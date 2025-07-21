@@ -43,7 +43,7 @@ async function loadUnitsForCatalog() {
     if (armyName) {
         url = `${url}?army=${armyName}`
     }
-    await fetch(encodeURI(url)).
+    await fetchWithRetry(encodeURI(url)).
     then(resp => resp.json()).
     then(units => {
         let unitIds = Object.getOwnPropertyNames(units);
@@ -94,7 +94,7 @@ async function loadUnits() {
     const isNewRegiment = hasRegimentIndex && roster.regiments[regimentIndex].units.length === 0;
 
     const loadRor = async () => {
-        await fetch(encodeURI(`${endpoint}/regimentsOfRenown?army=${roster.army}`)).
+        await fetchWithRetry(encodeURI(`${endpoint}/regimentsOfRenown?army=${roster.army}`)).
         then(resp => resp.json()).
         then(units => {
             units.forEach(regimentOfRenown => {
@@ -155,7 +155,7 @@ async function loadUnits() {
         if (regiment.units.length > 0)
             url = `${url}&leaderId=${regiment.units[0].id}`;
     }
-    await fetch(encodeURI(url)).
+    await fetchWithRetry(encodeURI(url)).
     then(resp => resp.json()).
     then(units => {
         const availableUnits = Object.values(units);

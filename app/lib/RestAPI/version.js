@@ -1,7 +1,7 @@
 
 const getServerVersion = async () => {
     let version = null;
-    await fetch(encodeURI(`${endpoint}/version`),{ method: "GET"  })
+    await fetchWithRetry(encodeURI(`${endpoint}/version`),{ method: "GET"  })
     .then(response => response.json())
     .then(versionObj => {
         version = `${versionObj.major}.${versionObj.minor}.${versionObj.patch}`;
@@ -12,7 +12,7 @@ const getServerVersion = async () => {
 
 const getBsDataVersion = async() => {
     let version = null;
-    await fetch(encodeURI(`${endpoint}/version?of=bsdata`),{ method: "GET" })
+    await fetchWithRetry(encodeURI(`${endpoint}/version?of=bsdata`),{ method: "GET" })
     .then(response => {
         version = response.json()
     });

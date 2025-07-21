@@ -119,7 +119,7 @@ function displayUpgrades(upgradeList) {
 
 async function loadUpgradesCatalog() {
     fixedPreviousUrl = encodeURI(`../catalog/tome.html?army=${armyName}`);
-    await fetch(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
+    await fetchWithRetry(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
         let upgradeList = [];
@@ -143,7 +143,7 @@ async function loadUpgradesCatalog() {
 
 async function loadUniversalLores() {
     fixedPreviousUrl = encodeURI(`../catalog/tome.html`);
-    await fetch(encodeURI(`${endpoint}/lores`)).
+    await fetchWithRetry(encodeURI(`${endpoint}/lores`)).
     then(resp => resp.json()).
     then(loreObject => {
         loreObject.universal.forEach(ulut => {
@@ -161,7 +161,7 @@ async function loadUpgrades() {
     refreshPointsOverlay(rosterId);
     updateValidationDisplay();
 
-    await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
+    await fetchWithRetry(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
         let upgradeList = [];

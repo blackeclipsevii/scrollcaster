@@ -21,7 +21,7 @@ async function getRosters() {
     /*
     let rosters = null;
     const endpoint = rosterEndpoint();
-    await fetch(encodeURI(endpoint),{
+    await fetchWithRetry(encodeURI(endpoint),{
         method: "GET" // default, so we can ignore
     }).then(response => { rosters = response.json() });
     return rosters;
@@ -33,7 +33,7 @@ async function getRosters() {
 async function getNewRoster(army) {
     let roster = null;
     const endpoint = rosterEndpoint();
-    await fetch(encodeURI(`${endpoint}&army=${army}`), {
+    await fetchWithRetry(encodeURI(`${endpoint}&army=${army}`), {
         method: "GET" // default, so we can ignore
     }).then(response => { 
         console.log(response);
@@ -48,7 +48,7 @@ async function getRoster(id) {
 /*
     const endpoint = rosterEndpoint();
     let roster = null;
-    await fetch(`${endpoint}&id=${id}`, {
+    await fetchWithRetry(`${endpoint}&id=${id}`, {
         method: "GET" // default, so we can ignore
     }).then(response => { 
         console.log(response);
@@ -64,7 +64,7 @@ async function putRoster(roster) {
     _storeRosters(rosters);
     /*
     const endpoint = rosterEndpoint();
-    await fetch(`${endpoint}&id=${roster.id}`, {
+    await fetchWithRetry(`${endpoint}&id=${roster.id}`, {
         method: "PUT",
         body: json,
         headers: { 'Content-Type': 'application/json' }
@@ -84,7 +84,7 @@ async function deleteRoster(id) {
     /*
     const endpoint = rosterEndpoint();
     localStorage.removeItem(id);
-  await fetch(`${endpoint}&id=${id}`,{
+  await fetchWithRetry(`${endpoint}&id=${id}`,{
       method: "DELETE"
   });
   */
