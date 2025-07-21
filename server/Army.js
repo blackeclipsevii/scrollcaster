@@ -2,10 +2,12 @@
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from "../shared/UpgradeType.js";
-import BsConstraint, { BsCondition, BsModifier, getConstraints, ModifierType, Scope } from './lib/BsConstraint.js';
+import BsConstraint, { BsCondition, BsModifier, ConditionType, getConstraints, ModifierType, Scope } from './lib/BsConstraint.js';
 import BsAttrObj from './lib/BsAttribObj.js';
 
 const LeaderId = "d1f3-921c-b403-1106";
+const RegimentId = "376a-6b97-8699-dd59";
+const LegendsPub = "9dee-a6b2-4b42-bfee";
 
 const upgradeLUT = {
     'battle formation': {
@@ -62,7 +64,7 @@ export default class Army {
         this.isArmyOfRenown = armyName.includes(' - ') && !armyName.includes('Library');
         this._parse(ageOfSigmar, armyName);
     }
-
+/*
     _unitConditionals(ageOfSigmar, catalogue, entryLink) {
         if (!entryLink.modifiers)
             return;
@@ -181,7 +183,7 @@ export default class Army {
             regimentOptions._tags.length > 0)
             unit.regimentOptions = regimentOptions;
     }
-
+*/
     _parse(ageOfSigmar, armyName) {
         const data = ageOfSigmar._database.armies[armyName];
         const catalogue = data.catalog;
@@ -193,7 +195,9 @@ export default class Army {
         const names = Object.getOwnPropertyNames(data.libraries);
         names.forEach(name => {
             data.libraries[name].sharedSelectionEntries.forEach(entry => {
-                if (entry['@type'] === 'unit') {
+                if (entry['@type'] === 'unit' &&
+                    entry['@publicationId'] !== LegendsPub
+                ) {
                     const unit = new Unit(entry);
                     _libraryUnits[unit.id] = unit;
                 }
@@ -265,10 +269,6 @@ export default class Army {
                 return;
             }
 
-            // these are the units this army can use
-            this.units[unit.id] = unit;
-            this.unitLUT[link['@id']] = unit.id;
-
             if (data.battleProfiles) {
                 const bpNames = Object.getOwnPropertyNames(data.battleProfiles);
                 bpNames.forEach(bpName => {
@@ -329,6 +329,11 @@ export default class Army {
                     }
                 });
             }
+
+            
+            // these are the units this army can use
+            this.units[unit.id] = unit;
+            this.unitLUT[link['@id']] = unit.id;
         });
 
         catalogue.sharedSelectionEntryGroups.forEach(entry => {

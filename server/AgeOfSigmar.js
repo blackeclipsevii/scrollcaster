@@ -14,6 +14,7 @@ import path from 'path';
 import Upgrade from './Upgrade.js';
 import { UpgradeType } from '../shared/UpgradeType.js';
 import BsConstraint, { Scope, BsModifier, ConstraintType, getConstraints } from './lib/BsConstraint.js';
+import { UnitType } from '../shared/UnitType.js';
 
 function parseGameSystem(path) {
     const xmlContent = fs.readFileSync(path, 'utf8');
@@ -77,6 +78,7 @@ export default class AgeOfSigmar {
 
     // get all the units available to a leader's regiment
     getRegimentOptions(army, leaderId) {
+        // to-do literally just make a schema tehre are too many spaces in the plain text
         const leader = army.units[leaderId];
         if (!leader) {
             console.log(`where are you ${leaderId}`)
@@ -85,7 +87,8 @@ export default class AgeOfSigmar {
         // aos keywords
         let keywords = Object.values(this.keywordLUT);
         // army keywords
-        keywords.join(Object.values(army.keywordLUT));
+        keywords.concat(Object.values(army.keywordLUT));
+        keywords = keywords.join(',').toUpperCase().split(',');
 
         const sortKeywords = (inKeywords) => {
             return inKeywords.sort((a, b) => {
@@ -114,10 +117,23 @@ export default class AgeOfSigmar {
         console.log(`${leader.name} ${leader.battleProfile}`);
         const options = leader.battleProfile.regimentOptions.toUpperCase().split(',');
 
+        const armyUnits = Object.values(army.units);
+        const allUnitNames = [];
+        armyUnits.forEach(aUnit => {
+            allUnitNames.push(aUnit.name.toUpperCase());
+        });
+
         // sort on spaces so we don't hit any keywords that match substrings of other keywords
         // longer keywords also take presidence
         //const sortedKeywords = sortKeywords(keywords);
         const canFieldUnit = (unit) => {
+            if (unit.type === UnitType.Manifestation ||
+                unit.type === UnitType.Terrain ||
+                unit.type === UnitType.Unknown
+            ) { // these don't go in a regiment
+                return false;
+            }
+
             let allTags = unit._tags;    
             allTags.push(unit.name);
 
@@ -151,9 +167,24 @@ export default class AgeOfSigmar {
                         subOptions.push(option);
                     }
                 }
+
+                // try to handle the unit name case
+                const nameOptions = [];
+                subOptions.forEach((so, idx) => {
+                    // this option is a name, not a keyword
+                    if (allUnitNames.includes(so) && !keywords.includes(so)) {
+                        nameOptions.push(idx);
+                    }
+                });
+
                 allTags.forEach(tag => {
-                    subOptions.forEach(so => {
-                        if (so.includes(tag)) {
+                    subOptions.forEach((so, idx)=> {
+                        if (nameOptions.includes(idx)) {
+                            if (so === unit.name.toUpperCase()) {
+                                ok = true;
+                            }
+                        }
+                        else if (so.includes(tag)) {
                             ok = !hasNonPrefix(so, tag);
                         }
                     })
@@ -164,7 +195,6 @@ export default class AgeOfSigmar {
         }
 
         let units = [];
-        const armyUnits = Object.values(army.units);
         armyUnits.forEach(unit => {
             if (canFieldUnit(unit)) {
                 units.push(unit);

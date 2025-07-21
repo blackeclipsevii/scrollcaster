@@ -24,7 +24,8 @@ export default class Unit {
         this.type = UnitType.Unknown;
         this.keywords.forEach(keyword => {
             let type = strToUnitType(keyword);
-            if (type < this.type)
+            if (this.type !== UnitType.Manifestation &&
+                type < this.type)
                 this.type = type;
         });
 
