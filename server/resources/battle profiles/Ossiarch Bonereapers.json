@@ -4,8 +4,8 @@
     "name": "Arch-Kavalos Zandtos",
     "unitSize": 1,
     "points": 210,
-    "regimentOptions": "Any Ossiarch Bonereapers",
-    "notes": "This Hero can join an eligible regiment as a Legion Subcommander.",
+    "regimentOptions": "Any <Ossiarch Bonereapers>",
+    "notes": "This Hero can join an eligible regiment as a <Legion Subcommander>.",
     "baseSize": "80mm"
   },
   {
@@ -13,7 +13,7 @@
     "name": "Arkhan the Black, Mortarch of Sacrament",
     "unitSize": 1,
     "points": 390,
-    "regimentOptions": "0-1 Legion Subcommander, Any Ossiarch Bonereapers",
+    "regimentOptions": "0-1 <Legion Subcommander>, Any <Ossiarch Bonereapers>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -22,7 +22,7 @@
     "name": "Katakros, Mortarch of the Necropolis",
     "unitSize": 1,
     "points": 520,
-    "regimentOptions": "0-1 Legion Subcommander, Any Ossiarch Bonereapers",
+    "regimentOptions": "0-1 <Legion Subcommander>, Any <Ossiarch Bonereapers>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -31,8 +31,8 @@
     "name": "Liege-Kavalos",
     "unitSize": 1,
     "points": 180,
-    "regimentOptions": "Any Ossiarch Bonereapers",
-    "notes": "This Hero can join an eligible regiment as a Legion Subcommander.",
+    "regimentOptions": "Any <Ossiarch Bonereapers>",
+    "notes": "This Hero can join an eligible regiment as a <Legion Subcommander>.",
     "baseSize": "80mm"
   },
   {
@@ -40,7 +40,7 @@
     "name": "Mortisan Boneshaper",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Gothizzar Harvester, Any Infantry",
+    "regimentOptions": "0-1 <Gothizzar Harvester>, Any <Infantry>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -49,7 +49,7 @@
     "name": "Mortisan Ossifector",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 Gothizzar Harvester, 0-1 Mortek Crawler, Any Infantry",
+    "regimentOptions": "0-1 <Gothizzar Harvester>, 0-1 <Mortek Crawler>, Any <Infantry>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -58,7 +58,7 @@
     "name": "Mortisan Soulmason",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "0-1 Gothizzar Harvester, Any Infantry",
+    "regimentOptions": "0-1 <Gothizzar Harvester>, Any <Infantry>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -67,7 +67,7 @@
     "name": "Mortisan Soulreaper",
     "unitSize": 1,
     "points": 90,
-    "regimentOptions": "0-1 Gothizzar Harvester, Any Infantry",
+    "regimentOptions": "0-1 <Gothizzar Harvester>, Any <Infantry>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -76,7 +76,7 @@
     "name": "Nagash, Supreme Lord of the Undead",
     "unitSize": 1,
     "points": 880,
-    "regimentOptions": "0-1 Legion Subcommander, Any Ossiarch Bonereapers",
+    "regimentOptions": "0-1 <Legion Subcommander>, Any <Ossiarch Bonereapers>",
     "notes": null,
     "baseSize": "130mm"
   },
@@ -85,7 +85,7 @@
     "name": "Vokmortian, Master of the Bone-tithe",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "Any Ossiarch Bonereapers",
+    "regimentOptions": "Any <Ossiarch Bonereapers>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -94,7 +94,7 @@
     "name": "Mortisan Boneshaper (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 Gothizzar Harvester, Any Infantry",
+    "regimentOptions": "0-1 <Gothizzar Harvester>, Any <Infantry>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "32mm"
   }

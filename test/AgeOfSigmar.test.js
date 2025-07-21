@@ -101,6 +101,46 @@ test('Morathi regiment options', () =>{
     ]);
 });
 
+test('Lord Kroak regiment options', () =>{
+    // 0-1 Skink Starpriest or Favoured Spawning
+    const aos = getAos();
+    const army = aos.getArmy('Seraphon');
+    expect(army).toBeTruthy();
+
+    const leaderId = "df01-5aa1-a502-7a0c";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Lord Kroak")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "Saurus Astrolith Bearer",
+        "Skink Starpriest",
+        "Aggradon Lancers",
+        "Bastiladon with Ark of Sotek",
+        "Bastiladon with Solar Engine",
+        "Engine of the Gods",
+        "Hunters of Huanchi with Dartpipes",
+        "Hunters of Huanchi with Starstone Bolas",
+        "Kroxigor",
+        "Kroxigor Warspawned",
+        "Raptadon Chargers",
+        "Raptadon Hunters",
+        "Ripperdactyl Riders",
+        "Saurus Guard",
+        "Saurus Warriors",
+        "Skinks",
+        "Spawn of Chotec",
+        "Stegadon",
+        "Terradon Riders",
+        "Terrawings",
+    ]);
+});
+
 test('Skink Starpriest regiment options', () =>{
     // non-MONSTER Skink
     const aos = getAos();
@@ -134,6 +174,56 @@ test('Skink Starpriest regiment options', () =>{
         "Terradon Riders",
         "Terrawings",
     ]);
+
+    
+    // two monsters should fail
+    const invalidRegiment = [
+        leader.id,
+        unitOptions[0].id,
+        unitOptions[2].id
+    ];
+
+    let errorMsgs = aos.validateRegiment(army, invalidRegiment);
+    expect(errorMsgs.length).toBe(1);
+
+    // one monster pass
+    const validRegiment = [
+        leader.id,
+        unitOptions[0].id,
+        unitOptions[10].id
+    ]    
+    errorMsgs = aos.validateRegiment(army, validRegiment);
+    expect(errorMsgs.length).toBe(0);
+});
+
+test('Terradon Chief regiment options', () =>{
+    // Any Skink Cavalry
+    const aos = getAos();
+    const army = aos.getArmy('Seraphon');
+    expect(army).toBeTruthy();
+
+    const leaderId = "767f-699-a82d-ca70";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Terradon Chief")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "Bastiladon with Ark of Sotek",
+        "Bastiladon with Solar Engine",
+        "Engine of the Gods",
+        "Raptadon Chargers",
+        "Raptadon Hunters",
+        "Ripperdactyl Riders",
+        "Spawn of Chotec",
+        "Stegadon",
+        "Terradon Riders", // 2x ?
+        "Terrawings",
+    ]);
 });
 
 test('Akhelian King regiment options', () =>{
@@ -152,7 +242,6 @@ test('Akhelian King regiment options', () =>{
     unitOptions.forEach(option => {
         names.push(option.name);
     });
-    expect(names.length).toEqual(13);
     expect(names).toEqual([
         "Akhelian Thrallmaster",
         "Isharann Soulrender",
@@ -168,6 +257,32 @@ test('Akhelian King regiment options', () =>{
         "Ikon of the Sea",
         "Ikon of the Storm",
     ]);
+
+    // picking both of or is bad (max 1)
+    let badReg = [
+        leader.id,
+        unitOptions[0].id,
+        unitOptions[1].id
+    ];
+    let errorMsgs = aos.validateRegiment(army, badReg);
+    expect(errorMsgs.length).toBe(1);
+
+    // two of one is bad
+    badReg = [
+        leader.id,
+        unitOptions[0].id,
+        unitOptions[0].id
+    ];
+    errorMsgs = aos.validateRegiment(army, badReg);
+    expect(errorMsgs.length).toBe(1);
+
+    const goodReg = [
+        leader.id,
+        unitOptions[0].id,
+        unitOptions[3].id
+    ];
+    errorMsgs = aos.validateRegiment(army, goodReg);
+    expect(errorMsgs.length).toBe(0);
 });
 
 test('Scinari Enlightener regiment options', () =>{
@@ -191,5 +306,88 @@ test('Scinari Enlightener regiment options', () =>{
         "Ydrilan Riverblades",
         "Vanari Bladelords",
         "Vanari Auralan Wardens"
+    ]);
+
+    // two riverblads should fail
+    const invalidRegiment = [
+        leader.id,
+        unitOptions[0].id,
+        unitOptions[0].id
+    ];
+
+    let errorMsgs = aos.validateRegiment(army, invalidRegiment);
+    expect(errorMsgs.length).toBe(1);
+
+    // pass
+    const validRegiment = [
+        leader.id,
+        unitOptions[0].id,
+        unitOptions[1].id
+    ]    
+    errorMsgs = aos.validateRegiment(army, validRegiment);
+    expect(errorMsgs.length).toBe(0);
+});
+
+test('Vanari Lord Regent regiment options', () =>{
+    // hero via faction catagory (lumineth paragon)
+    // keyword that is also in unit names
+    const aos = getAos();
+    const army = aos.getArmy('Lumineth Realm-lords');
+    expect(army).toBeTruthy();
+
+    const leaderId = "2e0b-1a0a-3d2b-8fef";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Vanari Lord Regent")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "The Light of Eltharion",
+        "Vanari Bannerblade",
+        "Ydrilan Riverblades",
+        "Vanari Bladelords",
+        "Vanari Dawnriders",
+        "Vanari Auralan Sentinels",
+        "Vanari Auralan Wardens",
+        "Vanari Starshard Ballista",
+        "The Light of Eltharion (Scourge of Ghyran)",
+        "Vanari Bannerblade (Scourge of Ghyran)",
+      ]);
+});
+
+test('Legion of the First Prince', () =>{
+    // Eternus has a title, but can be referenced by Eternus
+    const aos = getAos();
+    const army = aos.getArmy('Slaves to Darkness - Legion of the First Prince');
+    expect(army).toBeTruthy();
+
+    const leaderId = "672f-33c8-1e61-cead";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Be'lakor, the Dark Master")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "Eternus, Blade of the First Prince",
+        "Varanguard",
+        "Chaos Legionnaires",
+        "Chaos Furies",
+        "Centaurion Marshal",
+        "Legion of the First Prince Bloodcrushers",
+        "Legion of the First Prince Beasts of Nurgle",
+        "Legion of the First Prince Bloodletters",
+        "Legion of the First Prince Flamers of Tzeentch",
+        "Legion of the First Prince Fiends",
+        "Legion of the First Prince Hellflayer",
+        "Legion of the First Prince Plaguebearers",
+        "Legion of the First Prince Screamers of Tzeentch",
     ]);
 });

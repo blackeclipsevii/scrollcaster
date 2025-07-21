@@ -1,6 +1,30 @@
-function validateRoster(roster) {
+const validateRegiment = async (armyName, regiment) => {
+    let errors = ['bad request'];
+    const reg2Args = () => {
+        strArr = '';
+        regiment.units.forEach((ele,idx) => {
+            if (strArr.length === 0)
+                strArr = `leader=${ele.id}`
+            else
+                strArr = `${strArr}&unit${idx-1}=${ele.id}`
+        });
+        return strArr;
+    }
+    const regArg = encodeURI(`${endpoint}/validate?${reg2Args()}&army=${armyName}`);
+    console.log(regArg);
+    await fetch(regArg,{
+        method: "GET" // default, so we can ignore
+    })
+    .then(response => response.json())
+    .then(result => {
+        errors = result;
+    });
+    return errors;
+}
+
+const validateRoster = async (roster) => {
     let errors = [];
-    if (totalPoints > roster.points) {
+    if (Number(totalPoints) > roster.points) {
         let errorMsg = `Total allowed points exceeded: ${totalPoints} / ${roster.points}`;
         errors.push(errorMsg);
     }
@@ -17,12 +41,25 @@ function validateRoster(roster) {
     let warmasterIsGeneral = false;
     let warmasters = [];
     let uniqueUnits = {};
-    roster.regiments.forEach((reg, idx) => {
+
+    const validateUnique = (unit) => {
+        const uniqueName = unit.name.replace(" (Scourge of Ghyran)", "");
+        if (uniqueUnits[uniqueName]) {
+            let errorMsg = `Multiple instances of UNIQUE unit: ${uniqueName}`;
+            errors.push(errorMsg);
+        } else {
+            uniqueUnits[uniqueName] = true;
+        }
+    }
+    
+    for(let idx = 0; idx < roster.regiments.length; ++idx)
+    {
+        const reg = roster.regiments[idx];
         const nunits = reg.units.length;
         if (reg.units.length === 0) {
             let errorMsg = `Regiment ${idx+1} is empty`;
             errors.push(errorMsg);
-            return;
+            continue;
         }
         
         const leader = reg.units[0];
@@ -52,23 +89,28 @@ function validateRoster(roster) {
 
         reg.units.forEach(unit => {
             if (unit.keywords.includes('UNIQUE')) {
-                let uniqueName = unit.name.replace(" (Scourge of Ghyran)", "");
-                console.log(uniqueName);
-                if (uniqueUnits[uniqueName]) {
-                    let errorMsg = `Multiple instances of UNIQUE unit: ${uniqueName}`;
-                    errors.push(errorMsg);
-                } else {
-                    uniqueUnits[uniqueName] = true;
-                }
+                validateUnique(unit);
+            } else {
+                if (unit.artefact)
+                    numArtefacts += 1;
+
+                if (unit.heroicTrait)
+                    numTraits += 1;
             }
-
-            if (unit.artefact)
-                numArtefacts += 1;
-
-            if (unit.heroicTrait)
-                numTraits += 1;
         });
-    });
+
+        const vrErrors = await validateRegiment(roster.army, reg);
+        if (vrErrors.length > 0) {
+            errors.push(`Regiment ${idx+1}: ${vrErrors.join(', ')}`);
+        }
+    };
+
+    for (let i = 0; i < roster.auxiliaryUnits.length; ++i) {
+        const unit = roster.auxiliaryUnits[i];
+        if (unit.keywords.includes('UNIQUE')) {
+            validateUnique(unit);
+        } 
+    }
 
     if (numGenerals === 0) {
         let errorMsg = `A General must be selected`;

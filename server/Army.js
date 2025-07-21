@@ -2,11 +2,8 @@
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from "../shared/UpgradeType.js";
-import BsConstraint, { BsCondition, BsModifier, ConditionType, getConstraints, ModifierType, Scope } from './lib/BsConstraint.js';
-import BsAttrObj from './lib/BsAttribObj.js';
 
-const LeaderId = "d1f3-921c-b403-1106";
-const RegimentId = "376a-6b97-8699-dd59";
+// id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
 
 const upgradeLUT = {
@@ -42,7 +39,10 @@ const upgradeLUT = {
 
 export default class Army {
     constructor(ageOfSigmar, armyName) {
+        // the name of the army
         this.name = armyName;
+
+        // upgrades available to the army
         this.upgrades = {
             artefacts: {},
             battleFormations: {},
@@ -54,139 +54,42 @@ export default class Army {
                 prayer: {}
             }
         };
+
+        // LUT for point values
         this.points = {};
+
+        // Units available to the army
         this.units = {};
+
+        // LUT for units
         this.unitLUT = {};
+
+        // LUT for keywords
         this.keywordLUT = {};
+
+        // Regiments of Renown available to the army
         this.regimentsOfRenown = [];
+
+        // Tags - keywords that aren't really keywords
         this._tags = {};
-        // TO-DO what about big waaagh!s
+
         this.isArmyOfRenown = armyName.includes(' - ') && !armyName.includes('Library');
         this._parse(ageOfSigmar, armyName);
     }
-/*
-    _unitConditionals(ageOfSigmar, catalogue, entryLink) {
-        if (!entryLink.modifiers)
-            return;
 
-        const targetId = entryLink['@targetId'];
-        const unit = this.units[targetId];
-        if (!unit)
-            return;
-
-        let isLeader = false;
-        entryLink.modifiers.forEach(modifier => {
-            if (modifier['@type'] === 'set-primary')
-                isLeader = true;
-        });
-
-        // to-do WHAT IF A UNIT CAN BE BOTH A LEADER AND A UNIT
-        if (!isLeader)
-            return;
-
-        // TO-DO not sure how to parse these correctly
-        const regimentOptions = {
-            constraints: {},
-            units: [],
-            keywords: [],
-            _tags: []
-        };
-
-        if (catalogue.categoryEntries) {
-            catalogue.categoryEntries.forEach(catEntry => {
-                if (!catEntry.constraints) {
-                    // console.log(`Skipping catalog entry ${catEntry['@name']} - no constraints`);
-                    return;
-                }
-                let constraints = {};
-                catEntry.constraints.forEach(constraintXml => {
-                    const cObj = new BsConstraint(constraintXml);
-                    constraints[cObj.id] = cObj;
-                });
-
-                catEntry.modifiers.forEach(modXml =>{
-                    const mObj = new BsModifier(modXml);
-                    let meetsConditions = false;
-
-                    modXml.conditionGroups.forEach(condGroup =>{
-                        condGroup.localConditionGroups.forEach(lcg => {
-                            let localMeetsCondition = true;
-                            // TO-DO correctly local condition group
-                            lcg.conditions.forEach(conditionXml =>{
-                                const condObj = new BsCondition(conditionXml);
-                                if (condObj.childId === LeaderId)
-                                    return;
-                                localMeetsCondition &= condObj.meetsCondition(entryLink);
-                            });
-
-                            if (localMeetsCondition) {
-                                console.log(`${entryLink['@name']} meets conditions for ${catEntry['@name']}`);
-                                meetsConditions = true;
-                            }
-                        });
-                    });
-
-                    if (meetsConditions) {
-                        const constraint = constraints[mObj.field];
-                        constraint.applyModifier(mObj);
-                        let myConstraints = regimentOptions.constraints[catEntry['@id']];
-                        if (!myConstraints) {
-                            myConstraints = {
-                                name: catEntry['@name']
-                            };
-                            regimentOptions.constraints[entryLink['@id']] = myConstraints;
-                        }
-                        myConstraints[constraint.type] = constraint.value;
-                    }
-                });
-            });
-        }
-
-        const getLUTID = (modifier) => {
-            const recursiveStr = 'self.entries.recursive.';
-            const lutId = modifier['@affects'];
-            if (lutId.startsWith(recursiveStr))
-                return lutId.substring(recursiveStr.length);
-            return lutId;
-        }
-
-        if (entryLink.modifierGroups) {
-            entryLink.modifierGroups.forEach(group => {
-                if (group['@type'] === 'and') {
-                    group.modifiers.forEach(modifier => {
-                        if (modifier['@type'] === ModifierType.add &&
-                            modifier['@scope'] === Scope.force) {
-                            const lutId = getLUTID(modifier);
-                            const childId = this.unitLUT[lutId];
-                            const childUnit = this.units[this.unitLUT[lutId]];
-                            if (childUnit) {
-                                regimentOptions.units.push(childId);
-                            } else {
-                                let keyword = ageOfSigmar.keywordLUT[lutId];
-                                if (keyword) {
-                                    regimentOptions.keywords.push(keyword);
-                                } else {
-                                    keyword = this.keywordLUT[lutId];
-                                    if (keyword) {
-                                        regimentOptions._tags.push(keyword);
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            });
-        }
-
-        if (regimentOptions.units.length > 0 ||
-            regimentOptions.keywords.length > 0 ||
-            regimentOptions._tags.length > 0)
-            unit.regimentOptions = regimentOptions;
-    }
-*/
     _parse(ageOfSigmar, armyName) {
         const data = ageOfSigmar._database.armies[armyName];
+        if (!data) {
+            console.log (`ERROR: data not found for ${armyName}`);
+            return;
+        }
+
         const catalogue = data.catalog;
+        if (!catalogue) {
+            console.log (`ERROR: catalogue not found for ${armyName}`);
+            return;
+        }
+
         this.id = catalogue['@id'];
 
         const _libraryUnits = {};
@@ -243,7 +146,7 @@ export default class Army {
             else
                 upgrades[lu.alias][upgrade.name] = upgrade;
         }
-
+        
         catalogue.sharedSelectionEntries.forEach(entry => {
             const lc = entry['@name'].toLowerCase();
             if (entry['@type'] === 'unit') {
@@ -269,16 +172,11 @@ export default class Army {
                 return;
             }
 
-            if (data.battleProfiles) {
-                const bpNames = Object.getOwnPropertyNames(data.battleProfiles);
-                bpNames.forEach(bpName => {
-                    if (bpName.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '') === 
-                        unit.name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '')) {
-                        console.log (`Profile Found ${unit.name}`);
-                        const profile = data.battleProfiles[bpName];
-                        unit.battleProfile = profile;
-                    }
-                });
+            if (ageOfSigmar.battleProfiles) {
+                unit.battleProfile = ageOfSigmar.battleProfiles.get(unit.name);
+                if (!unit.battleProfile) {
+                    console.log(`profile not found for ${unit.name}`);
+                }
             }
 
             if (link.entryLinks) {
@@ -321,7 +219,7 @@ export default class Army {
                                 const keyword = this.keywordLUT[modifier['@value']];
                                 if (keyword) {
                                     // the keywords isn't technically on the warscroll
-                                    console.log(`${unit.name} tag added : ${keyword}`);
+                                  //  console.log(`${unit.name} tag added : ${keyword}`);
                                     unit._tags.push(keyword);
                                 }
                             }
@@ -347,7 +245,7 @@ export default class Army {
                                 addUpgrade(this.upgrades, key, element);
                             });
                         });
-                    } else {
+                    } else if (entry.selectionEntries) {
                         entry.selectionEntries.forEach(element => {
                             addUpgrade(this.upgrades, key, element);
                         });

@@ -4,7 +4,7 @@
     "name": "Belladamma Volga, First of the Vyrkos",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "Any Vyrkos Retainer, Any Soulblight Gravelords",
+    "regimentOptions": "Any <Vyrkos Retainer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "60mm"
   },
@@ -13,8 +13,8 @@
     "name": "Blades of the Hollow King",
     "unitSize": 3,
     "points": 290,
-    "regimentOptions": "Any Soulblight Gravelords",
-    "notes": "You cannot include this unit and Cado Ezechiar, the Hollow King in the same army.",
+    "regimentOptions": "Any <Soulblight Gravelords>",
+    "notes": "You cannot include this unit and <Cado Ezechiar, the Hollow King> in the same army.",
     "baseSize": "50mm [1], 40mm [2]"
   },
   {
@@ -22,7 +22,7 @@
     "name": "Bloodseeker Palanquin",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": "This unit will move to Warhammer Legends on 1 June 2026.",
     "baseSize": "120 × 92mm"
   },
@@ -31,7 +31,7 @@
     "name": "Cado Ezechiar, the Hollow King",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": "This unit will move to Warhammer Legends on 1 June 2026. You cannot include this unit and the Blades of the Hollow King in the same army.",
     "baseSize": "40mm"
   },
@@ -40,7 +40,7 @@
     "name": "Coven Throne",
     "unitSize": 1,
     "points": 250,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -49,8 +49,8 @@
     "name": "Gorslav the Gravekeeper",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Deadwalkers",
-    "notes": "This Hero can join an eligible regiment as a Vyrkos Retainer. This unit will move to Warhammer Legends on 1 June 2026.",
+    "regimentOptions": "Any <Deadwalkers>",
+    "notes": "This Hero can join an eligible regiment as a <Vyrkos Retainer>. This unit will move to Warhammer Legends on 1 June 2026.",
     "baseSize": "40mm"
   },
   {
@@ -58,8 +58,8 @@
     "name": "Ivya Volga, the Outcast",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Soulblight Gravelords",
-    "notes": "This Hero can join an eligible regiment as a Vyrkos Retainer.",
+    "regimentOptions": "Any <Soulblight Gravelords>",
+    "notes": "This Hero can join an eligible regiment as a <Vyrkos Retainer>.",
     "baseSize": "32mm"
   },
   {
@@ -67,8 +67,8 @@
     "name": "Kritza, the Rat Prince",
     "unitSize": 1,
     "points": 70,
-    "regimentOptions": "Any Soulblight Gravelords",
-    "notes": "This Hero can join an eligible regiment as a Vyrkos Retainer.",
+    "regimentOptions": "Any <Soulblight Gravelords>",
+    "notes": "This Hero can join an eligible regiment as a <Vyrkos Retainer>.",
     "baseSize": "60 × 35mm"
   },
   {
@@ -76,8 +76,8 @@
     "name": "Lady Annika, the Thirsting Blade",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "Any Soulblight Gravelords",
-    "notes": "This Hero can join an eligible regiment as a Vyrkos Retainer.",
+    "regimentOptions": "Any <Soulblight Gravelords>",
+    "notes": "This Hero can join an eligible regiment as a <Vyrkos Retainer>.",
     "baseSize": "60 × 35mm"
   },
   {
@@ -85,7 +85,7 @@
     "name": "Lauka Vai, Mother of Nightmares",
     "unitSize": 1,
     "points": 270,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "80mm"
   },
@@ -94,7 +94,7 @@
     "name": "Mannfred von Carstein, Mortarch of Night",
     "unitSize": 1,
     "points": 430,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -103,7 +103,7 @@
     "name": "Mortis Engine",
     "unitSize": 1,
     "points": 240,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -112,7 +112,7 @@
     "name": "Nagash, Supreme Lord of the Undead",
     "unitSize": 1,
     "points": 840,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "130mm"
   },
@@ -121,7 +121,7 @@
     "name": "Necromancer",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -130,7 +130,7 @@
     "name": "Neferata, Mortarch of Blood",
     "unitSize": 1,
     "points": 460,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -139,7 +139,7 @@
     "name": "Prince Vhordrai",
     "unitSize": 1,
     "points": 490,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "160mm"
   },
@@ -148,8 +148,8 @@
     "name": "Radukar the Beast",
     "unitSize": 1,
     "points": 270,
-    "regimentOptions": "0-1 Vyrkos Retainer, Any Soulblight Gravelords",
-    "notes": "You cannot include this unit and Radukar the Wolf in the same army.",
+    "regimentOptions": "0-1 <Vyrkos Retainer>, Any <Soulblight Gravelords>",
+    "notes": "You cannot include this unit and <Radukar the Wolf> in the same army.",
     "baseSize": "60mm"
   },
   {
@@ -157,8 +157,8 @@
     "name": "Radukar the Wolf",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "0-1 Vyrkos Retainer, Any Soulblight Gravelords",
-    "notes": "You cannot include this unit and Radukar the Beast in the same army.",
+    "regimentOptions": "0-1 <Vyrkos Retainer>, Any <Soulblight Gravelords>",
+    "notes": "You cannot include this unit and <Radukar the Beast> in the same army.",
     "baseSize": "40mm"
   },
   {
@@ -166,7 +166,7 @@
     "name": "Sekhar, Fang of Nulahmia",
     "unitSize": 1,
     "points": 210,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "60 × 35mm"
   },
@@ -175,8 +175,8 @@
     "name": "Torgillius the Chamberlain",
     "unitSize": 1,
     "points": 180,
-    "regimentOptions": "Any Soulblight Gravelords",
-    "notes": "This Hero can join an eligible regiment as a Vyrkos Retainer. This unit will move to Warhammer Legends on 1 June 2026.",
+    "regimentOptions": "Any <Soulblight Gravelords>",
+    "notes": "This Hero can join an eligible regiment as a <Vyrkos Retainer>. This unit will move to Warhammer Legends on 1 June 2026.",
     "baseSize": "40mm"
   },
   {
@@ -184,7 +184,7 @@
     "name": "Vampire Lord",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -193,7 +193,7 @@
     "name": "Vampire Lord on Nightmare Steed",
     "unitSize": 1,
     "points": 190,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "80mm"
   },
@@ -202,7 +202,7 @@
     "name": "Vampire Lord on Zombie Dragon",
     "unitSize": 1,
     "points": 400,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": "This unit will move to Warhammer Legends on 1 June 2026.",
     "baseSize": "130mm"
   },
@@ -211,7 +211,7 @@
     "name": "Vengorian Lord",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
     "notes": null,
     "baseSize": "80mm"
   },
@@ -221,7 +221,7 @@
     "unitSize": 1,
     "points": 110,
     "regimentOptions": "Any Deathrattle",
-    "notes": "This Hero can join an eligible regiment as a Vyrkos Retainer. This unit will move to Warhammer Legends on 1 June 2026.",
+    "notes": "This Hero can join an eligible regiment as a <Vyrkos Retainer>. This unit will move to Warhammer Legends on 1 June 2026.",
     "baseSize": "32mm"
   },
   {
@@ -229,8 +229,8 @@
     "name": "Wight King",
     "unitSize": 1,
     "points": 100,
-    "regimentOptions": "Any Soulblight Gravelords",
-    "notes": "This Hero can join an eligible regiment as a Deathrattle Overseer.",
+    "regimentOptions": "Any <Soulblight Gravelords>",
+    "notes": "This Hero can join an eligible regiment as a <Deathrattle Overseer>.",
     "baseSize": "32mm"
   },
   {
@@ -238,8 +238,8 @@
     "name": "Wight King on Skeletal Steed",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "0-1 Deathrattle Overseer, Any Soulblight Gravelords",
-    "notes": "This Hero can join an eligible regiment as a Deathrattle Overseer.",
+    "regimentOptions": "0-1 <Deathrattle Overseer>, Any <Soulblight Gravelords>",
+    "notes": "This Hero can join an eligible regiment as a <Deathrattle Overseer>.",
     "baseSize": "80mm"
   },
   {
@@ -248,7 +248,7 @@
     "unitSize": 1,
     "points": 120,
     "regimentOptions": "Any Deathrattle",
-    "notes": "This Hero can join an eligible regiment as a Deathrattle Overseer.",
+    "notes": "This Hero can join an eligible regiment as a <Deathrattle Overseer>.",
     "baseSize": "80mm"
   },
   {
@@ -256,7 +256,7 @@
     "name": "Scourge of Ghyran Sekhar, Fang of Nulahmia",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "Any Soulblight Gravelords",
+    "regimentOptions": "Any <Soulblight Gravelords>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "60 × 35mm"
   }

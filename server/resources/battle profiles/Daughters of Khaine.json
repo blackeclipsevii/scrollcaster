@@ -4,7 +4,7 @@
     "name": "Bloodwrack Medusa",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "0-1 Avatar of Khaine, Any Khinerai, Any Melusai",
+    "regimentOptions": "0-1 <Avatar of Khaine>, Any <Khinerai>, Any <Melusai>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -13,7 +13,7 @@
     "name": "Bloodwrack Shrine",
     "unitSize": 1,
     "points": 200,
-    "regimentOptions": "0-1 Coven Matriarch, Any Daughters of Khaine",
+    "regimentOptions": "0-1 <Coven Matriarch>, Any <Daughters of Khaine>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -22,7 +22,7 @@
     "name": "Hag Queen",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "0-1 Coven Matriarch, 0-1 Avatar of Khaine, Any Aelf",
+    "regimentOptions": "0-1 <Coven Matriarch>, 0-1 <Avatar of Khaine>, Any <Aelf>",
     "notes": null,
     "baseSize": "25mm"
   },
@@ -31,7 +31,7 @@
     "name": "Hag Queen on Cauldron of Blood",
     "unitSize": 1,
     "points": 330,
-    "regimentOptions": "0-1 Coven Matriarch, Any Daughters of Khaine",
+    "regimentOptions": "0-1 <Coven Matriarch>, Any <Daughters of Khaine>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -40,8 +40,8 @@
     "name": "High Gladiatrix",
     "unitSize": 1,
     "points": 100,
-    "regimentOptions": "0-1 Avatar of Khaine, Any Aelf",
-    "notes": "This Hero can join an eligible regiment as a Coven Matriarch.",
+    "regimentOptions": "0-1 <Avatar of Khaine>, Any <Aelf>",
+    "notes": "This Hero can join an eligible regiment as a <Coven Matriarch>.",
     "baseSize": "32mm"
   },
   {
@@ -49,17 +49,17 @@
     "name": "Krethusa the Croneseer",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "0-1 Coven Matriarch, Any Aelf",
+    "regimentOptions": "0-1 <Coven Matriarch>, Any <Aelf>",
     "notes": null,
     "baseSize": "60mm"
   },
   {
     "type": "Hero",
-    "name": "Melusai Ironscale",
+    "name": "<Melusai> Ironscale",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "0-1 Avatar of Khaine, Any Khinerai, Any Melusai",
-    "notes": "This Hero can join an eligible regiment as a Coven Matriarch.",
+    "regimentOptions": "0-1 <Avatar of Khaine>, Any <Khinerai>, Any <Melusai>",
+    "notes": "This Hero can join an eligible regiment as a <Coven Matriarch>.",
     "baseSize": "40mm"
   },
   {
@@ -67,7 +67,7 @@
     "name": "Morathi-Khaine",
     "unitSize": 1,
     "points": 760,
-    "regimentOptions": "The Shadow Queen (required), 0-1 Coven Matriarch, Any Daughters of Khaine",
+    "regimentOptions": "<The Shadow Queen> (required), 0-1 <Coven Matriarch>, Any <Daughters of Khaine>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -77,7 +77,7 @@
     "unitSize": 1,
     "points": 0,
     "regimentOptions": "None",
-    "notes": "This unit can only be taken in Morathi‑Khaine’s regiment.",
+    "notes": "This unit can only be taken in <Morathi‑Khaine>’s regiment.",
     "baseSize": "100mm"
   },
   {
@@ -85,7 +85,7 @@
     "name": "Slaughter Queen",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "0-1 Coven Matriarch, 0-1 Avatar of Khaine, Any Aelf",
+    "regimentOptions": "0-1 <Coven Matriarch>, 0-1 <Avatar of Khaine>, Any <Aelf>",
     "notes": null,
     "baseSize": "25mm"
   },
@@ -94,7 +94,7 @@
     "name": "Slaughter Queen on Cauldron of Blood",
     "unitSize": 1,
     "points": 320,
-    "regimentOptions": "0-1 Coven Matriarch, Any Daughters of Khaine",
+    "regimentOptions": "0-1 <Coven Matriarch>, Any <Daughters of Khaine>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -103,7 +103,7 @@
     "name": "Bloodwrack Shrine (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 230,
-    "regimentOptions": "0-1 Coven Matriarch, Any Daughters of Khaine",
+    "regimentOptions": "0-1 <Coven Matriarch>, Any <Daughters of Khaine>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "120 × 92mm"
   },
@@ -112,7 +112,7 @@
     "name": "Krethusa the Croneseer (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 240,
-    "regimentOptions": "0-1 Coven Matriarch, Any Aelf",
+    "regimentOptions": "0-1 <Coven Matriarch>, Any <Aelf>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "60mm"
   }

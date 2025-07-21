@@ -16,8 +16,8 @@ function displayPointsOverlay(id) {
     _loadTotalPoints(id);
 }
 
-function updateValidationDisplay() {
-    const errors = validateRoster(roster);
+async function updateValidationDisplay() {
+    const errors = await validateRoster(roster);
     const pointsOverlay = document.getElementById('pointsOverlay');
     const hasErrors = errors.length > 0;
     pointsOverlay.style.backgroundColor = hasErrors ? 'red' : 'green';
@@ -41,7 +41,7 @@ function updateValidationDisplay() {
             });
         } else {
             const p = document.createElement('p');
-            p.innerHTML = `Basic validation has passed!<br/><br/><strong>Warning: Regiment option validation is not implemented.</string>`;
+            p.innerHTML = `List is valid.`;
             section.appendChild(p);
         }
     

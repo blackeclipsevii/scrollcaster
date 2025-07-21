@@ -4,8 +4,8 @@
     "name": "Changecaster, Herald of Tzeentch",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Daemon",
-    "notes": "This Hero can join an eligible regiment as a Tzeentchian Deceiver.",
+    "regimentOptions": "Any <Daemon>",
+    "notes": "This Hero can join an eligible regiment as a <Tzeentchian Deceiver>.",
     "baseSize": "32mm"
   },
   {
@@ -13,8 +13,8 @@
     "name": "Curseling, Eye of Tzeentch",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "Any Arcanite",
-    "notes": "This Hero can join an eligible regiment as an Arcanite Cabalist.",
+    "regimentOptions": "Any <Arcanite>",
+    "notes": "This Hero can join an eligible regiment as an <Arcanite Cabalist>.",
     "baseSize": "32mm"
   },
   {
@@ -22,7 +22,7 @@
     "name": "Fateskimmer, Herald of Tzeentch on Burning Chariot",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 Tzeentchian Deceiver, Any Daemon",
+    "regimentOptions": "0-1 <Tzeentchian Deceiver>, Any <Daemon>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -31,7 +31,7 @@
     "name": "Gaunt Summoner",
     "unitSize": 1,
     "points": 180,
-    "regimentOptions": "0-1 Tzeentchian Deceiver, Any Disciples of Tzeentch",
+    "regimentOptions": "0-1 <Tzeentchian Deceiver>, Any <Disciples of Tzeentch>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -40,7 +40,7 @@
     "name": "Gaunt Summoner on Disc of Tzeentch",
     "unitSize": 1,
     "points": 230,
-    "regimentOptions": "0-1 Tzeentchian Deceiver, Any Disciples of Tzeentch",
+    "regimentOptions": "0-1 <Tzeentchian Deceiver>, Any <Disciples of Tzeentch>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -49,7 +49,7 @@
     "name": "Kairos Fateweaver",
     "unitSize": 1,
     "points": 440,
-    "regimentOptions": "0-1 Tzeentchian Deceiver, Any Disciples of Tzeentch",
+    "regimentOptions": "0-1 <Tzeentchian Deceiver>, Any <Disciples of Tzeentch>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -58,7 +58,7 @@
     "name": "Lord of Change",
     "unitSize": 1,
     "points": 380,
-    "regimentOptions": "0-1 Tzeentchian Deceiver, Any Disciples of Tzeentch",
+    "regimentOptions": "0-1 <Tzeentchian Deceiver>, Any <Disciples of Tzeentch>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -67,8 +67,8 @@
     "name": "Magister",
     "unitSize": 1,
     "points": 100,
-    "regimentOptions": "Any Arcanite",
-    "notes": "This Hero can join an eligible regiment as an Arcanite Cabalist.",
+    "regimentOptions": "Any <Arcanite>",
+    "notes": "This Hero can join an eligible regiment as an <Arcanite Cabalist>.",
     "baseSize": "32mm"
   },
   {
@@ -76,7 +76,7 @@
     "name": "Magister on Disc of Tzeentch",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 Arcanite Cabalist, Any Arcanite",
+    "regimentOptions": "0-1 <Arcanite Cabalist>, Any <Arcanite>",
     "notes": null,
     "baseSize": "50mm"
   },
@@ -85,8 +85,8 @@
     "name": "Ogroid Thaumaturge",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "Any Arcanite",
-    "notes": "This Hero can join an eligible regiment as an Arcanite Cabalist.",
+    "regimentOptions": "Any <Arcanite>",
+    "notes": "This Hero can join an eligible regiment as an <Arcanite Cabalist>.",
     "baseSize": "50mm"
   },
   {
@@ -94,8 +94,8 @@
     "name": "The Changeling",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "Any Daemon",
-    "notes": "This Hero can join an eligible regiment as a Tzeentchian Deceiver.",
+    "regimentOptions": "Any <Daemon>",
+    "notes": "This Hero can join an eligible regiment as a <Tzeentchian Deceiver>.",
     "baseSize": "40mm"
   },
   {
@@ -103,7 +103,7 @@
     "name": "Tzaangor Shaman",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "0-1 Arcanite Cabalist, Any Arcanite",
+    "regimentOptions": "0-1 <Arcanite Cabalist>, Any <Arcanite>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -112,8 +112,8 @@
     "name": "Ogroid Thaumaturge (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 130,
-    "regimentOptions": "Any Arcanite",
-    "notes": "This Hero can join an eligible regiment as an Arcanite Cabalist. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "regimentOptions": "Any <Arcanite>",
+    "notes": "This Hero can join an eligible regiment as an <Arcanite Cabalist>. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "50mm"
   }
 ]

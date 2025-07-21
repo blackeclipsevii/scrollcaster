@@ -4,8 +4,8 @@
     "name": "Breaka-boss on Mirebrute Troggoth",
     "unitSize": 1,
     "points": 200,
-    "regimentOptions": "0-1 Mob Wrangler, Any Kruleboyz",
-    "notes": "This Hero can join an eligible regiment as a Swamp Beast.",
+    "regimentOptions": "0-1 <Mob Wrangler>, Any <Kruleboyz>",
+    "notes": "This Hero can join an eligible regiment as a <Swamp Beast>.",
     "baseSize": "80mm"
   },
   {
@@ -13,7 +13,7 @@
     "name": "Gobsprakk, the Mouth of Mork",
     "unitSize": 1,
     "points": 310,
-    "regimentOptions": "0-1 Mob Wrangler, 0-1 Swamp Beast, Any Kruleboyz",
+    "regimentOptions": "0-1 <Mob Wrangler>, 0-1 <Swamp Beast>, Any <Kruleboyz>",
     "notes": null,
     "baseSize": "130mm"
   },
@@ -22,8 +22,8 @@
     "name": "Hobgrot Slittaboss",
     "unitSize": 1,
     "points": 70,
-    "regimentOptions": "Any Infantry, 0-1 Monster, 0-1 War Machine",
-    "notes": "This Hero can join an eligible regiment as a Mob Wrangler.",
+    "regimentOptions": "Any <Infantry>, 0-1 <Monster>, 0-1 <War Machine>",
+    "notes": "This Hero can join an eligible regiment as a <Mob Wrangler>.",
     "baseSize": "32mm"
   },
   {
@@ -31,8 +31,8 @@
     "name": "Killaboss on Corpse-rippa Vulcha",
     "unitSize": 1,
     "points": 260,
-    "regimentOptions": "0-1 Mob Wrangler, Any Kruleboyz",
-    "notes": "This Hero can join an eligible regiment as a Swamp Beast.",
+    "regimentOptions": "0-1 <Mob Wrangler>, Any <Kruleboyz>",
+    "notes": "This Hero can join an eligible regiment as a <Swamp Beast>.",
     "baseSize": "130mm"
   },
   {
@@ -40,8 +40,8 @@
     "name": "Killaboss on Great Gnashtoof",
     "unitSize": 1,
     "points": 150,
-    "regimentOptions": "0-1 Mob Wrangler, Any Kruleboyz",
-    "notes": "This Hero can join an eligible regiment as a Swamp Beast.",
+    "regimentOptions": "0-1 <Mob Wrangler>, Any <Kruleboyz>",
+    "notes": "This Hero can join an eligible regiment as a <Swamp Beast>.",
     "baseSize": "105 × 70mm"
   },
   {
@@ -49,8 +49,8 @@
     "name": "Killaboss with Stab-grot",
     "unitSize": 1,
     "points": 80,
-    "regimentOptions": "Any Kruleboyz",
-    "notes": "This Hero can join an eligible regiment as a Mob Wrangler.",
+    "regimentOptions": "Any <Kruleboyz>",
+    "notes": "This Hero can join an eligible regiment as a <Mob Wrangler>.",
     "baseSize": "40mm, 25mm"
   },
   {
@@ -58,7 +58,7 @@
     "name": "Kragnos, the End of Empires",
     "unitSize": 1,
     "points": 580,
-    "regimentOptions": "0-1 Mob Wrangler, 0-1 Swamp Beast, Any Kruleboyz",
+    "regimentOptions": "0-1 <Mob Wrangler>, 0-1 <Swamp Beast>, Any <Kruleboyz>",
     "notes": null,
     "baseSize": "130mm"
   },
@@ -67,8 +67,8 @@
     "name": "Murknob with Belcha-banna",
     "unitSize": 1,
     "points": 80,
-    "regimentOptions": "Any Kruleboyz",
-    "notes": "This Hero can join an eligible regiment as a Mob Wrangler.",
+    "regimentOptions": "Any <Kruleboyz>",
+    "notes": "This Hero can join an eligible regiment as a <Mob Wrangler>.",
     "baseSize": "40mm"
   },
   {
@@ -76,8 +76,8 @@
     "name": "Snatchaboss on Sludgeraker Beast",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "0-1 Mob Wrangler, Any Kruleboyz",
-    "notes": "This Hero can join an eligible regiment as a Swamp Beast.",
+    "regimentOptions": "0-1 <Mob Wrangler>, Any <Kruleboyz>",
+    "notes": "This Hero can join an eligible regiment as a <Swamp Beast>.",
     "baseSize": "120 × 92mm"
   },
   {
@@ -85,7 +85,7 @@
     "name": "Swampboss Skumdrekk",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "0-1 Mob Wrangler, 0-1 Swamp Beast, Any Kruleboyz",
+    "regimentOptions": "0-1 <Mob Wrangler>, 0-1 <Swamp Beast>, Any <Kruleboyz>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -94,7 +94,7 @@
     "name": "Swampcalla Shaman with Pot-grot",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "Any Kruleboyz",
+    "regimentOptions": "Any <Kruleboyz>",
     "notes": null,
     "baseSize": "40mm, 25mm"
   },
@@ -103,8 +103,8 @@
     "name": "Killaboss on Great Gnashtoof (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 160,
-    "regimentOptions": "0-1 Mob Wrangler, Any Kruleboyz",
-    "notes": "This Hero can join an eligible regiment as a Swamp Beast. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
+    "regimentOptions": "0-1 <Mob Wrangler>, Any <Kruleboyz>",
+    "notes": "This Hero can join an eligible regiment as a <Swamp Beast>. This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "105 × 70mm"
   },
   {
@@ -112,7 +112,7 @@
     "name": "Swampboss Skumdrekk (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 250,
-    "regimentOptions": "0-1 Mob Wrangler, 0-1 Swamp Beast, Any Kruleboyz",
+    "regimentOptions": "0-1 <Mob Wrangler>, 0-1 <Swamp Beast>, Any <Kruleboyz>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "120 × 92mm"
   }

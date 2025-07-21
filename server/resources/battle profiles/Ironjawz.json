@@ -4,8 +4,8 @@
     "name": "Ardboy Big Boss",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Infantry",
-    "notes": "This Hero can join an eligible regiment as a Headstompa.",
+    "regimentOptions": "Any <Infantry>",
+    "notes": "This Hero can join an eligible regiment as a <Headstompa>.",
     "baseSize": "40mm"
   },
   {
@@ -13,7 +13,7 @@
     "name": "Gordrakk, the Fist of Gork",
     "unitSize": 1,
     "points": 360,
-    "regimentOptions": "0-1 Headstompa, 0-1 Tusk Wrangler, Any Ironjawz",
+    "regimentOptions": "0-1 <Headstompa>, 0-1 <Tusk Wrangler>, Any <Ironjawz>",
     "notes": null,
     "baseSize": "160mm"
   },
@@ -22,7 +22,7 @@
     "name": "Kragnos, the End of Empires",
     "unitSize": 1,
     "points": 580,
-    "regimentOptions": "0-1 Headstompa, 0-1 Tusk Wrangler, Any Ironjawz",
+    "regimentOptions": "0-1 <Headstompa>, 0-1 <Tusk Wrangler>, Any <Ironjawz>",
     "notes": null,
     "baseSize": "130mm"
   },
@@ -31,8 +31,8 @@
     "name": "Megaboss",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "0-1 Headstompa, Any Ironjawz",
-    "notes": "This Hero can join an eligible regiment as a Headstompa.",
+    "regimentOptions": "0-1 <Headstompa>, Any <Ironjawz>",
+    "notes": "This Hero can join an eligible regiment as a <Headstompa>.",
     "baseSize": "60mm"
   },
   {
@@ -40,7 +40,7 @@
     "name": "Megaboss on Maw-krusha",
     "unitSize": 1,
     "points": 340,
-    "regimentOptions": "0-1 Headstompa, 0-1 Tusk Wrangler, Any Ironjawz",
+    "regimentOptions": "0-1 <Headstompa>, 0-1 <Tusk Wrangler>, Any <Ironjawz>",
     "notes": null,
     "baseSize": "160mm"
   },
@@ -49,8 +49,8 @@
     "name": "Tuskboss on Maw-grunta",
     "unitSize": 1,
     "points": 240,
-    "regimentOptions": "0-1 Headstompa, Any Ironjawz",
-    "notes": "This Hero can join an eligible regiment as a Tusk Wrangler.",
+    "regimentOptions": "0-1 <Headstompa>, Any <Ironjawz>",
+    "notes": "This Hero can join an eligible regiment as a <Tusk Wrangler>.",
     "baseSize": "120 × 92mm"
   },
   {
@@ -58,7 +58,7 @@
     "name": "Warchanter",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Ironjawz",
+    "regimentOptions": "Any <Ironjawz>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -67,7 +67,7 @@
     "name": "Weirdnob Shaman",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "Any Ironjawz",
+    "regimentOptions": "Any <Ironjawz>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -76,8 +76,8 @@
     "name": "Zoggrok Anvilsmasha",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "Any Ironjawz",
-    "notes": "This Hero can join an eligible regiment as a Headstompa.",
+    "regimentOptions": "Any <Ironjawz>",
+    "notes": "This Hero can join an eligible regiment as a <Headstompa>.",
     "baseSize": "50mm, 25mm"
   }
 ]
