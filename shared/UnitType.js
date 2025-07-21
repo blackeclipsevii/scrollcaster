@@ -13,7 +13,11 @@ export const UnitType = {
 
 export function strToUnitType(str) {
     const upper = str.toUpperCase();
-    if (upper === 'HERO') {
+    if (upper === 'FACTION TERRAIN') {
+        return UnitType.Terrain;
+    } else if (upper === 'MANIFESTATION' || upper === 'ENDLESS SPELL') {
+        return UnitType.Manifestation;
+    } else if (upper === 'HERO') {
         return UnitType.Hero;
     } else if (upper === 'INFANTRY') {
         return UnitType.Infantry;
@@ -25,10 +29,6 @@ export function strToUnitType(str) {
         return UnitType.Monster;
     } else if (upper === 'WAR MACHINE') {
         return UnitType.WarMachine;
-    } else if (upper === 'MANIFEST') {
-        return UnitType.Manifestation;
-    } else if (upper === 'FACTION TERRAIN') {
-        return UnitType.Terrain;
     }
     return UnitType.Unknown;
 }

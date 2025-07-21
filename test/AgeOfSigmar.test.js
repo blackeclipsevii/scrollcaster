@@ -3,11 +3,16 @@ import path from 'path'
 
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 
-var gAos = null;
+var _aos = null;
+const getAos = () => {
+    if (!_aos)
+        _aos = new AgeOfSigmar(directoryPath);
+    return _aos;
+}
 
 test('initialize AgeOfSigmar', () => {
-    gAos = new AgeOfSigmar(directoryPath)
-    expect(gAos.getArmyNames()).toEqual([
+    const aos = getAos();
+    expect(aos.getArmyNames()).toEqual([
         "Blades of Khorne",
         "Cities of Sigmar",
         "Daughters of Khaine - The Croneseer's Pariahs",
@@ -60,5 +65,131 @@ test('initialize AgeOfSigmar', () => {
         "Stormcast Eternals",
         "Sylvaneth - The Evergreen Hunt",
         "Sylvaneth"
+    ]);
+});
+
+test('Morathi regiment options', () =>{
+    // (required)
+    const aos = getAos();
+    const dok = aos.getArmy('Daughters of Khaine');
+    expect(dok).toBeTruthy();
+    const morathiId = "cb92-4063-ab41-97d5";
+    const morathiUnit = dok.units[morathiId];
+    expect(morathiUnit).toBeTruthy();
+    expect(morathiUnit.name).toEqual("Morathi-Khaine")
+    const unitOptions = aos.getRegimentOptions(dok, morathiId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "The Shadow Queen",
+        "High Gladiatrix",
+        "Melusai Ironscale",
+        "Avatar of Khaine",
+        "Blood Sisters",
+        "Doomfire Warlocks",
+        "Blood Stalkers",
+        "Khainite Shadowstalkers",
+        "Khinerai Heartrenders",
+        "Sisters of Slaughter with Bladed Bucklers",
+        "Khinerai Lifetakers",
+        "Sisters of Slaughter with Sacrificial Knives",
+        "Witch Aelves with Paired Sciansá",
+        "Witch Aelves with Bladed Bucklers"
+    ]);
+});
+
+test('Skink Starpriest regiment options', () =>{
+    // non-MONSTER Skink
+    const aos = getAos();
+    const army = aos.getArmy('Seraphon');
+    expect(army).toBeTruthy();
+
+    const leaderId = "abb5-c657-a20e-6e47";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Skink Starpriest")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "Bastiladon with Ark of Sotek",
+        "Bastiladon with Solar Engine",
+        "Engine of the Gods",
+        "Hunters of Huanchi with Dartpipes",
+        "Hunters of Huanchi with Starstone Bolas",
+        "Kroxigor",
+        "Kroxigor Warspawned",
+        "Raptadon Chargers",
+        "Raptadon Hunters",
+        "Ripperdactyl Riders",
+        "Skinks",
+        "Spawn of Chotec",
+        "Stegadon",
+        "Terradon Riders",
+        "Terrawings",
+    ]);
+});
+
+test('Akhelian King regiment options', () =>{
+    // ' or '
+    const aos = getAos();
+    const army = aos.getArmy('Idoneth Deepkin');
+    expect(army).toBeTruthy();
+
+    const leaderId = "1d8e-2553-5bf3-901b";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Akhelian King")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names.length).toEqual(13);
+    expect(names).toEqual([
+        "Akhelian Thrallmaster",
+        "Isharann Soulrender",
+        "Isharann Soulscryer",
+        "Akhelian Allopex",
+        "Akhelian Ishlaen Guard",
+        "Akhelian Leviadon",
+        "Akhelian Morrsarr Guard",
+        "Namarti Reavers",
+        "Namarti Thralls",
+        "Akhelian Thrallmaster (Scourge of Ghyran)",
+        "Namarti Thralls (Scourge of Ghyran)",
+        "Ikon of the Sea",
+        "Ikon of the Storm",
+    ]);
+});
+
+test('Scinari Enlightener regiment options', () =>{
+    // specific unit name allowed
+    const aos = getAos();
+    const army = aos.getArmy('Lumineth Realm-lords');
+    expect(army).toBeTruthy();
+
+    const leaderId = "c36-bd13-c06d-5fe";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Scinari Enlightener")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    //expect(names.length).toEqual(13);
+    expect(names).toEqual([
+        "Ydrilan Riverblades",
+        "Vanari Bladelords",
+        "Vanari Auralan Wardens"
     ]);
 });
