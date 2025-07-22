@@ -99,6 +99,28 @@ test('Morathi regiment options', () =>{
         "Witch Aelves with Paired Sciansá",
         "Witch Aelves with Bladed Bucklers"
     ]);
+
+    
+    // morathi requires the shadow queen
+    const invalidRegiment = [
+        morathiUnit.id
+    ];
+
+    let errorMsgs = aos.validateRegiment(dok, invalidRegiment);
+    expect(errorMsgs.length).toBe(1);
+
+    // shadow queen cannot be a leader
+    invalidRegiment[0] = unitOptions[0].id;
+    errorMsgs = aos.validateRegiment(dok, invalidRegiment);
+    expect(errorMsgs.length).toBe(1);
+
+    // shadow queen good under morathi
+    const validRegiment = [
+        morathiUnit.id,
+        unitOptions[0].id
+    ]    
+    errorMsgs = aos.validateRegiment(dok, validRegiment);
+    expect(errorMsgs.length).toBe(0);
 });
 
 test('Lord Kroak regiment options', () =>{

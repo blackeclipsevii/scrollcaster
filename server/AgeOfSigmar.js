@@ -104,16 +104,6 @@ export default class AgeOfSigmar {
         return substr === 'NON-';
     }
     
-    getQualifierFromOption = (option) => {
-        const requiredStr = '(REQUIRED)';
-        if (option.includes[requiredStr]) {
-            return 'REQUIRED';
-        }
-        
-        // ANY, 0-1, etc
-        return option.split(' ')[0];
-    };
-
     getKeywordsFromOption = (option) => {
         option = option.trim();
         // let optionQualifier = option.split(' ')[0];
@@ -213,17 +203,34 @@ export default class AgeOfSigmar {
             add(unit) {
                 this.units.push(unit);
             }
+
+            requirementsNotMetError() {
+                if (this.min > this.units.length) {
+                    return `Requirements not met ${this._battleProfileText()}`
+                }
+                return null;
+            }
         }
 
         let slots = []
         // initialize the expect slots
-        options.forEach(option => {
+        const canLead = options.every(option => {
             option = option.trim();
-            const qualifier = this.getQualifierFromOption(option);
+            if (option === 'NONE')
+                return false;
+
+            const qualifier = (() => {
+                const requiredStr = '(REQUIRED)';
+                if (option.includes(requiredStr))
+                    return 'REQUIRED';
+
+                return option.split(' ')[0];
+            })();
+
             const slot = new _Slot(option);
             if (option.includes(' or '))
                 slot.conditional = 'or';
-            if (qualifier.required) {
+            if (qualifier === 'REQUIRED') {
                 slot.priority = 100; // its literally required
                 slot.min = 1;
                 // maybe this can be higher?
@@ -239,7 +246,14 @@ export default class AgeOfSigmar {
             }
 
             slots.push(slot);
+            return true;
         });
+        if (!canLead) {
+            if (leader.battleProfile.notes)
+                return [`${leader.name} cannot be a leader: ${leader.battleProfile.notes.replace(/[<>]/g, "")}`];
+            else
+                return [`${leader.name} cannot be a leader!`];
+        }
         slots = slots.sort((a, b) => b.priorty - a.priority);
 
         // sort on spaces so we don't hit any keywords that match substrings of other keywords
@@ -285,6 +299,12 @@ export default class AgeOfSigmar {
             const message = slotUnit(armyUnit);
             if (message)
                 errors.push(message);
+        });
+
+        slots.forEach(slot => {
+            const rnm = slot.requirementsNotMetError();
+            if (rnm)
+                errors.push(rnm);
         });
 
         return errors;
