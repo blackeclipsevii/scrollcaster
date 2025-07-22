@@ -12,10 +12,10 @@ const validateRegiment = async (armyName, regiment) => {
     }
     const regArg = encodeURI(`${endpoint}/validate?${reg2Args()}&army=${armyName}`);
     console.log(regArg);
-    await fetchWithRetry(regArg,{
+    await fetch(regArg,{
         method: "GET" // default, so we can ignore
     })
-    .then(response => response.json())
+    .then(response => response.ok ? response.json() : [])
     .then(result => {
         errors = result;
     });

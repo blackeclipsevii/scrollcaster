@@ -59,10 +59,29 @@
   left: .5em;
 }
 
+input, select {
+  height: 3em;
+}
+
 input, select, textarea {
   width: 85%; /* Choose any width that suits your design */
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+.loader {
+  border: .5em solid #ccc; /* Light grey */
+  border-top: .5em solid #007bff; /* Blue */
+  border-radius: 50%;
+  width: 2em;
+  height: 2em;
+  animation: spin 1s linear infinite;
+  margin: .5m;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

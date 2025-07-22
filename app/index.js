@@ -1,12 +1,80 @@
 var _ror = {};
 var _armies = []
 
+const _populateArmies = () => {
+  let loader = document.getElementById("loader-box");
+  loader.style.display = 'none';
+
+  let armySelect = document.getElementById("army");
+  armySelect.innerHTML = '';
+  armySelect.disabled = false;
+  _armies.forEach((army)=> {
+    if (!army.includes(' - ')) {
+      const option = document.createElement("option");
+      option.value = army;
+      option.textContent = army;
+      armySelect.appendChild(option);
+    } else {
+      const parts = army.split('-');
+      const faction = parts[0].trim();
+      const subfaction = parts[1].trim();
+      if (_ror[faction]) {
+        _ror[faction].push(subfaction);
+      } else {
+        const l = ['Army of Renown (Optional)', subfaction];
+        _ror[faction] = l;
+      }
+    }
+  });
+
+  armySelect.onchange = () => {
+    const values = _ror[armySelect.value.trim()]
+    const rorSelect = document.getElementById("ror");
+    if (values && values.length > 0) {
+      rorSelect.disabled = false;
+      rorSelect.style.display = '';
+      rorSelect.innerHTML = '';
+      values.forEach(value => {
+        const option = document.createElement("option");
+        option.value = `${armySelect.value} - ${value}`;
+        option.textContent = value;
+        rorSelect.appendChild(option);
+      });
+    } else {
+      rorSelect.innerHTML = '';
+      rorSelect.style.display = 'none';
+    }
+  };
+}
+
+const fetchArmies = async (retry = 10) => {
+  fetch(`${endpoint}/armies`).
+  then(resp => {
+    if (resp.status !== 200)
+      throw 'retry';
+    return resp.json()
+  }).
+  then(armies => {
+    _armies = armies;
+    _ror = {};
+    _populateArmies();
+  })
+  .catch(() => {
+    if (retry > 0) {
+      setTimeout(fetchArmies, 500, retry-1);
+    }
+  });
+}
+
 const setOverlayContents = () => {
   const modal = document.querySelector(".modal");
   modal.innerHTML = `
-    <select id="army">
-    </select>
-
+    <div style='display: flex'>
+      <select id="army"> </select>
+      <div id="loader-box" style="margin-left: 1em; margin-right: 2em; width: 1em; height: 1em;">
+        <div id="loader" class="loader"></div>
+      </div>
+    </div>
     <select style='display: none;' id="ror">
     </select>
 
@@ -21,59 +89,35 @@ const setOverlayContents = () => {
 
     <button class="clickable-style full-rectangle-button" onclick="createArmy()">Create</button>
   `;
-  
+
+  let armySelect = document.getElementById("army");
+  armySelect.disabled = true;
+  const option = document.createElement("option");
+  option.value = '';
+  const msgIdx = Math.floor(Math.random() * 6);
+  const msgs = [
+    'Waking the deadwalkers...',
+    'Gathering warpstone...',
+    'Reforging...',
+    'Mustering reinforcements...',
+    'Loading...',
+    'Kicking the server...'
+  ];
+  option.id = 'loading';
+  option.textContent = msgs[msgIdx];
+  armySelect.appendChild(option);
+
   const ruleset = document.getElementById("ruleset");
   ruleset.selectedIndex = 1;
 }
 
-const toggleOverlay = overlayToggleFactory('flex', () =>{
+const toggleOverlay = overlayToggleFactory('flex', async () =>{
   setOverlayContents();
-  if (_armies.length === 0)
-  fetchWithRetry(`${endpoint}/armies`).
-  then(resp => resp.json()).
-  then(armies => {
-    _armies = armies;
-    _ror = {};
-    let armySelect = document.getElementById("army");
-    armies.forEach((army)=> {
-      console.log(army);
-      if (!army.includes(' - ')) {
-        const option = document.createElement("option");
-        option.value = army;
-        option.textContent = army;
-        armySelect.appendChild(option);
-      } else {
-        const parts = army.split('-');
-        const faction = parts[0].trim();
-        const subfaction = parts[1].trim();
-        if (_ror[faction]) {
-          _ror[faction].push(subfaction);
-        } else {
-          const l = ['Army of Renown (Optional)', subfaction];
-          _ror[faction] = l;
-        }
-      }
-    });
-    
-    armySelect.onchange = () => {
-      const values = _ror[armySelect.value.trim()]
-      const rorSelect = document.getElementById("ror");
-      if (values && values.length > 0) {
-        rorSelect.disabled = false;
-        rorSelect.style.display = '';
-        rorSelect.innerHTML = '';
-        values.forEach(value => {
-          const option = document.createElement("option");
-          option.value = `${armySelect.value} - ${value}`;
-          option.textContent = value;
-          rorSelect.appendChild(option);
-        });
-      } else {
-        rorSelect.innerHTML = '';
-        rorSelect.style.display = 'none';
-      }
-    };
-  });
+  if (_armies.length === 0) {
+    await fetchArmies();
+  } else {
+    _populateArmies();
+  }
 });
 
 function goToRoster(roster) {

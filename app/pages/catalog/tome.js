@@ -42,7 +42,7 @@ async function loadCore() {
 async function loadTome() {
     fixedPreviousUrl = encodeURI(`catalog.html`);
     const url = `${endpoint}/armies?army=${armyName}`;
-    await fetchWithRetry(encodeURI(url)).
+    await fetch(encodeURI(url)).
     then(resp => resp.json()).
     then(army => {
         const h2 = document.getElementById('army-name');

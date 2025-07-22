@@ -19,7 +19,7 @@ function arrowOnClick(arrow) {
 
 async function displayEnhancements(unit, newUsItem, type) {
     const details = newUsItem.querySelector(`.available-${type}s`);
-    await fetchWithRetry(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
+    await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
         const upgrades = allUpgrades[`${type}s`];
@@ -449,7 +449,7 @@ async function getSpecificUnit(id, useArmy) {
     }
 
     try {
-        const result = await fetchWithRetry(encodeURI(url));
+        const result = await fetch(encodeURI(url));
         return result.status === 200 ? result.json() : null;
     } catch (error) {
         return null;

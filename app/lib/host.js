@@ -7,16 +7,6 @@ var fixedPreviousUrl = null;
 var previousUrl = document.referrer;
 var version = '0.2.1beta';
 
-const fetchWithRetry = (url, options = {}, retries = 3, delay = 1000) => {
-  return fetch(url, options).catch(error => {
-    if (retries > 0) {
-      return new Promise(resolve => setTimeout(resolve, delay))
-        .then(() => fetchWithRetry(url, options, retries - 1, delay));
-    }
-    throw error;
-  });
-}
-
 function goBack() {
     if (fixedPreviousUrl) {
         window.location.href = fixedPreviousUrl;

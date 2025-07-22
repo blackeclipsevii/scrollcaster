@@ -11,7 +11,7 @@ async function loadTactics() {
     }
 
     let url = `${endpoint}/tactics`;
-    await fetchWithRetry(encodeURI(url)).
+    await fetch(encodeURI(url)).
     then(resp => resp.json()).
     then(tactics => {
         tactics.forEach(tacticCard => {
