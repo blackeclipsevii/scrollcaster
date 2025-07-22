@@ -50,10 +50,11 @@ async function displayEnhancements(unit, newUsItem, type) {
             </div>
             <div class='upgrade-group-right'>
                 <button class="upgrade-button">🔎</button>
-                <div style='display: inline-block' class='upgrade-points points-label'>${upgrade.points} PNTS</div>
+                <div style='display: inline-block' class='upgrade-points points-label'>${upgrade.points} PTS</div>
             </div>`;
 
-            if (!(upgrade.points && upgrade.points > 0)) {
+            const costsPoints = upgrade.points && upgrade.points > 0;
+            if (!costsPoints) {
                 const pl = upgradeDiv.querySelector('.points-label');
                 pl.style.display = 'none';
             }
