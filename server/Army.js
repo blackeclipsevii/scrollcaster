@@ -2,6 +2,7 @@
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from "../shared/UpgradeType.js";
+import { Lore } from './Lores.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -121,19 +122,25 @@ export default class Army {
             if (lu.type === UpgradeType.ManifestationLore ||
                 lu.type === UpgradeType.SpellLore ||
                 lu.type === UpgradeType.PrayerLore) {
-                const targetId = element.entryLinks[0]['@targetId'];
-                if (targetId) {
-                    upgrade = ageOfSigmar.lores.lores[lu.alias][targetId];
-                    if (upgrade && upgrade.unitIds) {
-                        upgrade.unitIds.forEach(uuid => {
-                            const unit = _libraryUnits[uuid];
-                            if (!unit) {
-                                console.log(`WARNING: Unable to find unit link in library: ${uuid}`);
-                                return;
-                            }
-                            this.units[uuid] = unit;
-                        });
+                if (element.entryLinks) {
+                    const targetId = element.entryLinks[0]['@targetId'];
+                    if (targetId) {
+                        upgrade = ageOfSigmar.lores.lores[lu.alias][targetId];
+                        if (upgrade && upgrade.unitIds) {
+                            upgrade.unitIds.forEach(uuid => {
+                                const unit = _libraryUnits[uuid];
+                                if (!unit) {
+                                    console.log(`WARNING: Unable to find unit link in library: ${uuid}`);
+                                    return;
+                                }
+                                this.units[uuid] = unit;
+                            });
+                        }
                     }
+                }
+                else
+                {   // if it's not in the lore don't add it
+                    return false;
                 }
             }
 

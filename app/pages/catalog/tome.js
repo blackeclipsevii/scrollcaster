@@ -2,8 +2,8 @@
 const params = new URLSearchParams(window.location.search);
 const armyName = params.get('army');
 
-const makeItem = (name, onclick) => {
-    const itemList = document.querySelector('.item-list');
+const makeItem = (name, onclick, listName = 'item-list') => {
+    const itemList = document.querySelector(`.${listName}`);
     const item = document.createElement('div');
     item.classList.add('selectable-item');
 
@@ -39,62 +39,127 @@ async function loadCore() {
     });
 }
 
-async function loadTome() {
+async function loadRor() {
     fixedPreviousUrl = encodeURI(`catalog.html`);
-    const url = `${endpoint}/armies?army=${armyName}`;
-    await fetch(encodeURI(url)).
+    const h2 = document.getElementById('army-name');
+    h2.textContent = 'Regiments of Renown';
+
+    await fetch(encodeURI(`${endpoint}/regimentsOfRenown`)).
     then(resp => resp.json()).
-    then(army => {
-        const h2 = document.getElementById('army-name');
-        h2.textContent = army.name;
-
-        if (army.units) {
-            makeItem('Warscrolls', () => {
-                window.location.href = encodeURI(`../units/units.html?army=${armyName}`);
+    then(unitsLUT => {
+        const units = Object.values(unitsLUT);
+        units.forEach(regimentOfRenown => {
+            makeItem(regimentOfRenown.name, () => {
+                displayUpgradeOverlay(regimentOfRenown.upgrades);
             });
-        }
-
-        if (army.upgrades.battleTraits) {
-            makeItem('Battle Traits', () => {
-                const names = Object.getOwnPropertyNames(army.upgrades.battleTraits);
-                const traits = [];
-                names.forEach(name => {
-                    traits.push(army.upgrades.battleTraits[name]);
-                })
-                displayUpgradeOverlay(traits);
-            });          
-        }
-
-        if (!army.isArmyOfRenown && army.upgrades.battleFormations) {
-            makeItem('Battle Formations', () => {
-                window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=battleFormation`);
-            });          
-        }
-
-        if (army.upgrades.artefacts) {
-            makeItem('Artefacts of Power', () => {
-                window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=artefact`);
-            });          
-        }
-
-        if (army.upgrades.heroicTraits) {
-            makeItem('Heroic Traits', () => {
-                window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=heroicTrait`);
-            });          
-        }
-
-        if (army.upgrades.lores.manifestation ||
-            army.upgrades.lores.spell ||
-            army.upgrades.lores.prayer) {
-            makeItem('Lores', () => {
-                window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=lore`);
-            });          
-        }
+        });
     });
+}
+
+async function loadTome(doSub = true) {
+    fixedPreviousUrl = encodeURI(`catalog.html`);
+
+    const h2 = document.getElementById('army-name');
+    h2.textContent = armyName;
+
+    const _loadFaction = async (subFactionName) => {
+        const url = `${endpoint}/armies?army=${subFactionName}`;
+        await fetch(encodeURI(url)).
+        then(resp => resp.json()).
+        then(army => {
+
+            
+            const itemList = document.querySelector(`.item-list`);
+            itemList.innerHTML = '';
+            const h2 = document.getElementById('army-name');
+            h2.textContent = army.name;
+
+            if (army.units) {
+                makeItem('Warscrolls', () => {
+                    window.location.href = encodeURI(`../units/units.html?army=${armyName}`);
+                });
+            }
+
+            if (army.upgrades.battleTraits) {
+                makeItem('Battle Traits', () => {
+                    const names = Object.getOwnPropertyNames(army.upgrades.battleTraits);
+                    const traits = [];
+                    names.forEach(name => {
+                        traits.push(army.upgrades.battleTraits[name]);
+                    })
+                    displayUpgradeOverlay(traits);
+                });          
+            }
+
+            if (!army.isArmyOfRenown && army.upgrades.battleFormations) {
+                makeItem('Battle Formations', () => {
+                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=battleFormation`);
+                });          
+            }
+
+            if (army.upgrades.artefacts) {
+                makeItem('Artefacts of Power', () => {
+                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=artefact`);
+                });          
+            }
+
+            if (army.upgrades.heroicTraits) {
+                makeItem('Heroic Traits', () => {
+                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=heroicTrait`);
+                });          
+            }
+
+            if (Object.getOwnPropertyNames(army.upgrades.lores.manifestation).length > 6 ||
+                getarmy.upgrades.lores.spell ||
+                army.upgrades.lores.prayer) {
+                makeItem('Lores', () => {
+                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=lore`);
+                });          
+            }
+        });
+    }
+
+    if (doSub) {
+        const subfactions = [];
+        await fetchArmies(async (allArmies) => {
+            allArmies.forEach(army => {
+                if (army.includes(armyName)) {
+                    subfactions.push(army);
+                }
+            });
+
+            if (subfactions.length > 1) {
+                 subfactions.every(army => {
+                    if (!army.includes(' - ')) {
+                        makeItem(armyName, () => {
+                            fixedPreviousUrl = encodeURI(`tome.html?army=${armyName}`);
+                            _loadFaction(armyName);
+                        });
+                        return false;
+                    }
+                    return true;
+                });
+
+                subfactions.forEach(army => {
+                    if (army.includes(' - ')) {
+                        makeItem(army.split(' - ')[1], () => {
+                            fixedPreviousUrl = encodeURI(`tome.html?army=${armyName}`);
+                            _loadFaction(army);
+                        });
+                    }
+                });
+            } else {
+                _loadFaction(armyName);
+            }
+        });
+
+        return;
+    }
+
     loadScrollData();
 }
 
 if (armyName)
-    loadTome();
+    armyName === 'ror' ? loadRor() : loadTome();
 else
     loadCore();

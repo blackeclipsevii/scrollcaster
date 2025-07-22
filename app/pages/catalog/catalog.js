@@ -23,13 +23,18 @@ async function loadArmies() {
     addItem('Age of Sigmar', coreList, () => {
         window.location.href = encodeURI(`tome.html`);
     });
+    
+    addItem('Regiments of Renown', coreList, () => {
+        window.location.href = encodeURI(`tome.html?army=ror`);
+    });
 
     const loader = document.getElementById('loader-box');
     loader.style.display = 'block';
     await fetchArmies(async (allArmies) => {
         loader.style.display = 'none';
-        _armies = allArmies;
-        _armies.forEach(army => {
+        allArmies.forEach(army => {
+            if (army.includes(' - '))
+                return;
             const armyList = document.getElementById('army-list');
             addItem(army, armyList, () => {
                 window.location.href = encodeURI(`tome.html?army=${army}`);
