@@ -1,11 +1,11 @@
-const hostname = "http://localhost";
-const port = 3000;
+const hostname = "https://army-thing.fly.dev";
+const port = null;
 const endpoint = port ? `${hostname}:${port}` : hostname;
 var _loadScrollData = false;
 var roster = null;
 var fixedPreviousUrl = null;
 var previousUrl = document.referrer;
-var version = '0.2.1beta';
+var version = '0.2.2beta';
 
 const fetchArmies = async (callback, retry = 10) => {
   fetch(`${endpoint}/armies`).
