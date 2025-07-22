@@ -118,9 +118,13 @@ function displayRoster(roster) {
   container.className = "clickable-style army-card";
   container.style.overflow = "hidden";
   const entry = document.createElement("div");
+  let armyName = roster.army;
+  if (armyName.includes(' - ')) {
+    armyName = armyName.split(' - ')[1];
+  }
   entry.innerHTML = `
   <strong>${roster.name}</strong><br/>
-  ${roster.army} | ${roster.ruleset} | ${roster.points} pts
+  ${armyName} | ${roster.ruleset} | ${roster.points} pts
   <p>${roster.description}</p>
   <div style="display: hidden" class="roster-id" id="${roster.id}"></div>
   `;
@@ -128,6 +132,37 @@ function displayRoster(roster) {
   entry.style.float = "left";
 
   const callbackMap = {
+    Rename: async (e) => {
+        const toggle = overlayToggleFactory('block', () => {
+          const modal = document.querySelector(".modal");
+          modal.innerHTML = '';
+
+          const section = document.createElement('div');
+          section.innerHTML = `
+            <input type="text" id="replaceName" placeholder="${roster.name}" />
+          `;
+          
+          const button = document.createElement('button');
+          button.className = 'full-rectangle-button';
+          button.textContent = 'Update Roster Name';
+          button.onclick = async () => {
+            const element = document.getElementById('replaceName');
+            if (element.value.length !== 0) {
+              roster.name = element.value;
+              await putRoster(roster);
+            }
+            disableOverlay();
+            await viewRosters();
+          };
+
+          modal.appendChild(section);
+          modal.appendChild(button);
+          const offset = (window.innerWidth - modal.clientWidth) / 2.0;
+          modal.style.marginLeft = `${offset}px`;
+      });
+      toggle();
+    },
+    
     Duplicate: async (e) => {
       const json = JSON.stringify(roster);
       const clone = JSON.parse(json);
@@ -253,8 +288,12 @@ async function createArmy() {
     return;
   }
 
-  if (!name)
+  if (!name) {
     name = army;
+    if (name.includes(' - ')) {
+      name = name.split(' - ')[1];
+    }
+  }
 
   let roster = await getNewRoster(army);
   console.log(JSON.stringify(roster));
