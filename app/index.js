@@ -172,8 +172,32 @@ function displayRoster(roster) {
     },
 
     Delete: async (e) => {
-      await deleteRoster(roster.id);
-      await viewRosters();
+        const toggle = overlayToggleFactory('block', () => {
+          const modal = document.querySelector(".modal");
+          modal.innerHTML = '';
+
+          const section = document.createElement('p');
+          section.innerHTML = `
+          Do you want to delete <i><b>${roster.name}</b></i>?<br/><br/>
+          <strong>This cannot be undone.</strong>
+          `;
+
+          const button = document.createElement('button');
+          button.className = 'full-rectangle-button';
+          button.textContent = 'Delete Roster';
+          button.style.backgroundColor = 'red';
+          button.onclick = async () => {
+            await deleteRoster(roster.id);
+            disableOverlay();
+            await viewRosters();
+          };
+
+          modal.appendChild(section);
+          modal.appendChild(button);
+          const offset = (window.innerWidth - modal.clientWidth) / 2.0;
+          modal.style.marginLeft = `${offset}px`;
+      });
+      toggle();
     }
   };
   const menu = createContextMenu(roster.id, roster.id, callbackMap);
