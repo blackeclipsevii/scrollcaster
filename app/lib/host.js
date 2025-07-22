@@ -3,9 +3,9 @@ const port = null;
 const endpoint = port ? `${hostname}:${port}` : hostname;
 var _loadScrollData = false;
 var roster = null;
-var fixedPreviousUrl = null;
 var previousUrl = document.referrer;
-var version = '0.2.2beta';
+var version = '0.3.0beta';
+const _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
 const fetchArmies = async (callback, retry = 10) => {
   fetch(`${endpoint}/armies`).
@@ -22,11 +22,12 @@ const fetchArmies = async (callback, retry = 10) => {
   });
 }
 
-function goBack() {
-    if (fixedPreviousUrl) {
-        window.location.href = fixedPreviousUrl;
+const displayPoints = (pointsElement, points, pts='pts') => {
+    if (points > 0) {
+        pointsElement.textContent = `${points} ${pts}`;
     } else {
-        window.location.href = previousUrl;
+        pointsElement.style.display = 'none';
+        pointsElement.textContent = '';
     }
 }
 
@@ -47,16 +48,15 @@ window.addEventListener("beforeunload", () => {
 });
 
 window.addEventListener( "pageshow", function ( event ) {
-    var historyTraversal = event.persisted || 
-                            ( typeof window.performance != "undefined" && 
-                                window.performance.navigation.type === 2 );
-    if ( historyTraversal ) {
+    const params = new URLSearchParams(window.location.search);
+    const lsd = params.get('loadScrollData');
+    if (lsd)
         _loadScrollData = true;
-    }
 });
 
 function loadScrollData() {
     if (_loadScrollData) {
+        console.log(`loading scroll`)
         _loadScrollData = false;
         const scrollY = sessionStorage.getItem(`scrollY${window.document.title}`);
         if (scrollY !== null) {

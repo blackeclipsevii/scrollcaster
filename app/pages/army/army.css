@@ -6,8 +6,8 @@
   align-items: center;
   padding: 0.5rem;
   background: #f2f2f2;
-  border-radius: 5px;
-  margin-bottom: 0.5rem;
+  border-radius: var(--border-radius);
+  margin-top: 0.5rem;
   position: relative;
   width: 95%;
   font-size: 14px;
@@ -23,12 +23,7 @@
   overflow: hidden;
   transition: max-height 0.4s ease;
   background: #fafafa;
-  padding: 0 10px;
-}
-
-.unit-details label, .unit-details button {
-    display: block;
-    margin: 10px 0;
+  padding: 0 .5em;
 }
 
 .crown-icon {
@@ -40,7 +35,6 @@
   border: 1px solid #ccc;
   width: 95%;
   margin: 5px auto;
-  font-family: Arial, sans-serif;
   font-size: 14px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, .15);
 }
@@ -72,56 +66,47 @@
     flex-shrink: 0;
 }
 
-.unit-slot-points {
-    position: relative;
-    top: 20%;
-}
-
-.unit-label {
-    position: relative;
-    color: white;
-    right: 5%;
-    top: 15%;
-    font-size: 10px;
-    padding: 2px 6px;
-    margin-bottom: 0px;
-    border-radius: 6px;
-    white-space: nowrap;
-    display: none;
-}
-
 .unit-header-right {
     display: flex;
-    gap: .5rem; 
 }
 
 .unit-header-left {
     max-width: 40%;
 }
 
-.general-label {
-    background-color: green;
-}
-  
-.reinforced-label {
-    background-color: blue;
+
+.upgrade-group {
+    display: flex;
+    align-items: center;
+    color: black;
 }
 
-.upgrade-label,
-.upgrade-group,
 .upgrade-group-left,
 .upgrade-group-right,
+.upgrade-label,
 .upgrade-checkbox,
 .upgrade-button {
+    margin-top: .5em;
+    margin-bottom: .5em;
     display: inline-block;
 }
 
-.upgrade-label {
-    width: fit-content;
-    font-size: 1.2em;
+
+.upgrade-group-left,
+.upgrade-group-right {
+    margin: 0;
+    padding: 0;
 }
 
-.upgrade-checkbox {
-    width: 1.2em;
-    height: 1.2em;
+.upgrade-group-left {
+    max-width: 75%;
+}
+
+.upgrade-button {
+    border: 0px;
+    margin: 0px;
+    margin-left: .5em;
+    background: white;
+    display: inline-block;
+    cursor: pointer;
 }

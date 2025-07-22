@@ -7,7 +7,8 @@
   margin: 0;
 }
 
-.menu-btn {
+.menu-btn,
+.menu-btn-disabled {
   position: relative;
   display: inline-block;
   background: none;
@@ -19,6 +20,10 @@
   font-size: 1.5rem;
   cursor: pointer;
   transform: rotate(-90deg);
+}
+
+.menu-btn-disabled {
+  color: #ccc
 }
 
 .menu {

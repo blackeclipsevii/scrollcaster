@@ -7,22 +7,6 @@
     padding: 1rem;
 }
 
-.ability-body {
-    margin-top: 0px;
-    border: 0px;
-    padding-top: 0px;
-    padding-left:  5px;
-    padding-right: 5px;
-    padding-bottom: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-.ability-container {
-    width: 100%;
-    padding: 0;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -38,9 +22,6 @@ td.characteristics,
 th.characteristics {
   text-align: center;
   vertical-align: middle;
-  /*border: 1px solid #ccc;*/
-  /*padding: 20px;
-  font-family: sans-serif;*/
 }
 
 td.characteristics,
@@ -61,12 +42,12 @@ th.ranged-weapon {
 .ability-label {
     position: relative;
     color: white;
-    background-color: #999;
+    background-color: #5A5E5A;
     top: 15%;
     font-size: 12px;
     padding: 2px 6px;
     margin: 2px;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     white-space: nowrap;
     display: inline;
 }

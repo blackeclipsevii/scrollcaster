@@ -20,7 +20,8 @@ async function updateValidationDisplay() {
     const errors = await validateRoster(roster);
     const pointsOverlay = document.getElementById('pointsOverlay');
     const hasErrors = errors.length > 0;
-    pointsOverlay.style.backgroundColor = hasErrors ? 'red' : 'green';
+    const postfix = hasErrors ? 'invalid' : 'valid';
+    pointsOverlay.className = `points-overlay-${postfix}`;
 
     pointsOverlay.onclick = overlayToggleFactory('block', () =>{
         const modal = document.querySelector(".modal");

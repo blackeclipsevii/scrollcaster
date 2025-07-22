@@ -22,25 +22,23 @@ const makeItem = (name, onclick, listName = 'item-list') => {
 }
 
 async function loadCore() {
-    fixedPreviousUrl = encodeURI(`catalog.html`);
     const h2 = document.getElementById('army-name');
     h2.textContent = 'Age of Sigmar';
 
     makeItem('Warscrolls', () => {
-        window.location.href = encodeURI(`../units/units.html`);
+        goTo(encodeURI(`../units/units.html`));
     });
     
     makeItem('Battle Tactic Cards', () => {
-        window.location.href = encodeURI(`../tactics/tactics.html`);
+        goTo(encodeURI(`../tactics/tactics.html`));
     });          
 
     makeItem('Lores', () => {
-        window.location.href = encodeURI(`../upgrades/upgrades.html?type=lore`);
+        goTo(encodeURI(`../upgrades/upgrades.html?type=lore`));
     });
 }
 
 async function loadRor() {
-    fixedPreviousUrl = encodeURI(`catalog.html`);
     const h2 = document.getElementById('army-name');
     h2.textContent = 'Regiments of Renown';
 
@@ -57,8 +55,6 @@ async function loadRor() {
 }
 
 async function loadTome(doSub = true) {
-    fixedPreviousUrl = encodeURI(`catalog.html`);
-
     const h2 = document.getElementById('army-name');
     h2.textContent = armyName;
 
@@ -66,9 +62,7 @@ async function loadTome(doSub = true) {
         const url = `${endpoint}/armies?army=${subFactionName}`;
         await fetch(encodeURI(url)).
         then(resp => resp.json()).
-        then(army => {
-
-            
+        then(army => {            
             const itemList = document.querySelector(`.item-list`);
             itemList.innerHTML = '';
             const h2 = document.getElementById('army-name');
@@ -76,7 +70,7 @@ async function loadTome(doSub = true) {
 
             if (army.units) {
                 makeItem('Warscrolls', () => {
-                    window.location.href = encodeURI(`../units/units.html?army=${armyName}`);
+                    goTo(encodeURI(`../units/units.html?army=${subFactionName}`));
                 });
             }
 
@@ -93,19 +87,19 @@ async function loadTome(doSub = true) {
 
             if (!army.isArmyOfRenown && army.upgrades.battleFormations) {
                 makeItem('Battle Formations', () => {
-                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=battleFormation`);
+                    goTo(encodeURI(`../upgrades/upgrades.html?armyName=${subFactionName}&type=battleFormation`));
                 });          
             }
 
             if (army.upgrades.artefacts) {
                 makeItem('Artefacts of Power', () => {
-                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=artefact`);
+                    goTo(encodeURI(`../upgrades/upgrades.html?armyName=${subFactionName}&type=artefact`));
                 });          
             }
 
             if (army.upgrades.heroicTraits) {
                 makeItem('Heroic Traits', () => {
-                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=heroicTrait`);
+                    goTo(encodeURI(`../upgrades/upgrades.html?armyName=${subFactionName}&type=heroicTrait`));
                 });          
             }
 
@@ -113,7 +107,7 @@ async function loadTome(doSub = true) {
                 getarmy.upgrades.lores.spell ||
                 army.upgrades.lores.prayer) {
                 makeItem('Lores', () => {
-                    window.location.href = encodeURI(`../upgrades/upgrades.html?armyName=${armyName}&type=lore`);
+                    goTo(encodeURI(`../upgrades/upgrades.html?armyName=${subFactionName}&type=lore`));
                 });          
             }
         });
@@ -132,7 +126,7 @@ async function loadTome(doSub = true) {
                  subfactions.every(army => {
                     if (!army.includes(' - ')) {
                         makeItem(armyName, () => {
-                            fixedPreviousUrl = encodeURI(`tome.html?army=${armyName}`);
+                            goTo(encodeURI(`tome.html?army=${armyName}&loadScrollData=true`), false);
                             _loadFaction(armyName);
                         });
                         return false;
@@ -143,20 +137,21 @@ async function loadTome(doSub = true) {
                 subfactions.forEach(army => {
                     if (army.includes(' - ')) {
                         makeItem(army.split(' - ')[1], () => {
-                            fixedPreviousUrl = encodeURI(`tome.html?army=${armyName}`);
+                            goTo(encodeURI(`tome.html?army=${army}&loadScrollData=true`), false);
                             _loadFaction(army);
                         });
                     }
                 });
+                
+                loadScrollData();
             } else {
                 _loadFaction(armyName);
+                loadScrollData();   
             }
         });
 
         return;
     }
-
-    loadScrollData();
 }
 
 if (armyName)

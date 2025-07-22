@@ -21,11 +21,11 @@ function addItem(name, list, onclick) {
 async function loadArmies() {
     const coreList = document.getElementById('core-list');
     addItem('Age of Sigmar', coreList, () => {
-        window.location.href = encodeURI(`tome.html`);
+        goTo(encodeURI(`tome.html`));
     });
     
     addItem('Regiments of Renown', coreList, () => {
-        window.location.href = encodeURI(`tome.html?army=ror`);
+        goTo(encodeURI(`tome.html?army=ror`));
     });
 
     const loader = document.getElementById('loader-box');
@@ -37,14 +37,13 @@ async function loadArmies() {
                 return;
             const armyList = document.getElementById('army-list');
             addItem(army, armyList, () => {
-                window.location.href = encodeURI(`tome.html?army=${army}`);
+                goTo(encodeURI(`tome.html?army=${army}`));
             });
         });
+        
+        loadScrollData();
     });
-    
-    
-    loadScrollData();
 }
 
 loadArmies();
-addOverlayListener();
+// addOverlayListener();

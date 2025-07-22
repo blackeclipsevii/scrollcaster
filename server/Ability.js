@@ -4,6 +4,7 @@ import { AbilityType } from "../shared/AbilityType.js";
 export default class Ability {
     constructor(profile) {
         this.name = profile['@name'];
+        this.metadata = {};
         profile.characteristics.forEach((char) => {
             const lcName = char['@name'].toLowerCase();
             if (lcName !== 'used by') {
@@ -13,9 +14,7 @@ export default class Ability {
         });
 
         profile.attributes.forEach((attrib) => {
-            if (attrib['@name'] === 'Color') {
-                this.color = attrib['#text'];
-            }
+            this.metadata[attrib['@name'].toLowerCase()] = attrib['#text'];
         });
 
         if (profile['@typeName'].includes('Activated')) {

@@ -59,7 +59,8 @@ function displayUpgrade(upgrade) {
     right.classList.add('selectable-item-right');
 
     const points = document.createElement('span');
-    points.textContent = upgrade.points ? `${upgrade.points} pts` : '';
+    points.className = 'points-label';
+    displayPoints(points, upgrade.points);
 
     if (rosterId) {
         const addBtn = document.createElement('button');
@@ -118,7 +119,6 @@ function displayUpgrades(upgradeList) {
 }
 
 async function loadUpgradesCatalog() {
-    fixedPreviousUrl = encodeURI(`../catalog/tome.html?army=${armyName}`);
     await fetch(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
     then(resp => resp.json()).
     then(allUpgrades => {
@@ -137,12 +137,11 @@ async function loadUpgradesCatalog() {
         }
         
         displayUpgrades(upgradeList);
+        loadScrollData();
     });
-    loadScrollData();
 }
 
 async function loadUniversalLores() {
-    fixedPreviousUrl = encodeURI(`../catalog/tome.html`);
     await fetch(encodeURI(`${endpoint}/lores`)).
     then(resp => resp.json()).
     then(loreObject => {
@@ -150,12 +149,11 @@ async function loadUniversalLores() {
             const lore = loreObject.lores.manifestation[ulut.id];
             displayUpgrade(lore);
         });
+        loadScrollData();
     });
-    loadScrollData();
 }
 
 async function loadUpgrades() {
-    fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
     roster = await getRoster(rosterId);
     displayPointsOverlay(rosterId);
     refreshPointsOverlay(rosterId);
@@ -180,8 +178,8 @@ async function loadUpgrades() {
             upgradeList = [allUpgrades[type]];
         }
         displayUpgrades(upgradeList);
+        loadScrollData();
     });
-    loadScrollData();
 }
 
 const header = document.getElementById('army-header');

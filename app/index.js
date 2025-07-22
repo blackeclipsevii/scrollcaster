@@ -106,7 +106,7 @@ const toggleOverlay = overlayToggleFactory('flex', async () =>{
 });
 
 function goToRoster(roster) {
-  window.location.href = encodeURI(`./pages/army/army.html?id=${roster.id}`);
+  goTo(encodeURI(`./pages/army/army.html?id=${roster.id}`));
 }
 
 function displayRoster(roster) {

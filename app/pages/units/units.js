@@ -55,9 +55,9 @@ async function loadUnitsForCatalog() {
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
-                const key = 'readMyScroll';
+                const key = _inCatalog ? 'readMyScrollCat' : 'readMyScrollArmy';
                 localStorage.setItem(key, JSON.stringify(unit));
-                window.location.href = `../warscroll/warscroll.html?local=${key}`;
+                goTo(`../warscroll/warscroll.html?local=${key}`);
             });
 
             const unitList = getUnitList(unit);
@@ -81,8 +81,8 @@ async function loadUnitsForCatalog() {
             item.append(left, right);
             unitList.appendChild(item);
         });
+        loadScrollData();
     });
-    loadScrollData();
 }
 
 async function loadUnits() {
@@ -121,7 +121,8 @@ async function loadUnits() {
                 right.classList.add('selectable-item-right');
 
                 const points = document.createElement('span');
-                points.textContent = regimentOfRenown.points ? `${regimentOfRenown.points} pts` : '';
+                points.className = 'points-label';
+                displayPoints(points, regimentOfRenown.points);
 
                 const addBtn = document.createElement('button');
                 addBtn.classList.add('rectangle-button');
@@ -177,9 +178,9 @@ async function loadUnits() {
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
-                const key = 'readMyScroll';
+                const key = _inCatalog ? 'readMyScrollCat' : 'readMyScrollArmy';
                 localStorage.setItem(key, JSON.stringify(unit));
-                window.location.href = `../warscroll/warscroll.html?local=${key}`;
+                goTo(`../warscroll/warscroll.html?local=${key}`);
             });
 
             const unitList = getUnitList(unit);
@@ -197,7 +198,8 @@ async function loadUnits() {
             right.classList.add('selectable-item-right');
 
             const points = document.createElement('span');
-            points.textContent = unit.points ? `${unit.points} pts` : '';
+            points.className = 'points-label';
+            displayPoints(points, unit.points);
 
             const addBtn = document.createElement('button');
             addBtn.classList.add('rectangle-button');
@@ -221,20 +223,18 @@ async function loadUnits() {
             item.append(left, right);
             unitList.appendChild(item);
         });
+        loadScrollData();
     });
-    loadScrollData();
 }
 
 addOverlayListener();
 
 if (rosterId) {
-    fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
     loadUnits();
 } else {
-    let url = `../catalog/tome.html`;
+    let url = `../catalog/tome.html?loadScrollData=true`;
     if (armyName) {
-        url = `${url}?army=${armyName}`
+        url = `${url}&army=${armyName}`
     }
-    fixedPreviousUrl = encodeURI(url);
     loadUnitsForCatalog();
 }

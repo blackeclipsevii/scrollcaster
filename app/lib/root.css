@@ -1,9 +1,29 @@
 :root {
     --shadow-color: #1C1C1E;
+    --red-color: #FE494A;
+    --blue-color: #3186FF;
+    --green-color: #0EBC5F;
+    --black-color: #1F1F1F;
+    --header-color: var(--black-color);
+    --white-color: white;
+    --points-font-size: 14px;
+    --border-radius: 6px;
+
+    /* ability colors */
+    --yellow-ability: #D7B21D;
+    --grey-ability: #5A5E5A;
+    --blue-ability: #055C72;
+    --orange-ability: #DB571A;
+    --red-ability: #A10000;
+    --purple-ability:#642A8D;
+    --black-ability: var(--black-color);
 }
 
-body {
-    font-family: sans-serif;
+.points-display {
+    font-size: 14px;
+}
+
+body {font-family: system-ui,Avenir,Helvetica,Arial,sans-serif;
     margin: 0;
     padding: 0;
     overflow-y: scroll;
@@ -23,7 +43,7 @@ header {
     top: 0;
     left: 0;
   
-    background-color: #2C2C2C;
+    background-color: var(--header-color);
     color: white;
     padding-bottom: 1rem;
     padding-top: 1rem;
@@ -40,7 +60,7 @@ footer {
     bottom: 0;
     left: 0;
   
-    background-color: #1C1C1E;
+    background-color: var(--header-color);
     color: white;
     padding-bottom: 1em;
     padding-top: 1em;
@@ -54,11 +74,14 @@ footer {
 }
 
 .footer-button {
-    border: 0;
-    width: 6em;
-    height: 2em;
+    display: flex;
+    border: 0px;
     padding: 0;
     margin: 0;
+    margin-bottom: 1em;
+    gap: .5em;
+    text-align: center;
+    justify-content: center;
     border-color: white;
     cursor: pointer;
 }
@@ -74,7 +97,7 @@ footer {
     margin: 0;
     border: 0;
     padding: 0;
-    bottom: 10%;
+    bottom: 30%;
 }
 
 .header-left,
@@ -125,8 +148,8 @@ footer {
     padding: .5rem;
     margin: .5rem;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    background-color: white;
+    border-radius: var(--border-radius);
+    background-color: var(--white-color);
 }
 
 .section h2 {
@@ -161,23 +184,23 @@ footer {
 
 .rectangle-button-small,
 .rectangle-button {
-    background-color: #1976D2;
+    background-color: var(--blue-color);
     color: white;
     border: none;
     padding: 0.6rem 0.9rem;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     font-size: 1.2rem;
     cursor: pointer;
 }
 
 .full-rectangle-button {
-    background-color: #1976D2;
+    background-color: var(--blue-color);
     color: white;
     border: none;
     margin-top: 0.3rem;
     padding: 0.6rem 0.9rem;
     width: 100%;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     font-size: 14px;
     cursor: pointer;
 }
@@ -185,7 +208,6 @@ footer {
 .rectangle-button-small {
     font-size: .8rem;
     padding: 0.4rem 0.6rem;
-    border-radius: 6px;
 }
 
 #pointsOverlay:active,
@@ -201,16 +223,24 @@ footer {
     left: 2em;
     color: #fff;
     padding: 10px 15px;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     font-size: 1rem;
     z-index: 500;
     cursor: pointer;
     box-shadow: 0 3px 6px rgba(0, 0, 0, .25);
 }
 
+.points-overlay-invalid {
+    background-color: var(--red-color);
+}
+
+.points-overlay-valid {
+    background-color: var(--green-color);
+}
+
 .loader {
   border: .5em solid #ccc; /* Light grey */
-  border-top: .5em solid #007bff; /* Blue */
+  border-top: .5em solid var(--blue-color); /* Blue */
   border-radius: 50%;
   width: 2em;
   height: 2em;
@@ -221,4 +251,108 @@ footer {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.points-label,
+.general-label,
+.reinforced-label {
+    position: relative;
+    color: white;
+    right: 5%;
+    top: 15%;
+    font-size: 12px;
+    padding: 2px 6px;
+    margin-bottom: 0px;
+    border-radius: var(--border-radius);
+    white-space: nowrap;
+    display: none;
+}
+
+.general-label {
+    background-color: var(--green-color);
+}
+  
+.reinforced-label {
+    background-color: var(--blue-color);
+}
+
+.points-label {
+    background-color: var(--red-color);
+    display: inline-block;
+}
+
+.ability-body {
+    background-color: white;
+    margin: 0px;
+    border: 0px;
+    margin-top: .5em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+.melee-weapons-header,
+.footer-left,
+.footer-right, 
+.ability-header {  
+    display: flex;
+    align-items: center;
+
+    color: white;
+    margin-left: 1em;
+    margin-top: .5em;
+}
+
+img.ranged-weapons-header,
+h4.ranged-weapons-header,
+img.melee-weapons-header,
+h4.melee-weapons-header {
+    padding: 0;
+    margin: 0;
+}
+.ranged-weapons-header,
+.melee-weapons-header {
+    margin-top: 0;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    padding-left: 1em;
+    margin-left: 0;
+    gap: .5em;
+    height: fit-content;
+    background-color: var(--black-color);
+}
+#ranged-weapons-section,
+#melee-weapons-section {
+    padding: 0px;
+}
+
+#meleeWeaponsHeader,
+#rangedWeaponsHeader,
+#rangedWeapons,
+#meleeWeapons {
+    padding-left: 1em;
+    padding-bottom: 1em;
+}
+
+.ability-container {
+  width: 100%;
+  padding: 0;
+}
+
+.ability-icon,
+h3.abilitytiming {
+  padding: 0px;
+  margin: 0px;
+  margin-left: 0em;
+  margin-top: 0em;
+  margin-bottom: .25em;
+  margin-right: 1em;
+  max-width:18em;
+  display: inline-block;
+}
+
+h4.abilityname {
+  padding: 0px;
+  margin: 0px;
 }

@@ -7,13 +7,14 @@ const displayUpgradeOverlay = overlayToggleFactory('block', (upgrade) =>{
         section = document.createElement('div');
         section.id = 'abilities-section';
         section.className = 'section';
+        section.style.border = '0px';
         modal.appendChild(section);
     }
 
     if (upgrade.type === 3 || upgrade.type === 4 || upgrade.type === 6) {
-        widgetAbilityDisplayAbilities(upgrade.abilities, modal);
+        widgetAbilityDisplayAbilities(upgrade.abilities, upgrade.name);
     } else {
-        widgetAbilityDisplayAbilities(upgrade, modal);
+        widgetAbilityDisplayAbilities(upgrade, upgrade.name);
     }
 
     const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;

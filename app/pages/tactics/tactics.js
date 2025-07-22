@@ -4,10 +4,7 @@ const rosterId = params.get('id');
 
 async function loadTactics() {
     if (rosterId) {
-        fixedPreviousUrl = encodeURI(`../army/army.html?id=${rosterId}`);
         roster = await getRoster(rosterId);
-    } else {
-        fixedPreviousUrl = encodeURI(`../catalog/tome.html`);
     }
 
     let url = `${endpoint}/tactics`;
@@ -60,8 +57,9 @@ async function loadTactics() {
             tacticList.appendChild(item);
         });
     });
-    loadScrollData();
 }
 
 loadTactics();
 addOverlayListener();
+
+loadScrollData();

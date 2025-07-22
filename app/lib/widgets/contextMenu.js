@@ -41,12 +41,16 @@ function createContextMenu(uniqueId, id, callbackMap) {
 
     const menu = div.querySelector('.menu');
     const entryNames = Object.getOwnPropertyNames(callbackMap);
-    entryNames.forEach(entryName => {
-        const li = document.createElement('li');
-        li.onclick = callbackMap[entryName];
-        li.textContent = entryName;
-        menu.appendChild(li);
-    });
+    if (entryNames.length === 0) {
+        button.className = 'menu-btn-disabled';
+    } else {
+        entryNames.forEach(entryName => {
+            const li = document.createElement('li');
+            li.onclick = callbackMap[entryName];
+            li.textContent = entryName;
+            menu.appendChild(li);
+        });
+    }
     ele.appendChild(div);
     return ele;
 }

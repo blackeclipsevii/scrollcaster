@@ -3,7 +3,7 @@
 
 .section {
     gap: 1rem;
-    padding: 1rem;
+    padding: .25rem;
     border-bottom: 1px solid #ccc;
 }
 
@@ -53,16 +53,11 @@
 }
 
 button.add-btn {
-    background-color: #007bff;
+    background-color: var(--blue-color);
     color: white;
     border: none;
     padding: 0.3rem 0.6rem;
     border-radius: 50%;
     font-size: 1.2rem;
     cursor: pointer;
-}
-
-.ability-container {
-    width: 100%;
-    padding: 0;
 }

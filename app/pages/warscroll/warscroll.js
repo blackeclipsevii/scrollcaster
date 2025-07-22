@@ -64,12 +64,22 @@ const displayWeapons = (qualifier, unit) => {
     let className = null;
     if (qualifier === 'ranged') {
         className = 'ranged-weapon';
-        title.innerHTML = "Ranged Weapons";
+        title.innerHTML = `
+        <div class='melee-weapons-header'>
+            <img src='../../resources/abShooting.png'></img>
+            <h4>Ranged Weapons</h4>
+        </div>
+        `;
         headers = ['RANGE', 'A', 'HIT', 'W', 'R', 'D'];
         
     } else {        
         className = 'melee-weapon';
-        title.innerHTML = "Melee Weapons";
+        title.innerHTML = `
+        <div class='melee-weapons-header'>
+            <img src='../../resources/abOffensive.png'></img>
+            <h4>Melee Weapons</h4>
+        </div>
+        `;
         headers = ['A', 'HIT', 'W', 'R', 'D'];
     }
 
@@ -97,7 +107,10 @@ const displayWeapons = (qualifier, unit) => {
         headers.forEach(cellData => {
             cell = document.createElement("td");
             cell.className = className;
-            cell.textContent = weaponList[i][lut[cellData]];
+            if (cellData === 'R' && weaponList[i][lut[cellData]] !== 0) 
+                cell.textContent = `-${weaponList[i][lut[cellData]]}`;
+            else
+                cell.textContent = weaponList[i][lut[cellData]];
             dataRow.appendChild(cell);
         });
         profileTable.appendChild(dataRow);
@@ -131,7 +144,7 @@ const displayKeywords = (unit) => {
 const _initializeWeaponsDiv = (qualifier) => {
     const div = document.getElementById(qualifier + '-weapons-section');
     
-    let title = document.createElement('h3');
+    let title = document.createElement('div');
     title.id = qualifier + 'WeaponsTitle';
 
     let header = document.createElement('table');
@@ -141,8 +154,8 @@ const _initializeWeaponsDiv = (qualifier) => {
     container.id = qualifier + 'Weapons';
 
     div.appendChild(title);
-    div.appendChild(header);
     div.appendChild(container);
+    container.appendChild(header);
     return div;
 }
 
@@ -189,7 +202,7 @@ async function readUnit() {
         displayChars(unit);
         displayWeapons('ranged', unit);
         displayWeapons('melee', unit);
-        widgetAbilityDisplayAbilities(unit);
+        widgetAbilityDisplayAbilities(unit, unit);
         displayKeywords(unit);
     }
 
