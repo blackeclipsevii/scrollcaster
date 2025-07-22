@@ -36,7 +36,7 @@ async function loadCore() {
 
     makeItem('Lores', () => {
         window.location.href = encodeURI(`../upgrades/upgrades.html?type=lore`);
-    });   
+    });
 }
 
 async function loadTome() {

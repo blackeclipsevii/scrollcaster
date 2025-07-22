@@ -1,4 +1,3 @@
-
 const params = new URLSearchParams(window.location.search);
 
 function addItem(name, list, onclick) {
@@ -25,18 +24,20 @@ async function loadArmies() {
         window.location.href = encodeURI(`tome.html`);
     });
 
-
-    const url = `${endpoint}/armies`;
-    await fetch(encodeURI(url)).
-    then(resp => resp.json()).
-    then(allArmies => {
-        allArmies.forEach(army => {
+    const loader = document.getElementById('loader-box');
+    loader.style.display = 'block';
+    await fetchArmies(async (allArmies) => {
+        loader.style.display = 'none';
+        _armies = allArmies;
+        _armies.forEach(army => {
             const armyList = document.getElementById('army-list');
             addItem(army, armyList, () => {
                 window.location.href = encodeURI(`tome.html?army=${army}`);
             });
         });
     });
+    
+    
     loadScrollData();
 }
 

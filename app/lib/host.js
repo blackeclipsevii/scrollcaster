@@ -7,6 +7,21 @@ var fixedPreviousUrl = null;
 var previousUrl = document.referrer;
 var version = '0.2.1beta';
 
+const fetchArmies = async (callback, retry = 10) => {
+  fetch(`${endpoint}/armies`).
+  then(resp => {
+    if (resp.status !== 200)
+      throw 'retry';
+    return resp.json()
+  }).
+  then(data => callback(data))
+  .catch(() => {
+    if (retry > 0) {
+      setTimeout(fetchArmies, 500, callback, retry-1);
+    }
+  });
+}
+
 function goBack() {
     if (fixedPreviousUrl) {
         window.location.href = fixedPreviousUrl;

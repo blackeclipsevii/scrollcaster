@@ -1,7 +1,11 @@
 var _ror = {};
 var _armies = []
 
-const _populateArmies = () => {
+const _populateArmies = (data) => {
+  if (data) {
+    _armies = data;
+  }
+  _ror = {};
   let loader = document.getElementById("loader-box");
   loader.style.display = 'none';
 
@@ -45,25 +49,6 @@ const _populateArmies = () => {
       rorSelect.style.display = 'none';
     }
   };
-}
-
-const fetchArmies = async (retry = 10) => {
-  fetch(`${endpoint}/armies`).
-  then(resp => {
-    if (resp.status !== 200)
-      throw 'retry';
-    return resp.json()
-  }).
-  then(armies => {
-    _armies = armies;
-    _ror = {};
-    _populateArmies();
-  })
-  .catch(() => {
-    if (retry > 0) {
-      setTimeout(fetchArmies, 500, retry-1);
-    }
-  });
 }
 
 const setOverlayContents = () => {
@@ -114,9 +99,9 @@ const setOverlayContents = () => {
 const toggleOverlay = overlayToggleFactory('flex', async () =>{
   setOverlayContents();
   if (_armies.length === 0) {
-    await fetchArmies();
+    await fetchArmies(_populateArmies);
   } else {
-    _populateArmies();
+    _populateArmies(null);
   }
 });
 
