@@ -122,10 +122,14 @@ function displayRoster(roster) {
   if (armyName.includes(' - ')) {
     armyName = armyName.split(' - ')[1];
   }
+
+  const currentPts = rosterTotalPoints(roster);
   entry.innerHTML = `
-  <strong>${roster.name}</strong><br/>
-  ${armyName} | ${roster.ruleset} | ${roster.points} pts
-  <p>${roster.description}</p>
+  <strong>${roster.name}</strong>
+  <span style='margin-left: 1.5em; margin-bottom: 0; background-color: grey;' class='points-label'>${currentPts} points</span> 
+  <br/>
+  ${armyName}${roster.battleFormation ? ' | ' + roster.battleFormation.name: ''}<br/>
+  ${roster.description.length ? roster.description + '<br/>' : ''}
   <div style="display: hidden" class="roster-id" id="${roster.id}"></div>
   `;
   entry.onclick = () => goToRoster(roster);

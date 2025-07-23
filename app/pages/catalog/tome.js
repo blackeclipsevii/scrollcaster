@@ -2,7 +2,7 @@
 const params = new URLSearchParams(window.location.search);
 const armyName = params.get('army');
 
-const makeItem = (name, onclick, listName = 'item-list') => {
+const makeItem = (name, onclick, listName = 'item-list', points=null) => {
     const itemList = document.querySelector(`.${listName}`);
     const item = document.createElement('div');
     item.classList.add('selectable-item');
@@ -16,6 +16,13 @@ const makeItem = (name, onclick, listName = 'item-list') => {
 
     const right = document.createElement('div');
     right.classList.add('selectable-item-right');
+    
+    if (points) {
+        const pts = document.createElement('span');
+        pts.className = 'points-label';
+        displayPoints(pts, points);
+        right.append(pts);
+    }
 
     item.append(left, right);
     itemList.appendChild(item);
@@ -49,7 +56,7 @@ async function loadRor() {
         units.forEach(regimentOfRenown => {
             makeItem(regimentOfRenown.name, () => {
                 displayUpgradeOverlay(regimentOfRenown.upgrades);
-            });
+            }, 'item-list', regimentOfRenown.points);
         });
     });
 }

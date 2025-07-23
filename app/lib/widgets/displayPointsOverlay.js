@@ -57,21 +57,3 @@ function refreshPointsOverlay(id) {
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
     _saveTotalPoints(id);
 }
-
-function unitTotalPoints(unit) {
-    if (!unit.points)
-        return 0;
-
-    let pts = unit.points;
-    
-    if (unit.isReinforced)
-        pts += unit.points;
-
-    if ( unit.heroicTrait && unit.heroicTrait.points)
-        pts += unit.heroicTrait.points;
-    
-    if (unit.artefact && unit.artefact.points)
-        pts += unit.artefact.points;
-    
-    return pts;
-}

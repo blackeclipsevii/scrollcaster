@@ -74,10 +74,12 @@ async function loadUnitsForCatalog() {
             const right = document.createElement('div');
             right.classList.add('selectable-item-right');
 
-            const points = document.createElement('span');
-            points.textContent = unit.points ? `${unit.points} pts` : '';
-
-            right.append(points);
+            if (unit.points) {
+                const points = document.createElement('span');
+                points.className = 'points-label';
+                points.textContent = unit.points ? `${unit.points} pts` : '';
+                right.append(points);
+            }
             item.append(left, right);
             unitList.appendChild(item);
         });
@@ -121,9 +123,10 @@ async function loadUnits() {
                 right.classList.add('selectable-item-right');
 
                 const points = document.createElement('span');
-                points.className = 'points-label';
-                displayPoints(points, regimentOfRenown.points);
-
+                if (regimentOfRenown.points) {
+                    points.className = 'points-label';
+                    displayPoints(points, regimentOfRenown.points);
+                }
                 const addBtn = document.createElement('button');
                 addBtn.classList.add('rectangle-button');
                 addBtn.textContent = '+';

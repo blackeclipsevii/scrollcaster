@@ -19,9 +19,9 @@
 .army-card {
   display: inline-block;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   padding: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: .5rem;
   background: #f9f9f9;
   cursor: pointer;
   transition: background 0.2s;
