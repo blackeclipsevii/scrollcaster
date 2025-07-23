@@ -25,6 +25,7 @@ async function loadTactics() {
 
             const item = document.createElement('div');
             item.classList.add('selectable-item');
+            item.classList.add('not-added');
 
             // Clicking the container navigates to details
             item.addEventListener('click', () => {
@@ -44,6 +45,7 @@ async function loadTactics() {
                 addBtn.textContent = '+';
                 addBtn.addEventListener('click', async (e) => {
                     e.stopPropagation(); // Prevents click from triggering page change
+                    item.classList.remove('not-added');
                     roster.battleTacticCards.push(tacticCard);
                     await putRoster(roster);
                     goBack();

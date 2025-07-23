@@ -152,7 +152,7 @@ footer {
     background-color: var(--white-color);
 }
 
-.section h2 {
+.section h3 {
     margin: .5em;
     display: flex;
     justify-content: space-between;
@@ -253,6 +253,7 @@ footer {
   100% { transform: rotate(360deg); }
 }
 
+.ability-label,
 .points-label,
 .general-label,
 .reinforced-label {
@@ -278,6 +279,14 @@ footer {
 
 .points-label {
     background-color: var(--red-color);
+    display: inline-block;
+}
+
+.ability-label {
+    background-color: #5A5E5A;
+    top: 15%;
+    right: 0%;
+    white-space: nowrap;
     display: inline-block;
 }
 

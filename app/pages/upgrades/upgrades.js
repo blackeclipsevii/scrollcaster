@@ -46,6 +46,10 @@ function displayUpgrade(upgrade) {
     const item = document.createElement('div');
     item.classList.add('selectable-item');
 
+    if (roster) {
+        item.classList.add('not-added');
+    }
+
     // Clicking the container navigates to details
     item.addEventListener('click', () => {
         displayUpgradeOverlay(upgrade);
@@ -79,6 +83,8 @@ function displayUpgrade(upgrade) {
             } else if (upgrade.type == 6) {
                 roster.lores.prayer = upgrade;
             }
+            if (roster)
+                item.classList.remove('not-added');
             await putRoster(roster);
             goBack();
             // window.location.href = `../army/army.html?id=${rosterId}`;
@@ -94,6 +100,9 @@ function displayUpgrade(upgrade) {
 
 function displayUpgrades(upgradeList) {
     upgradeList.forEach(upgrades => {
+        if (!upgrades)
+            return;
+
         let upgradeNames = Object.getOwnPropertyNames(upgrades);
         if (isLore) {
             if (rosterId) {

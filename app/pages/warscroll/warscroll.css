@@ -38,16 +38,3 @@ td.ranged-weapon,
 th.ranged-weapon {
   width: 14.2%;
 }
-
-.ability-label {
-    position: relative;
-    color: white;
-    background-color: #5A5E5A;
-    top: 15%;
-    font-size: 12px;
-    padding: 2px 6px;
-    margin: 2px;
-    border-radius: var(--border-radius);
-    white-space: nowrap;
-    display: inline;
-}

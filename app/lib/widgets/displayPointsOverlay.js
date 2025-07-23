@@ -5,7 +5,7 @@ function _saveTotalPoints(id) {
 }
 
 function _loadTotalPoints(id) {
-    totalPoints = localStorage.getItem(`${id}-total-points`);
+    totalPoints = Number(localStorage.getItem(`${id}-total-points`));
 }
 
 function displayPointsOverlay(id) {

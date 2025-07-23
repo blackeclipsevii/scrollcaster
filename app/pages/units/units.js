@@ -87,11 +87,38 @@ async function loadUnitsForCatalog() {
     });
 }
 
+const getUnitCounts = () => {
+    class ArmyUnitCounts {
+        updateCount (unit) {
+            let currentCount = this[unit.id]
+            if (!currentCount)
+                currentCount = 0;
+            this[unit.id] = currentCount + 1;
+        }
+    };
+
+    const armyUnitCounts = new ArmyUnitCounts();
+
+    roster.regiments.forEach(reg =>{
+        reg.units.forEach(unit =>{
+            armyUnitCounts.updateCount(unit);
+        });
+    });
+
+    roster.auxiliaryUnits.forEach(unit => {
+        armyUnitCounts.updateCount(unit);
+    });
+
+    return armyUnitCounts;
+}
+
 async function loadUnits() {
     roster = await getRoster(rosterId);
     displayPointsOverlay(rosterId);
     refreshPointsOverlay(rosterId);
     updateValidationDisplay();
+
+    const armyUnitCounts = getUnitCounts();
 
     const isNewRegiment = hasRegimentIndex && roster.regiments[regimentIndex].units.length === 0;
 
@@ -117,7 +144,33 @@ async function loadUnits() {
 
                 const left = document.createElement('div');
                 left.classList.add('selectable-item-left');
-                left.textContent = regimentOfRenown.name;
+                
+                const nameEle = document.createElement('p');
+                nameEle.textContent = regimentOfRenown.name;
+                nameEle.style.padding = '0px';
+                nameEle.style.margin = '0px';
+                left.appendChild(nameEle);
+
+                const quantityEle = document.createElement('p');
+                quantityEle.style.fontSize = '10px';
+                quantityEle.className = 'ability-label';
+                quantityEle.style.backgroundColor = 'rgb(0,0,0,0)';
+                quantityEle.style.color = 'rgb(0,0,0,0)';
+                left.appendChild(quantityEle);
+
+                const updateCountDisplay = () => {
+                    const count = armyUnitCounts[regimentOfRenown.id];
+                    if (count) {
+                        quantityEle.textContent = `${armyUnitCounts[regimentOfRenown.id]}x Regiment in Army`;
+                        quantityEle.style.backgroundColor = 'grey';
+                        quantityEle.style.color = 'white';
+                        item.classList.remove('not-added');
+                    } else {
+                        quantityEle.textContent = 'None';
+                        item.classList.add('not-added');
+                    }
+                }
+                updateCountDisplay();
 
                 const right = document.createElement('div');
                 right.classList.add('selectable-item-right');
@@ -205,7 +258,33 @@ async function loadUnits() {
 
             const left = document.createElement('div');
             left.classList.add('selectable-item-left');
-            left.textContent = unit.name;
+
+            const nameEle = document.createElement('p');
+            nameEle.textContent = unit.name;
+            nameEle.style.padding = '0px';
+            nameEle.style.margin = '0px';
+            left.appendChild(nameEle);
+
+            const quantityEle = document.createElement('p');
+            quantityEle.style.fontSize = '10px';
+            quantityEle.className = 'ability-label';
+            quantityEle.style.backgroundColor = 'rgb(0,0,0,0)';
+            quantityEle.style.color = 'rgb(0,0,0,0)';
+            left.appendChild(quantityEle);
+
+            const updateCountDisplay = () => {
+                const count = armyUnitCounts[unit.id];
+                if (count) {
+                    quantityEle.textContent = `${armyUnitCounts[unit.id]}x Unit in Army`;
+                    quantityEle.style.backgroundColor = 'grey';
+                    quantityEle.style.color = 'white';
+                    item.classList.remove('not-added');
+                } else {
+                    quantityEle.textContent = 'None';
+                    item.classList.add('not-added');
+                }
+            }
+            updateCountDisplay();
 
             const right = document.createElement('div');
             right.classList.add('selectable-item-right');
@@ -227,9 +306,18 @@ async function loadUnits() {
                     const regiment = roster.regiments[regimentIndex];
                     regiment.units.push(unit);
                 }
+
                 await putRoster(roster);
-                goBack();
-                // window.location.href = `../army/army.html?id=${rosterId}`;
+                if (isNewRegiment) {
+                    goBack();
+                } else {
+                    armyUnitCounts.updateCount(unit);
+                    updateCountDisplay();
+
+                    totalPoints += unitTotalPoints(unit);
+                    refreshPointsOverlay(roster.id);
+                    updateValidationDisplay();
+                }
             });
 
             right.append(points, addBtn);
