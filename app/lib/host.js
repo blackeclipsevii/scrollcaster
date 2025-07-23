@@ -7,6 +7,51 @@ var previousUrl = document.referrer;
 var version = '0.3.0beta';
 const _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
+
+function unitTotalPoints(unit) {
+    if (!unit.points)
+        return 0;
+
+    let pts = unit.points;
+    
+    if (unit.isReinforced)
+        pts += unit.points;
+
+    if ( unit.heroicTrait && unit.heroicTrait.points)
+        pts += unit.heroicTrait.points;
+    
+    if (unit.artefact && unit.artefact.points)
+        pts += unit.artefact.points;
+    
+    return pts;
+}
+
+const rosterTotalPoints = (roster) => {
+  let total = 0;
+  roster.regiments.forEach(reg => {
+    reg.units.forEach(unit => {
+      total += unitTotalPoints(unit);
+    });
+  });
+
+  roster.auxiliaryUnits.forEach(unit => {
+    total += unitTotalPoints(unit);
+  });
+
+  const lores = Object.values(roster.lores);
+  lores.forEach(lore => {
+    if (lore && lore.points) {
+      total += lore.points;
+    }
+  });
+
+  if (roster.terrainFeature && roster.terrainFeature.points) {
+    total += roster.terrainFeature.points;
+  }
+  
+  return total;
+}
+
 const fetchArmies = async (callback, retry = 10) => {
   fetch(`${endpoint}/armies`).
   then(resp => {
