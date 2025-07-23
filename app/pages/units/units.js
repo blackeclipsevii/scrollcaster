@@ -176,6 +176,16 @@ async function loadUnits() {
             if (!type && unit.type > 5)
                 return;
 
+            if (isNewRegiment) {
+                // cant lead without a profile
+                if (!unit.battleProfile)
+                    return;
+
+                // the profile explicitly says they cannot lead
+                if (unit.battleProfile.regimentOptions.toUpperCase() === 'NONE')
+                    return;
+            }
+
             const item = document.createElement('div');
             item.classList.add('selectable-item');
 

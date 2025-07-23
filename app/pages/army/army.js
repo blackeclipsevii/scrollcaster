@@ -137,7 +137,7 @@ function removeSection(section, className) {
     }
 }
 
-async function createUnitSlot(parent, unit, idx, callbackMap, menuIdxContent, onclick){
+async function createUnitSlot(parent, unit, idx, callbackMap, onclick){
     const newUsItem = clonePrototype('unit-slot-prototype');
     
     const hiddenIdx = newUsItem.querySelector('.unit-idx');
@@ -220,12 +220,57 @@ async function createUnitSlot(parent, unit, idx, callbackMap, menuIdxContent, on
     const usPoints = newUsItem.querySelector('.unit-slot-points');
     displayPoints(usPoints, unitPoints, 'PTS');
 
-    if (!menuIdxContent)
-        menuIdxContent = unit.id;
-
     let unitHdr = newUsItem.querySelector(".unit-header-right");
+    if (typeof callbackMap === 'string') {
+        callbackMap = {};
+        callbackMap.Duplicate = async (e) => {
+            const regItem = parent.closest('.regiment-item');
+            const _div = regItem.querySelector('.regiment-idx');
+            const _currentRegIdx = Number(_div.textContent);
+
+            const reg = roster.regiments[Number(_currentRegIdx)];
+            const json = JSON.stringify(unit);
+            const clone = JSON.parse(json);
+            reg.units.push(clone);
+            putRoster(roster);
+            await createUnitSlot(parent, clone, reg.units.length-1, 'foo', onclick);
+            totalPoints += unitTotalPoints(clone);
+            refreshPointsOverlay();
+            updateValidationDisplay();
+        };
+
+        if (idx > 0) {
+            callbackMap.Delete = async (e) => {
+                // get the regiment index, dont assume it hasnt changed
+                const regItem = parent.closest('.regiment-item');
+                let _div = regItem.querySelector('.regiment-idx');
+                const _currentRegIdx = Number(_div.textContent);
+
+                // get the unit index, don't assume it hasn't changed
+                _div = newUsItem.querySelector('.unit-idx');
+                const _currentIdx = Number(_div.textContent);
+
+                // remove from the object
+                roster.regiments[_currentRegIdx].units.splice(_currentIdx, 1);
+                putRoster(roster);
+
+                // update the points
+                totalPoints -= unitTotalPoints(unit);
+                refreshPointsOverlay();
+                updateValidationDisplay();
+
+                // remove the div and move all of the other unit indices
+                parent.removeChild(newUsItem);
+                const slots = parent.querySelectorAll('.unit-slot');
+                slots.forEach((slot, newIdx) => {
+                    const hiddenIdx = slot.querySelector('.unit-idx');
+                    hiddenIdx.textContent = newIdx;
+                });
+            }
+        } // to-do add replace to unit 0
+    }
     if (callbackMap) {
-        const menu = createContextMenu(menuIdxContent, menuIdxContent, callbackMap);
+        const menu = createContextMenu(callbackMap);
         unitHdr.appendChild(menu);
     }
     unitHdr = newUsItem.querySelector(".unit-header-left");
@@ -274,7 +319,7 @@ async function displayRegimentOfRenown() {
 
         let unitHdr = newUsItem.querySelector(".unit-header-right");
         // does nothing but helps positioning be consistant
-        const menu = createContextMenu(generateId(), 0, {});
+        const menu = createContextMenu({});
         unitHdr.appendChild(menu);
 
         unitHdr = newUsItem.querySelector(".unit-header-left");
@@ -309,7 +354,7 @@ async function displayRegimentOfRenown() {
 
         let unitHdr = newUsItem.querySelector(".unit-header-right");
         // does nothing but helps positioning be consistant
-        const menu = createContextMenu(generateId(), 0, {});
+        const menu = createContextMenu({});
         unitHdr.appendChild(menu);
 
         unitHdr = newUsItem.querySelector(".unit-header-left");
@@ -343,7 +388,7 @@ async function displayRegimentOfRenown() {
         }
     };
 
-    const menu = createContextMenu(regiment.id, 0, callbackMap);
+    const menu = createContextMenu(callbackMap);
     const regHdr = newRegItem.querySelector(".regiment-header");
     regHdr.appendChild(menu);
 
@@ -357,12 +402,16 @@ async function displayRegiment(index) {
     const regiment = roster.regiments[index];
     const newRegItem = clonePrototype('regiment-item-prototype');
     newRegItem.id = '';
-    const hiddenIdx = newRegItem.querySelector('.regiment-idx');
-    hiddenIdx.textContent = index;
 
-    newRegItem.id = `regiment-item-${index+1}`;
-    const title = newRegItem.querySelector('.regiment-item-title');
-    title.innerHTML = `Regiment ${index+1}`;
+    const setInternalIdx = (_regItem, _index) => {
+        const hiddenIdx = _regItem.querySelector('.regiment-idx');
+        hiddenIdx.textContent = _index;
+        _regItem.id = `regiment-item-${_index+1}`;
+        const title = _regItem.querySelector('.regiment-item-title');
+        title.innerHTML = `Regiment ${_index+1}`;
+    }
+
+    setInternalIdx(newRegItem, index);
 
     const content = newRegItem.querySelector('.regiment-content');
 
@@ -371,26 +420,7 @@ async function displayRegiment(index) {
     for(let i = 0; i < regiment.units.length; ++i) {
         const unit = regiment.units[i];
         
-        const callbackMap = {
-            Duplicate: async (e) => {
-                const json = JSON.stringify(unit);
-                const clone = JSON.parse(json);
-                regiment.units.push(clone);
-                putRoster(roster);
-                // meh is easy
-                loadArmy(false);
-            }
-        };
-        if (i > 0) {
-            callbackMap.Delete = async (e) => {
-                regiment.units.splice(i, 1);
-                putRoster(roster);
-                // meh is easy
-                loadArmy(false);
-            }
-        } // to-do add replace to unit 0
-
-        await createUnitSlot(content, unit, i, callbackMap, `${unit.id}:${index}:${i}`, () => {
+        await createUnitSlot(content, unit, i, 'defaults', () => {
             const key = 'readMyScroll_Army';
             localStorage.setItem(key, JSON.stringify(unit));
             goTo(`../warscroll/warscroll.html?local=${key}`);
@@ -403,27 +433,45 @@ async function displayRegiment(index) {
     const pointsSpan = newRegItem.querySelector('.regiment-item-points');
     if (points > 0) {
         pointsSpan.textContent = `${points} pts`;
+        totalPoints += points;
     }
-    totalPoints += points;
 
     const callbackMap = {
         Duplicate: async (e) => {
-            const json = JSON.stringify(roster.regiments[index]);
+            const _div = newRegItem.querySelector('.regiment-idx');
+            const _currentIdx = Number(_div.textContent);
+            const reg = roster.regiments[_currentIdx];
+            const json = JSON.stringify(reg);
             const clone = JSON.parse(json);
             roster.regiments.push(clone);
+            putRoster(roster);
             displayRegiment(roster.regiments.length-1);
             updateValidationDisplay();
         },
 
         Delete: async (e) => {
-            roster.regiments.splice(index, 1);
+            const _div = newRegItem.querySelector('.regiment-idx');
+            const _currentIdx = Number(_div.textContent);
+            const reg = roster.regiments[_currentIdx];
+            reg.units.forEach(unit => {
+                totalPoints -= unitTotalPoints(unit);
+            });
+            roster.regiments.splice(_currentIdx, 1);
             putRoster(roster);
-            // refresh order
-            loadArmy(false);
+            refreshPointsOverlay();
+
+            // remove this regiment
+            regimentsDiv.removeChild(newRegItem);
+
+            // update remaining regiments
+            const divs = regimentsDiv.querySelectorAll('.regiment-item');
+            divs.forEach((div, idx)=> {
+                setInternalIdx(div, idx);
+            });
         }
     };
 
-    const menu = createContextMenu(uniqueId, index, callbackMap);
+    const menu = createContextMenu(callbackMap);
     const regHdr = newRegItem.querySelector(".regiment-header");
     regHdr.appendChild(menu);
 
@@ -464,10 +512,10 @@ async function getManifestationUnits() {
     return { units: manifestations, armyUnits: armySpecific };
 }
 
-function displaySingleton(typename, callbackMap, unit, idx, menuIdxContent, onclick) {
+function displaySingleton(typename, callbackMap, unit, idx, onclick) {
     const parent = document.getElementById(typename);
     
-    createUnitSlot(parent, unit, idx, callbackMap, menuIdxContent, onclick);
+    createUnitSlot(parent, unit, idx, callbackMap, onclick);
 
     const unitsPoints = unitTotalPoints(unit);
     totalPoints += unitsPoints;
@@ -491,19 +539,25 @@ function displayAux(idx) {
             const clone = JSON.parse(json);
             roster.auxiliaryUnits.push(clone);
             putRoster(roster);
-            // meh is easy
-            loadArmy(false);
+            displayAux(roster.auxiliaryUnits.length-1);
         },
 
         Delete: async (e) => {
             roster.auxiliaryUnits.splice(idx, 1);
             putRoster(roster);
-            // meh is easy
-            loadArmy(false);
+            
+            const parent = document.getElementById(typename);
+            const slots = parent.querySelectorAll('.unit-slot');
+            slots.forEach(slot => {
+                const hiddenIdx = slot.querySelector('.unit-idx');
+                if (idx === Number(hiddenIdx.textContent)) {
+                    parent.removeChild(slot);
+                }
+            });
         }
     };
 
-    displaySingleton(typename, callbackMap, unit, idx, idx, onclick);
+    displaySingleton(typename, callbackMap, unit, idx, onclick);
 }
 
 function displayTerrain() {
@@ -533,7 +587,7 @@ function displayTerrain() {
         }
     };
 
-    displaySingleton(typename, callbackMap, roster.terrainFeature, 0, 0, onclick);
+    displaySingleton(typename, callbackMap, roster.terrainFeature, 0, onclick);
 }
 
 function displayBattleTraits() {
@@ -558,7 +612,7 @@ function displayBattleTraits() {
     
     let unitHdr = newUsItem.querySelector(".unit-header-right");
     // does nothing but helps positioning be consistant
-    const menu = createContextMenu(generateId(), 0, {});
+    const menu = createContextMenu({});
     unitHdr.appendChild(menu);
     unitHdr = newUsItem.querySelector(".unit-header-left");
     unitHdr.onclick = onclick;
@@ -581,7 +635,7 @@ function displayBattleFormation() {
             goTo(encodeURI(url));
         }
     };
-    displaySingleton(typename, callbackMap, roster.battleFormation, 900, 900, onclick);
+    displaySingleton(typename, callbackMap, roster.battleFormation, 900, onclick);
 }
 
 function displayLore(name, callbackMap, onclick) {
@@ -597,11 +651,11 @@ function displayLore(name, callbackMap, onclick) {
     title.innerHTML = `${name} Lore`;
     parent.append(newRegItem);
     
-    const menu = createContextMenu(generateId(), 0, callbackMap);
+    const menu = createContextMenu(callbackMap);
     const regHdr = newRegItem.querySelector(".regiment-header");
     regHdr.appendChild(menu);
     
-    createUnitSlot(newRegItem, roster.lores[lcName], 0, {}, `${lcName}-lore-0`, onclick);
+    createUnitSlot(newRegItem, roster.lores[lcName], 0, {}, onclick);
 
     const unitsPoints = unitTotalPoints(roster.lores[lcName]);
     if (unitsPoints) {
@@ -628,7 +682,16 @@ function displaySpellLore() {
         Delete: async (e) => {
             roster.lores.spell = null;
             await putRoster(roster);
-            loadArmy(false);
+            
+            const parent = document.getElementById('lores');
+            const slots = parent.querySelectorAll('.regiment-item');
+            slots.forEach(slot => {
+                if (slot.id.includes('spell')) {
+                    parent.removeChild(slot);
+                    return false;
+                }
+                return true;
+            });
         }
     };
     
@@ -651,7 +714,15 @@ function displayPrayerLore() {
         Delete: async (e) => {
             roster.lores.prayer = null;
             await putRoster(roster);
-            loadArmy(false);
+            const parent = document.getElementById('lores');
+            const slots = parent.querySelectorAll('.regiment-item');
+            slots.forEach(slot => {
+                if (slot.id.includes('prayer')) {
+                    parent.removeChild(slot);
+                    return false;
+                }
+                return true;
+            });
         }
     };
 
@@ -706,7 +777,7 @@ async function displayManifestLore() {
             let unitHdr = subUsItem.querySelector(".unit-header-right");
             
             // does nothing but helps positioning be consistant
-            const menu = createContextMenu(generateId(), 0, {});
+            const menu = createContextMenu({});
             unitHdr.appendChild(menu);
 
             unitHdr = subUsItem.querySelector(".unit-header-left");
@@ -747,16 +818,15 @@ async function displayManifestLore() {
         Delete: async (e) => {
             roster.lores.manifestation = null;
             putRoster(roster);
-            newRegItem.parentElement.removeChild(newRegItem);
-            //loadArmy(false);
+            parent.removeChild(newRegItem);
         }
     };
     
-    const regItemMenu = createContextMenu(generateId(), 0, callbackMap);
+    const regItemMenu = createContextMenu(callbackMap);
     const regHdr = newRegItem.querySelector(".regiment-header");
     regHdr.appendChild(regItemMenu);
 
-    const menu = createContextMenu(lore.id, lore.id, {});
+    const menu = createContextMenu({});
     let unitHdr = newUsItem.querySelector(".unit-header-right");
     unitHdr.appendChild(menu);
     unitHdr = newUsItem.querySelector(".unit-header-left");
@@ -790,11 +860,18 @@ function displayTactics() {
             Delete: async (e) => {
                 roster.battleTacticCards.splice(index, 1);
                 await putRoster(roster);
-                loadArmy(false);
+
+                const slots = parent.querySelectorAll('.unit-slot');
+                slots.forEach(slot => {
+                    const hiddenIdx = slot.querySelector('.unit-idx');
+                    if (index === Number(hiddenIdx.textContent)) {
+                        parent.removeChild(slot);
+                    }
+                });
             }
         };
 
-        createUnitSlot(parent, tactic, index, callbackMap, index, onclick);
+        createUnitSlot(parent, tactic, index, callbackMap, onclick);
     });
 }
 

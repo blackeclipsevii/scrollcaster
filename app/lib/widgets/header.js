@@ -1,4 +1,10 @@
 var _linkStack = null;
+var _currentUrl = null;
+
+const absoluteUrl = (relativePath) => {
+    const rootUrl = window.location.origin;
+    return new URL(relativePath, rootUrl).href;
+}
 
 function _saveStack() {
     const key = _inCatalog ? 'catalog-link-stack' : 'roster-link-stack';
@@ -16,7 +22,7 @@ function goBack() {
 }
 
 function goTo(nextUrl,doNavigation=true) {    
-    let myUrl = window.location.href;
+    let myUrl = _currentUrl ? absoluteUrl(_currentUrl) : window.location.href;
     if (!myUrl.includes('loadScrollData')) {
         if (myUrl.includes('?')) {
             myUrl = `${myUrl}&loadScrollData=true`
@@ -28,6 +34,8 @@ function goTo(nextUrl,doNavigation=true) {
     _saveStack();
     if(doNavigation)
         window.location.href = nextUrl;
+    else
+        _currentUrl = nextUrl;
 }
 
 function initializeHeader(options) {

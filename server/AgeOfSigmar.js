@@ -101,7 +101,7 @@ export default class AgeOfSigmar {
     _hasNonPrefix = (options, keyOpt) => {
         // Check if the 4 characters before the needle are 'non-'
         const substr = options.slice(keyOpt.index - 4, keyOpt.index).toUpperCase().trim();
-        return substr === 'NON-';
+        return substr.startsWith('NON');
     }
     
     getKeywordsFromOption = (option) => {
@@ -169,30 +169,42 @@ export default class AgeOfSigmar {
         }
 
         const availableKeywords = this._getAvailableKeywords(army);
-        const options = leader.battleProfile.regimentOptions.toUpperCase().split(',');
+        const options = leader.battleProfile.regimentOptions.split(',');
         const aos = this;
         class _Slot {
             constructor(option) {
-                this.originalOption = option;
-                this.min = 0;
-                this.max = 5;
-                this.conditional = 'and';
-                this.keywords = aos.getKeywordsFromOption(option);
-                this.units = [];
-                this.priority = 50; //0-100
-            }
+                const optionUC = option.trim().toUpperCase();
+                const qualifier = (() => {
+                    const requiredStr = '(REQUIRED)';
+                    if (optionUC.includes(requiredStr))
+                        return 'REQUIRED';
 
-            _battleProfileText() {
-                return this.originalOption.replace(/[<>]/g, "");
+                    return optionUC.split(' ')[0];
+                })();
+                const isRequired = qualifier === 'REQUIRED';
+
+                this.originalOption = option;
+                this.min = isRequired ? 1 : 0;
+                this.max = isRequired ? 1 : 100;
+                this.conditional = optionUC.includes(' OR ') ? 'or' : 'and';
+                this.keywords = aos.getKeywordsFromOption(option.toUpperCase());
+                this.units = [];
+                this.priority = isRequired ? 100 : 50; //0-100
+                
+                if (qualifier.includes('-')) {
+                    const minMax = qualifier.split('-');
+                    this.min = Number(minMax[0]);
+                    this.max = Number(minMax[1]);
+                }
             }
 
             meetsKeywordRequirements(unit) {
-                return aos.meetsOption(unit, this.originalOption, this.keywords, availableKeywords)
+                return aos.meetsOption(unit, this.originalOption.toUpperCase(), this.keywords, availableKeywords)
             }
 
             canAdd(unit) {
                 if (this.units.length === this.max) {
-                    const error = `${unit.name} does not meet regiment requirement ${this._battleProfileText()}`;
+                    const error = `You can only select ${this.originalOption}`;
                     console.log(error);
                     return error;
                 }
@@ -204,53 +216,28 @@ export default class AgeOfSigmar {
                 this.units.push(unit);
             }
 
-            requirementsNotMetError() {
+            areRequirementsMet() {
                 if (this.min > this.units.length) {
-                    return `Requirements not met ${this._battleProfileText()}`
+                    return false;
                 }
-                return null;
+                return true;
             }
         }
 
         let slots = []
         // initialize the expect slots
         const canLead = options.every(option => {
-            option = option.trim();
-            if (option === 'NONE')
+            const optionUc = option.trim().toUpperCase();
+            if (optionUc === 'NONE')
                 return false;
 
-            const qualifier = (() => {
-                const requiredStr = '(REQUIRED)';
-                if (option.includes(requiredStr))
-                    return 'REQUIRED';
-
-                return option.split(' ')[0];
-            })();
-
             const slot = new _Slot(option);
-            if (option.includes(' or '))
-                slot.conditional = 'or';
-            if (qualifier === 'REQUIRED') {
-                slot.priority = 100; // its literally required
-                slot.min = 1;
-                // maybe this can be higher?
-                slot.max = 1;
-            } else {
-                if (qualifier.includes('-')) {
-                    const minMax = qualifier.split('-');
-                    slot.min = Number(minMax[0]);
-                    slot.max = Number(minMax[1]);
-                } else if (qualifier === 'ANY') {
-                    slot.max = 100;
-                }
-            }
-
             slots.push(slot);
             return true;
         });
         if (!canLead) {
             if (leader.battleProfile.notes)
-                return [`${leader.name} cannot be a leader: ${leader.battleProfile.notes.replace(/[<>]/g, "")}`];
+                return [`${leader.name} cannot be a leader: ${leader.battleProfile.notes}`];
             else
                 return [`${leader.name} cannot be a leader!`];
         }
@@ -274,7 +261,7 @@ export default class AgeOfSigmar {
                     const slotError = slots[i].canAdd(unit);
                     lastError = slotError;
                     if (!slotError) {
-                        console.log(`${unit.name} met requirement for : ${slots[i]._battleProfileText()}`);
+                        console.log(`${unit.name} met requirement for : ${slots[i].originalOption}`);
                         slots[i].add(unit);
                         return null;
                     }
@@ -302,9 +289,8 @@ export default class AgeOfSigmar {
         });
 
         slots.forEach(slot => {
-            const rnm = slot.requirementsNotMetError();
-            if (rnm)
-                errors.push(rnm);
+            if (!slot.areRequirementsMet())
+                errors.push(slot.originalOption);
         });
 
         return errors;

@@ -4,7 +4,7 @@ const endpoint = port ? `${hostname}:${port}` : hostname;
 var _loadScrollData = false;
 var roster = null;
 var previousUrl = document.referrer;
-var version = '0.3.0beta';
+var version = '0.3.1beta';
 const _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
 

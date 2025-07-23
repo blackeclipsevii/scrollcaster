@@ -1,7 +1,8 @@
-function createContextMenu(uniqueId, id, callbackMap) {
+function createContextMenu(callbackMap) {
     const ele = document.createElement('div');
     ele.innerHTML = `<button class="menu-btn">⋯</button>`;
     const button = ele.querySelector('.menu-btn');
+    const uniqueId = generateId();
     button.addEventListener('click', (e) => {
         e.preventDefault();
         const { pageX: x, pageY: y } = e;
@@ -32,8 +33,6 @@ function createContextMenu(uniqueId, id, callbackMap) {
     const div = document.createElement('div');
     div.innerHTML = `
     <div id="menu-wrapper-${uniqueId}" class="menu-wrapper">
-        <div style="display: none;" class="idx">${id}</div>
-        <div style="display: none;" class="uniqueId">${uniqueId}</div>
         <ul class="menu">
         </ul>
     </div>

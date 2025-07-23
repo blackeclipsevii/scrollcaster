@@ -1,3 +1,11 @@
+
+const formatMessageText = (message) => {
+    return message.replace(/</g, "#")
+                  .replace(/>/g, '%')
+                  .replace(/#/g, '<b>')
+                  .replace(/%/g, '</b>');
+}
+
 const validateRegiment = async (armyName, regiment) => {
     let errors = ['bad request'];
     const reg2Args = () => {
@@ -101,7 +109,7 @@ const validateRoster = async (roster) => {
 
         const vrErrors = await validateRegiment(roster.army, reg);
         if (vrErrors.length > 0) {
-            errors.push(`Regiment ${idx+1}: ${vrErrors.join(', ')}`);
+            errors.push(`${formatMessageText(vrErrors.join(', '))} for <b>${leader.name}</b>'s regiment.`);
         }
     };
 

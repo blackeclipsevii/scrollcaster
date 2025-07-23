@@ -3,7 +3,7 @@ var _lastLink = null;
 function initializeFooter(root) {
     const key = _inCatalog ? 'catalog-last-link' : 'roster-last-link';
     const defaultRosterLink = `${root}/index.html`;
-    const defaultCatLink = `${root}/pages/catalog/catalog.html`;
+    const defaultCatLink = `${root}/pages/catalog/tome.html`;
 
     const saveLink = () => {
       const otherKey = _inCatalog ? 'roster-last-link' : 'catalog-last-link';

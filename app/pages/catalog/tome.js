@@ -1,9 +1,23 @@
 
 const params = new URLSearchParams(window.location.search);
-const armyName = params.get('army');
+let armyName = params.get('army');
+let core = params.get('core');
 
-const makeItem = (name, onclick, listName = 'item-list', points=null) => {
-    const itemList = document.querySelector(`.${listName}`);
+const coreVisible = (visible) => {
+    const bb = document.querySelector('.back-btn');
+    bb.style.display = visible ? 'none' : '';
+
+    const sec = document.getElementById('core-section');
+    sec.style.display = visible ? '' : 'none';
+}
+
+const resetLists = () => {
+    const lists = document.querySelectorAll('.item-list');
+    lists.forEach(l => l.innerHTML = '');
+}
+
+const makeItem = (name, onclick, listName = 'army-list', points=null) => {
+    const itemList = document.getElementById(listName);
     const item = document.createElement('div');
     item.classList.add('selectable-item');
 
@@ -29,6 +43,8 @@ const makeItem = (name, onclick, listName = 'item-list', points=null) => {
 }
 
 async function loadCore() {
+    coreVisible(false);
+    resetLists();
     const h2 = document.getElementById('army-name');
     h2.textContent = 'Age of Sigmar';
 
@@ -46,6 +62,8 @@ async function loadCore() {
 }
 
 async function loadRor() {
+    coreVisible(false);
+    resetLists();
     const h2 = document.getElementById('army-name');
     h2.textContent = 'Regiments of Renown';
 
@@ -62,16 +80,17 @@ async function loadRor() {
 }
 
 async function loadTome(doSub = true) {
+    coreVisible(false);
+    resetLists();
     const h2 = document.getElementById('army-name');
     h2.textContent = armyName;
 
     const _loadFaction = async (subFactionName) => {
+        resetLists();
         const url = `${endpoint}/armies?army=${subFactionName}`;
         await fetch(encodeURI(url)).
         then(resp => resp.json()).
         then(army => {            
-            const itemList = document.querySelector(`.item-list`);
-            itemList.innerHTML = '';
             const h2 = document.getElementById('army-name');
             h2.textContent = army.name;
 
@@ -111,7 +130,7 @@ async function loadTome(doSub = true) {
             }
 
             if (Object.getOwnPropertyNames(army.upgrades.lores.manifestation).length > 6 ||
-                getarmy.upgrades.lores.spell ||
+                army.upgrades.lores.spell ||
                 army.upgrades.lores.prayer) {
                 makeItem('Lores', () => {
                     goTo(encodeURI(`../upgrades/upgrades.html?armyName=${subFactionName}&type=lore`));
@@ -133,7 +152,7 @@ async function loadTome(doSub = true) {
                  subfactions.every(army => {
                     if (!army.includes(' - ')) {
                         makeItem(armyName, () => {
-                            goTo(encodeURI(`tome.html?army=${armyName}&loadScrollData=true`), false);
+                            goTo(encodeURI(`/pages/catalog/tome.html?army=${armyName}&loadScrollData=true`), false);
                             _loadFaction(armyName);
                         });
                         return false;
@@ -144,7 +163,7 @@ async function loadTome(doSub = true) {
                 subfactions.forEach(army => {
                     if (army.includes(' - ')) {
                         makeItem(army.split(' - ')[1], () => {
-                            goTo(encodeURI(`tome.html?army=${army}&loadScrollData=true`), false);
+                            goTo(encodeURI(`/pages/catalog/tome.html?army=${army}&loadScrollData=true`), false);
                             _loadFaction(army);
                         });
                     }
@@ -161,7 +180,54 @@ async function loadTome(doSub = true) {
     }
 }
 
+async function loadArmies() {
+    coreVisible(true);
+    const h2 = document.getElementById('army-name');
+    h2.textContent = 'Armies';
+
+    makeItem('Age of Sigmar', () => {
+        goTo(encodeURI(`/pages/catalog/tome.html?core=true`), false);
+        coreVisible(false);
+        resetLists();
+        core = true;
+        armyName = null;
+        loadCore();
+    }, 'core-list');
+    
+    makeItem('Regiments of Renown', () => {
+        goTo(encodeURI(`/pages/catalog/tome.html?army=ror`), false);
+        coreVisible(false);
+        resetLists();
+        core = false;
+        armyName = null;
+        loadRor();
+    }, 'core-list');
+
+    const loader = document.getElementById('loader-box');
+    loader.style.display = 'block';
+    await fetchArmies(async (allArmies) => {
+        loader.style.display = 'none';
+        allArmies.forEach(army => {
+            if (army.includes(' - '))
+                return;
+
+            makeItem(army, () => {
+                goTo(encodeURI(`/pages/catalog/tome.html?army=${army}`), false);
+                coreVisible(false);
+                resetLists();
+                core = false;
+                armyName = army;
+                loadTome();
+            }, 'army-list');
+        });
+        
+        loadScrollData();
+    });
+}
+
 if (armyName)
     armyName === 'ror' ? loadRor() : loadTome();
-else
+else if (core)
     loadCore();
+else
+    loadArmies();

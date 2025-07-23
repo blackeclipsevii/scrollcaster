@@ -204,7 +204,7 @@ function displayRoster(roster) {
       toggle();
     }
   };
-  const menu = createContextMenu(roster.id, roster.id, callbackMap);
+  const menu = createContextMenu(callbackMap);
   menu.className = 'menu-blob';
   container.appendChild(entry);
   container.appendChild(menu);
@@ -276,7 +276,7 @@ async function createHeaderMenu() {
       toggle();
     }
   };
-  const menu = createContextMenu(456, 2345, callbackMap);
+  const menu = createContextMenu(callbackMap);
   const btn = menu.querySelector('.menu-btn');
   btn.style.color = 'white';
   btn.style.top = '.5em';
