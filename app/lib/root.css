@@ -152,7 +152,7 @@ footer {
     background-color: var(--white-color);
 }
 
-.section h3 {
+.section-title {
     margin: .5em;
     display: flex;
     justify-content: space-between;
@@ -365,3 +365,32 @@ h4.abilityname {
   padding: 0px;
   margin: 0px;
 }
+
+.heart-checkbox {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0px;
+    margin-right: .5em;
+    display: inline-block;
+  }
+
+  .heart-checkbox::before {
+    content: "♡"; /* empty heart */
+    font-size: 2em;
+    color: red;
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+
+  .heart-checkbox:checked::before {
+    content: "♥"; /* filled heart */
+    font-size: 2em;
+    transform: scale(1.1);
+  }

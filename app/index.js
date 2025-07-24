@@ -106,7 +106,7 @@ const toggleOverlay = overlayToggleFactory('flex', async () =>{
 });
 
 function goToRoster(roster) {
-  goTo(encodeURI(`./pages/army/army.html?id=${roster.id}`));
+  goTo(`/pages/army/army.html?id=${roster.id}`);
 }
 
 function displayRoster(roster) {
@@ -226,7 +226,7 @@ async function createHeaderMenu() {
           section.innerHTML = `
             <b>Client Version:</b> ${version} <br/>
             <b>Server Version:</b> ${serverVersion} <br/>
-            <b>BSData:</b> Game System Revision ${bsdataRevision} <br/>
+            <b>BSData:</b> ${bsdataRevision} <br/>
           `;
           
           const link = document.createElement("a");
@@ -240,6 +240,30 @@ async function createHeaderMenu() {
           button.textContent = 'Close';
           button.onclick = () => {
               disableOverlay();
+          };
+
+          modal.appendChild(section);
+          modal.appendChild(button);
+          const offset = (window.innerWidth - modal.clientWidth) / 2.0;
+          modal.style.marginLeft = `${offset}px`;
+      });
+      toggle();
+    },
+    'Clear Favorites': () => {
+      const toggle = overlayToggleFactory('block', () => {
+          const modal = document.querySelector(".modal");
+          modal.innerHTML = '';
+
+          const section = document.createElement('p');
+          section.innerHTML = 'Do you want to clear favorites history?<br/><br/><strong>This cannot be undone.</strong>';
+
+          const button = document.createElement('button');
+          button.className = 'full-rectangle-button';
+          button.textContent = 'Clear Favorites';
+          button.style.backgroundColor = 'red';
+          button.onclick = () => {
+            clearFavorites();
+            disableOverlay();
           };
 
           modal.appendChild(section);

@@ -32,10 +32,12 @@ function goTo(nextUrl,doNavigation=true) {
     }
     _linkStack.push(myUrl);
     _saveStack();
+
+    console.log(`going to: ${nextUrl}`)
     if(doNavigation)
-        window.location.href = nextUrl;
+        window.location.href = absoluteUrl(encodeURI(nextUrl));
     else
-        _currentUrl = nextUrl;
+        _currentUrl = absoluteUrl(encodeURI(nextUrl));
 }
 
 function initializeHeader(options) {
@@ -75,4 +77,9 @@ function initializeHeader(options) {
         <button class="export-btn" onclick="exportListAndDisplay()">⤴</button>
         `;
     }
+}
+
+function setHeaderTitle(name) {
+    const element = document.getElementById('army-header');
+    element.textContent = name;
 }

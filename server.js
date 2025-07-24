@@ -6,7 +6,7 @@ import express from 'express'
 import AgeOfSigmar from './server/AgeOfSigmar.js';
 import Roster from './server/Roster.js';
 
-import installCatalog from './server/lib/installCatalog.js'
+import installCatalog, { getCommitIdUsed } from './server/lib/installCatalog.js'
 
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
@@ -98,10 +98,9 @@ server.get('/version', (req, res) => {
   const parsedUrl = url.parse(req.url, true);
   if (parsedUrl.query.of) {
     if (parsedUrl.query.of.toLowerCase() === 'bsdata') {
-      const aos = getAgeOfSigmar();
-      const revision = aos.gameSystem['@revision'];
-      console.log (`BSData Revision ${revision}`);
-      res.end(revision);
+      const commit = getCommitIdUsed();
+      console.log (`BSData Commit Used: ${commit}`);
+      res.end(JSON.stringify({commit: commit}));
       return;
     }
   };

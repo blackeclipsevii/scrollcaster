@@ -7,7 +7,7 @@
     border-bottom: 1px solid #ccc;
 }
 
-.section h3 {
+.section-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -50,11 +50,13 @@
 
 .selectable-item-left {
     font-weight: bold;
+    min-width: 50%;
+    max-width: 60%;
 }
 
 .selectable-item-right {
     display: flex;
-    gap: 1rem;
+    gap: .25rem;
     align-items: center;
 }
 

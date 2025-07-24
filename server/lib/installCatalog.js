@@ -3,9 +3,14 @@ import path from 'path'
 import axios from 'axios'
 import extract from 'extract-zip'
 
+var commitId = null;
 const zipUrl = 'https://github.com/BSData/age-of-sigmar-4th/archive/refs/heads/main.zip';
 const zipPath = path.resolve('./main.zip');
 const extractPath = path.resolve('./data');
+
+export const getCommitIdUsed = () => {
+  return commitId === null ? 'unknown' : commitId;
+}
 
 export default async function installCatalog() {
   try {
@@ -14,6 +19,21 @@ export default async function installCatalog() {
   } catch (err) {
     console.error('Error deleting folder:', err);
   }
+
+  fetch("https://api.github.com/repos/BSData/age-of-sigmar-4th/commits")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`GitHub API error: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then(commits => {
+    commitId = commits[0]?.sha;
+    console.log("Latest Commit SHA:", commitId);
+  })
+  .catch(error => {
+    console.error("Error fetching commit data:", error);
+  });
 
   try {
     // Download the ZIP file

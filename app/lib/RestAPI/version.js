@@ -14,11 +14,10 @@ const getBsDataVersion = async() => {
     let version = null;
     try {
         await fetch(encodeURI(`${endpoint}/version?of=bsdata`),{ method: "GET" })
-        .then(response => {
-            version = response.ok ? response.json() : 0
-        });
+        .then(response => response.json())
+        .then(obj => version = obj.commit.substring(0, 7));
     } catch(error) {
-        version = 0;
+        version = 'unknown';
     }
     return version;
 }

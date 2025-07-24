@@ -361,7 +361,7 @@ async function displayRegimentOfRenown() {
         unitHdr.onclick = () => {
             const key = `readMyScroll_Army`;
             localStorage.setItem(key, JSON.stringify(unit));
-            goTo(`../warscroll/warscroll.html?local=${key}`);
+            goTo(`/pages/warscroll/warscroll.html?local=${key}`);
         };
        // detailsSection.appendChild(newUsItem);
         details.appendChild(newUsItem);
@@ -423,7 +423,7 @@ async function displayRegiment(index) {
         await createUnitSlot(content, unit, i, 'defaults', () => {
             const key = 'readMyScroll_Army';
             localStorage.setItem(key, JSON.stringify(unit));
-            goTo(`../warscroll/warscroll.html?local=${key}`);
+            goTo(`/pages/warscroll/warscroll.html?local=${key}`);
         });
         uniqueId += unit.id;
         const unitsPoints = unitTotalPoints(unit);
@@ -530,7 +530,7 @@ function displayAux(idx) {
     const onclick = () => {
         const key = 'readMyScroll_Army';
         localStorage.setItem(key, JSON.stringify(unit));
-        goTo(`../warscroll/warscroll.html?local=${key}`);
+        goTo(`/pages/warscroll/warscroll.html?local=${key}`);
     };
     
     const callbackMap = {
@@ -565,15 +565,15 @@ function displayTerrain() {
     const onclick = () => {
         const key = 'readMyScroll_Army';
         localStorage.setItem(key, JSON.stringify(roster.terrainFeature));
-        goTo(`../warscroll/warscroll.html?local=${key}`);
+        goTo(`/pages/warscroll/warscroll.html?local=${key}`);
     };
 
     const callbackMap = {
         Replace: async (e) => {
             roster.terrainFeature = null;
             putRoster(roster);
-            const url = `../units/units.html?id=${roster.id}&army=${roster.army}`;
-            goTo(encodeURI(`${url}&type=faction terrain`));
+            const url = `/pages/list/list.html?id=${roster.id}&army=${roster.army}`;
+            goTo(`${url}&type=faction terrain`);
         },
 
         Delete: async (e) => {
@@ -631,8 +631,8 @@ function displayBattleFormation() {
         Replace: async (e) => {
             roster.battleFormation = null;
             putRoster(roster);
-            const url = `../upgrades/upgrades.html?id=${roster.id}&type=battleFormation&army=${roster.army}`;
-            goTo(encodeURI(url));
+            const url = `/pages/list/list.html?id=${roster.id}&type=battleFormation&army=${roster.army}&upgrades=true`;
+            goTo(url);
         }
     };
     displaySingleton(typename, callbackMap, roster.battleFormation, 900, onclick);
@@ -675,8 +675,8 @@ function displaySpellLore() {
         Replace: async (e) => {
             roster.lores.spell = null;
             putRoster(roster);
-            const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
-            goTo(encodeURI(url));
+            const url = `/pages/list/list.html?id=${roster.id}&type=spellLore&army=${roster.army}&upgrades=true`;
+            goTo(url);
         },
 
         Delete: async (e) => {
@@ -707,8 +707,8 @@ function displayPrayerLore() {
         Replace: async (e) => {
             roster.lores.prayer = null;
             putRoster(roster);
-            const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
-            goTo(encodeURI(url));
+            const url = `/pages/list/list.html?id=${roster.id}&type=spellLore&army=${roster.army}&upgrades=true`;
+            goTo(url);
         },
 
         Delete: async (e) => {
@@ -791,7 +791,7 @@ async function displayManifestLore() {
             await createManifestSlot(unit, () => {
                 const key = 'readMyScroll_Army';
                 localStorage.setItem(key, JSON.stringify(unit));
-                goTo(`../warscroll/warscroll.html?local=${key}`);
+                goTo(`/pages/warscroll/warscroll.html?local=${key}`);
             });
         }
     }
@@ -853,8 +853,8 @@ function displayTactics() {
             Replace: async (e) => {
                 roster.battleTacticCards.splice(index, 1);
                 putRoster(roster);
-                const url = `../tactics/tactics.html?id=${roster.id}&army=${roster.army}`;
-                goTo(encodeURI(url));
+                const url = `/pages/list/list.html?id=${roster.id}&army=${roster.army}&tactics=true`;
+                goTo(url);
             },
 
             Delete: async (e) => {
@@ -997,34 +997,34 @@ async function addItem(section) {
             await putRoster(roster);
 
             // automatically go to adding a leader
-            const url = `../units/units.html?id=${roster.id}&regimentIndex=${idx}&army=${roster.army}`;
-            goTo(encodeURI(`${url}&type=hero`));
+            const url = `/pages/list/list.html?id=${roster.id}&regimentIndex=${idx}&army=${roster.army}`;
+            goTo(`${url}&type=hero`);
         }
     } 
     else if (lc.includes('auxiliary')) {   
-        const url = `../units/units.html?id=${roster.id}&auxiliary=true&army=${roster.army}`;
-        goTo(encodeURI(url));
+        const url = `/pages/list/list.html?id=${roster.id}&auxiliary=true&army=${roster.army}`;
+        goTo(url);
     }
     else if (lc.includes('lores')) {
-        const url = `../upgrades/upgrades.html?id=${roster.id}&type=spellLore&army=${roster.army}`;
+        const url = `/pages/list/list.html?id=${roster.id}&type=spellLore&army=${roster.army}&upgrades=true`;
         if((!roster.lores.spell && roster.lores.canHaveSpell) || 
             (!roster.lores.manifestation && roster.lores.canHaveManifestation) || 
             (!roster.lores.prayer && roster.lores.canHavePrayer))
-            goTo(encodeURI(url));
+            goTo(url);
     }
     else if (lc.includes('formation')) {
-        const url = `../upgrades/upgrades.html?id=${roster.id}&type=battleFormation&army=${roster.army}`;
-        goTo(encodeURI(url));
+        const url = `/pages/list/list.html?id=${roster.id}&type=battleFormation&army=${roster.army}&upgrades=true`;
+        goTo(url);
     }
     else if (lc.includes('terrain')) {
-        const url = `../units/units.html?id=${roster.id}&army=${roster.army}`;
+        const url = `/pages/list/list.html?id=${roster.id}&army=${roster.army}`;
         if (!roster.terrainFeature)
-            goTo(encodeURI(`${url}&type=faction terrain`));
+            goTo(`${url}&type=faction terrain`);
     }
     else if (lc.includes('tactic')) {
-        const url = `../tactics/tactics.html?id=${roster.id}&army=${roster.army}`;
+        const url = `/pages/list/list.html?id=${roster.id}&army=${roster.army}&tactics=true`;
         if (roster.battleTacticCards.length < 2)
-            goTo(encodeURI(url));
+        goTo(url);
     }
     else {
         alert(`Add new item to ${section}`);
@@ -1042,10 +1042,10 @@ function addEntry(button) {
     const content = parent.querySelector('.regiment-content');
     const count = content.children.length;
 
-    const url = `../units/units.html?id=${roster.id}&regimentIndex=${idx}&army=${roster.army}`;
+    const url = `/pages/list/list.html?id=${roster.id}&regimentIndex=${idx}&army=${roster.army}`;
     if (count === 0) {
-        goTo(encodeURI(`${url}&type=hero`));
+        goTo(`${url}&type=hero`);
     } else {
-        goTo(encodeURI(url));
+        goTo(url);
     }
 }

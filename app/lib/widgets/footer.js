@@ -2,8 +2,8 @@ var _lastLink = null;
 
 function initializeFooter(root) {
     const key = _inCatalog ? 'catalog-last-link' : 'roster-last-link';
-    const defaultRosterLink = `${root}/index.html`;
-    const defaultCatLink = `${root}/pages/catalog/tome.html`;
+    const defaultRosterLink = absoluteUrl(`/index.html`);
+    const defaultCatLink = absoluteUrl(`/pages/list/list.html?catalog=true`);
 
     const saveLink = () => {
       const otherKey = _inCatalog ? 'roster-last-link' : 'catalog-last-link';
