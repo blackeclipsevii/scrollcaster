@@ -120,6 +120,7 @@ const exportListAndDisplay = overlayToggleFactory('block', () =>{
     copyButton.textContent = 'Copy to Clipboard';
     copyButton.onclick = () => {
         copyToClipboard(text);
+        disableOverlay();
     };
 
     modal.appendChild(section);
