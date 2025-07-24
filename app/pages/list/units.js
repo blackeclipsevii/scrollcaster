@@ -347,24 +347,6 @@ const unitPage = {
             });
         }
 
-        const _makeSection = (main, name) => {
-            const section = document.createElement('div');
-            section.style.display = 'none';
-            section.className = 'section';
-            section.innerHTML = `
-                <h3 class="section-title">${name}</h3>
-                <div class="item-list" id="${name.toLowerCase().replace(/ /g, '-')}-list"></div>
-            `;
-            main.appendChild(section);
-        }   
-
-        const _makeLayout = (sections) => {
-            const main = document.querySelector('.main');
-            sections.forEach(name => {
-                _makeSection(main, name)
-            });
-        }
-
         const _makeUnitLayout = () => {
             const sections = [
                 'Hero', 
@@ -377,12 +359,11 @@ const unitPage = {
                 'Faction Terrain', 
                 'Regiments of Renown'
             ];
-            _makeLayout(sections);
+            makeLayout(sections);
         }
         setHeaderTitle('Units');
         _makeUnitLayout();
-        addOverlayListener();
-
+        
         if (rosterId) {
             loadUnits();
         } else {
@@ -395,11 +376,14 @@ const unitPage = {
     }
 }
 
+addOverlayListener();
+dynamicPages['units'] = unitPage;
+
 if (params.get('catalog'))
-    catalogPage.loadPage();
+    dynamicPages['catalog'].loadPage();
 else if (params.get('upgrades'))
-    upgradePage.loadPage();
+    dynamicPages['upgrades'].loadPage();
 else if (params.get('tactics'))
-    tacticsPage.loadPage();
+    dynamicPages['tactics'].loadPage();
 else
-    unitPage.loadPage();
+    dynamicPages['units'].loadPage();

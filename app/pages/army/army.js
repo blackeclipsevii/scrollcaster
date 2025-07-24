@@ -1,11 +1,74 @@
 
 var totalPoints = 0;
 
+function _newUnitSlot() {
+    const unitSlot = document.createElement('div');
+    unitSlot.innerHTML = `
+        <span style="display: none;" class="unit-idx"></span>
+        <div class="unit-header">
+            <span class="arrow">›</span>
+            <div class="unit-header-left">
+                <span class="unit-slot-name">
+                <span class="unit-text">Unit Name</span>
+                </span>
+            </div>
+
+            <div class="unit-header-right">
+                <div>
+                <span class="general-label" style="display: none;">GENERAL</span>
+                <span class="reinforced-label" style="display: none;">REINFORCED</span>
+                <span class="unit-slot-points points-label"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="unit-details">
+            <div class="section">
+                <label class="upgrade-label is-general">
+                <input type="checkbox" class="upgrade-checkbox general-checkbox" onchange="toggleCrown(this)"> General
+                </label>
+                <label class="upgrade-label is-reinforced">
+                <input type="checkbox" class="upgrade-checkbox reinforced-checkbox" onchange="toggleReinforced(this)"> Reinforced
+                </label>
+            </div>
+            
+            <div class="section available-artefacts">
+                <h3 class="section-title">Artefacts of Power:</h3>
+            </div>
+            
+            <div class="section available-heroicTraits">
+                <h3 class="section-title">Heroic Traits:</h3>
+            </div>
+        </div>
+    `
+    unitSlot.className = `unit-slot`;
+    return unitSlot;
+}
+
+const _newRegimentItem = () => {
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <span style="display: none;" class="regiment-idx"></span>
+      <div class="regiment-header" style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="regiment-item-title"></span>
+          <span class="regiment-item-points" style="margin-left:auto;"></span>
+      </div>
+      
+      <!-- Content that will hold hero/units -->
+      <div class="regiment-content" style="margin-top: 0.5rem;"></div>
+
+      <!-- Add button below content -->
+      <div class="clickable-style" style="display: flex; align-items: center; gap: 0.5rem;">
+        <button class="full-rectangle-button" onclick="addEntry(this)">Add Unit +</button>
+      </div>
+    `;
+    div.className = `regiment-item`;
+    return div;
+}
+
 function clonePrototype(id, newId = '') {
-    const usPrototype = document.getElementById(id);
-    const newUsItem = usPrototype.cloneNode(true);
+    const newUsItem = id.includes('unit') ? _newUnitSlot() : _newRegimentItem();
     newUsItem.id = newId;
-    newUsItem.style.display = '';
     if (id.includes('unit')) {
         newUsItem.style.padding = "0.4em";
         newUsItem.style.background = "#ddd";

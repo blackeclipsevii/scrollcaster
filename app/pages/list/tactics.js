@@ -1,38 +1,15 @@
 const tacticsPage = {
     loadPage: () => {
-        const params = new URLSearchParams(window.location.search);
-        const rosterId = params.get('id');
-        
         const _makeTacticLayout = () => {
-            const _makeSection = (main, name) => {
-                const section = document.createElement('div');
-                section.style.display = 'none';
-                section.className = 'section';
-                section.innerHTML = `
-                    <h3 class="section-title">${name}</h3>
-                    <div class="item-list" id="${name.toLowerCase().replace(/ /g, '-')}-list"></div>
-                `;
-                main.appendChild(section);
-            }   
-        
-            const _makeLayout = (sections) => {
-                const main = document.querySelector('.main');
-                sections.forEach(name => {
-                    _makeSection(main, name)
-                });
-            }
             const sections = [
                 'Battle Tactic Cards'
             ];
-            _makeLayout(sections);
+            clearLayout();
+            makeLayout(sections);
         }
         
         async function loadTactics() {
             _makeTacticLayout();
-            if (rosterId) {
-                roster = await getRoster(rosterId);
-            }
-        
             const tacticList = document.querySelector('.item-list');
             const section = tacticList.closest('.section');
             section.style.display = 'block';
@@ -106,8 +83,9 @@ const tacticsPage = {
         }
         setHeaderTitle('Battle Tactic Cards');
         loadTactics();
-        addOverlayListener();
         
         loadScrollData();
     }
 }
+
+dynamicPages['tactics'] = tacticsPage;

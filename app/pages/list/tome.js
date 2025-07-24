@@ -52,11 +52,15 @@ const catalogPage = {
             });
             
             makeItem('Battle Tactic Cards', () => {
-                goTo(`/pages/list/list.html?tactics=true`);
+                goTo(`/pages/list/list.html?tactics=true`, false);
+                tacticsPage.loadPage();
             });          
         
             makeItem('Lores', () => {
-                goTo(`/pages/list/list.html?type=lore&upgrades=true`);
+                goTo(`/pages/list/list.html?type=lore&upgrades=true`, false);
+                const ugSettings = new UpgradeSettings;
+                ugSettings.type = 'lores';
+                dynamicPages['upgrades'].loadPage(ugSettings);
             });
         }
         
@@ -112,27 +116,43 @@ const catalogPage = {
         
                     if (!army.isArmyOfRenown && army.upgrades.battleFormations) {
                         makeItem('Battle Formations', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=battleFormation&upgrades=true`);
+                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=battleFormation&upgrades=true`, false);
+                            const ugSettings = new UpgradeSettings;
+                            ugSettings.type = 'battleFormations';
+                            ugSettings.armyName = subFactionName;
+                            dynamicPages['upgrades'].loadPage(ugSettings);
                         });          
                     }
         
                     if (army.upgrades.artefacts) {
                         makeItem('Artefacts of Power', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=artefact&upgrades=true`);
+                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=artefact&upgrades=true`, false);
+                            const ugSettings = new UpgradeSettings;
+                            ugSettings.type = 'artefacts';
+                            ugSettings.armyName = subFactionName;
+                            dynamicPages['upgrades'].loadPage(ugSettings);
                         });          
                     }
         
                     if (army.upgrades.heroicTraits) {
                         makeItem('Heroic Traits', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=heroicTrait&upgrades=true`);
+                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=heroicTrait&upgrades=true`, false);
+                            const ugSettings = new UpgradeSettings;
+                            ugSettings.type = 'heroicTraits';
+                            ugSettings.armyName = subFactionName;
+                            dynamicPages['upgrades'].loadPage(ugSettings);
                         });          
                     }
         
                     if (Object.getOwnPropertyNames(army.upgrades.lores.manifestation).length > 6 ||
-                        army.upgrades.lores.spell ||
-                        army.upgrades.lores.prayer) {
+                        Object.getOwnPropertyNames(army.upgrades.lores.spell).length > 0||
+                        Object.getOwnPropertyNames(army.upgrades.lores.prayer).length > 0) {
                         makeItem('Lores', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=lore&upgrades=true`);
+                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=lore&upgrades=true`, false);
+                            const ugSettings = new UpgradeSettings;
+                            ugSettings.type = 'lores';
+                            ugSettings.armyName = subFactionName;
+                            dynamicPages['upgrades'].loadPage(ugSettings);
                         });          
                     }
                 });
@@ -267,3 +287,5 @@ const catalogPage = {
         loadTomePage();
     }
 };
+
+dynamicPages['catalog'] = catalogPage;
