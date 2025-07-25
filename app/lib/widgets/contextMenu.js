@@ -1,8 +1,26 @@
-function createContextMenu(callbackMap) {
+var _menuIds = [];
+
+const deleteContextMenu = (id) => {
+    const menu = document.getElementById(id);
+    if (menu)
+        menu.parentElement.removeChild(menu);
+
+    const wrapper = document.getElementById(`menu-wrapper-${id}`)
+    if (wrapper)
+        wrapper.parentElement.removeChild(wrapper);
+}
+
+const deleteContextMenus = () => {
+    _menuIds.forEach(id => deleteContextMenu(id));
+    _menuIds = [];
+}
+
+function createContextMenu(callbackMap, trackMenu=true) {
     const ele = document.createElement('div');
     ele.innerHTML = `<button class="menu-btn">⋯</button>`;
     const button = ele.querySelector('.menu-btn');
     const uniqueId = generateId();
+    ele.id = uniqueId;
     button.addEventListener('click', (e) => {
         e.preventDefault();
         const { pageX: x, pageY: y } = e;
@@ -51,5 +69,10 @@ function createContextMenu(callbackMap) {
         });
     }
     ele.appendChild(div);
+
+    if (trackMenu) {
+        _menuIds.push(uniqueId);
+    }
+
     return ele;
 }
