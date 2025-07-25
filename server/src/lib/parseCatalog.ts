@@ -1,8 +1,9 @@
 import fs from 'fs'
 import { XMLParser, XMLValidator} from "fast-xml-parser"
-import { bsLayoutSmoother } from './BsSmoother.js';
+import { bsLayoutSmoother } from './bs/BsSmoother.js';
+import { BsCatalog, BsLibrary } from './bs/BsCatalog.js';
 
-export default function parseCatalog(path) {
+export default function parseCatalog(path: string): BsCatalog | BsLibrary | null {
     const xmlContent = fs.readFileSync(path, 'utf8');
     const options = {
         ignoreAttributes: false,

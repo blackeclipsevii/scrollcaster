@@ -2,12 +2,14 @@ import Ability from "./Ability.js";
 import Weapon from "./Weapon.js";
 
 import { UnitType, strToUnitType } from "./types/UnitType.js";
-import { WeaponType } from "./types/WeaponType.js";
+import { WeaponType } from "./Weapon.js";
 
 export default class Unit {
     constructor(selectionEntry) {
         this.isGeneral = false;
         this.isWarmaster = false; // must be general if able
+
+        this.monstrousTraits = null;
 
         this.canHaveHeroicTrait = false;
         this.heroicTrait = null;

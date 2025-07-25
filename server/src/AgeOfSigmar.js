@@ -526,9 +526,9 @@ export default class AgeOfSigmar {
         // populate the armies and seperate the libraries
         catFiles.forEach(file => {
             const lc = file.toLowerCase();
-            console.log(lc);
 
             if (path.extname(lc) === '.cat') {
+                // console.log(lc);
                 const fullPath = `${dir}/${file}`;
                 const data = parseCatalog(fullPath);
                 if (data) {

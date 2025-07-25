@@ -46,8 +46,9 @@ const isFavorite = (id, type) => {
     return true;
 }
 
-const _initializeFavoritesList = () => {
-  const main = document.querySelector('.main');
+const initializeFavoritesList = () => {
+  deleteFavoritesList();
+  const main = document.getElementById('loading-content');
   const div = document.createElement('div');
   div.style.display = 'none';
   div.className = 'section';
@@ -55,7 +56,17 @@ const _initializeFavoritesList = () => {
     <h3 class="section-title">Favorites</h3>
     <div class="item-list" id="favorites-list"></div>
   `;
-  main.insertBefore(div, main.firstChild)
+  if (main.firstChild)
+    main.insertBefore(div, main.firstChild)
+  else
+    main.appendChild(div);
+}
+
+const deleteFavoritesList = () => {
+    const fl = document.getElementById('favorites-list');
+    if (fl) {
+        fl.parentElement.removeChild(fl);
+    }
 }
 
 const newFavoritesOnChange = (selectableList, item, itemName) => {
@@ -95,10 +106,6 @@ const newFavoritesOnChange = (selectableList, item, itemName) => {
 }
 
 const newFavoritesCheckbox = (favoriteId, favoriteType, onchange=null, checkboxId=null) => {
-    if (!document.getElementById('favorites-list')) {
-        _initializeFavoritesList();
-    }
-
     const heart = document.createElement('input');
     heart.id = checkboxId ? checkboxId : generateId();
     heart.type = 'checkbox';

@@ -53,6 +53,9 @@ function exportRoster(roster) {
         if (unit.heroicTrait) {
             text += `  ${indent}* Heroic Trait: ${unit.heroicTrait.name}\n`;
         }
+        if (unit.monstrousTrait) {
+            text += `  ${indent}* Monstrous Trait: ${unit.monstrousTrait.name}\n`;
+        }
     };
 
     for(let i = 0; i < roster.regiments.length; ++i) {

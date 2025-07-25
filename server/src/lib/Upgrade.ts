@@ -9,7 +9,8 @@ export enum UpgradeType {
     ManifestationLore = 4,
     BattleTraits = 5,
     PrayerLore = 6,
-    RegimentOfRenown = 7
+    RegimentOfRenown = 7,
+    MonstrousTraits = 8
 }
 
 export interface Upgrade extends Identifiable {
