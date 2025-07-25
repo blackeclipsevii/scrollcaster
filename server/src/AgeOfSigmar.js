@@ -4,7 +4,7 @@ import Army from './Army.js';
 import BattleTacticCard from './BattleTacticCard.js';
 import Unit from './Unit.js';
 
-import { bsLayoutSmoother } from './lib/BsSmoother.js';
+import { bsLayoutSmoother } from './lib/bs/BsSmoother.js';
 
 import fs from 'fs';
 import { XMLParser, XMLValidator} from "fast-xml-parser";
@@ -13,7 +13,7 @@ import parseCatalog from './lib/parseCatalog.js';
 import path from 'path';
 import Upgrade from './Upgrade.js';
 import { UpgradeType } from './lib/Upgrade.js';
-import { BsModifier, ConstraintType, getConstraints } from './lib/BsConstraint.js';
+import { BsModifier, ConstraintType, getConstraints } from './lib/bs/BsConstraint.js';
 import { UnitType } from './types/UnitType.js';
 
 function parseGameSystem(path) {
