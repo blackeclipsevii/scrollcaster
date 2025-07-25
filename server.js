@@ -4,10 +4,10 @@ import path from 'path'
 import fs from 'fs'
 import express from 'express'
 
-import AgeOfSigmar from './server/src/AgeOfSigmar.js';
-import Roster from './server/src/Roster.js';
+import AgeOfSigmar from './server/dist/AgeOfSigmar.js';
+import Roster from './server/dist/Roster.js';
 
-import installCatalog, { getCommitIdUsed } from './server/src/lib/installCatalog.js'
+import installCatalog, { getCommitIdUsed } from './server/dist/lib/installCatalog.js'
 
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';

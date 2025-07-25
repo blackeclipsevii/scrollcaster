@@ -28,17 +28,11 @@ COPY . .
 
 RUN npm run build
 
-RUN dir
-
 # Final stage for app image
 FROM base
 
 # Copy built application
-COPY --from=build --excludes=/scrollcaster/server --excludes=/scrollcaster/dist /scrollcaster /scrollcaster
-COPY --from=build /scrollcaster/dist /scrollcaster/server
-COPY --from=build /scrollcaster/server/resources /scrollcaster/server/resources
-
-RUN dir
+COPY --from=build /scrollcaster /scrollcaster
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000

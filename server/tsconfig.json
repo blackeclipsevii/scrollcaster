@@ -4,6 +4,6 @@
     "allowJs": true,
     "outDir": "dist"
   },
-  "include": ["server/**/*", "./server.js"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules"]
 }

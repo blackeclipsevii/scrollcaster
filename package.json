@@ -17,8 +17,7 @@
     "jest": "^30.0.4"
   },
   "scripts": {
-    "build": "npx tsc -p .",
-    "start": "npm run build -- -w",
+    "build": "npx tsc -p ./server",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "jest": {
