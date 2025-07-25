@@ -10,15 +10,12 @@ const tacticsPage = {
     async fetchTactics() {
         if (this._cache.tactics)
             return this._cache.tactics;
-
-        let result = null;
-        await fetch(encodeURI(`${endpoint}/tactics`)).
-        then(resp => resp.json()).
-        then(tactics => result = tactics);
+        let result = await fetch(encodeURI(`${endpoint}/tactics`)).
+                           then(resp => resp.json());
         this._cache.tactics = result;
         return result;
     },
-    loadPage(settings) {
+    async loadPage(settings) {
         if (!settings)
             settings = new TacticsSettings;
 
@@ -34,8 +31,8 @@ const tacticsPage = {
         }
         
         async function loadTactics() {
-            const tacticList = document.querySelector('.item-list');
-            const section = tacticList.closest('.section');
+            const tacticList = document.getElementById('battle-tactic-cards-list');
+            const section = document.getElementById('battle-tactic-cards-section');
             section.style.display = 'block';
         
             const tactics = await thisPage.fetchTactics();
@@ -104,7 +101,7 @@ const tacticsPage = {
         setHeaderTitle('Battle Tactic Cards');
         disableHeaderContextMenu();
         _makeTacticLayout();
-        loadTactics();
+        await loadTactics();
         swapLayout();
     }
 }

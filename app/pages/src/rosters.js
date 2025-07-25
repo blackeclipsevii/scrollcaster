@@ -222,7 +222,7 @@ const rosterPage = {
         },
 
         Delete: async (e) => {
-            const toggle = overlayToggleFactory('block', () => {
+            const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
@@ -266,7 +266,7 @@ const rosterPage = {
       const right = document.querySelector('.header-right');
       const callbackMap = {
         'About': () => {
-            const toggle = overlayToggleFactory('block', () => {
+            const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
@@ -293,13 +293,11 @@ const rosterPage = {
 
               modal.appendChild(section);
               modal.appendChild(button);
-              const offset = (window.innerWidth - modal.clientWidth) / 2.0;
-              modal.style.marginLeft = `${offset}px`;
           });
           toggle();
         },
         'Clear Favorites': () => {
-          const toggle = overlayToggleFactory('block', () => {
+          const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
@@ -317,13 +315,11 @@ const rosterPage = {
 
               modal.appendChild(section);
               modal.appendChild(button);
-              const offset = (window.innerWidth - modal.clientWidth) / 2.0;
-              modal.style.marginLeft = `${offset}px`;
           });
           toggle();
         },
         'Delete All Rosters': () => {
-            const toggle = overlayToggleFactory('block', () => {
+            const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
@@ -343,8 +339,6 @@ const rosterPage = {
 
               modal.appendChild(section);
               modal.appendChild(button);
-              const offset = (window.innerWidth - modal.clientWidth) / 2.0;
-              modal.style.marginLeft = `${offset}px`;
           });
           toggle();
         }
