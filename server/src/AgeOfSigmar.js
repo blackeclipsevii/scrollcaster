@@ -12,7 +12,7 @@ import parseCatalog from './lib/parseCatalog.js';
 
 import path from 'path';
 import Upgrade from './Upgrade.js';
-import { UpgradeType } from './types/UpgradeType.js';
+import { UpgradeType } from './lib/Upgrade.js';
 import { BsModifier, ConstraintType, getConstraints } from './lib/BsConstraint.js';
 import { UnitType } from './types/UnitType.js';
 

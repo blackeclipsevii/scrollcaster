@@ -1,7 +1,7 @@
 
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
-import { UpgradeType } from "./types/UpgradeType.js";
+import { UpgradeType } from './lib/Upgrade.js';
 import { Lore } from './Lores.js';
 
 // id designation the legends publication
@@ -61,9 +61,6 @@ export default class Army {
 
         // Units available to the army
         this.units = {};
-
-        // LUT for units
-        this.unitLUT = {};
 
         // LUT for keywords
         this.keywordLUT = {};
@@ -238,7 +235,6 @@ export default class Army {
             
             // these are the units this army can use
             this.units[unit.id] = unit;
-            this.unitLUT[link['@id']] = unit.id;
         });
 
         catalogue.sharedSelectionEntryGroups.forEach(entry => {

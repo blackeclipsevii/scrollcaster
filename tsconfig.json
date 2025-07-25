@@ -1,0 +1,9 @@
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "dist"
+  },
+  "include": ["server/**/*", "./server.js"],
+  "exclude": ["node_modules"]
+}

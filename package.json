@@ -6,17 +6,21 @@
     "test": "test"
   },
   "dependencies": {
-    "fast-xml-parser": "^5.0.4",
-    "express": "^5.1.0",
     "axios": "^1.10.0",
-    "extract-zip": "^2.0.1"
+    "express": "^5.1.0",
+    "extract-zip": "^2.0.1",
+    "fast-xml-parser": "^5.0.4"
   },
-  "type":"module",
+  "type": "module",
   "devDependencies": {
-    "jest": "^30.0.4"
+    "@tsconfig/node20": "^20.1.6",
+    "jest": "^30.0.4",
+    "typescript": "^5.8.3"
   },
   "scripts": {
-    "test":"node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "build": "tsc -p .",
+    "start": "npm run build -- -w",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "jest": {
     "testMatch": [
