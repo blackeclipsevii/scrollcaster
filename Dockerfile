@@ -32,6 +32,7 @@ RUN npm run build
 FROM base
 
 # Copy built application
+COPY --from=build /scrollcaster/package.json /scrollcaster
 COPY --from=build /scrollcaster/dist /scrollcaster
 COPY --from=build /scrollcaster/server/resources /scrollcaster/server/resources
 
