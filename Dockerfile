@@ -22,11 +22,11 @@ RUN apt-get update -qq && \
 # Install node modules
 COPY package.json nodemon.json tsconfig.json ./
 RUN npm install
-RUN npm run build
 
 # Copy application code
 COPY . .
 
+RUN npm run build
 
 # Final stage for app image
 FROM base
