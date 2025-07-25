@@ -1,5 +1,5 @@
 
-import bsTextSmoother from './lib/BsSmoother.js';
+import bsTextSmoother from './lib/bs/BsSmoother.js';
 
 import { BattleTacticType } from './types/BattleTacticType.js';
 

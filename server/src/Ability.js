@@ -1,4 +1,4 @@
-import bsTextSmoother from "./lib/BsSmoother.js"
+import bsTextSmoother from "./lib/bs/BsSmoother.js"
 import { AbilityType } from "./types/AbilityType.js";
 
 export default class Ability {
