@@ -80,9 +80,9 @@ const catalogPage = {
             });          
         
             makeItem('Lores', () => {
-                const ugSettings = new UpgradeSettings;
-                ugSettings.type = 'lores';
-                dynamicGoTo(ugSettings);
+                const settings = new UpgradeSettings;
+                settings.type = 'lores';
+                dynamicGoTo(settings);
             });
         }
         
@@ -115,7 +115,7 @@ const catalogPage = {
                 then(army => {           
                     h2.textContent = army.name;
         
-                    if (army.units) {
+                    if (army.units.length > 0) {
                         makeItem('Warscrolls', () => {
                             const settings = new UnitSettings;
                             settings.armyName = subFactionName;
@@ -123,7 +123,7 @@ const catalogPage = {
                         });
                     }
         
-                    if (army.upgrades.battleTraits) {
+                    if (Object.getOwnPropertyNames(army.upgrades.battleTraits).length > 0) {
                         makeItem('Battle Traits', () => {
                             const names = Object.getOwnPropertyNames(army.upgrades.battleTraits);
                             const traits = [];
@@ -143,7 +143,7 @@ const catalogPage = {
                         });          
                     }
         
-                    if (army.upgrades.artefacts) {
+                    if (Object.getOwnPropertyNames(army.upgrades.artefacts).length > 0) {
                         makeItem('Artefacts of Power', () => {
                             const settings = new UpgradeSettings;
                             settings.type = 'artefacts';
@@ -152,23 +152,32 @@ const catalogPage = {
                         });          
                     }
         
-                    if (army.upgrades.heroicTraits) {
+                    if (Object.getOwnPropertyNames(army.upgrades.heroicTraits).length > 0) {
                         makeItem('Heroic Traits', () => {
-                            const ugSettings = new UpgradeSettings;
-                            ugSettings.type = 'heroicTraits';
-                            ugSettings.armyName = subFactionName;
+                            const settings = new UpgradeSettings;
+                            settings.type = 'heroicTraits';
+                            settings.armyName = subFactionName;
+                            dynamicGoTo(settings);
+                        });          
+                    }
+
+                    if (Object.getOwnPropertyNames(army.upgrades.monstrousTraits).length > 0) {
+                        makeItem('Monstrous Traits', () => {
+                            const settings = new UpgradeSettings;
+                            settings.type = 'monstrousTraits';
+                            settings.armyName = subFactionName;
                             dynamicGoTo(settings);
                         });          
                     }
         
                     if (Object.getOwnPropertyNames(army.upgrades.lores.manifestation).length > 6 ||
-                        Object.getOwnPropertyNames(army.upgrades.lores.spell).length > 0||
+                        Object.getOwnPropertyNames(army.upgrades.lores.spell).length > 0 ||
                         Object.getOwnPropertyNames(army.upgrades.lores.prayer).length > 0) {
                         makeItem('Lores', () => {
-                            const ugSettings = new UpgradeSettings;
-                            ugSettings.type = 'lores';
-                            ugSettings.armyName = subFactionName;
-                            dynamicGoTo(ugSettings);
+                            const settings = new UpgradeSettings;
+                            settings.type = 'lores';
+                            settings.armyName = subFactionName;
+                            dynamicGoTo(settings);
                         });          
                     }
                 });

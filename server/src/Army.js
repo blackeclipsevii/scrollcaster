@@ -35,6 +35,10 @@ const upgradeLUT = {
     'prayer lore': {
         alias: 'prayer',
         type: UpgradeType.PrayerLore
+    },
+    'monstrous traits': {
+        alias: 'monstrousTraits',
+        type: UpgradeType.MonstrousTraits
     }
 };
 
@@ -49,6 +53,7 @@ export default class Army {
             battleFormations: {},
             battleTraits: {},
             heroicTraits: {},
+            monstrousTraits: {},
             lores: {
                 manifestation: {},
                 spell: {},
@@ -186,7 +191,7 @@ export default class Army {
             if (link.entryLinks) {
                 link.entryLinks.forEach(ele => {
                     const lc = ele['@name'].toLowerCase();
-                    if (lc.includes('trait')) {
+                    if (lc.includes('heroic trait')) {
                         unit.canHaveHeroicTrait = true;
                         return;
                     }
@@ -239,6 +244,7 @@ export default class Army {
 
         catalogue.sharedSelectionEntryGroups.forEach(entry => {
             const lc = entry['@name'].toLowerCase();
+            
             ulKeys.forEach(key => {
                 if (lc.includes(key)) {
                     // console.log(entry, null, 2);

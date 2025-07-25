@@ -405,7 +405,7 @@ const unitPage = {
         }
         setHeaderTitle('Units');
         disableHeaderContextMenu();
-
+        initializeFavoritesList();
         _makeUnitLayout();
         
         if (thisPage.settings.roster || thisPage.settings.rosterId) {
@@ -418,42 +418,3 @@ const unitPage = {
 }
 
 dynamicPages['units'] = unitPage;
-
-/*
-const params = new URLSearchParams(window.location.search);
-
-if (params.get('builder')) {
-    const settings = new BuilderSettings;
-    settings.rosterId = params.get('rosterId');
-    dynamicGoTo(settings);
-} else if (params.get('catalog')) {
-    const settings = new CatalogSettings;
-    settings.armyName = params.get('army') || params.get('armyName');
-    settings.core = params.get('core') !== null;
-    dynamicGoTo(settings);
-} else if (params.get('upgrades')) {
-    const settings = new UpgradeSettings;
-    settings.type = params.get('type');
-    settings.armyName = params.get('armyName');
-    dynamicGoTo(settings);
-} else if (params.get('tactics')) {
-    const settings = new TacticsSettings;
-    dynamicGoTo(settings);
-} else if (params.get('warscroll')){
-    const settings = new WarscrollSettings;
-    settings.local = params.get('local');
-    dynamicGoTo(settings);
-} else {
-    const settings = new UnitSettings;
-    settings.rosterId = params.get('id');
-    settings.armyName = params.get('army') || params.get('armyName');
-    settings.displayLegends = params.get('legends') !== null;
-    settings.regimentIndex = params.get('regimentIndex');
-    settings.auxiliary = params.get('auxiliary');
-    settings.type = params.get('type');
-    if (settings.type)
-        settings.type = decodeURI(settings.type);
-
-    dynamicGoTo(settings);
-}
-*/

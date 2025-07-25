@@ -9,6 +9,8 @@ export default class Unit {
         this.isGeneral = false;
         this.isWarmaster = false; // must be general if able
 
+        this.monstrousTraits = null;
+
         this.canHaveHeroicTrait = false;
         this.heroicTrait = null;
 

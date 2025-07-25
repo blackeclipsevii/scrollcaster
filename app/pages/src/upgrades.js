@@ -49,12 +49,32 @@ const upgradePage = {
                 upgradeList = document.getElementById('prayer-lore-list');
             }else if (upgrade.type === 4) {
                 upgradeList = document.getElementById('manifestation-lore-list');
-            } else {
+            } else if (upgrade.type === 8) {
+                upgradeList = document.getElementById('monstrous-traits-list');
+            }else {
                 console.log(`upgrade: ${upgrade}`);
                 console.log(`type unknown: ${upgrade.name}`);
                 document.querySelector('.item-list');
             }
             return upgradeList;
+        }
+
+        const typeToStr = (unit) => {
+            if (unit.type === 0)
+                return 'Artefact';
+            if (unit.type == 1)
+                return 'Heroic Trait';
+            if (unit.type == 2)
+                return 'Battle Formation';
+            if (unit.type == 3)
+                return 'Spell Lore';
+            if (unit.type == 6)
+                return 'Prayer Lore';
+            if (unit.type == 4)
+                return 'Manifestation Lore';
+            if (unit.type == 8)
+                return 'Monstrous Trait';
+            return 'Unknown';
         }
         
         const isUniversal = (str) => {
@@ -88,6 +108,15 @@ const upgradePage = {
             nameEle.style.padding = '0px';
             nameEle.style.margin = '0px';
             left.appendChild(nameEle);
+
+            const typeEle = document.createElement('p');
+            typeEle.className = 'selectable-item-type ability-label';
+            typeEle.style.display = 'inline-block';
+            typeEle.textContent = typeToStr(upgrade);
+            typeEle.style.fontSize = '10px';
+            typeEle.style.backgroundColor = 'grey';
+            typeEle.style.marginRight = '1em';
+            left.appendChild(typeEle);
         
             const right = document.createElement('div');
             right.classList.add('selectable-item-right');
@@ -228,6 +257,7 @@ const upgradePage = {
             const sections = [
                 'Artefacts of Power', 
                 'Heroic Traits', 
+                'Monstrous Traits', 
                 'Battle Formations', 
                 'Spell Lore', 
                 'Prayer Lore', 
@@ -235,6 +265,7 @@ const upgradePage = {
             ];
 
             makeLayout(sections);
+            initializeFavoritesList();
             disableHeaderContextMenu();
             if (thisPage.settings.roster)
                 loadUpgrades();

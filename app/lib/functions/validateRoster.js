@@ -45,6 +45,7 @@ const validateRoster = async (roster) => {
 
     let numArtefacts = 0;
     let numTraits = 0;
+    let numMonstrousTraits = 0;
     let numGenerals = 0;
     let warmasterIsGeneral = false;
     let warmasters = [];
@@ -104,6 +105,9 @@ const validateRoster = async (roster) => {
 
                 if (unit.heroicTrait)
                     numTraits += 1;
+
+                if (unit.monstrousTrait)
+                    numMonstrousTraits += 1;
             }
         });
 
@@ -138,6 +142,11 @@ const validateRoster = async (roster) => {
 
     if (numTraits > 1) {
         let errorMsg = `More than one Heroic Trait is selected.`;
+        errors.push(errorMsg);
+    }
+
+    if (numMonstrousTraits > 1) {
+        let errorMsg = `More than one Monstrous Trait is selected.`;
         errors.push(errorMsg);
     }
 

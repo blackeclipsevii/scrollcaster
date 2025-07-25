@@ -61,6 +61,17 @@ const tacticsPage = {
                 nameEle.style.padding = '0px';
                 nameEle.style.margin = '0px';
                 left.appendChild(nameEle);
+
+                
+                const typeEle = document.createElement('p');
+                typeEle.className = 'selectable-item-type ability-label';
+                typeEle.style.display = 'inline-block';
+                typeEle.textContent = 'Battle Tactic Card';
+                typeEle.style.fontSize = '10px';
+                typeEle.style.backgroundColor = 'grey';
+                typeEle.style.marginRight = '1em';
+                left.appendChild(typeEle);
+        
     
                 // Clicking the container navigates to details
                 left.addEventListener('click', () => {
@@ -100,6 +111,7 @@ const tacticsPage = {
         }
         setHeaderTitle('Battle Tactic Cards');
         disableHeaderContextMenu();
+        initializeFavoritesList();
         _makeTacticLayout();
         await loadTactics();
         swapLayout();

@@ -71,6 +71,10 @@ const builderPage = {
                     <div class="section available-heroicTraits">
                         <h3 class="section-title">Heroic Traits:</h3>
                     </div>
+
+                    <div class="section available-monstrousTraits">
+                        <h3 class="section-title">Monstrous Traits:</h3>
+                    </div>
                 </div>
             `
             
@@ -260,7 +264,8 @@ const builderPage = {
             // Find the crown icon
             usName.textContent = unit.name;
 
-            let numOptions = 4;
+            let numOptions = 5;
+            const canBeGeneral = !(unit.type !== 0 || !parent.className.includes('regiment'));
             if (unit.type !== 0 || !parent.className.includes('regiment')) {
                 removeSection(newUsItem, 'is-general');
                 -- numOptions;
@@ -289,7 +294,14 @@ const builderPage = {
             }
 
             if (!unit.canBeReinforced) {
-                removeSection(newUsItem, 'is-reinforced');
+                if (!canBeGeneral) {
+                    const child = newUsItem.querySelector(`.is-reinforced`);
+                    const parentSection = child.closest('.section');
+                    parentSection.style.display = 'none';
+                }
+                {
+                    removeSection(newUsItem, 'is-reinforced');
+                }
                 -- numOptions;
             } else {
                 const checkbox = newUsItem.querySelector('.reinforced-checkbox');
@@ -336,6 +348,15 @@ const builderPage = {
                 -- numOptions;
             } else {
                 await displayEnhancements(unit, newUsItem, 'heroicTrait');
+            }
+
+            const isMonster = unit.keywords && unit.keywords.includes('MONSTER');
+            const isUnique = unit.keywords && unit.keywords.includes('UNIQUE');
+            if (!isMonster || isUnique) {
+                removeSection(newUsItem, 'available-monstrousTraits');
+                -- numOptions;
+            } else {
+                await displayEnhancements(unit, newUsItem, 'monstrousTrait');
             }
 
             if (numOptions < 1) {
@@ -479,6 +500,7 @@ const builderPage = {
                 removeSection(newUsItem, 'is-reinforced');
                 removeSection(newUsItem, 'available-artefacts');
                 removeSection(newUsItem, 'available-heroicTraits');
+                removeSection(newUsItem, 'available-monstrousTraits');
 
                 const usPoints = newUsItem.querySelector('.unit-slot-points');
                 displayPoints(usPoints, regiment.points, 'PTS');
@@ -940,6 +962,7 @@ const builderPage = {
                     removeSection(subUsItem, 'is-reinforced');
                     removeSection(subUsItem, 'available-artefacts');
                     removeSection(subUsItem, 'available-heroicTraits');
+                    removeSection(subUsItem, 'available-monstrousTraits');
                     const arrow = subUsItem.querySelector('.arrow');
                     arrow.textContent = '\u2022'; //'\u29BF';
 
@@ -979,6 +1002,7 @@ const builderPage = {
             removeSection(newUsItem, 'is-reinforced');
             removeSection(newUsItem, 'available-artefacts');
             removeSection(newUsItem, 'available-heroicTraits');
+            removeSection(newUsItem, 'available-monstrousTraits');
             //arrow.textContent = '\u2022'; //'\u29BF';
 
             const unitPoints = unitTotalPoints(lore);
