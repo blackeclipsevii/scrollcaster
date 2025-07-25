@@ -1,6 +1,10 @@
 import { BsProfile } from "./lib/bs/BsCatalog.js"
-import { WeaponType } from "./types/WeaponType.js";
 import { bsCharacteristicArrToMetadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
+
+export enum WeaponType {
+    Melee = 0,
+    Ranged = 1
+}
 
 export default class Weapon {
     name: string;
