@@ -9,10 +9,6 @@ LABEL fly_launch_runtime="Node.js"
 # Node.js app lives here
 WORKDIR /scrollcaster
 
-# Set production environment
-ENV NODE_ENV="production"
-
-
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
@@ -23,6 +19,10 @@ RUN apt-get update -qq && \
 # Install node modules
 COPY package.json ./
 RUN npm install
+
+# Set production environment
+ENV NODE_ENV="production"
+
 RUN npm run build
 
 # Copy application code
