@@ -57,10 +57,10 @@ const builderPage = {
                 <div class="unit-details">
                     <div class="section">
                         <label class="upgrade-label is-general">
-                        <input type="checkbox" class="upgrade-checkbox general-checkbox" onchange="toggleCrown(this)"> General
+                            <input type="checkbox" class="upgrade-checkbox general-checkbox"> General
                         </label>
                         <label class="upgrade-label is-reinforced">
-                        <input type="checkbox" class="upgrade-checkbox reinforced-checkbox" onchange="toggleReinforced(this)"> Reinforced
+                            <input type="checkbox" class="upgrade-checkbox reinforced-checkbox"> Reinforced
                         </label>
                     </div>
                     
@@ -73,6 +73,7 @@ const builderPage = {
                     </div>
                 </div>
             `
+            
             unitSlot.className = `unit-slot`;
             return unitSlot;
         }
@@ -263,11 +264,64 @@ const builderPage = {
             if (unit.type !== 0 || !parent.className.includes('regiment')) {
                 removeSection(newUsItem, 'is-general');
                 -- numOptions;
+            } else {
+                const checkbox = newUsItem.querySelector('.general-checkbox');
+                checkbox.onchange = () => {
+                    const unitContainer = checkbox.closest('.unit-slot');
+                    const crown = unitContainer.querySelector('.general-label');
+
+                    crown.style.display = checkbox.checked ? 'inline' : 'none';
+
+                    let div = checkbox.closest(".regiment-item");
+                    div = div.querySelector(".regiment-idx");
+                    const regIdx = Number(div.textContent);
+                    const regiment = thisPage.roster.regiments[regIdx];
+
+                    div = checkbox.closest(".unit-slot");
+                    div = div.querySelector(".unit-idx");
+                    const unitIdx = Number(div.textContent);
+                    const unit = regiment.units[unitIdx];
+
+                    unit.isGeneral = checkbox.checked;
+                    putRoster(roster);
+                    updateValidationDisplay();
+                };
             }
 
             if (!unit.canBeReinforced) {
                 removeSection(newUsItem, 'is-reinforced');
                 -- numOptions;
+            } else {
+                const checkbox = newUsItem.querySelector('.reinforced-checkbox');
+                checkbox.onchange = () => {
+                    const unitContainer = checkbox.closest('.unit-slot');
+                    const crown = unitContainer.querySelector('.reinforced-label');
+
+                    crown.style.display = checkbox.checked ? 'inline' : 'none';
+
+                    // to-do what about aux general???
+                    let div = checkbox.closest(".regiment-item");
+                    div = div.querySelector(".regiment-idx");
+                    const regIdx = Number(div.textContent);
+                    const regiment = thisPage.roster.regiments[regIdx];
+
+                    div = checkbox.closest(".unit-slot");
+                    div = div.querySelector(".unit-idx");
+                    const unitIdx = Number(div.textContent);
+                    const unit = regiment.units[unitIdx];
+
+                    const ptsBefore = unitTotalPoints(unit);
+                    unit.isReinforced = checkbox.checked;
+                    const ptsAfter = unitTotalPoints(unit);
+                    putRoster(roster);
+
+                    const usPoints = unitContainer.querySelector('.unit-slot-points');
+                    usPoints.textContent = `${ptsAfter} PTS`;
+                    totalPoints = totalPoints - (ptsBefore - ptsAfter);
+                    refreshPointsOverlay(thisPage.roster.id);
+                    updateValidationDisplay();
+                };
+
             }
 
             if (!unit.canHaveArtefact) {
@@ -1046,59 +1100,6 @@ const builderPage = {
 
             
             setHeaderTitle(thisPage.roster.name);
-            refreshPointsOverlay(thisPage.roster.id);
-            updateValidationDisplay();
-        }
-
-        function toggleCrown(checkbox) {
-            const unitContainer = checkbox.closest('.unit-slot');
-            const crown = unitContainer.querySelector('.general-label');
-
-            crown.style.display = checkbox.checked ? 'inline' : 'none';
-
-
-            // to-do what about aux general???
-            let div = checkbox.closest(".regiment-item");
-            div = div.querySelector(".regiment-idx");
-            const regIdx = Number(div.textContent);
-            const regiment = thisPage.roster.regiments[regIdx];
-
-            div = checkbox.closest(".unit-slot");
-            div = div.querySelector(".unit-idx");
-            const unitIdx = Number(div.textContent);
-            const unit = regiment.units[unitIdx];
-
-            unit.isGeneral = checkbox.checked;
-            putRoster(roster);
-            updateValidationDisplay();
-        }
-
-        function toggleReinforced(checkbox) {
-            const unitContainer = checkbox.closest('.unit-slot');
-            const crown = unitContainer.querySelector('.reinforced-label');
-
-            crown.style.display = checkbox.checked ? 'inline' : 'none';
-
-
-            // to-do what about aux general???
-            let div = checkbox.closest(".regiment-item");
-            div = div.querySelector(".regiment-idx");
-            const regIdx = Number(div.textContent);
-            const regiment = thisPage.roster.regiments[regIdx];
-
-            div = checkbox.closest(".unit-slot");
-            div = div.querySelector(".unit-idx");
-            const unitIdx = Number(div.textContent);
-            const unit = regiment.units[unitIdx];
-
-            const ptsBefore = unitTotalPoints(unit);
-            unit.isReinforced = checkbox.checked;
-            const ptsAfter = unitTotalPoints(unit);
-            putRoster(roster);
-
-            const usPoints = unitContainer.querySelector('.unit-slot-points');
-            usPoints.textContent = `${ptsAfter} PTS`;
-            totalPoints = totalPoints - (ptsBefore - ptsAfter);
             refreshPointsOverlay(thisPage.roster.id);
             updateValidationDisplay();
         }
