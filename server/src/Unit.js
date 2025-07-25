@@ -1,8 +1,8 @@
 import Ability from "./Ability.js";
 import Weapon from "./Weapon.js";
 
-import { UnitType, strToUnitType } from "../shared/UnitType.js";
-import { WeaponType } from "../shared/WeaponType.js";
+import { UnitType, strToUnitType } from "./types/UnitType.js";
+import { WeaponType } from "./types/WeaponType.js";
 
 export default class Unit {
     constructor(selectionEntry) {

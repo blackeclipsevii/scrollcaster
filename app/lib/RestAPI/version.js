@@ -1,23 +1,30 @@
+async function getVersion (of=null){
+    let url = `${endpoint}/version`;
+    if (of !== null) 
+        url =`${url}?of=${of}`;
+
+    return await fetch(encodeURI(url), { method: "GET" })
+                 .then(response => response.json())
+                 .catch(_ => console.log(`Unable to retrieve version of ${of}`));
+}
 
 const getServerVersion = async () => {
-    let version = null;
-    await fetch(encodeURI(`${endpoint}/version`),{ method: "GET"  })
-    .then(response => response.ok ? response.json() : {major: 0, minor: 0, patch: 0})
-    .then(versionObj => {
-        version = `${versionObj.major}.${versionObj.minor}.${versionObj.patch}`;
-    });
-    return version;
+    const result = await getVersion();
+    if (result)
+        return `${result.major}.${result.minor}.${result.patch}`
+    return 'unknown';
 };
 
-
 const getBsDataVersion = async() => {
-    let version = null;
-    try {
-        await fetch(encodeURI(`${endpoint}/version?of=bsdata`),{ method: "GET" })
-        .then(response => response.json())
-        .then(obj => version = obj.commit.substring(0, 7));
-    } catch(error) {
-        version = 'unknown';
-    }
-    return version;
+    const result = await getVersion('bsdata');
+    if (result)
+        return result.version.substring(0, 7);
+    return 'unknown';
+}
+
+const getBattleProfileVersion = async() => {
+    const result = await getVersion('battle profiles');
+    if (result)
+        return result.version;
+    return 'unknown';
 }

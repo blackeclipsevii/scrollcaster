@@ -1,12 +1,13 @@
 
 import url from 'url';
 import path from 'path'
+import fs from 'fs'
 import express from 'express'
 
-import AgeOfSigmar from './server/AgeOfSigmar.js';
-import Roster from './server/Roster.js';
+import AgeOfSigmar from './server/src/AgeOfSigmar.js';
+import Roster from './server/src/Roster.js';
 
-import installCatalog, { getCommitIdUsed } from './server/lib/installCatalog.js'
+import installCatalog, { getCommitIdUsed } from './server/src/lib/installCatalog.js'
 
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
@@ -100,13 +101,27 @@ server.get('/version', (req, res) => {
     if (parsedUrl.query.of.toLowerCase() === 'bsdata') {
       const commit = getCommitIdUsed();
       console.log (`BSData Commit Used: ${commit}`);
-      res.end(JSON.stringify({commit: commit}));
+      res.end(JSON.stringify({version: commit}));
       return;
     }
-  };
 
-  res.end(JSON.stringify(version));
-  return;
+    if (parsedUrl.query.of.toLowerCase() === 'battle profiles') {
+      const filename = './server/resources/battle profiles/version.txt';
+      if (!fs.existsSync(filename)) {
+        res.status(404);
+        res.end();
+      }
+      const bpVers = fs.readFileSync(filename);
+      console.log (`Battle Profile release date: ${bpVers}`);
+      res.end(JSON.stringify({version: `${bpVers}`}));
+      return
+    }
+  } else {
+    res.end(JSON.stringify(version));
+  }
+
+  res.status(400);
+  res.end();
 });
 
 server.get('/upgrades', (req, res) => {

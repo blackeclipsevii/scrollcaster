@@ -1,57 +1,63 @@
+class HistoryStack {
+    currentSettings = null;
+    history = [];
+}
 var _linkStack = null;
-var _currentUrl = null;
+var _headerMenuId = '';
 
 const absoluteUrl = (relativePath) => {
     const rootUrl = window.location.origin;
     return new URL(relativePath, rootUrl).href;
 }
 
-function _saveStack() {
-    const key = _inCatalog ? 'catalog-link-stack' : 'roster-link-stack';
-    const json = JSON.stringify(_linkStack);
-    localStorage.setItem(key, json);
+const _getHistoryKey = () => {
+    return _inCatalog ? 'catalog' : 'roster';
 }
 
-function goBack() {
-    if (_linkStack && _linkStack.length > 0) {
-        previousUrl = _linkStack.pop();
-        _saveStack();
-    }
-
-    window.location.href = previousUrl;
-}
-
-function goTo(nextUrl,doNavigation=true) {    
-    let myUrl = _currentUrl ? absoluteUrl(_currentUrl) : window.location.href;
-    if (!myUrl.includes('loadScrollData')) {
-        if (myUrl.includes('?')) {
-            myUrl = `${myUrl}&loadScrollData=true`
-        } else {
-            myUrl = `${myUrl}?loadScrollData=true`
+async function dynamicGoTo(settings, updateHistory=true, doLoadPage=true) {
+    const key = _getHistoryKey();
+    const name = settings.constructor.name.toLowerCase();
+    const types = Object.getOwnPropertyNames(dynamicPages);
+    for (let i = 0; i < types.length; ++i) {
+        const type = types[i];
+        const linkStack = _linkStack[key];
+        if (name.includes(type)) {
+            if (updateHistory && linkStack.currentSettings) {
+                linkStack.history.push({
+                    scrollY: window.scrollY || document.documentElement.scrollTop,
+                    settings: linkStack.currentSettings
+                });
+            }
+            linkStack.currentSettings = settings;
+            if (doLoadPage) {
+                enableBackButton();
+                deleteContextMenus();
+                await dynamicPages[type].loadPage(settings);
+            }
+            return;
         }
     }
-    _linkStack.push(myUrl);
-    _saveStack();
+}
 
-    console.log(`going to: ${nextUrl}`)
-    if(doNavigation)
-        window.location.href = absoluteUrl(encodeURI(nextUrl));
+const goBack = async () => {
+    const key = _getHistoryKey();
+    const linkStack = _linkStack[key];
+    if (linkStack.history.length > 0) {
+        previous = linkStack.history.pop();
+        await dynamicGoTo(previous.settings, false);
+        window.scrollTo(0, previous.scrollY);
+    }
     else
-        _currentUrl = absoluteUrl(encodeURI(nextUrl));
+        console.log('ERROR previous is bad');
 }
 
 function initializeHeader(options) {
-    const key = _inCatalog ? 'catalog-link-stack' : 'roster-link-stack';
-    
-    _linkStack = (() => {
-        const tmp = localStorage.getItem(key);
-        if (tmp)
-          return JSON.parse(tmp);
-        
-        return [];
-    })();
+    _linkStack = {
+        catalog: new HistoryStack,
+        roster: new HistoryStack
+    }
 
-    const main = document.querySelector('.main');
+    const main = document.querySelector('.persist');
     const header = document.createElement('header');
     header.innerHTML = `
         <div class="header-left">
@@ -82,4 +88,46 @@ function initializeHeader(options) {
 function setHeaderTitle(name) {
     const element = document.getElementById('army-header');
     element.textContent = name;
+}
+function enableBackButton() {
+    const hdr = document.querySelector('header');
+    const left = hdr.querySelector('.header-left');
+    left.style.display = 'block';
+}
+function disableBackButton() {
+    const hdr = document.querySelector('header');
+    const left = hdr.querySelector('.header-left');
+    left.style.display = 'none';
+}
+function enableHeaderContextMenu() {
+    const hdr = document.querySelector('header');
+    const right = hdr.querySelector('.header-right');
+    right.style.display = '';
+}
+
+function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
+    if (_headerMenuId.length > 0) {
+        deleteContextMenu(_headerMenuId);
+        _headerMenuId = '';
+    }
+    
+    const menu = createContextMenu(callbackMap, false);
+    _headerMenuId = menu.id;
+
+    const btn = menu.querySelector('.menu-btn');
+    btn.style.color = 'white';
+    btn.style.top = '.5em';
+    menu.style.zIndex = '1000';
+    const hdr = document.querySelector('header');
+    const right = hdr.querySelector('.header-right');
+    right.appendChild(menu);
+    if (autoDisplay) {
+        right.style.display = '';
+    }
+}
+
+function disableHeaderContextMenu() {
+    const hdr = document.querySelector('header');
+    const right = hdr.querySelector('.header-right');
+    right.style.display = 'none';
 }

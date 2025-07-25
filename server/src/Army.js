@@ -1,7 +1,7 @@
 
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
-import { UpgradeType } from "../shared/UpgradeType.js";
+import { UpgradeType } from "./types/UpgradeType.js";
 import { Lore } from './Lores.js';
 
 // id designation the legends publication

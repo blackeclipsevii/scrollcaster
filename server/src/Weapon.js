@@ -1,7 +1,7 @@
 
 import bsTextSmoother from "./lib/BsSmoother.js";
 
-import { WeaponType } from "../shared/WeaponType.js";
+import { WeaponType } from "./types/WeaponType.js";
 
 export default class Weapon {
     constructor(profileXml) {

@@ -1,10 +1,41 @@
 
+class UpgradeSettings {
+    type = null;
+    roster = null;
+    armyName = null;
+
+    isLore() {
+        return this.type && this.type.toLowerCase().includes('lore')
+    }
+}
+
 const upgradePage = {
-    loadPage : () => {
-        if (type)
-        type = decodeURI(type) + 's';
+    settings: null,
+    _cache: {
+        upgrades: null,
+        armyName: null
+    },
+    async fetchUpgrades(armyName) {
+        if (this._cache.upgrades && this._cache.armyName === armyName) {
+            return this._cache.upgrades;
+        }
+        let result = null;
+        await fetch(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
+            then(resp => resp.json()).
+            then(allUpgrades => result = allUpgrades);
+        this._cache.upgrades = result;
+        this._cache.armyName = armyName;
+        return result;
+    },
+    loadPage(settings) {
+        const thisPage = this;
         
-        function getList(upgrade) {
+        if (!settings)
+            settings = new UpgradeSettings;
+
+        thisPage.settings = settings;
+
+        const getList = (upgrade) => {
             let upgradeList = null;
             if (upgrade.type === 0) {
                 upgradeList = document.getElementById('artefacts-of-power-list');
@@ -19,14 +50,14 @@ const upgradePage = {
             }else if (upgrade.type === 4) {
                 upgradeList = document.getElementById('manifestation-lore-list');
             } else {
+                console.log(`upgrade: ${upgrade}`);
                 console.log(`type unknown: ${upgrade.name}`);
                 document.querySelector('.item-list');
             }
             return upgradeList;
         }
         
-        
-        function isUniversal(str) {
+        const isUniversal = (str) => {
             return str.startsWith("UNIVERSAL-");
         }
         
@@ -71,12 +102,13 @@ const upgradePage = {
             const heart = newFavoritesCheckbox(useableId, 'upgrade', onchange);
             right.append(heart);
         
-            if (rosterId) {
+            if (thisPage.settings.roster) {
                 const addBtn = document.createElement('button');
                 addBtn.classList.add('rectangle-button');
                 addBtn.textContent = '+';
                 addBtn.addEventListener('click', async (e) => {
                     e.stopPropagation(); // Prevents click from triggering page change
+                    const type = thisPage.settings.type;
                     if (type.includes('battleFormation')) {
                         roster.battleFormation = upgrade;
                     } else if (type.includes('tactic')) {
@@ -92,7 +124,6 @@ const upgradePage = {
                         item.classList.remove('not-added');
                     await putRoster(roster);
                     goBack();
-                    // window.location.href = `../army/army.html?id=${rosterId}`;
                 });
         
                 right.append(points, addBtn);
@@ -112,8 +143,8 @@ const upgradePage = {
                     return;
         
                 let upgradeNames = Object.getOwnPropertyNames(upgrades);
-                if (isLore) {
-                    if (rosterId) {
+                if (thisPage.settings && thisPage.settings.isLore()) {
+                    if (thisPage.settings.roster) {
                         upgradeNames = upgradeNames
                                         .sort((a, b) => {
                                             // Prioritize non-UNIVERSAL strings
@@ -124,7 +155,7 @@ const upgradePage = {
                                             // Sort alphabetically within each group
                                             return a.localeCompare(b);
                                         });
-                    } else if (armyName) {
+                    } else if (thisPage.settings.armyName) {
                         upgradeNames = upgradeNames.filter(name => !isUniversal(name));
                     }
                 }
@@ -135,32 +166,9 @@ const upgradePage = {
             });
         }
         
-        async function loadUpgradesCatalog() {
-            setHeaderTitle('Upgrades');
-            await fetch(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
-            then(resp => resp.json()).
-            then(allUpgrades => {
-                let upgradeList = [];
-                if (isLore) {
-                    // to-do add a header to label these seperately
-                    upgradeList = [];
-        
-                    const loreNames = Object.getOwnPropertyNames(allUpgrades.lores);
-                    loreNames.forEach(loreName => {
-                        upgradeList.push(allUpgrades.lores[loreName]);
-                    });
-        
-                } else {
-                    upgradeList = [allUpgrades[type]];
-                }
-                
-                displayUpgrades(upgradeList);
-                loadScrollData();
-            });
-        }
-        
         async function loadUniversalLores() {
             setHeaderTitle('Universal Manifestation Lores');
+            hidePointsOverlay();
             await fetch(encodeURI(`${endpoint}/lores`)).
             then(resp => resp.json()).
             then(loreObject => {
@@ -168,58 +176,55 @@ const upgradePage = {
                     const lore = loreObject.lores.manifestation[ulut.id];
                     displayUpgrade(lore);
                 });
-                loadScrollData();
             });
+        }
+        
+        async function loadUpgradesCatalog() {
+            setHeaderTitle('Upgrades');
+            hidePointsOverlay();
+            const allUpgrades = await thisPage.fetchUpgrades(thisPage.settings.armyName);
+            let upgradeList = [];
+            if (thisPage.settings && thisPage.settings.isLore()) {
+                // to-do add a header to label these seperately
+                upgradeList = [];
+    
+                const loreNames = Object.getOwnPropertyNames(allUpgrades.lores);
+                loreNames.forEach(loreName => {
+                    upgradeList.push(allUpgrades.lores[loreName]);
+                });
+    
+            } else {
+                upgradeList = [allUpgrades[thisPage.settings.type]];
+            }
+            
+            displayUpgrades(upgradeList);
         }
         
         async function loadUpgrades() {
             setHeaderTitle('Upgrades');
-            roster = await getRoster(rosterId);
-            displayPointsOverlay(rosterId);
-            refreshPointsOverlay(rosterId);
+            displayPointsOverlay(thisPage.settings.roster.id);
+            refreshPointsOverlay(thisPage.settings.roster.id);
             updateValidationDisplay();
         
-            await fetch(encodeURI(`${endpoint}/upgrades?army=${roster.army}`)).
-            then(resp => resp.json()).
-            then(allUpgrades => {
-                let upgradeList = [];
-                const isLore = type.toLowerCase().includes('lore');
-                if (isLore) {
-                    // to-do add a header to label these seperately
-                    upgradeList = [];
-        
-                    const loreNames = Object.getOwnPropertyNames(roster.lores);
-                    loreNames.forEach(loreName => {
-                        if (!roster.lores[loreName])
-                            upgradeList.push(allUpgrades.lores[loreName]);
-                    });
-        
-                } else {
-                    upgradeList = [allUpgrades[type]];
-                }
-                displayUpgrades(upgradeList);
-                loadScrollData();
-            });
+            const allUpgrades = await thisPage.fetchUpgrades(roster.army);
+            let upgradeList = [];
+            if (thisPage.settings && thisPage.settings.isLore()) {
+                // to-do add a header to label these seperately
+                upgradeList = [];
+    
+                const loreNames = Object.getOwnPropertyNames(roster.lores);
+                loreNames.forEach(loreName => {
+                    if (!roster.lores[loreName])
+                        upgradeList.push(allUpgrades.lores[loreName]);
+                });
+    
+            } else {
+                upgradeList = [allUpgrades[thisPage.settings.type]];
+            }
+            displayUpgrades(upgradeList);
         }
         
         const loadUpgradesPage = () => {
-            const _makeSection = (main, name) => {
-                const section = document.createElement('div');
-                section.style.display = 'none';
-                section.className = 'section';
-                section.innerHTML = `
-                    <h3 class="section-title">${name}</h3>
-                    <div class="item-list" id="${name.toLowerCase().replace(/ /g, '-')}-list"></div>
-                `;
-                main.appendChild(section);
-            }   
-        
-            const _makeLayout = (sections) => {
-                const main = document.querySelector('.main');
-                sections.forEach(name => {
-                    _makeSection(main, name)
-                });
-            }
             const sections = [
                 'Artefacts of Power', 
                 'Heroic Traits', 
@@ -228,17 +233,21 @@ const upgradePage = {
                 'Prayer Lore', 
                 'Manifestation Lore'
             ];
-            _makeLayout(sections);
-        
-            if (rosterId)
+
+            makeLayout(sections);
+            disableHeaderContextMenu();
+            if (thisPage.settings.roster)
                 loadUpgrades();
-            else if (armyName)
+            else if (thisPage.settings.armyName)
                 loadUpgradesCatalog();
             else
                 loadUniversalLores();
+            
+            swapLayout();
         }
         
-        addOverlayListener();
         loadUpgradesPage();
     }
 }
+
+dynamicPages['upgrades'] = upgradePage;

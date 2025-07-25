@@ -1,4 +1,3 @@
-@import "../../lib/root.css";
 
 .warscroll {
     display: flex;
@@ -22,6 +21,9 @@ td.characteristics,
 th.characteristics {
   text-align: center;
   vertical-align: middle;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 td.characteristics,

@@ -12,9 +12,9 @@ import parseCatalog from './lib/parseCatalog.js';
 
 import path from 'path';
 import Upgrade from './Upgrade.js';
-import { UpgradeType } from '../shared/UpgradeType.js';
+import { UpgradeType } from './types/UpgradeType.js';
 import { BsModifier, ConstraintType, getConstraints } from './lib/BsConstraint.js';
-import { UnitType } from '../shared/UnitType.js';
+import { UnitType } from './types/UnitType.js';
 
 function parseGameSystem(path) {
     const xmlContent = fs.readFileSync(path, 'utf8');
