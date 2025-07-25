@@ -12,6 +12,14 @@ const warscrollPage = {
         }
         this.settings = settings;
         const thisPage = this;
+        const _limitString = (str, max = 5) => {
+            if (typeof str !== 'string')
+                return '';
+            if (str.toLowerCase().includes('see'))
+                return '*';
+            return str.length <= max ? str : str.slice(0, max);
+        }
+
         const displayChars = (unit) => {
             whClearDiv('char');
             _initializeCharDiv();
@@ -121,9 +129,9 @@ const warscrollPage = {
                     cell = document.createElement("td");
                     cell.className = className;
                     if (cellData === 'R' && weaponList[i][lut[cellData]] !== 0) 
-                        cell.textContent = `-${weaponList[i][lut[cellData]]}`;
+                        cell.textContent = _limitString(`-${weaponList[i][lut[cellData]]}`);
                     else
-                        cell.textContent = weaponList[i][lut[cellData]];
+                        cell.textContent = _limitString(weaponList[i][lut[cellData]]);
                     dataRow.appendChild(cell);
                 });
                 profileTable.appendChild(dataRow);
@@ -248,7 +256,6 @@ const warscrollPage = {
             })
         }
         _makeUnitLayout();
-        enableBackButton();
         disableHeaderContextMenu();
         hidePointsOverlay();
         readUnit();

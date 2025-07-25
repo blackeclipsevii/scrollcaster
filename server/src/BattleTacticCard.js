@@ -1,7 +1,7 @@
 
 import bsTextSmoother from './lib/BsSmoother.js';
 
-import { BattleTacticType } from '../shared/BattleTacticType.js';
+import { BattleTacticType } from './types/BattleTacticType.js';
 
 export class BattleTactic {
     constructor (type, text) {

@@ -102,7 +102,6 @@ const tacticsPage = {
             });
         }
         setHeaderTitle('Battle Tactic Cards');
-        enableBackButton();
         disableHeaderContextMenu();
         _makeTacticLayout();
         loadTactics();

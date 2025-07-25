@@ -28,9 +28,7 @@ const catalogPage = {
         const thisPage = this;
 
         const coreVisible = (visible) => {
-            const bb = document.querySelector('.back-btn');
-            bb.style.display = visible ? 'none' : '';
-        
+            visible ? disableBackButton() : enableBackButton();
             const sec = document.getElementById('core-section');
             sec.style.display = visible ? '' : 'none';
         }
@@ -292,7 +290,6 @@ const catalogPage = {
                 clearLayout();
             }
             makeLayout(sections);
-            enableBackButton();
             disableHeaderContextMenu();
             hidePointsOverlay();
             document.getElementById('army-section').style.display = 'block';

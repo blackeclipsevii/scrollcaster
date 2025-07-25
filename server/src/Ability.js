@@ -1,5 +1,5 @@
 import bsTextSmoother from "./lib/BsSmoother.js"
-import { AbilityType } from "../shared/AbilityType.js";
+import { AbilityType } from "./types/AbilityType.js";
 
 export default class Ability {
     constructor(profile) {

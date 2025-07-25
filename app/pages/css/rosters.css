@@ -1,6 +1,3 @@
-@import "../lib/widgets/contextMenu.css";
-@import "../lib/root.css";
-@import "../lib/modal.css";
 
 .fab {
   position: fixed;
@@ -52,18 +49,21 @@
   left: .5em;
 }
 
-.modal input,
-.modal select {
+.roster-modal input,
+.roster-modal select {
   height: 3em;
 }
 
-.modal input, 
-.modal select, 
-.modal textarea {
+.roster-modal input, 
+.roster-modal select, 
+.roster-modal textarea {
   margin-bottom: 1em;
-  width: 85%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+.roster-modal textarea {
+  height: 6em;
 }

@@ -102,7 +102,6 @@ const builderPage = {
                 const content = parent.querySelector('.regiment-content');
                 const count = content.children.length;
 
-                const url = `/pages/list/list.html?id=${thisPage.roster.id}&regimentIndex=${idx}&army=${thisPage.roster.army}`;
                 const settings = new UnitSettings;
                 settings.roster = thisPage.roster;
                 settings.regimentIndex = idx;
@@ -1189,7 +1188,7 @@ const builderPage = {
                 'Faction Terrain'
             ];
 
-            enableBackButton();
+            updateHeaderContextMenu({ 'Export List': exportListAndDisplay });
             makeLayout(sections, factory);
 
             let btn = document.getElementById('battle-formation-add-button');

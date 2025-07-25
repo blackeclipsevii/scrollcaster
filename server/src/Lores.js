@@ -1,7 +1,7 @@
 import parseCatalog from "./lib/parseCatalog.js";
 
 import Upgrade from "./Upgrade.js";
-import { UpgradeType } from "../shared/UpgradeType.js";
+import { UpgradeType } from "./types/UpgradeType.js";
 
 export class Lore {
     constructor(selectionEntryGroup) {

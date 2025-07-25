@@ -404,7 +404,6 @@ const unitPage = {
             makeLayout(sections);
         }
         setHeaderTitle('Units');
-        enableBackButton();
         disableHeaderContextMenu();
 
         _makeUnitLayout();

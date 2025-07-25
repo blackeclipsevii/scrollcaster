@@ -48,6 +48,9 @@ const rosterPage = {
       });
 
       armySelect.onchange = () => {
+        const nameField = document.getElementById('name');
+        nameField.placeholder = `Name (Default: ${armySelect.value})`;
+
         const values = thisPage._ror[armySelect.value.trim()]
         const rorSelect = document.getElementById("ror");
         if (values && values.length > 0) {
@@ -65,11 +68,14 @@ const rosterPage = {
           rorSelect.style.display = 'none';
         }
       };
+
+      armySelect.onchange();
     }
 
     const setOverlayContents = () => {
       const modal = document.querySelector(".modal");
       modal.innerHTML = `
+        <h3 style='margin-top: 0px;'>Create Roster</h3>
         <div style='display: flex'>
           <select id="army"> </select>
           <div id="loader-box" style="margin-left: 1em; margin-right: 2em; width: 1em; height: 1em;">
@@ -79,7 +85,7 @@ const rosterPage = {
         <select style='display: none;' id="ror">
         </select>
 
-        <select id="ruleset">
+        <select disabled=true id="ruleset">
           <option value="">Select Ruleset</option>
           <option>GHB 2025-26</option>
         </select>
@@ -88,6 +94,7 @@ const rosterPage = {
         <input type="text" id="name" placeholder="Name" />
         <textarea id="description" placeholder="Description"></textarea>
       `;
+      modal.classList.add('roster-modal');
 
       const button = document.createElement('button');
       button.className = 'clickable-style full-rectangle-button';
@@ -158,37 +165,54 @@ const rosterPage = {
       entry.style.float = "left";
 
       const callbackMap = {
-        Rename: async (e) => {
-            const toggle = overlayToggleFactory('block', () => {
+        'Update Details': async (e) => {
+            const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
-              modal.innerHTML = '';
+              const armyParts = roster.army.split(' - ');
+              modal.innerHTML = `
+                <h3 style='margin-top: 0px;'>Update Roster Details</h3>
+                <div style='display: flex'>
+                  <select disabled=true id="army">
+                    <option value="">${armyParts[0]}</option>
+                  </select>
+                </div>
+                <select disabled=true style="${armyParts.length === 1 ? 'display: none;' : ''}">
+                    <option value="">${armyParts.length > 1 ? armyParts[1] : ''}</option>
+                </select>
 
-              const section = document.createElement('div');
-              section.innerHTML = `
-                <input type="text" id="replaceName" placeholder="${roster.name}" />
+                <select disabled=true>
+                  <option>GHB 2025-26</option>
+                </select>
+
+                <input value="2000" type="number" id="replacePoints" placeholder="Points" />
+                <input type="text" id="replaceName" placeholder="Name" value="${roster.name}"/>
+                <textarea id="replaceDesc" placeholder="Description">${roster.description}</textarea>
               `;
-              
+              modal.classList.add('roster-modal');
+
               const button = document.createElement('button');
-              button.className = 'full-rectangle-button';
-              button.textContent = 'Update Roster Name';
+              button.className = 'clickable-style full-rectangle-button';
+              button.textContent = 'Update Roster';
               button.onclick = async () => {
-                const element = document.getElementById('replaceName');
-                if (element.value.length !== 0) {
-                  roster.name = element.value;
-                  await putRoster(roster);
-                }
+                let rName = document.getElementById('replaceName').value;
+                if (rName.length === 0)
+                  rName = roster.name;
+                let rPoints = document.getElementById('replacePoints').value;
+                if (rPoints.length === 0)
+                  rPoints = roster.points;
+                const rDesc = document.getElementById('replaceDesc').value;
+                roster.name = rName;
+                roster.points = Number(rPoints);
+                roster.description = rDesc;
+                await putRoster(roster);
                 disableOverlay();
                 await viewRosters();
               };
 
-              modal.appendChild(section);
               modal.appendChild(button);
-              const offset = (window.innerWidth - modal.clientWidth) / 2.0;
-              modal.style.marginLeft = `${offset}px`;
           });
           toggle();
         },
-        
         Duplicate: async (e) => {
           const json = JSON.stringify(roster);
           const clone = JSON.parse(json);
@@ -237,6 +261,8 @@ const rosterPage = {
     async function createHeaderMenu() {
       const serverVersion = await getServerVersion();
       const bsdataRevision = await getBsDataVersion();
+      const bpVersion = await getBattleProfileVersion();
+
       const right = document.querySelector('.header-right');
       const callbackMap = {
         'About': () => {
@@ -248,6 +274,7 @@ const rosterPage = {
               section.innerHTML = `
                 <b>Client Version:</b> ${version} <br/>
                 <b>Server Version:</b> ${serverVersion} <br/>
+                <b>Battle Profile Version:</b> ${bpVersion} <br/>
                 <b>BSData:</b> ${bsdataRevision} <br/>
               `;
               
@@ -322,18 +349,12 @@ const rosterPage = {
           toggle();
         }
       };
-      const menu = createContextMenu(callbackMap);
-      const btn = menu.querySelector('.menu-btn');
-      btn.style.color = 'white';
-      btn.style.top = '.5em';
-      menu.style.zIndex = '1000';
-      right.appendChild(menu);
 
+      updateHeaderContextMenu(callbackMap);
     }
 
     async function viewRosters() {
-      if (!document.querySelector('.menu'))
-        createHeaderMenu();
+      createHeaderMenu();
 
       const armies = document.getElementById("roster-list");
       armies.innerHTML = '';
@@ -388,6 +409,7 @@ const rosterPage = {
     _makePage = () => {
       setHeaderTitle('scrollcaster');
       hidePointsOverlay();
+      console.log('disable back');
       disableBackButton();
       let oldEle = document.getElementById('roster-list');
       if (oldEle) {

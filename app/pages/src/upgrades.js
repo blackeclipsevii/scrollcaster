@@ -235,8 +235,6 @@ const upgradePage = {
             ];
 
             makeLayout(sections);
-        
-            enableBackButton();
             disableHeaderContextMenu();
             if (thisPage.settings.roster)
                 loadUpgrades();

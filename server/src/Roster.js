@@ -1,5 +1,5 @@
 
-import { UnitType } from "../shared/UnitType.js";
+import { UnitType } from "./types/UnitType.js";
 
 export default class Roster {
     constructor(army) {

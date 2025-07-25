@@ -3,6 +3,7 @@ class HistoryStack {
     history = [];
 }
 var _linkStack = null;
+var _headerMenuId = '';
 
 const absoluteUrl = (relativePath) => {
     const rootUrl = window.location.origin;
@@ -28,8 +29,11 @@ async function dynamicGoTo(settings, updateHistory=true, doLoadPage=true) {
                 });
             }
             linkStack.currentSettings = settings;
-            if (doLoadPage)
+            if (doLoadPage) {
+                enableBackButton();
+                deleteContextMenus();
                 await dynamicPages[type].loadPage(settings);
+            }
             return;
         }
     }
@@ -88,7 +92,7 @@ function setHeaderTitle(name) {
 function enableBackButton() {
     const hdr = document.querySelector('header');
     const left = hdr.querySelector('.header-left');
-    left.style.display = '';
+    left.style.display = 'block';
 }
 function disableBackButton() {
     const hdr = document.querySelector('header');
@@ -97,11 +101,33 @@ function disableBackButton() {
 }
 function enableHeaderContextMenu() {
     const hdr = document.querySelector('header');
-    const left = hdr.querySelector('.header-right');
-    left.style.display = '';
+    const right = hdr.querySelector('.header-right');
+    right.style.display = '';
 }
+
+function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
+    if (_headerMenuId.length > 0) {
+        deleteContextMenu(_headerMenuId);
+        _headerMenuId = '';
+    }
+    
+    const menu = createContextMenu(callbackMap, false);
+    _headerMenuId = menu.id;
+
+    const btn = menu.querySelector('.menu-btn');
+    btn.style.color = 'white';
+    btn.style.top = '.5em';
+    menu.style.zIndex = '1000';
+    const hdr = document.querySelector('header');
+    const right = hdr.querySelector('.header-right');
+    right.appendChild(menu);
+    if (autoDisplay) {
+        right.style.display = '';
+    }
+}
+
 function disableHeaderContextMenu() {
     const hdr = document.querySelector('header');
-    const left = hdr.querySelector('.header-right');
-    left.style.display = 'none';
+    const right = hdr.querySelector('.header-right');
+    right.style.display = 'none';
 }
