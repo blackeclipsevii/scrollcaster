@@ -34,7 +34,7 @@ FROM base
 
 # Copy built application
 COPY --from=build /scrollcaster/dist /scrollcaster
-COPY --from=build /scrollcaster/server/resources /scrollcaster
+COPY --from=build /scrollcaster/server/resources /scrollcaster/server
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000

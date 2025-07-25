@@ -18,7 +18,7 @@
     "typescript": "^5.8.3"
   },
   "scripts": {
-    "build": "tsc -p .",
+    "build": "npx tsc -p .",
     "start": "npm run build -- -w",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
