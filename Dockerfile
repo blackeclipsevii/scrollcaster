@@ -23,6 +23,7 @@ RUN apt-get update -qq && \
 # Install node modules
 COPY package.json ./
 RUN npm install
+RUN npm run build
 
 # Copy application code
 COPY . .
