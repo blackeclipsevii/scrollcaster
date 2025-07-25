@@ -4,7 +4,7 @@ const endpoint = port ? `${hostname}:${port}` : hostname;
 var roster = null;
 var dynamicPages = {};
 var previousUrl = document.referrer;
-var version = '0.3.1beta';
+var version = '0.4.0beta';
 let _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
 function unitTotalPoints(unit) {
