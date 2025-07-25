@@ -32,8 +32,8 @@ RUN npm run build
 FROM base
 
 # Copy built application
-COPY --from=build /scrollcaster/dist /scrollcaster
-COPY --from=build /scrollcaster/package.json /scrollcaster/package.json
+COPY --from=build --excludes=/scrollcaster/server --excludes=/scrollcaster/dist /scrollcaster /scrollcaster
+COPY --from=build /scrollcaster/dist /scrollcaster/server
 COPY --from=build /scrollcaster/server/resources /scrollcaster/server/resources
 
 # Start the server by default, this can be overwritten at runtime
