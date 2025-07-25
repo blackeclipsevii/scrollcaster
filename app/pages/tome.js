@@ -1,6 +1,32 @@
 
+class CatalogSettings {
+    armyName = null;
+    core = false;
+};
+
 const catalogPage = {
-    loadPage: () => {
+    settings: null,
+    _cache: {
+        armies: null,
+        regimentsOfRenown: null
+    },
+    async fetchRegimentsOfRenown() {
+        if (this._cache.regimentsOfRenown) {
+            //return this._cache.regimentsOfRenown;
+        }
+        let result = null;
+        await fetch(encodeURI(`${endpoint}/regimentsOfRenown`)).
+              then(resp => resp.json()).
+              then(units => result = units);
+        this._cache.regimentsOfRenown = result;
+        return result;
+    },
+    async loadPage(settings) {
+        if (!settings)
+            settings = new CatalogSettings;
+        this.settings = settings;
+        const thisPage = this;
+
         const coreVisible = (visible) => {
             const bb = document.querySelector('.back-btn');
             bb.style.display = visible ? 'none' : '';
@@ -48,19 +74,17 @@ const catalogPage = {
             h2.textContent = 'Age of Sigmar';
         
             makeItem('Warscrolls', () => {
-                goTo(`/pages/list/list.html`);
+                dynamicGoTo(new UnitSettings);
             });
             
             makeItem('Battle Tactic Cards', () => {
-                goTo(`/pages/list/list.html?tactics=true`, false);
-                tacticsPage.loadPage();
+                dynamicGoTo(new TacticsSettings);
             });          
         
             makeItem('Lores', () => {
-                goTo(`/pages/list/list.html?type=lore&upgrades=true`, false);
                 const ugSettings = new UpgradeSettings;
                 ugSettings.type = 'lores';
-                dynamicPages['upgrades'].loadPage(ugSettings);
+                dynamicGoTo(ugSettings);
             });
         }
         
@@ -68,18 +92,14 @@ const catalogPage = {
             coreVisible(false);
             resetLists();
             const h2 = document.getElementById('army-section').querySelector('.section-title');
-
             h2.textContent = 'Regiments of Renown';
         
-            await fetch(encodeURI(`${endpoint}/regimentsOfRenown`)).
-            then(resp => resp.json()).
-            then(unitsLUT => {
-                const units = Object.values(unitsLUT);
-                units.forEach(regimentOfRenown => {
-                    makeItem(regimentOfRenown.name, () => {
-                        displayUpgradeOverlay(regimentOfRenown.upgrades);
-                    }, 'item-list', regimentOfRenown.points);
-                });
+            const unitsLUT = await thisPage.fetchRegimentsOfRenown();
+            const units = Object.values(unitsLUT);
+            units.forEach(regimentOfRenown => {
+                makeItem(regimentOfRenown.name, () => {
+                    displayUpgradeOverlay(regimentOfRenown.upgrades);
+                }, 'army-list', regimentOfRenown.points);
             });
         }
         
@@ -87,7 +107,7 @@ const catalogPage = {
             coreVisible(false);
             resetLists();
             const h2 = document.getElementById('army-section').querySelector('.section-title');
-            h2.textContent = armyName;
+            h2.textContent = thisPage.settings.armyName;
         
             const _loadFaction = async (subFactionName) => {
                 resetLists();
@@ -99,7 +119,9 @@ const catalogPage = {
         
                     if (army.units) {
                         makeItem('Warscrolls', () => {
-                            goTo(`/pages/list/list.html?army=${subFactionName}`);
+                            const settings = new UnitSettings;
+                            settings.armyName = subFactionName;
+                            dynamicGoTo(settings);
                         });
                     }
         
@@ -116,31 +138,28 @@ const catalogPage = {
         
                     if (!army.isArmyOfRenown && army.upgrades.battleFormations) {
                         makeItem('Battle Formations', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=battleFormation&upgrades=true`, false);
-                            const ugSettings = new UpgradeSettings;
-                            ugSettings.type = 'battleFormations';
-                            ugSettings.armyName = subFactionName;
-                            dynamicPages['upgrades'].loadPage(ugSettings);
+                            const settings = new UpgradeSettings;
+                            settings.type = 'battleFormations';
+                            settings.armyName = subFactionName;
+                            dynamicGoTo(settings);
                         });          
                     }
         
                     if (army.upgrades.artefacts) {
                         makeItem('Artefacts of Power', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=artefact&upgrades=true`, false);
-                            const ugSettings = new UpgradeSettings;
-                            ugSettings.type = 'artefacts';
-                            ugSettings.armyName = subFactionName;
-                            dynamicPages['upgrades'].loadPage(ugSettings);
+                            const settings = new UpgradeSettings;
+                            settings.type = 'artefacts';
+                            settings.armyName = subFactionName;
+                            dynamicGoTo(settings);
                         });          
                     }
         
                     if (army.upgrades.heroicTraits) {
                         makeItem('Heroic Traits', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=heroicTrait&upgrades=true`, false);
                             const ugSettings = new UpgradeSettings;
                             ugSettings.type = 'heroicTraits';
                             ugSettings.armyName = subFactionName;
-                            dynamicPages['upgrades'].loadPage(ugSettings);
+                            dynamicGoTo(settings);
                         });          
                     }
         
@@ -148,11 +167,10 @@ const catalogPage = {
                         Object.getOwnPropertyNames(army.upgrades.lores.spell).length > 0||
                         Object.getOwnPropertyNames(army.upgrades.lores.prayer).length > 0) {
                         makeItem('Lores', () => {
-                            goTo(`/pages/list/list.html?armyName=${subFactionName}&type=lore&upgrades=true`, false);
                             const ugSettings = new UpgradeSettings;
                             ugSettings.type = 'lores';
                             ugSettings.armyName = subFactionName;
-                            dynamicPages['upgrades'].loadPage(ugSettings);
+                            dynamicGoTo(ugSettings);
                         });          
                     }
                 });
@@ -162,7 +180,7 @@ const catalogPage = {
                 const subfactions = [];
                 await fetchArmies(async (allArmies) => {
                     allArmies.forEach(army => {
-                        if (army.includes(armyName)) {
+                        if (army.includes(thisPage.settings.armyName)) {
                             subfactions.push(army);
                         }
                     });
@@ -170,9 +188,12 @@ const catalogPage = {
                     if (subfactions.length > 1) {
                          subfactions.every(army => {
                             if (!army.includes(' - ')) {
-                                makeItem(armyName, () => {
-                                    goTo(`/pages/list/list.html?army=${armyName}&loadScrollData=true&catalog=true`, false);
-                                    _loadFaction(armyName);
+                                makeItem(army, () => {
+                                    const settings = new CatalogSettings;
+                                    settings.armyName = army;
+                                    dynamicGoTo(settings, true, false); // update history but dont go
+                                    thisPage.settings = settings;
+                                    _loadFaction(army);
                                 });
                                 return false;
                             }
@@ -182,16 +203,16 @@ const catalogPage = {
                         subfactions.forEach(army => {
                             if (army.includes(' - ')) {
                                 makeItem(army.split(' - ')[1], () => {
-                                    goTo(`/pages/list/list.html?army=${army}&loadScrollData=true&catalog=true`, false);
+                                    const settings = new CatalogSettings;
+                                    settings.armyName = army;
+                                    dynamicGoTo(settings, true, false); // update history but dont go
+                                    thisPage.settings = settings;
                                     _loadFaction(army);
                                 });
                             }
                         });
-                        
-                        loadScrollData();
                     } else {
-                        _loadFaction(armyName);
-                        loadScrollData();   
+                        _loadFaction(thisPage.settings.armyName);
                     }
                 });
         
@@ -205,47 +226,48 @@ const catalogPage = {
 
             h2.textContent = 'Armies';
         
-            makeItem('Age of Sigmar', () => {
-                goTo(`/pages/list/list.html?core=true&catalog=true`, false);
+            makeItem('Age of Sigmar', async () => {
+                const settings = new CatalogSettings;
+                settings.core = true;
+                dynamicGoTo(settings, true, false); // update history but dont go
                 coreVisible(false);
                 resetLists();
-                core = true;
-                armyName = null;
-                loadCore();
+                thisPage.settings = settings;
+                await loadCore();
             }, 'core-list');
             
             makeItem('Regiments of Renown', () => {
-                goTo(`/pages/list/list.html?army=ror&catalog=true`, false);
+                const settings = new CatalogSettings;
+                settings.armyName = 'ror';
+                dynamicGoTo(settings, true, false); // update history but dont go
                 coreVisible(false);
                 resetLists();
-                core = false;
-                armyName = null;
+                thisPage.settings = settings;
                 loadRor();
             }, 'core-list');
         
-            const loader = document.getElementById('core-loader-box');
-            loader.style.display = 'block';
+            const loader = document.getElementById('armies-loader-box');
+            //loader.style.display = 'block';
             await fetchArmies(async (allArmies) => {
-                loader.style.display = 'none';
+              //  loader.style.display = 'none';
                 allArmies.forEach(army => {
                     if (army.includes(' - '))
                         return;
         
                     makeItem(army, () => {
-                        goTo(`/pages/list/list.html?army=${army}&catalog=true`, false);
+                        const settings = new CatalogSettings;
+                        settings.armyName = army;
+                        dynamicGoTo(settings, true, false); // update history but dont go
                         coreVisible(false);
                         resetLists();
-                        core = false;
-                        armyName = army;
+                        thisPage.settings = settings;
                         loadTome();
                     }, 'army-list');
                 });
-                
-                loadScrollData();
             });
         }
         
-        const loadTomePage = () => {
+        const loadTomePage = async () => {
             const _makeSection = (main, name) => {
                 const section = document.createElement('div');
                 section.style.display = 'none';
@@ -263,28 +285,29 @@ const catalogPage = {
                 main.appendChild(section);
             }   
         
-            const _makeLayout = (sections) => {
-                const main = document.querySelector('.main');
-                sections.forEach(name => {
-                    _makeSection(main, name)
-                });
-            }
             const sections = [
                 'Core', 'Army'
             ];
-            _makeLayout(sections);
+            if (document.getElementById('core-section')) {
+                clearLayout();
+            }
+            makeLayout(sections);
+            enableBackButton();
+            disableHeaderContextMenu();
+            hidePointsOverlay();
             document.getElementById('army-section').style.display = 'block';
 
-            if (armyName)
-                armyName === 'ror' ? loadRor() : loadTome();
-            else if (core)
-                loadCore();
+            if (thisPage.settings.armyName)
+                thisPage.settings.armyName === 'ror' ? await loadRor() : await loadTome();
+            else if (thisPage.settings.core)
+                await loadCore();
             else
-                loadArmies();
-                
+                await loadArmies();
+            
+            swapLayout();
         }
         setHeaderTitle('Catalog');
-        loadTomePage();
+        await loadTomePage();
     }
 };
 

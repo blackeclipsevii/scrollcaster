@@ -1,6 +1,6 @@
-@import "lib/widgets/contextMenu.css";
-@import "lib/root.css";
-@import "lib/modal.css";
+@import "../lib/widgets/contextMenu.css";
+@import "../lib/root.css";
+@import "../lib/modal.css";
 
 .fab {
   position: fixed;
@@ -38,13 +38,6 @@
   transform: translateY(2px);
 }
 
-.modal {
-  background: white;
-  padding: 2em;
-  display: flex;
-  flex-direction: column;
-}
-
 .menu-blob {
   float: right;
   width: 2em;
@@ -59,12 +52,16 @@
   left: .5em;
 }
 
-input, select {
+.modal input,
+.modal select {
   height: 3em;
 }
 
-input, select, textarea {
-  width: 85%; /* Choose any width that suits your design */
+.modal input, 
+.modal select, 
+.modal textarea {
+  margin-bottom: 1em;
+  width: 85%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;

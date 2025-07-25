@@ -1,4 +1,6 @@
-@import "../../lib/root.css";
+@import "../lib/root.css";
+@import "../lib/modal.css";
+@import "../lib/items.css";
 
 .warscroll {
     display: flex;

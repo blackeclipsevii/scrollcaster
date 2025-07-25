@@ -1,12 +1,11 @@
 const hostname = "https://army-thing.fly.dev";
 const port = null;
 const endpoint = port ? `${hostname}:${port}` : hostname;
-var _loadScrollData = false;
 var roster = null;
 var dynamicPages = {};
 var previousUrl = document.referrer;
 var version = '0.3.1beta';
-const _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
+let _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
 function unitTotalPoints(unit) {
     if (!unit.points)
@@ -53,7 +52,7 @@ const rosterTotalPoints = (roster) => {
 }
 
 const fetchArmies = async (callback, retry = 10) => {
-  fetch(`${endpoint}/armies`).
+  await fetch(`${endpoint}/armies`).
   then(resp => {
     if (resp.status !== 200)
       throw 'retry';
@@ -86,27 +85,4 @@ function generateId() {
         const v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
-}
-
-window.addEventListener("beforeunload", () => {
-    sessionStorage.setItem(`scrollY${window.document.title}`, window.scrollY);
-});
-
-window.addEventListener( "pageshow", function ( event ) {
-    const params = new URLSearchParams(window.location.search);
-    const lsd = params.get('loadScrollData');
-    if (lsd)
-        _loadScrollData = true;
-});
-
-function loadScrollData() {
-    if (_loadScrollData) {
-        console.log(`loading scroll`)
-        _loadScrollData = false;
-        const scrollY = sessionStorage.getItem(`scrollY${window.document.title}`);
-        if (scrollY !== null) {
-            console.log(`scroll ${scrollY}`)
-            window.scrollTo(0, parseInt(scrollY));
-        }
-    }
 }

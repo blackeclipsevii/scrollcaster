@@ -8,12 +8,24 @@ function _loadTotalPoints(id) {
     totalPoints = Number(localStorage.getItem(`${id}-total-points`));
 }
 
-function displayPointsOverlay(id) {
-    const main = document.querySelector('.main');
-    const overlay = document.createElement('div');
-    overlay.id = 'pointsOverlay';
-    main.appendChild(overlay);
+const displayPointsOverlay = (id) => {
+    let overlay = document.getElementById('pointsOverlay');
+    if (!overlay) {
+        const main = document.querySelector('.persist');
+        overlay = document.createElement('div');
+        overlay.id = 'pointsOverlay';
+        main.appendChild(overlay);
+    } else {
+        overlay.style.display = '';
+    }
     _loadTotalPoints(id);
+}
+
+const hidePointsOverlay = () => {
+    let overlay = document.getElementById('pointsOverlay');
+    if (!overlay)
+        return;
+    overlay.style.display = 'none';
 }
 
 async function updateValidationDisplay() {

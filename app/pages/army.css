@@ -1,6 +1,6 @@
-@import "../../lib/root.css";
-@import "../../lib/modal.css";
-@import "../../lib/widgets/contextMenu.css";
+@import "../lib/root.css";
+@import "../lib/modal.css";
+@import "../lib/widgets/contextMenu.css";
 
 .regiment-item {
   align-items: center;

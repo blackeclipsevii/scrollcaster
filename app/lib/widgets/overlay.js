@@ -9,7 +9,7 @@ const addOverlayListener = () => {
         modal.className = 'modal';
         overlay.appendChild(modal);
 
-        let main = document.querySelector('.main');
+        let main = document.querySelector('.persist');
         if (!main)
             main = document.querySelector('body');
         main.appendChild(overlay);

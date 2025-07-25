@@ -17,7 +17,7 @@ const upgradePage = {
     },
     async fetchUpgrades(armyName) {
         if (this._cache.upgrades && this._cache.armyName === armyName) {
-            return this._cache.upgraes;
+            return this._cache.upgrades;
         }
         let result = null;
         await fetch(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
@@ -102,7 +102,7 @@ const upgradePage = {
             const heart = newFavoritesCheckbox(useableId, 'upgrade', onchange);
             right.append(heart);
         
-            if (rosterId) {
+            if (thisPage.settings.roster) {
                 const addBtn = document.createElement('button');
                 addBtn.classList.add('rectangle-button');
                 addBtn.textContent = '+';
@@ -124,7 +124,6 @@ const upgradePage = {
                         item.classList.remove('not-added');
                     await putRoster(roster);
                     goBack();
-                    // window.location.href = `../army/army.html?id=${rosterId}`;
                 });
         
                 right.append(points, addBtn);
@@ -169,6 +168,7 @@ const upgradePage = {
         
         async function loadUniversalLores() {
             setHeaderTitle('Universal Manifestation Lores');
+            hidePointsOverlay();
             await fetch(encodeURI(`${endpoint}/lores`)).
             then(resp => resp.json()).
             then(loreObject => {
@@ -176,12 +176,12 @@ const upgradePage = {
                     const lore = loreObject.lores.manifestation[ulut.id];
                     displayUpgrade(lore);
                 });
-                loadScrollData();
             });
         }
         
         async function loadUpgradesCatalog() {
             setHeaderTitle('Upgrades');
+            hidePointsOverlay();
             const allUpgrades = await thisPage.fetchUpgrades(thisPage.settings.armyName);
             let upgradeList = [];
             if (thisPage.settings && thisPage.settings.isLore()) {
@@ -198,7 +198,6 @@ const upgradePage = {
             }
             
             displayUpgrades(upgradeList);
-            loadScrollData();
         }
         
         async function loadUpgrades() {
@@ -223,7 +222,6 @@ const upgradePage = {
                 upgradeList = [allUpgrades[thisPage.settings.type]];
             }
             displayUpgrades(upgradeList);
-            loadScrollData();
         }
         
         const loadUpgradesPage = () => {
@@ -236,15 +234,18 @@ const upgradePage = {
                 'Manifestation Lore'
             ];
 
-            clearLayout();
             makeLayout(sections);
         
+            enableBackButton();
+            disableHeaderContextMenu();
             if (thisPage.settings.roster)
                 loadUpgrades();
             else if (thisPage.settings.armyName)
                 loadUpgradesCatalog();
             else
                 loadUniversalLores();
+            
+            swapLayout();
         }
         
         loadUpgradesPage();

@@ -1,31 +1,5 @@
-var _lastLink = null;
-
 function initializeFooter(root) {
-    const key = _inCatalog ? 'catalog-last-link' : 'roster-last-link';
-    const defaultRosterLink = absoluteUrl(`/index.html`);
-    const defaultCatLink = absoluteUrl(`/pages/list/list.html?catalog=true`);
-
-    const saveLink = () => {
-      const otherKey = _inCatalog ? 'roster-last-link' : 'catalog-last-link';
-      let value = window.location.href;
-      if (!value.includes('loadScrollData')) {
-        const delim = value.includes('?') ? '&' : '?';
-        value = `${value}${delim}loadScrollData=true`;
-      }
-      localStorage.setItem(otherKey, value);
-    };
-
-    _lastLink = (() => {
-        const tmp = localStorage.getItem(key);
-        if (tmp)
-          return tmp;
-        
-        if (_inCatalog)
-          return defaultRosterLink;
-        return defaultCatLink;
-    })();
-
-    const main = document.querySelector('.main');
+    const main = document.querySelector('.persist');
     const footer = document.createElement('footer');
     footer.innerHTML = `
       <div class='footer-button footer-left'>
@@ -41,22 +15,30 @@ function initializeFooter(root) {
 
     const left = document.getElementById('catalog-button');
     left.onclick = () => {
-      localStorage.setItem('inCatalog', 'true');
       if (_inCatalog) {
-        window.location.href = encodeURI(defaultCatLink);
+        dynamicGoTo(new CatalogSettings);
+        _linkStack['catalog'].history = [];
       } else {
-        saveLink();
-        window.location.href = _lastLink;
+        localStorage.setItem('inCatalog', 'true');
+        _inCatalog = true;
+        if (_linkStack['catalog'].currentSettings)
+          dynamicGoTo(_linkStack['catalog'].currentSettings, false);
+        else
+          dynamicGoTo(new CatalogSettings);
       }
     };
     const right = document.getElementById('army-button');
     right.onclick = () => {
-      localStorage.setItem('inCatalog', 'false');
       if (!_inCatalog) {
-        window.location.href = encodeURI(defaultRosterLink);
+        dynamicGoTo(new RosterSettings);
+        _linkStack['roster'].history = [];
       } else {
-        saveLink();
-        window.location.href = _lastLink;
+        localStorage.setItem('inCatalog', 'false');
+        _inCatalog = false;
+        if (_linkStack['roster'].currentSettings)
+          dynamicGoTo(_linkStack['roster'].currentSettings, false);
+        else
+          dynamicGoTo(new RosterSettings);
       }
     };
 }
