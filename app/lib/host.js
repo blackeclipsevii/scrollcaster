@@ -1,5 +1,5 @@
-const hostname = "http://localhost"; //"https://army-thing.fly.dev";
-const port = 3000;
+const hostname = "https://army-thing.fly.dev";
+const port = null;
 const endpoint = port ? `${hostname}:${port}` : hostname;
 var roster = null;
 var dynamicPages = {};
