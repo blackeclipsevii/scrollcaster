@@ -96,8 +96,8 @@ footer {
 .fab {
   position: fixed;
   bottom: 3em;
-  width: 2.75em;
-  height: 2.75em;
+  width: 2.5em;
+  height: 2.5em;
   background-color: var(--blue-color);
   border: solid white 4px;
   color: white;
