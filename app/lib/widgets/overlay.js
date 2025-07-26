@@ -23,12 +23,12 @@ const addOverlayListener = () => {
 }
 
 const enableOverlay = (style) => {
-    document.body.classList.add('no-scroll');
+  //  document.body.classList.add('no-scroll');
     overlay.style.display = style;
 }
 
 const disableOverlay = () => {
-    document.body.classList.remove('no-scroll');
+  //  document.body.classList.remove('no-scroll');
     const modal = overlay.querySelector('.modal');
     modal.style.margin = '';
     overlay.style.display = 'none';

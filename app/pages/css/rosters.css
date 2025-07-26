@@ -1,18 +1,4 @@
 
-.fab {
-  position: fixed;
-  bottom: 3em;
-  right: 1em;
-  width: 2em;
-  height: 2em;
-  background-color: var(--blue-color);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  font-size: 2em;
-  cursor: pointer;
-}
-
 .army-card {
   display: inline-block;
   border: 1px solid #ccc;

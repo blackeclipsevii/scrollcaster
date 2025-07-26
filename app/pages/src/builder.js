@@ -1245,3 +1245,11 @@ const builderPage = {
 };
 
 dynamicPages['builder'] = builderPage;
+
+// (async () => {
+//   const settings = new BuilderSettings
+//   roster = await getRoster('e6d0831b-d3e3-4342-87f7-1c68a2b4bebf');
+//   settings.roster = roster;
+//   _linkStack['roster'].currentSettings = settings;
+//   dynamicGoTo(settings);
+// })();

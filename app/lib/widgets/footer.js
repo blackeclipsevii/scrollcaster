@@ -2,18 +2,18 @@ function initializeFooter(root) {
     const main = document.querySelector('.persist');
     const footer = document.createElement('footer');
     footer.innerHTML = `
-      <div class='footer-button footer-left'>
-        <div id='catalog-button'>Catalog</div>
+      <div id='footer-left' class='footer-button footer-left'>
         <img src='${root}/resources/abSpecial.png'></img>
+        <div id='catalog-button'>Catalog</div>
       </div>
-      <div class='footer-button footer-right'>
-        <div id='army-button'>Rosters</div>
+      <div id='footer-right' class='footer-button footer-right'>
         <img src='${root}/resources/abOffensive.png'></img>
+        <div id='army-button'>Rosters</div>
       </div>
     `;
     main.appendChild(footer);
 
-    const left = document.getElementById('catalog-button');
+    const left = document.getElementById('footer-left');
     left.onclick = () => {
       if (_inCatalog) {
         dynamicGoTo(new CatalogSettings);
@@ -27,7 +27,7 @@ function initializeFooter(root) {
           dynamicGoTo(new CatalogSettings);
       }
     };
-    const right = document.getElementById('army-button');
+    const right = document.getElementById('footer-right');
     right.onclick = () => {
       if (!_inCatalog) {
         dynamicGoTo(new RosterSettings);
