@@ -1,11 +1,11 @@
 .regiment-item {
   align-items: center;
-  padding: 0.5rem;
+  padding: 1%;
   background: #f2f2f2;
   border-radius: var(--border-radius);
-  margin-top: 0.5rem;
+  margin-bottom: .5em;
   position: relative;
-  width: 95%;
+  width: 96%;
   font-size: 14px;
 }
 
@@ -28,9 +28,13 @@
 }
 
 .unit-slot {
+  box-sizing: border-box;
   border: 1px solid #ccc;
-  width: 95%;
-  margin: 5px auto;
+  width: 100%;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  margin-left: 0px;
+  margin-right: 0px;
   font-size: 14px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, .15);
 }

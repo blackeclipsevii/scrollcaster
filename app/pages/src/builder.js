@@ -1152,7 +1152,7 @@ const builderPage = {
                     <h3 id="${adjustedName}-section-title" class="section-title">${name}
                     <button id="${adjustedName}-add-button" class="rectangle-button">+</button>
                     </h3>
-                    <div class="section-container" id="${adjustedName}-container"></div>
+                    <div style='display: block' class="section-container" id="${adjustedName}-container"></div>
                 `;
                 main.appendChild(section);
 

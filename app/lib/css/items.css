@@ -1,15 +1,3 @@
-.section {
-    gap: 1rem;
-    padding: .25rem;
-    border-bottom: 1px solid #ccc;
-}
-
-.section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .item-list {
     display: flex;
     flex-direction: column;
