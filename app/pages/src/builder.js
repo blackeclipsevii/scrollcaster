@@ -9,6 +9,21 @@ class BuilderSettings {
 const builderPage = {
     roster: null,
     settings: null,
+    _cache: {
+        upgrades: null,
+        armyName: null
+    },
+    async fetchUpgrades() {
+        if(this._cache.upgrades && this._cache.armyName === this.roster.army)
+            return this._cache.upgrades;
+        const url = encodeURI(`${endpoint}/upgrades?army=${this.roster.army}`);
+        const result = await fetch(url).then(resp => resp.json()).catch(_ => null);
+        if (result){
+            this._cache.upgrades = result;
+            this._cache.armyName = this.roster.army;
+        }
+        return result;
+    },
     async loadPage(settings) {
         if (!settings) {
             throw 'builder requires settings';
@@ -148,76 +163,72 @@ const builderPage = {
 
         async function displayEnhancements(unit, newUsItem, type) {
             const details = newUsItem.querySelector(`.available-${type}s`);
-            await fetch(encodeURI(`${endpoint}/upgrades?army=${thisPage.roster.army}`)).
-            then(resp => resp.json()).
-            then(allUpgrades => {
-                const upgrades = allUpgrades[`${type}s`];
-                const names = Object.getOwnPropertyNames(upgrades);
-                names.forEach(name => {
-                    const upgrade = upgrades[name];
-                    const upgradeDiv = document.createElement('div');
-                    upgradeDiv.className = 'upgrade-group';
+            const allUpgrades = await thisPage.fetchUpgrades();
+            const upgrades = allUpgrades[`${type}s`];
+            const values = Object.values(upgrades);
+            values.forEach(upgrade => {
+                const upgradeDiv = document.createElement('div');
+                upgradeDiv.className = 'upgrade-group';
 
-                    upgradeDiv.innerHTML = `
-                    <div class='upgrade-group-left'>
-                    <label class="upgrade-label">
-                        <input type="checkbox" class="upgrade-checkbox">${name}
-                    </label>
-                    </div>
-                    <div class='upgrade-group-right'>
-                        <button class="upgrade-button">🔎</button>
-                        <div style='display: inline-block' class='upgrade-points points-label'>${upgrade.points} PTS</div>
-                    </div>`;
+                upgradeDiv.innerHTML = `
+                <div class='upgrade-group-left'>
+                <label class="upgrade-label">
+                    <input type="checkbox" class="upgrade-checkbox">${upgrade.name}
+                </label>
+                </div>
+                <div class='upgrade-group-right'>
+                    <button class="upgrade-button">🔎</button>
+                    <div style='display: inline-block' class='upgrade-points points-label'>${upgrade.points} PTS</div>
+                </div>`;
 
-                    const costsPoints = upgrade.points && upgrade.points > 0;
-                    if (!costsPoints) {
-                        const pl = upgradeDiv.querySelector('.points-label');
-                        pl.style.display = 'none';
-                    }
+                const costsPoints = upgrade.points && upgrade.points > 0;
+                if (!costsPoints) {
+                    const pl = upgradeDiv.querySelector('.points-label');
+                    pl.style.display = 'none';
+                }
 
-                    const label = upgradeDiv.querySelector(`.upgrade-button`);
-                    label.onclick = () => {
-                        displayUpgradeOverlay(upgrade);
-                    };
+                const label = upgradeDiv.querySelector(`.upgrade-button`);
+                label.onclick = () => {
+                    displayUpgradeOverlay(upgrade);
+                };
 
-                    const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
-                    if (unit[type] && unit[type].name === name) {
-                        checkbox.checked = true;
-                    }
+                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
+                if (unit[type] && unit[type].name === upgrade.name) {
+                    checkbox.checked = true;
+                }
 
-                    checkbox.onchange = () => {
-                        if (checkbox.checked) {
-                            if (!unit[type]) {
-                                unit[type] = upgrade;
-                                if (costsPoints) {
-                                    const unitPoints = unitTotalPoints(unit);
-                                    const usPoints = newUsItem.querySelector('.unit-slot-points');
-                                    displayPoints(usPoints, unitPoints, 'PTS');
-                                    totalPoints += upgrade.points;
-                                    refreshPointsOverlay(thisPage.roster.id);
-                                }
-                                updateValidationDisplay();
-                                putRoster(roster);
-                            } else if (unit[type].name !== name) {
-                                checkbox.checked = false;
+                checkbox.onchange = () => {
+                    if (checkbox.checked) {
+                        if (!unit[type]) {
+                            unit[type] = upgrade;
+                            if (costsPoints) {
+                                const unitPoints = unitTotalPoints(unit);
+                                const usPoints = newUsItem.querySelector('.unit-slot-points');
+                                displayPoints(usPoints, unitPoints, 'PTS');
+                                totalPoints += upgrade.points;
+                                refreshPointsOverlay(thisPage.roster.id);
                             }
-                        } else {
-                            if (unit[type] && unit[type].name === name) {
-                                unit[type] = null;
-                                if (costsPoints) {
-                                    const unitPoints = unitTotalPoints(unit);
-                                    const usPoints = newUsItem.querySelector('.unit-slot-points');
-                                    displayPoints(usPoints, unitPoints, 'PTS');
-                                    totalPoints -= upgrade.points;
-                                    refreshPointsOverlay(thisPage.roster.id);
-                                }
-                                updateValidationDisplay();
-                                putRoster(roster);
-                            }
+                            updateValidationDisplay();
+                            putRoster(roster);
+                        } else if (unit[type].name !== upgrade.name) {
+                            checkbox.checked = false;
                         }
-                    };
-                    details.appendChild(upgradeDiv);
-                });
+                    } else {
+                        if (unit[type] && unit[type].name === upgrade.name) {
+                            unit[type] = null;
+                            if (costsPoints) {
+                                const unitPoints = unitTotalPoints(unit);
+                                const usPoints = newUsItem.querySelector('.unit-slot-points');
+                                displayPoints(usPoints, unitPoints, 'PTS');
+                                totalPoints -= upgrade.points;
+                                refreshPointsOverlay(thisPage.roster.id);
+                            }
+                            updateValidationDisplay();
+                            putRoster(roster);
+                        }
+                    }
+                };
+                details.appendChild(upgradeDiv);
             });
         }
 
@@ -350,9 +361,11 @@ const builderPage = {
                 await displayEnhancements(unit, newUsItem, 'heroicTrait');
             }
 
+            const upgrades = await thisPage.fetchUpgrades();
+            const hasMonstrousTraits = Object.getOwnPropertyNames(upgrades.monstrousTraits).length > 0;
             const isMonster = unit.keywords && unit.keywords.includes('MONSTER');
             const isUnique = unit.keywords && unit.keywords.includes('UNIQUE');
-            if (!isMonster || isUnique) {
+            if (!hasMonstrousTraits || !isMonster || isUnique) {
                 removeSection(newUsItem, 'available-monstrousTraits');
                 -- numOptions;
             } else {

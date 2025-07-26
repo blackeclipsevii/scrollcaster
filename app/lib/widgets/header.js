@@ -33,6 +33,7 @@ async function dynamicGoTo(settings, updateHistory=true, doLoadPage=true) {
                 enableBackButton();
                 deleteContextMenus();
                 await dynamicPages[type].loadPage(settings);
+                window.scrollTo(0, 0);
             }
             return;
         }
