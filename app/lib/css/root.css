@@ -95,11 +95,15 @@ footer {
 
 .fab {
   position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   bottom: 3em;
-  width: 2.5em;
-  height: 2.5em;
-  background-color: var(--blue-color);
+  width: 2.2em;
+  height: 2em;
+  padding-bottom: .2em;
   border: solid white 4px;
+  background-color: var(--blue-color);
   color: white;
   border-radius: 50%;
   font-size: 2em;

@@ -142,17 +142,67 @@ const rosterPage = {
       if (!roster)
         return;
       
-      const armies = document.getElementById("roster-list");
-      const container = document.createElement("div");
-      container.className = "clickable-style army-card";
-      container.style.overflow = "hidden";
-      const entry = document.createElement("div");
+      const armies = document.getElementById("rosters-list");
       let armyName = roster.army;
       if (armyName.includes(' - ')) {
         armyName = armyName.split(' - ')[1];
       }
+      const item = document.createElement('div');
+      item.classList.add('selectable-item');
+  
+      const left = document.createElement('div');
+      left.classList.add('selectable-item-left');
+      
+      const nameEle = document.createElement('p');
+      nameEle.className = 'selectable-item-name';
+      nameEle.textContent = roster.name;
+      nameEle.style.padding = '0px';
+      nameEle.style.margin = '0px';
+      nameEle.style.marginBottom = '.25em';
+      left.appendChild(nameEle);
 
+      const armyNameEle = document.createElement('p');
+      if (roster.battleFormation)
+        armyNameEle.textContent = `${armyName} | ${roster.battleFormation.name}`;
+      else
+        armyNameEle.textContent = armyName;
+      
+      armyNameEle.style.fontSize = '12px';
+      armyNameEle.style.padding = '0px';
+      armyNameEle.style.margin = '0px';
+      armyNameEle.style.marginBottom = '.25em';
+      left.appendChild(armyNameEle);
+
+      if (roster.description) {
+        const descEle = document.createElement('p');
+        descEle.className = 'selectable-item-description';
+        let desc = roster.description;
+        if (desc.length > 40) {
+          desc = `${roster.description.slice(0, 37)}...`;
+        }
+        descEle.innerHTML = `<i>${desc}</i>`;
+        descEle.style.fontSize = '12px';
+        descEle.style.padding = '0px';
+        descEle.style.margin = '0px';
+        left.appendChild(descEle);
+      }
+      const right = document.createElement('div');
+      right.classList.add('selectable-item-right');
+
+      const points = document.createElement('span');
+      if (rosterTotalPoints(roster) > roster.points)
+        points.className = 'points-label';  
+      else
+        points.className = 'general-label';
+      points.style.display = 'inline-block';
+      points.textContent = `${roster.points} Points`;
+      left.onclick = () => {
+        goToRoster(roster);
+      }
+  
+/*
       const currentPts = rosterTotalPoints(roster);
+      const entry = document.createElement("div");
       entry.innerHTML = `
       <strong>${roster.name}</strong>
       <span style='margin-left: 1.5em; margin-bottom: 0; background-color: grey;' class='points-label'>${currentPts} points</span> 
@@ -161,9 +211,7 @@ const rosterPage = {
       ${roster.description.length ? roster.description + '<br/>' : ''}
       <div style="display: hidden" class="roster-id" id="${roster.id}"></div>
       `;
-      entry.onclick = () => goToRoster(roster);
-      entry.style.float = "left";
-
+*/
       const callbackMap = {
         'Update Details': async (e) => {
             const toggle = overlayToggleFactory('flex', () => {
@@ -252,10 +300,9 @@ const rosterPage = {
       };
       const menu = createContextMenu(callbackMap);
       menu.className = 'menu-blob';
-      container.appendChild(entry);
-      container.appendChild(menu);
-
-      armies.appendChild(container);
+      right.append(points, menu);
+      item.append(left, right);
+      armies.appendChild(item);
     }
 
     async function createHeaderMenu() {
@@ -332,7 +379,7 @@ const rosterPage = {
               button.style.backgroundColor = 'red';
               button.onclick = () => {
                   deleteRosters();
-                  const armies = document.getElementById("roster-list");
+                  const armies = document.getElementById("rosters-list");
                   armies.innerHTML = '';
                   disableOverlay();
               };
@@ -350,7 +397,7 @@ const rosterPage = {
     async function viewRosters() {
       createHeaderMenu();
 
-      const armies = document.getElementById("roster-list");
+      const armies = document.getElementById("rosters-list");
       armies.innerHTML = '';
 
       const rosters = await getRosters();
@@ -401,26 +448,27 @@ const rosterPage = {
     }
 
     _makePage = () => {
+      let rl = document.getElementById('rosters-list');
+      if (rl) {
+        rl.parentElement.removeChild(rl);
+      }
+
+      const sections = ['Rosters'];
+      makeLayout(sections);
+      rl = document.getElementById('rosters-section');
+      rl.style.display = '';
+
       setHeaderTitle('scrollcaster');
       hidePointsOverlay();
       console.log('disable back');
       disableBackButton();
-      let oldEle = document.getElementById('roster-list');
-      if (oldEle) {
-        oldEle.parentElement.removeChild(oldEle);
-      }
 
       const div = document.getElementById('loading-content');
-      const button = document.createElement('button');
+      const button = document.createElement('div');
       button.textContent = '+';
       button.className = 'clickable-style fab';
       button.onclick = toggleOverlay;
       div.appendChild(button);
-
-      const listEle = document.createElement('div');
-      listEle.id = 'roster-list';
-      listEle.style.padding = '1em';
-      div.appendChild(listEle);
     }
     _makePage();
     await viewRosters();
