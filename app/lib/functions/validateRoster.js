@@ -90,7 +90,7 @@ const validateRoster = async (roster) => {
             errors.push(errorMsg);
         }
         
-        if (nunits > 6 && reg.units[0].isGeneral) {
+        if (nunits > 5 && reg.units[0].isGeneral) {
             // 5 excluding leader
             let errorMsg = `The general's regiment contains more than 5 units.`;
             errors.push(errorMsg);

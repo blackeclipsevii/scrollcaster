@@ -53,7 +53,7 @@
     --selectable-item-alt-font-color: var(--white-3);
     --hover-color: var(--black-3);
     --disabled-color: var(--white-3);
-    --label-font-color: var(--black-1);
+    --label-font-color: var(--black-2);
     
     --regiment-item-backround-color: var(--section-color);
     --dark-text-color: var(--black-color);
@@ -99,6 +99,7 @@ header {
     left: 0;
   
     background-color: var(--header-color);
+    border-bottom: 1px solid var(--background-color);
     color: var(--header-font-color);
     text-align: center;
     width: 100%;
@@ -112,11 +113,10 @@ footer {
 
     background-color: var(--header-color);
     color: var(--header-font-color);
-    height: 3.5em;
+    height: 3em;
     text-align: center;
     z-index: 5;
-    border-top: 1px solid;
-    border-color: var(--shadow-color);
+    border-top: 1px solid var(--background-color);
     overflow: hidden;
 /*
     border-radius: 2vb;
@@ -132,8 +132,8 @@ footer {
 
 .footer-button {
     background-color: var(--header-color);
-    font-size: 12px;
-    width: 6em;
+    font-size: 10px;
+    width: 8em;
     border: 1px;
     border-radius: 2vb;
     padding: 0px;
@@ -173,7 +173,7 @@ footer {
     margin: 0;
     border: 0;
     padding: .5em;
-    bottom: 8%;
+    bottom: 0em;
 }
 
 .header-left,
@@ -246,7 +246,7 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--dark-text-color);
+    color: var(--white-1);
 }
 
 .back-btn,

@@ -54,7 +54,7 @@ const makeSelectableItemType = (typedObj, isUnit=true) => {
 
 // Standard method of making the name text
 const makeSelectableItemName = (namedObj) => {
-    const nameEle = document.createElement('h4');
+    const nameEle = document.createElement('p');
     nameEle.className = 'selectable-item-name';
     nameEle.textContent = namedObj.name;
     nameEle.style.padding = '0px';

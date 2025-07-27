@@ -318,7 +318,7 @@ const builderPage = {
                     const btn = regItem.querySelector('.full-rectangle-button');
                     let maxUnits = 4;
                     if (regiment.units.length > 0 && regiment.units[0].isGeneral)
-                        maxUnits = 6;
+                        maxUnits = 5;
                     btn.disabled = regiment.units.length >= maxUnits;
                 };
             }
@@ -397,6 +397,7 @@ const builderPage = {
                 removeSection(newUsItem, "unit-details");
                 const arrow = newUsItem.querySelector('.arrow');
                 arrow.textContent = '\u2022'; //'\u29BF';
+                arrow.style.fontSize = '2em';
             } else {
                 const arrow = newUsItem.querySelector('.arrow');
                 arrow.onclick = (event) => {
@@ -445,7 +446,7 @@ const builderPage = {
                     const btn = regItem.querySelector('.full-rectangle-button');
                     let maxUnits = 4;
                     if (_regiment.units.length > 0 && _regiment.units[0].isGeneral)
-                        maxUnits = 6;
+                        maxUnits = 5;
                     btn.disabled = _regiment.units.length >= maxUnits;
                 }
                 
@@ -584,6 +585,7 @@ const builderPage = {
                 removeSection(newUsItem, "unit-details");
                 const arrow = newUsItem.querySelector('.arrow');
                 arrow.textContent = '\u2022'; //'\u29BF';
+                arrow.style.fontSize = '2em';
         
                 const usPoints = newUsItem.querySelector('.unit-slot-points');
                 usPoints.style.display = 'none';
@@ -761,8 +763,7 @@ const builderPage = {
             const unitsPoints = unitTotalPoints(unit);
             totalPoints += unitsPoints;
 
-            let pointsOverlay = document.getElementById('pointsOverlay');
-            pointsOverlay.textContent = `${totalPoints} / ${thisPage.roster.points} pts`;
+            refreshPointsOverlay(thisPage.roster.id);
         }
 
         function displayAux(idx) {
@@ -838,7 +839,7 @@ const builderPage = {
         }
 
         function displayBattleTraits() {
-            const typename = 'battle-traits-container';
+            const typename = 'battle-traits-&-formation-container';
             const traitNames = Object.getOwnPropertyNames(thisPage.roster.battleTraits);
             const trait = thisPage.roster.battleTraits[traitNames[0]];
             const onclick = () => {
@@ -861,6 +862,7 @@ const builderPage = {
             removeSection(newUsItem, "unit-details");
             const arrow = newUsItem.querySelector('.arrow');
             arrow.textContent = '\u2022'; //'\u29BF';
+            arrow.style.fontSize = '2em';
             
             let unitHdr = newUsItem.querySelector(".selectable-item-right");
             // does nothing but helps positioning be consistant
@@ -873,7 +875,7 @@ const builderPage = {
         }
 
         function displayBattleFormation() {
-            const typename = 'battle-formation-container';
+            const typename = 'battle-traits-&-formation-container';
             const onclick = () => {
                 displayUpgradeOverlay(thisPage.roster.battleFormation);
             }
@@ -890,7 +892,7 @@ const builderPage = {
             };
 
             displaySingleton(typename, callbackMap, thisPage.roster.battleFormation, 900, onclick, false);
-            const btn = document.getElementById('battle-formation-add-button');
+            const btn = document.getElementById('battle-traits-&-formation-add-button');
             btn.disabled = true;
         }
 
@@ -905,9 +907,7 @@ const builderPage = {
             const unitsPoints = unitTotalPoints(thisPage.roster.lores[lcName]);
             if (unitsPoints) {
                 totalPoints += unitsPoints;
-
-                let pointsOverlay = document.getElementById('pointsOverlay');
-                pointsOverlay.textContent = `${totalPoints} / ${thisPage.roster.points} pts`;
+                refreshPointsOverlay(thisPage.roster.id);
             }
         }
 
@@ -1004,6 +1004,7 @@ const builderPage = {
                     removeSection(subUsItem, 'available-monstrousTraits');
                     const arrow = subUsItem.querySelector('.arrow');
                     arrow.textContent = '\u2022'; //'\u29BF';
+                    arrow.style.fontSize = '2em';
 
                     const unitPoints = unitTotalPoints(unit);
                     const usPoints = subUsItem.querySelector('.unit-slot-points');
@@ -1120,12 +1121,8 @@ const builderPage = {
             if (doGet) {
                 
                 if (thisPage.roster.isArmyOfRenown) {
-                    const formationEle = document.getElementById('battle-formation-container');
-                    if (formationEle) {
-                        const section = formationEle.closest('.section');
-                        if (section)
-                            section.parentElement.removeChild(section);
-                    }
+                    const btn = document.getElementById('battle-traits-&-formation-add-button');
+                    btn.disabled = true;
                 }
                 displayPointsOverlay(rosterId);
                 refreshPointsOverlay(rosterId);
@@ -1277,8 +1274,7 @@ const builderPage = {
             const sections = [
                 'Regiments',
                 'Auxiliary Units',
-                'Battle Traits',
-                'Battle Formation',
+                'Battle Traits & Formation',
                 'Lores',
                 'Battle Tactics',
                 'Faction Terrain'
@@ -1287,12 +1283,12 @@ const builderPage = {
             updateHeaderContextMenu({ 'Export List': exportListAndDisplay });
             makeLayout(sections, factory);
 
-            let btn = document.getElementById('battle-formation-add-button');
+            let btn = document.getElementById('battle-traits-&-formation-add-button');
             btn.textContent = '⚙︎';
             btn = document.getElementById('faction-terrain-add-button');
             btn.textContent = '⚙︎';
-            let title = document.getElementById('battle-traits-section-title');
-            title.textContent = 'Battle Traits';
+           // let title = document.getElementById('battle-traits-section-title');
+           // title.textContent = 'Battle Traits';
 
             await loadArmy(true);
             swapLayout();

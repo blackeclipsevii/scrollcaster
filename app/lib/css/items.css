@@ -9,6 +9,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: var(--white-1);
     background-color: var(--selectable-item-color);
     border: var(--section-border-size) solid var(--background-color);
     padding: 1em;
@@ -18,7 +19,7 @@
     transition: background 0.2s ease;
 }
 
-.selectable-item p {
+#rosters-list p {
     color: var(--selectable-item-alt-font-color);
 }
 
@@ -40,7 +41,6 @@
 }
 
 .selectable-item-left {
-    font-weight: bold;
     min-width: 50%;
     max-width: 60%;
 }

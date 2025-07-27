@@ -4,6 +4,7 @@
   padding: 1%;
   background: var(--regiment-item-backround-color);
   border-radius: var(--border-radius);
+  color: var(--white-2);
   margin-bottom: .5em;
   position: relative;
   width: 100%;
