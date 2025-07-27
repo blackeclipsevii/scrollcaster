@@ -32,8 +32,10 @@
   border-style: solid;
 }
 
-.not-added {
-    border-style: dashed;
+.selectable-item.not-added {
+    color: var(--white-3);
+    border: 1px dashed var(--white-3);
+    background-color: var(--section-background);
     box-shadow: none;
 }
 

@@ -130,16 +130,20 @@ const unitPage = {
         }
 
         // Update the quantity element
-        const _updateCountDisplay = (identifiableObj, selectableItem, quantityEle, message) => {
+        const _updateCountDisplay = (identifiableObj, labelItem, selectableItem, quantityEle, message) => {
             const count = armyUnitCounts[identifiableObj.id];
             if (count) {
                 quantityEle.textContent = `${armyUnitCounts[identifiableObj.id]}x ${message}`;
                 quantityEle.style.display = '';
                 selectableItem.classList.remove('not-added');
+                labelItem.style.color = '';
+                labelItem.style.backgroundColr = '';
             } else {
                 quantityEle.textContent = 'None';
                 quantityEle.style.display = 'none';
                 selectableItem.classList.add('not-added');
+                labelItem.style.color = getVar('white-3');
+                labelItem.style.backgroundColor = getVar('black-2');
             }
         }
 
@@ -164,7 +168,7 @@ const unitPage = {
             if (addOnClick && countMessage) {
                 quantityEle = _makeQuantityElement();
                 left.appendChild(quantityEle);
-                _updateCountDisplay(displayableObj, item, quantityEle, countMessage);
+                _updateCountDisplay(displayableObj, roleEle, item, quantityEle, countMessage);
             }
             const right = document.createElement('div');
             right.classList.add('selectable-item-right');
@@ -185,7 +189,7 @@ const unitPage = {
                 addBtn.addEventListener('click', async (event) => {
                     await addOnClick(event);
                     if (quantityEle)
-                        _updateCountDisplay(displayableObj, item, quantityEle, countMessage);
+                        _updateCountDisplay(displayableObj, roleEle, item, quantityEle, countMessage);
                 });
                 right.append(addBtn);
             }
