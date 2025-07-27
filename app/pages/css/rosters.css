@@ -45,9 +45,10 @@
 .roster-modal textarea {
   margin-bottom: 1em;
   padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: none;
   box-sizing: border-box;
+  background-color: var(--input-background-color);
+  color: var(--input-font-color);
 }
 
 .roster-modal textarea {

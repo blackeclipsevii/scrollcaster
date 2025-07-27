@@ -7,6 +7,11 @@ var previousUrl = document.referrer;
 var version = '0.4.0beta';
 let _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
+const getVar = (varName) => {
+    const rootStyles = getComputedStyle(document.documentElement);
+    return rootStyles.getPropertyValue(`--${varName}`).trim();
+}
+
 function unitTotalPoints(unit) {
     if (!unit.points)
         return 0;

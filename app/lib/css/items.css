@@ -9,13 +9,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid #ccc;
+    background-color: var(--selectable-item-color);
+    border: var(--section-border-size) solid var(--background-color);
     padding: 1em;
     margin: 0px;
     border-radius: 6px;
     cursor: pointer;
     transition: background 0.2s ease;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, .15);
+}
+
+.selectable-item p {
+    color: var(--selectable-item-alt-font-color);
 }
 
 .selectable-item:active:not(:focus-within) {
@@ -24,7 +28,7 @@
 }
 
 .selectable-item:hover {
-  background: #f0f0f0;
+  background: var(--hover-color);
   border-style: solid;
 }
 
@@ -47,7 +51,7 @@
 
 button.add-btn {
     background-color: var(--blue-color);
-    color: white;
+    color: var(--light-text-color);;
     border: none;
     padding: 0.3rem 0.6rem;
     border-radius: 50%;

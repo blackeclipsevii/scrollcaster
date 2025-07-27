@@ -30,7 +30,7 @@ const enableOverlay = (style) => {
 const disableOverlay = () => {
   //  document.body.classList.remove('no-scroll');
     const modal = overlay.querySelector('.modal');
-    modal.style.margin = '';
+    modal.style.marginLeft = '';
     overlay.style.display = 'none';
 }
 

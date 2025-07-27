@@ -1,4 +1,5 @@
-:root {
+/*
+:light-mode {
     --shadow-color: #1C1C1E;
     --red-color: #FE494A;
     --blue-color: #3186FF;
@@ -6,6 +7,58 @@
     --black-color: #1F1F1F;
     --header-color: var(--black-color);
     --white-color: white;
+    --background-color: var(--white-color);
+    --dark-text-color: var(--black-color);
+    --light-text-color: var(--white-color);
+    --points-font-size: 14px;
+    --border-radius: 6px;
+
+    --yellow-ability: #D7B21D;
+    --grey-ability: #5A5E5A;
+    --blue-ability: #055C72;
+    --orange-ability: #DB571A;
+    --red-ability: #A10000;
+    --purple-ability:#642A8D;
+    --black-ability: var(--black-color);
+}
+*/
+:root {
+    --shadow-color: rgb(0,0,0,0);
+    --red-color: #fa7970;
+    --blue-color: #77bdfb;
+    --green-color: #7ce38b;
+    --white-color: #ecf2f8;
+
+    --black-1: #0d1117;
+    --black-2: #161b22;
+    --black-3: #21262d;
+    --white-1: #ecf2f8;
+    --white-2: #c6cdd5;
+    --white-3: #89929b;
+    
+    --background-color: #000;
+    --header-color: var(--black-3);
+    --header-font-color: var(--white-1);
+    
+    --input-background-color: var(--black-1);
+    --input-font-color: var(--white-1);
+    --input-hint-color: var(--white-3);
+    
+    --section-color: var(--black-2);
+    --section-border-color: var(--black-1);
+    --section-border-size: 0px;
+    --section-font-color: var(--light-text-color);
+    --selectable-item-color: var(--black-3);
+    --selectable-item-font-color: var(--white-1);
+    --selectable-item-alt-font-color: var(--white-3);
+    --hover-color: var(--black-3);
+    --disabled-color: var(--white-3);
+    --label-font-color: var(--black-1);
+    
+    --regiment-item-backround-color: var(--section-color);
+    --dark-text-color: var(--black-color);
+    --light-text-color: var(--white-color);
+    --slot-background-color: var(--hover-color);
     --points-font-size: 14px;
     --border-radius: 6px;
 
@@ -19,6 +72,7 @@
     --black-ability: var(--black-color);
 }
 
+
 .points-display {
     font-size: 14px;
 }
@@ -27,6 +81,7 @@ body {font-family: system-ui,Avenir,Helvetica,Arial,sans-serif;
     margin: 0;
     padding: 0;
     overflow-y: scroll;
+    background-color: var(--background-color);
 }
 
 body.no-scroll {
@@ -44,13 +99,10 @@ header {
     left: 0;
   
     background-color: var(--header-color);
-    color: white;
-    padding-bottom: 1rem;
-    padding-top: 1rem;
+    color: var(--header-font-color);
     text-align: center;
-    font-size: 1.25em;
     width: 100%;
-    height: 1.25em;
+    height: 3em;
     z-index: 5;
     box-shadow: 0 2px 6px var(--shadow-color);
 }
@@ -59,7 +111,7 @@ footer {
     position: fixed;
 
     background-color: var(--header-color);
-    color: white;
+    color: var(--header-font-color);
     height: 3.5em;
     text-align: center;
     z-index: 5;
@@ -89,7 +141,6 @@ footer {
     margin-bottom: 1em;
     text-align: center;
     justify-content: center;
-    border-color: white;
     cursor: pointer;
 }
 
@@ -102,9 +153,8 @@ footer {
   width: 2.2em;
   height: 2em;
   padding-bottom: .2em;
-  border: solid white 4px;
   background-color: var(--blue-color);
-  color: white;
+  color: var(--label-font-color);
   border-radius: 50%;
   font-size: 2em;
   cursor: pointer;
@@ -115,7 +165,7 @@ footer {
 .header-left,
 .header-right,
 .header-center {
-    top: 10%;
+    top: .15em;
 }
 
 .footer-left,
@@ -161,21 +211,34 @@ footer {
     width: 55%;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
+}
+
+#army-header {
+    font-size: 16px;
+    line-height: 3em;
 }
 
 .main {
-    margin-top: 4.5em;
+    margin-top: 3.5em;
     margin-bottom: 7em;
 }
 
 .section {
     gap: 1rem;
-    padding: 0rem;
+    padding: .25rem;
     margin: .5rem;
-    min-height: 4em;
-    border-bottom: 1px solid #ccc;
-    background-color: var(--white-color);
+    border: var(--section-border-size) solid var(--section-border-color);
+    color: var(--section-font-color);
+    border-radius: var(--border-radius);
+    background-color: var(--section-color);
+}
+
+.section-container {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  width: 100%;
 }
 
 .section-title {
@@ -183,7 +246,7 @@ footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: black;
+    color: var(--dark-text-color);
 }
 
 .back-btn,
@@ -191,7 +254,7 @@ footer {
     width: 40px;
     height: 40px;
     background: none;
-    color: white;
+    color: var(--light-text-color);;
     border: none;
     border-radius: 50%;
     font-size: 1.5rem;
@@ -211,7 +274,7 @@ footer {
 .rectangle-button-small,
 .rectangle-button {
     background-color: var(--blue-color);
-    color: white;
+    color: var(--label-font-color);
     border: none;
     padding: 0.6rem 0.9rem;
     border-radius: var(--border-radius);
@@ -221,7 +284,7 @@ footer {
 
 .full-rectangle-button {
     background-color: var(--blue-color);
-    color: white;
+    color: var(--label-font-color);
     border: none;
     margin-top: 0.3rem;
     padding: 0.6rem 0.9rem;
@@ -248,10 +311,9 @@ footer {
     position: fixed;
     bottom: 5em;
     left: 1.5em;
-    color: #fff;
+    color: var(--label-font-color);
     padding: 10px 15px;
     border-radius: var(--border-radius);
-    border: solid white 2px;
     font-size: 1rem;
     z-index: 500;
     cursor: pointer;
@@ -267,7 +329,7 @@ footer {
 }
 
 .loader {
-  border: .5em solid #ccc; /* Light grey */
+  border: .5em solid var(--hover-color); /* Light grey */
   border-top: .5em solid var(--blue-color); /* Blue */
   border-radius: 50%;
   width: 2em;
@@ -286,7 +348,7 @@ footer {
 .general-label,
 .reinforced-label {
     position: relative;
-    color: white;
+    color: var(--label-font-color);
     right: 5%;
     top: 15%;
     font-size: 12px;
@@ -311,15 +373,17 @@ footer {
 }
 
 .ability-label {
-    background-color: #5A5E5A;
+    color: var(--selectable-item-font-color);
+    background-color: var(--grey-ability);
     top: 15%;
     right: 0%;
     white-space: nowrap;
     display: inline-block;
+    margin-right: .5em;
 }
 
 .ability-body {
-    background-color: white;
+    background-color: var(--section-color);
     margin: 0px;
     border: 0px;
     margin-top: .5em;
@@ -334,7 +398,7 @@ footer {
     display: flex;
     align-items: center;
 
-    color: white;
+    color: var(--light-text-color);
     margin-left: 1em;
     margin-top: .5em;
 }
@@ -410,7 +474,7 @@ h4.abilityname {
   .heart-checkbox::before {
     content: "♡"; /* empty heart */
     font-size: 2em;
-    color: red;
+    color: var(--red-color);
     transition: transform 0.2s;
     display: inline-block;
   }

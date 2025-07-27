@@ -90,26 +90,6 @@ const unitPage = {
             return unitList;
         }
 
-        const typeToStr = (unit) => {
-            if (unit.type === 0)
-                return 'Hero';
-            if (unit.type == 1)
-                return 'Infantry';
-            if (unit.type == 2)
-                return 'Cavalry';
-            if (unit.type == 3)
-                return 'Beast';
-            if (unit.type == 4)
-                return 'Monster';
-            if (unit.type == 5)
-                return 'War Machine';
-            if (unit.type == 6)
-                return 'Manifestation';
-            if (unit.type == 7)
-                return 'Faction Terrain';
-            return 'Regiment of Renown';
-        }
-
         var armyUnitCounts = null;
 
         const _getUnitCounts = () => {
@@ -140,35 +120,12 @@ const unitPage = {
             return armyUnitCounts;
         }
 
-        // Standard method of making the name text
-        const _makeTypeText = (typedObj) => {
-            const nameEle = document.createElement('p');
-            nameEle.className = 'selectable-item-type ability-label';
-            nameEle.style.display = 'inline-block';
-            nameEle.textContent = typeToStr(typedObj);
-            nameEle.style.fontSize = '10px';
-            nameEle.style.backgroundColor = 'grey';
-            nameEle.style.marginRight = '1em';
-            return nameEle;
-        }
-
-        // Standard method of making the name text
-        const _makeNameElement = (namedObj) => {
-            const nameEle = document.createElement('p');
-            nameEle.className = 'selectable-item-name';
-            nameEle.textContent = namedObj.name;
-            nameEle.style.padding = '0px';
-            nameEle.style.margin = '0px';
-            return nameEle;
-        }
-
         // element for the 1x Unit in Army display
         const _makeQuantityElement = () => {
-            const quantityEle = document.createElement('p');
-            quantityEle.style.fontSize = '10px';
-            quantityEle.className = 'ability-label';
-            quantityEle.style.backgroundColor = 'rgb(0,0,0,0)';
-            quantityEle.style.color = 'rgb(0,0,0,0)';
+            const quantityEle = document.createElement('span');
+            quantityEle.className = 'selectable-item-quantity ability-label'
+            //quantityEle.style.fontSize = '10px';
+            //quantityEle.className = 'ability-label';
             return quantityEle;
         }
 
@@ -177,11 +134,11 @@ const unitPage = {
             const count = armyUnitCounts[identifiableObj.id];
             if (count) {
                 quantityEle.textContent = `${armyUnitCounts[identifiableObj.id]}x ${message}`;
-                quantityEle.style.backgroundColor = 'grey';
-                quantityEle.style.color = 'white';
+                quantityEle.style.display = '';
                 selectableItem.classList.remove('not-added');
             } else {
                 quantityEle.textContent = 'None';
+                quantityEle.style.display = 'none';
                 selectableItem.classList.add('not-added');
             }
         }
@@ -197,10 +154,10 @@ const unitPage = {
             left.classList.add('selectable-item-left');
             left.addEventListener('click', leftOnClick);
 
-            const nameEle = _makeNameElement(displayableObj);
+            const nameEle = makeSelectableItemName(displayableObj);
             left.appendChild(nameEle);
 
-            const roleEle = _makeTypeText(displayableObj);
+            const roleEle = makeSelectableItemType(displayableObj);
             left.appendChild(roleEle);
 
             let quantityEle = null;

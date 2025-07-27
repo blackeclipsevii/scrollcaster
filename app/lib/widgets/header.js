@@ -64,7 +64,7 @@ function initializeHeader(options) {
         <div class="header-left">
         </div>
         <div class="header-center">
-            <span id="army-header">${options.name}</span>
+            <div id="army-header">${options.name}</p>
         </div>
         <div class="header-right">
         </div>
@@ -107,20 +107,24 @@ function enableHeaderContextMenu() {
 }
 
 function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
+    const hdr = document.querySelector('header');
+    const right = hdr.querySelector('.header-right');
+
     if (_headerMenuId.length > 0) {
-        deleteContextMenu(_headerMenuId);
-        _headerMenuId = '';
+        // reuse the existing menu and swap the content
+        updateMenuCallbacks(_headerMenuId, callbackMap);
+        if (autoDisplay)
+            right.style.display = '';
+        return;
     }
     
     const menu = createContextMenu(callbackMap, false);
     _headerMenuId = menu.id;
 
     const btn = menu.querySelector('.menu-btn');
-    btn.style.color = 'white';
+    btn.style.color = getVar('light-text-color');
     btn.style.top = '.5em';
     menu.style.zIndex = '1000';
-    const hdr = document.querySelector('header');
-    const right = hdr.querySelector('.header-right');
     right.appendChild(menu);
     if (autoDisplay) {
         right.style.display = '';

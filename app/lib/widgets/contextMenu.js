@@ -1,13 +1,34 @@
 var _menuIds = [];
 
 const deleteContextMenu = (id) => {
-    const menu = document.getElementById(id);
-    if (menu)
-        menu.parentElement.removeChild(menu);
+    //const menu = document.getElementById(id);
+    //if (menu)
+    //    menu.parentElement.removeChild(menu);
 
     const wrapper = document.getElementById(`menu-wrapper-${id}`)
     if (wrapper)
         wrapper.parentElement.removeChild(wrapper);
+}
+
+const updateMenuCallbacks = (id, callbackMap) => { 
+    const wrapper = document.getElementById(`menu-wrapper-${id}`);
+    if (!wrapper) {
+        console.log(`Error finding context menu wrapper ${id}`)
+        return;
+    }
+    wrapper.innerHTML = `<ul class="menu"></ul>`;
+    const menu = wrapper.querySelector('.menu');
+    const entryNames = Object.getOwnPropertyNames(callbackMap);
+    if (entryNames.length === 0) {
+        button.className = 'menu-btn-disabled';
+    } else {
+        entryNames.forEach(entryName => {
+            const li = document.createElement('li');
+            li.onclick = callbackMap[entryName];
+            li.textContent = entryName;
+            menu.appendChild(li);
+        });
+    }
 }
 
 const deleteContextMenus = () => {
@@ -16,11 +37,12 @@ const deleteContextMenus = () => {
 }
 
 function createContextMenu(callbackMap, trackMenu=true) {
+    const uniqueId = generateId();
     const ele = document.createElement('div');
     ele.innerHTML = `<button class="menu-btn">⋯</button>`;
-    const button = ele.querySelector('.menu-btn');
-    const uniqueId = generateId();
     ele.id = uniqueId;
+
+    const button = ele.querySelector('.menu-btn');
     button.addEventListener('click', (e) => {
         e.preventDefault();
         const { pageX: x, pageY: y } = e;

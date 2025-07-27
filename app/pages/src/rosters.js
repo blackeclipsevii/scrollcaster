@@ -142,6 +142,9 @@ const rosterPage = {
       if (!roster)
         return;
       
+      const section = document.getElementById('rosters-section');
+      section.style.display = '';
+      
       const armies = document.getElementById("rosters-list");
       let armyName = roster.army;
       if (armyName.includes(' - ')) {
@@ -153,7 +156,7 @@ const rosterPage = {
       const left = document.createElement('div');
       left.classList.add('selectable-item-left');
       
-      const nameEle = document.createElement('p');
+      const nameEle = document.createElement('h4');
       nameEle.className = 'selectable-item-name';
       nameEle.textContent = roster.name;
       nameEle.style.padding = '0px';
@@ -455,12 +458,9 @@ const rosterPage = {
 
       const sections = ['Rosters'];
       makeLayout(sections);
-      rl = document.getElementById('rosters-section');
-      rl.style.display = '';
 
       setHeaderTitle('scrollcaster');
       hidePointsOverlay();
-      console.log('disable back');
       disableBackButton();
 
       const div = document.getElementById('loading-content');

@@ -1,9 +1,4 @@
 
-const getVar = (varName) => {
-    const rootStyles = getComputedStyle(document.documentElement);
-    return rootStyles.getPropertyValue(`--${varName}`).trim();
-}
-
 const widgetsAbilityNewAbilityDiv = (ability) => {
     const abilitiesDiv = document.getElementById('abilities-section');
     let div = document.createElement('div');

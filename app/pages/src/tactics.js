@@ -55,7 +55,7 @@ const tacticsPage = {
                 const left = document.createElement('div');
                 left.classList.add('selectable-item-left');
     
-                const nameEle = document.createElement('p');
+                const nameEle = document.createElement('h4');
                 nameEle.className = 'selectable-item-name';
                 nameEle.textContent = tacticCard.name;
                 nameEle.style.padding = '0px';
@@ -63,12 +63,11 @@ const tacticsPage = {
                 left.appendChild(nameEle);
 
                 
-                const typeEle = document.createElement('p');
+                const typeEle = document.createElement('span');
                 typeEle.className = 'selectable-item-type ability-label';
                 typeEle.style.display = 'inline-block';
                 typeEle.textContent = 'Battle Tactic Card';
-                typeEle.style.fontSize = '10px';
-                typeEle.style.backgroundColor = 'grey';
+                typeEle.style.marginTop = '.5em';
                 typeEle.style.marginRight = '1em';
                 left.appendChild(typeEle);
         

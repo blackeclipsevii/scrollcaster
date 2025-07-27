@@ -20,18 +20,20 @@
   font-size: 1.5rem;
   cursor: pointer;
   transform: rotate(-90deg);
+  color: var(--section-font-color);
 }
 
 .menu-btn-disabled {
-  color: #ccc
+  color: var(--disabled-color);
 }
 
 .menu {
   list-style: none;
   right: 0;
   top: 100%;
-  background: white;
-  border: 1px solid #ccc;
+  background: var(--background-color);
+  border: 1px solid var(--background-color);
+  color: var(--section-font-color);
   padding: 0;
   margin: 0;
 }
@@ -42,5 +44,5 @@
 }
 
 .menu li:hover {
-  background: #eee;
+  background-color: var(--hover-color);
 }

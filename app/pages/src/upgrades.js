@@ -59,24 +59,6 @@ const upgradePage = {
             return upgradeList;
         }
 
-        const typeToStr = (unit) => {
-            if (unit.type === 0)
-                return 'Artefact';
-            if (unit.type == 1)
-                return 'Heroic Trait';
-            if (unit.type == 2)
-                return 'Battle Formation';
-            if (unit.type == 3)
-                return 'Spell Lore';
-            if (unit.type == 6)
-                return 'Prayer Lore';
-            if (unit.type == 4)
-                return 'Manifestation Lore';
-            if (unit.type == 8)
-                return 'Monstrous Trait';
-            return 'Unknown';
-        }
-        
         const isUniversal = (str) => {
             return str.startsWith("UNIVERSAL-");
         }
@@ -89,7 +71,7 @@ const upgradePage = {
         
             const item = document.createElement('div');
             item.classList.add('selectable-item');
-        
+            
             if (roster) {
                 item.classList.add('not-added');
             }
@@ -102,20 +84,10 @@ const upgradePage = {
                 displayUpgradeOverlay(upgrade);
             });
         
-            const nameEle = document.createElement('p');
-            nameEle.className = 'selectable-item-name';
-            nameEle.textContent = upgrade.name;
-            nameEle.style.padding = '0px';
-            nameEle.style.margin = '0px';
+            const nameEle = makeSelectableItemName(upgrade);
             left.appendChild(nameEle);
 
-            const typeEle = document.createElement('p');
-            typeEle.className = 'selectable-item-type ability-label';
-            typeEle.style.display = 'inline-block';
-            typeEle.textContent = typeToStr(upgrade);
-            typeEle.style.fontSize = '10px';
-            typeEle.style.backgroundColor = 'grey';
-            typeEle.style.marginRight = '1em';
+            const typeEle = makeSelectableItemType(upgrade, false);
             left.appendChild(typeEle);
         
             const right = document.createElement('div');

@@ -1,5 +1,6 @@
 .modal {
-  background: white;
+  background: var(--section-color);
+  color: var(--section-font-color);
   padding: 1em;
   border-radius: var(--border-radius);
   width: 80%;
@@ -17,6 +18,23 @@
   width: 100%;
   padding: 0.5rem;
   font-size: 1rem;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+  background-color: var(--input-background-color);
+  color: var(--input-font-color);
+}
+
+.modal input::placeholder,
+.modal textarea::placeholder {
+  color: var(--input-hint-color);
+}
+
+.modal select option {
+  background-color: var(--input-background-color);
+  color: var(--input-font-color);
 }
 
 .overlay {

@@ -50,27 +50,31 @@ const builderPage = {
 
         function _newUnitSlot() {
             const unitSlot = document.createElement('div');
+
             unitSlot.innerHTML = `
                 <span style="display: none;" class="unit-idx"></span>
-                <div class="unit-header">
-                    <span class="arrow">›</span>
-                    <div class="unit-header-left">
-                        <span class="unit-slot-name">
-                        <span class="unit-text">Unit Name</span>
-                        </span>
-                    </div>
+                <div class='unit-slot-display-wrapper'>
+                <span class="arrow">
+                ›
+                </span>
+                <div class='unit-slot-selectable-item-wrapper'>
+                    <div class="selectable-item unit-slot-selectable-item">
+                        <div class="selectable-item-left">
+                            <span class="general-label" style="display: none;">GENERAL</span>
+                            <span class="reinforced-label" style="display: none;">REINFORCED</span>
+                        </div>
 
-                    <div class="unit-header-right">
-                        <div>
-                        <span class="general-label" style="display: none;">GENERAL</span>
-                        <span class="reinforced-label" style="display: none;">REINFORCED</span>
-                        <span class="unit-slot-points points-label"></span>
+                        <div class="selectable-item-right">
+                            <div>
+                            <span class="unit-slot-points points-label"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
+                </div>
 
                 <div class="unit-details">
-                    <div class="section">
+                    <div class="section upgrade-section">
                         <label class="upgrade-label is-general">
                             <input type="checkbox" class="upgrade-checkbox general-checkbox"> General
                         </label>
@@ -79,15 +83,15 @@ const builderPage = {
                         </label>
                     </div>
                     
-                    <div class="section available-artefacts">
+                    <div class="section upgrade-section available-artefacts">
                         <h3 class="section-title">Artefacts of Power:</h3>
                     </div>
                     
-                    <div class="section available-heroicTraits">
+                    <div class="section upgrade-section available-heroicTraits">
                         <h3 class="section-title">Heroic Traits:</h3>
                     </div>
 
-                    <div class="section available-monstrousTraits">
+                    <div class="section upgrade-section available-monstrousTraits">
                         <h3 class="section-title">Monstrous Traits:</h3>
                     </div>
                 </div>
@@ -134,21 +138,33 @@ const builderPage = {
             return div;
         }
 
+        function updateSelectableItemPrototype(prototype, displayableObj, isUnit, leftOnClick) {
+            const left = prototype.querySelector('.selectable-item-left');
+            left.addEventListener('click', leftOnClick);
+
+            const nameEle = makeSelectableItemName(displayableObj);
+            nameEle.classList.add('unit-text');
+            left.appendChild(nameEle);
+
+            const roleEle = makeSelectableItemType(displayableObj, isUnit);
+
+            left.insertBefore(roleEle, left.firstChild);
+            left.insertBefore(nameEle, left.firstChild);
+        }
+
         function clonePrototype(id, newId = '') {
             const newUsItem = id.includes('unit') ? _newUnitSlot() : _newRegimentItem();
             newUsItem.id = newId;
             if (id.includes('unit')) {
                 newUsItem.style.padding = "0.4em";
-                newUsItem.style.background = "#ddd";
+               // newUsItem.style.background = "#ddd";
                 newUsItem.style.marginBottom = "0.3rem";
                 newUsItem.style.borderRadius = "4px";
             }
             return newUsItem;
         }
 
-        function arrowOnClick(arrow) {
-            const container = arrow.closest('.unit-header').parentElement;
-            const details = container.querySelector('.unit-details');
+        const arrowOnClick = (arrow, details) => {
             if(!details)
                 return;
             
@@ -265,15 +281,11 @@ const builderPage = {
             }
         }
 
-        async function createUnitSlot(parent, unit, idx, callbackMap, onclick){
+        async function createUnitSlot(parent, unit, idx, callbackMap, onclick, isUnit){
             const newUsItem = clonePrototype('unit-slot-prototype');
             
             const hiddenIdx = newUsItem.querySelector('.unit-idx');
             hiddenIdx.textContent = idx;
-
-            const usName = newUsItem.querySelector('.unit-text');
-            // Find the crown icon
-            usName.textContent = unit.name;
 
             let numOptions = 5;
             const canBeGeneral = !(unit.type !== 0 || !parent.className.includes('regiment'));
@@ -382,7 +394,7 @@ const builderPage = {
                 const arrow = newUsItem.querySelector('.arrow');
                 arrow.onclick = (event) => {
                     event.stopPropagation();
-                    arrowOnClick(arrow);
+                    arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
                 }
             }
 
@@ -420,8 +432,23 @@ const builderPage = {
             const usPoints = newUsItem.querySelector('.unit-slot-points');
             displayPoints(usPoints, unitPoints, 'PTS');
 
-            let unitHdr = newUsItem.querySelector(".unit-header-right");
+            let unitHdr = newUsItem.querySelector(".selectable-item-right");
             if (typeof callbackMap === 'string') {
+                const toggleUnitAddButton = (regItem, _regiment) => {
+                    const btn = regItem.querySelector('.full-rectangle-button');
+                    let maxUnits = 4;
+                    if (_regiment.units.length > 0 && _regiment.units[0].isGeneral)
+                        maxUnits = 6;
+                    btn.disabled = _regiment.units.length >= maxUnits;
+                }
+                
+                const regItem = parent.closest('.regiment-item');
+                if (regItem) {
+                    const _div = regItem.querySelector('.regiment-idx');
+                    const _currentRegIdx = Number(_div.textContent);
+                    toggleUnitAddButton(regItem, thisPage.roster.regiments[Number(_currentRegIdx)]);
+                }
+                
                 callbackMap = {};
                 callbackMap.Duplicate = async (e) => {
                     const regItem = parent.closest('.regiment-item');
@@ -433,7 +460,10 @@ const builderPage = {
                     const clone = JSON.parse(json);
                     reg.units.push(clone);
                     putRoster(roster);
-                    await createUnitSlot(parent, clone, reg.units.length-1, 'foo', onclick);
+                    
+                    toggleUnitAddButton(regItem, reg);
+
+                    await createUnitSlot(parent, clone, reg.units.length-1, 'foo', onclick, isUnit);
                     totalPoints += unitTotalPoints(clone);
                     refreshPointsOverlay();
                     updateValidationDisplay();
@@ -453,6 +483,8 @@ const builderPage = {
                         // remove from the object
                         thisPage.roster.regiments[_currentRegIdx].units.splice(_currentIdx, 1);
                         putRoster(roster);
+                        
+                        toggleUnitAddButton(regItem, thisPage.roster.regiments[_currentRegIdx]);
 
                         // update the points
                         totalPoints -= unitTotalPoints(unit);
@@ -466,6 +498,7 @@ const builderPage = {
                             const hiddenIdx = slot.querySelector('.unit-idx');
                             hiddenIdx.textContent = newIdx;
                         });
+                        toggleUnitAddButton(parent, thisPage.roster.regiments[_currentRegIdx]);
                     }
                 } // to-do add replace to unit 0
             }
@@ -473,10 +506,10 @@ const builderPage = {
                 const menu = createContextMenu(callbackMap);
                 unitHdr.appendChild(menu);
             }
-            unitHdr = newUsItem.querySelector(".unit-header-left");
-            unitHdr.onclick = onclick;
+            updateSelectableItemPrototype(newUsItem, unit, isUnit, onclick);
             parent.appendChild(newUsItem);
             newUsItem.style.display = "";
+            return newUsItem;
         }
 
         async function displayRegimentOfRenown() {
@@ -501,13 +534,11 @@ const builderPage = {
                 //arrow.textContent = '\u2022'; //'\u29BF';
                 arrow.onclick = (event) => {
                     event.stopPropagation();
-                    arrowOnClick(arrow);
+                    arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
                 }
-                
-                const usName = newUsItem.querySelector('.unit-text');
-                // Find the crown icon
-                usName.textContent = regiment.name;
-
+                updateSelectableItemPrototype(newUsItem, regimentOfRenown, true, () => {
+                    displayUpgradeOverlay(thisPage.roster.regimentOfRenown.upgrades);
+                });
                 // these are all for units
                 removeSection(newUsItem, 'is-general');
                 removeSection(newUsItem, 'is-reinforced');
@@ -518,15 +549,11 @@ const builderPage = {
                 const usPoints = newUsItem.querySelector('.unit-slot-points');
                 displayPoints(usPoints, regiment.points, 'PTS');
 
-                let unitHdr = newUsItem.querySelector(".unit-header-right");
+                let unitHdr = newUsItem.querySelector(".selectable-item-right");
                 // does nothing but helps positioning be consistant
                 const menu = createContextMenu({});
                 unitHdr.appendChild(menu);
 
-                unitHdr = newUsItem.querySelector(".unit-header-left");
-                unitHdr.onclick = () => {
-                    displayUpgradeOverlay(thisPage.roster.regimentOfRenown.upgrades);
-                }
                 content.appendChild(newUsItem);
                 newUsItem.style.display = "";
                 const details = newUsItem.querySelector('.unit-details');
@@ -540,9 +567,11 @@ const builderPage = {
             const _createUnitSlot = async (unit) => {
                 const newUsItem = clonePrototype('unit-slot-prototype');
                 
-                const usName = newUsItem.querySelector('.unit-text');
-                // Find the crown icon
-                usName.textContent = unit.name;
+                updateSelectableItemPrototype(newUsItem, unit, true, () => {
+                    const settings = new WarscrollSettings;
+                    settings.unit = unit;
+                    dynamicGoTo(settings);
+                });
 
                 // remove toggle
                 removeSection(newUsItem, "unit-details");
@@ -553,17 +582,11 @@ const builderPage = {
                 usPoints.style.display = 'none';
                 usPoints.textContent = '';
 
-                let unitHdr = newUsItem.querySelector(".unit-header-right");
+                let unitHdr = newUsItem.querySelector(".selectable-item-right");
                 // does nothing but helps positioning be consistant
                 const menu = createContextMenu({});
                 unitHdr.appendChild(menu);
 
-                unitHdr = newUsItem.querySelector(".unit-header-left");
-                unitHdr.onclick = () => {
-                    const settings = new WarscrollSettings;
-                    settings.unit = unit;
-                    dynamicGoTo(settings);
-                };
             // detailsSection.appendChild(newUsItem);
                 details.appendChild(newUsItem);
                 newUsItem.style.display = "";
@@ -625,12 +648,12 @@ const builderPage = {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
                     dynamicGoTo(settings);
-                });
+                }, true);
                 uniqueId += unit.id;
                 const unitsPoints = unitTotalPoints(unit);
                 points += unitsPoints;
             };
-            
+
             const pointsSpan = newRegItem.querySelector('.regiment-item-points');
             if (points > 0) {
                 pointsSpan.textContent = `${points} pts`;
@@ -648,6 +671,11 @@ const builderPage = {
                     putRoster(roster);
                     displayRegiment(thisPage.roster.regiments.length-1);
                     updateValidationDisplay();
+
+                    if (thisPage.roster.regiments.length > 4) {
+                        const btn = document.getElementById('regiments-add-button');
+                        btn.disabled = true;
+                    }
                 },
 
                 Delete: async (e) => {
@@ -669,6 +697,11 @@ const builderPage = {
                     divs.forEach((div, idx)=> {
                         setInternalIdx(div, idx);
                     });
+                    
+                    if (thisPage.roster.regiments.length < 5) {
+                        const btn = document.getElementById('regiments-add-button');
+                        btn.disabled = false;
+                    }
                 }
             };
 
@@ -713,10 +746,10 @@ const builderPage = {
             return { units: manifestations, armyUnits: armySpecific };
         }
 
-        function displaySingleton(typename, callbackMap, unit, idx, onclick) {
+        function displaySingleton(typename, callbackMap, unit, idx, onclick, isUnit) {
             const parent = document.getElementById(typename);
             
-            createUnitSlot(parent, unit, idx, callbackMap, onclick);
+            createUnitSlot(parent, unit, idx, callbackMap, onclick, isUnit);
 
             const unitsPoints = unitTotalPoints(unit);
             totalPoints += unitsPoints;
@@ -758,7 +791,7 @@ const builderPage = {
                 }
             };
 
-            displaySingleton(typename, callbackMap, unit, idx, onclick);
+            displaySingleton(typename, callbackMap, unit, idx, onclick, true);
         }
 
         function displayTerrain() {
@@ -787,10 +820,14 @@ const builderPage = {
                     terrain.innerHTML = '';
                     totalPoints -= points;
                     refreshPointsOverlay(thisPage.roster.id);
+                    const btn = document.getElementById('faction-terrain-add-button');
+                    btn.disabled = false;
                 }
             };
 
-            displaySingleton(typename, callbackMap, thisPage.roster.terrainFeature, 0, onclick);
+            displaySingleton(typename, callbackMap, thisPage.roster.terrainFeature, 0, onclick, true);
+            const btn = document.getElementById('faction-terrain-add-button');
+            btn.disabled = true;
         }
 
         function displayBattleTraits() {
@@ -802,8 +839,13 @@ const builderPage = {
             };
             const newUsItem = clonePrototype('unit-slot-prototype');
             
+            updateSelectableItemPrototype(newUsItem, trait, false, onclick);
+
             const usName = newUsItem.querySelector('.unit-text');
             usName.textContent = trait.name.replace("Battle Traits: ", "");
+
+            const label = newUsItem.querySelector('.ability-label');
+            label.textContent = 'Battle Traits';
 
             const usPoints = newUsItem.querySelector('.unit-slot-points');
             usPoints.style.display = 'none';
@@ -813,12 +855,11 @@ const builderPage = {
             const arrow = newUsItem.querySelector('.arrow');
             arrow.textContent = '\u2022'; //'\u29BF';
             
-            let unitHdr = newUsItem.querySelector(".unit-header-right");
+            let unitHdr = newUsItem.querySelector(".selectable-item-right");
             // does nothing but helps positioning be consistant
             const menu = createContextMenu({});
             unitHdr.appendChild(menu);
-            unitHdr = newUsItem.querySelector(".unit-header-left");
-            unitHdr.onclick = onclick;
+
             const parent = document.getElementById(typename);
             parent.appendChild(newUsItem);
             newUsItem.style.display = "";
@@ -840,27 +881,19 @@ const builderPage = {
                     dynamicGoTo(settings);
                 }
             };
-            displaySingleton(typename, callbackMap, thisPage.roster.battleFormation, 900, onclick);
+
+            displaySingleton(typename, callbackMap, thisPage.roster.battleFormation, 900, onclick, false);
+            const btn = document.getElementById('battle-formation-add-button');
+            btn.disabled = true;
         }
 
-        function displayLore(name, callbackMap, onclick) {
+        async function displayLore(name, callbackMap, onclick) {
             const typename = 'lores-container';
             const lcName = name.toLowerCase();
             const parent = document.getElementById(typename);
-            const newRegItem = clonePrototype('regiment-item-prototype');
-            newRegItem.id = `regiment-item-${lcName}`;
-            const deadButton = newRegItem.querySelector('.full-rectangle-button');
-            deadButton.parentElement.removeChild(deadButton);
 
-            const title = newRegItem.querySelector('.regiment-item-title');
-            title.innerHTML = `${name} Lore`;
-            parent.append(newRegItem);
-            
-            const menu = createContextMenu(callbackMap);
-            const regHdr = newRegItem.querySelector(".regiment-header");
-            regHdr.appendChild(menu);
-            
-            createUnitSlot(newRegItem, thisPage.roster.lores[lcName], 0, {}, onclick);
+            const slot = await createUnitSlot(parent, thisPage.roster.lores[lcName], 0, callbackMap, onclick, false);
+            slot.id = `${lcName}-slot`;
 
             const unitsPoints = unitTotalPoints(thisPage.roster.lores[lcName]);
             if (unitsPoints) {
@@ -890,15 +923,11 @@ const builderPage = {
                     thisPage.roster.lores.spell = null;
                     await putRoster(roster);
                     
-                    const parent = document.getElementById('lores-container');
-                    const slots = parent.querySelectorAll('.regiment-item');
-                    slots.forEach(slot => {
-                        if (slot.id.includes('spell')) {
-                            parent.removeChild(slot);
-                            return false;
-                        }
-                        return true;
-                    });
+                    const ele = document.getElementById('spell-slot');
+                    ele.parentElement.removeChild(ele);
+
+                    const btn = document.getElementById('lores-add-button');
+                    btn.disabled = false;
                 }
             };
             
@@ -922,15 +951,12 @@ const builderPage = {
                 Delete: async (e) => {
                     thisPage.roster.lores.prayer = null;
                     await putRoster(roster);
-                    const parent = document.getElementById('lores-container');
-                    const slots = parent.querySelectorAll('.regiment-item');
-                    slots.forEach(slot => {
-                        if (slot.id.includes('prayer')) {
-                            parent.removeChild(slot);
-                            return false;
-                        }
-                        return true;
-                    });
+                    
+                    const ele = document.getElementById('prayer-slot');
+                    ele.parentElement.removeChild(ele);
+
+                    const btn = document.getElementById('lores-add-button');
+                    btn.disabled = false;
                 }
             };
 
@@ -940,22 +966,16 @@ const builderPage = {
         async function displayManifestLore() {
             const lore = thisPage.roster.lores.manifestation;
             const parent = document.getElementById('lores-container');
-            const newRegItem = clonePrototype('regiment-item-prototype');
-            newRegItem.id = `regiment-item-manifest`;
-
-            const title = newRegItem.querySelector('.regiment-item-title');
-            title.innerHTML = 'Manifestation Lore';
-            
-            const content = newRegItem.querySelector('.regiment-content');
             const newUsItem = clonePrototype('unit-slot-prototype');
             
-            const deadButton = newRegItem.querySelector('.full-rectangle-button');
-            deadButton.parentElement.removeChild(deadButton);
-            
+            updateSelectableItemPrototype(newUsItem, lore, false, () => {
+                displayUpgradeOverlay(thisPage.roster.lores.manifestation);
+            });
+
             const arrow = newUsItem.querySelector('.arrow');
             arrow.onclick = (event) => {
                 event.stopPropagation();
-                arrowOnClick(arrow);
+                arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
             }
             
             async function displayManifestations() {
@@ -968,9 +988,8 @@ const builderPage = {
                 const createManifestSlot = async (unit, onclick) => {
                     const subUsItem = clonePrototype('unit-slot-prototype');
                     
-                    const usName = subUsItem.querySelector('.unit-text');
-                    // Find the crown icon
-                    usName.textContent = unit.name;
+                    updateSelectableItemPrototype(subUsItem, unit, true, onclick);
+
                     removeSection(subUsItem, 'is-general');
                     removeSection(subUsItem, 'is-reinforced');
                     removeSection(subUsItem, 'available-artefacts');
@@ -983,13 +1002,13 @@ const builderPage = {
                     const usPoints = subUsItem.querySelector('.unit-slot-points');
                     displayPoints(usPoints, unitPoints);
 
-                    let unitHdr = subUsItem.querySelector(".unit-header-right");
+                    let unitHdr = subUsItem.querySelector(".selectable-item-right");
                     
                     // does nothing but helps positioning be consistant
                     const menu = createContextMenu({});
                     unitHdr.appendChild(menu);
 
-                    unitHdr = subUsItem.querySelector(".unit-header-left");
+                    unitHdr = subUsItem.querySelector(".selectable-item-left");
                     unitHdr.onclick = onclick;
                     details.appendChild(subUsItem);
                     subUsItem.style.display = "";
@@ -1028,40 +1047,39 @@ const builderPage = {
                 Delete: async (e) => {
                     thisPage.roster.lores.manifestation = null;
                     putRoster(roster);
-                    parent.removeChild(newRegItem);
+                    parent.removeChild(newUsItem);
+                    const btn = document.getElementById('lores-add-button');
+                    btn.disabled = false;
                 }
             };
             
-            const regItemMenu = createContextMenu(callbackMap);
-            const regHdr = newRegItem.querySelector(".regiment-header");
-            regHdr.appendChild(regItemMenu);
+            //const regItemMenu = createContextMenu(callbackMap);
+          //  const regHdr = newRegItem.querySelector(".regiment-header");
+            //regHdr.appendChild(regItemMenu);
 
-            const menu = createContextMenu({});
-            let unitHdr = newUsItem.querySelector(".unit-header-right");
+            const menu = createContextMenu(callbackMap);
+            let unitHdr = newUsItem.querySelector(".selectable-item-right");
             unitHdr.appendChild(menu);
-            unitHdr = newUsItem.querySelector(".unit-header-left");
-            unitHdr.onclick = () => {
-                displayUpgradeOverlay(thisPage.roster.lores.manifestation);
-            }
-            content.appendChild(newUsItem);
-            parent.appendChild(newRegItem);
+
+            parent.appendChild(newUsItem);
             newUsItem.style.display = "";
-            newRegItem.style.display = "";
 
             displayManifestations();
         }
 
-        function displayTactics() {
+        async function displayTactics() {
             const typename = 'battle-tactics-container';
             const parent = document.getElementById(typename);
-            thisPage.roster.battleTacticCards.forEach((tactic, index) => {
+            for (let i = 0; i < thisPage.roster.battleTacticCards.length; ++i) {
+                const tactic = thisPage.roster.battleTacticCards[i];
+
                 const onclick = () => {
                     displayTacticsOverlay(tactic);
                 }
                 
                 const callbackMap = {
                     Replace: async (e) => {
-                        thisPage.roster.battleTacticCards.splice(index, 1);
+                        thisPage.roster.battleTacticCards.splice(i, 1);
                         putRoster(roster);
                         const settings = new TacticsSettings;
                         settings.roster = thisPage.roster;
@@ -1069,21 +1087,26 @@ const builderPage = {
                     },
 
                     Delete: async (e) => {
-                        thisPage.roster.battleTacticCards.splice(index, 1);
+                        thisPage.roster.battleTacticCards.splice(i, 1);
                         await putRoster(roster);
 
                         const slots = parent.querySelectorAll('.unit-slot');
                         slots.forEach(slot => {
                             const hiddenIdx = slot.querySelector('.unit-idx');
-                            if (index === Number(hiddenIdx.textContent)) {
+                            if (i === Number(hiddenIdx.textContent)) {
                                 parent.removeChild(slot);
                             }
                         });
+
+                        const btn = document.getElementById('battle-tactics-add-button');
+                        btn.disabled = false;
                     }
                 };
 
-                createUnitSlot(parent, tactic, index, callbackMap, onclick);
-            });
+                const newItem = await createUnitSlot(parent, tactic, i, callbackMap, onclick, false);
+                const label = newItem.querySelector('.ability-label');
+                label.textContent = 'Battle Tactic Card';
+            }
         }
 
         async function loadArmy(doGet) {
@@ -1101,6 +1124,7 @@ const builderPage = {
                 refreshPointsOverlay(rosterId);
             }
 
+            const upgrades = await thisPage.fetchUpgrades();
             const sections = document.querySelectorAll('.section-container');
             sections.forEach(section => section.innerHTML = '');
 
@@ -1112,6 +1136,11 @@ const builderPage = {
             if (thisPage.roster.regimentOfRenown)
                 displayRegimentOfRenown();
 
+            if ((thisPage.roster.regiments.length + (thisPage.roster.regimentOfRenown ? 1 : 0)) >= 5) {
+                const btn = document.getElementById('regiments-add-button');
+                btn.disabled = true;
+            }
+
             for (let i = 0; i< thisPage.roster.auxiliaryUnits.length; ++i)
                 displayAux(i);
 
@@ -1120,21 +1149,43 @@ const builderPage = {
 
             displayBattleTraits();
 
-            if (thisPage.roster.battleFormation)
+            if (thisPage.roster.battleFormation) 
                 displayBattleFormation();
 
-            if (thisPage.roster.lores.spell)
+
+            let nLores = 1;
+            if (Object.getOwnPropertyNames(upgrades.lores.spell).length > 0)
+                nLores ++;
+            if (Object.getOwnPropertyNames(upgrades.lores.prayer).length > 0)
+                nLores ++;
+
+            if (thisPage.roster.lores.spell) {
                 displaySpellLore();
+                nLores --;
+            }
 
-            if (thisPage.roster.lores.prayer)
+            if (thisPage.roster.lores.prayer) {
                 displayPrayerLore();
+                nLores --;
+            }
 
-            if (thisPage.roster.lores.manifestation)
+            if (thisPage.roster.lores.manifestation) {
                 displayManifestLore();
+                nLores --;
+            }
+
+            if (nLores === 0) {
+                const btn = document.getElementById('lores-add-button');
+                btn.disabled = true;
+            }
 
             if (thisPage.roster.battleTacticCards.length > 0)
                 displayTactics();
 
+            if (thisPage.roster.battleTacticCards.length === 2) {
+                const btn = document.getElementById('battle-tactics-add-button');
+                btn.disabled = true;
+            }
             
             setHeaderTitle(thisPage.roster.name);
             refreshPointsOverlay(thisPage.roster.id);
@@ -1152,7 +1203,7 @@ const builderPage = {
                     <h3 id="${adjustedName}-section-title" class="section-title">${name}
                     <button id="${adjustedName}-add-button" class="rectangle-button">+</button>
                     </h3>
-                    <div style='display: block' class="section-container" id="${adjustedName}-container"></div>
+                    <div class="section-container" id="${adjustedName}-container"></div>
                 `;
                 main.appendChild(section);
 

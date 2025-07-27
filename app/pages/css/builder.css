@@ -1,35 +1,59 @@
 .regiment-item {
+  box-sizing: border-box;
   align-items: center;
   padding: 1%;
-  background: #f2f2f2;
+  background: var(--regiment-item-backround-color);
   border-radius: var(--border-radius);
   margin-bottom: .5em;
   position: relative;
-  width: 96%;
+  width: 100%;
   font-size: 14px;
 }
 
 .arrow {
-    font-size: x-large;
+    font-size: 3em;
     transition: transform 0.3s ease;
+    padding-bottom: .35em;
+    margin: 0px;
+    height: .9em;
+    width: .5em;
+    line-height: 1em;
+    border-radius: 100vb;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.unit-slot-selectable-item-wrapper {
+    display: inline-block;
+    width: 100%;
+}
+
+.unit-slot-selectable-item {
+    padding: .5em;
 }
 
 .unit-details {
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.4s ease;
-  background: #fafafa;
-  padding: 0 .5em;
+  border-radius: var(--border-radius);
 }
 
-.crown-icon {
-    margin-left: 5px;
-    color: goldenrod;
+.upgrade-section {
+    padding-right: 1em;
+    padding-left: 1em;
+}
+
+button:disabled {
+    background-color: var(--section-color);
+    color: var(--hover-color);
+    border: 3px dashed var(--hover-color);
 }
 
 .unit-slot {
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 1px solid var(--background-color);
   width: 100%;
   margin-bottom: 5px;
   margin-top: 5px;
@@ -37,13 +61,20 @@
   margin-right: 0px;
   font-size: 14px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, .15);
+  background-color: var(--slot-background-color);
+}
+
+.unit-slot-display-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .unit-slot:active:not(:focus-within) {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
   transform: translateY(2px);
 }
-
+/*
 .unit-header {
     display: flex;
     justify-content: space-between;
@@ -51,19 +82,9 @@
     padding: 10px;
     padding-right: 5px;
     padding-left: 10px;
-    background: #f2f2f2;
+    color: var(--selectable-item-font-color);
+    background-color: var(--selectable-item-color);
     cursor: pointer;
-}
-
-.unit-slot-name {
-    position: relative;
-    display: flex-start;
-    align-items: center;
-    max-width: 150px;
-}
-
-.unit-text {
-    flex-shrink: 0;
 }
 
 .unit-header-right {
@@ -73,12 +94,11 @@
 .unit-header-left {
     max-width: 40%;
 }
-
-
+*/
 .upgrade-group {
     display: flex;
     align-items: center;
-    color: black;
+    color: var(--dark-text-color);
 }
 
 .upgrade-group-left,
@@ -106,7 +126,7 @@
     border: 0px;
     margin: 0px;
     margin-left: .5em;
-    background: white;
+    background-color: var(--section-background-color);
     display: inline-block;
     cursor: pointer;
 }
