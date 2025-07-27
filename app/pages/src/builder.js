@@ -114,8 +114,8 @@ const builderPage = {
             <div class="regiment-content" style="margin-top: 0.5rem;"></div>
 
             <!-- Add button below content -->
-            <div class="clickable-style" style="display: flex; align-items: center; gap: 0.5rem;">
-                <button class="full-rectangle-button">Add Unit +</button>
+            <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <button class="add-unit-button">Add Unit +</button>
             </div>
             `;
             div.className = `regiment-item`;
@@ -314,7 +314,7 @@ const builderPage = {
                     updateValidationDisplay();
 
                     const regItem = parent.closest('.regiment-item');
-                    const btn = regItem.querySelector('.full-rectangle-button');
+                    const btn = regItem.querySelector('.add-unit-button');
                     let maxUnits = 4;
                     if (regiment.units.length > 0 && regiment.units[0].isGeneral)
                         maxUnits = 5;
@@ -442,7 +442,7 @@ const builderPage = {
             let unitHdr = newUsItem.querySelector(".selectable-item-right");
             if (typeof callbackMap === 'string') {
                 const toggleUnitAddButton = (regItem, _regiment) => {
-                    const btn = regItem.querySelector('.full-rectangle-button');
+                    const btn = regItem.querySelector('.add-unit-button');
                     let maxUnits = 4;
                     if (_regiment.units.length > 0 && _regiment.units[0].isGeneral)
                         maxUnits = 5;
@@ -525,7 +525,7 @@ const builderPage = {
             newRegItem.id = `regiment-item-of-renown`;
             const regiment = thisPage.roster.regimentOfRenown;
 
-            const deadButton = newRegItem.querySelector('.full-rectangle-button');
+            const deadButton = newRegItem.querySelector('.add-unit-button');
             deadButton.parentElement.removeChild(deadButton);
 
             const title = newRegItem.querySelector('.regiment-item-title');

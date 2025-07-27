@@ -282,6 +282,7 @@ footer {
     cursor: pointer;
 }
 
+.add-unit-button,
 .full-rectangle-button {
     background-color: var(--blue-color);
     color: var(--label-font-color);
@@ -292,6 +293,12 @@ footer {
     border-radius: var(--border-radius);
     font-size: 14px;
     cursor: pointer;
+}
+
+.add-unit-button {
+    border: 2px dashed var(--blue-color);
+    color: var(--blue-color);
+    background-color: var(--black-3);
 }
 
 .rectangle-button-small {
