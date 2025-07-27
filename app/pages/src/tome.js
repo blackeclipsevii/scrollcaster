@@ -115,7 +115,7 @@ const catalogPage = {
                 then(army => {           
                     h2.textContent = army.name;
         
-                    if (army.units.length > 0) {
+                    if (Object.getOwnPropertyNames(army.units).length > 0) {
                         makeItem('Warscrolls', () => {
                             const settings = new UnitSettings;
                             settings.armyName = subFactionName;
