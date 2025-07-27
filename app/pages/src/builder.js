@@ -129,9 +129,8 @@ const builderPage = {
                 const settings = new UnitSettings;
                 settings.roster = thisPage.roster;
                 settings.regimentIndex = idx;
-                if (count === 0) {
+                if (count === 0)
                     settings.type = 'hero';
-                }
 
                 dynamicGoTo(settings);
             };

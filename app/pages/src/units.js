@@ -1,7 +1,7 @@
 
 class UnitSettings {
     type = null;
-    rosterId = null;
+    roster = null;
     regimentIndex = null;
     auxiliary = false;
 
@@ -16,36 +16,41 @@ class UnitSettings {
 const unitPage = {
     settings: null,
     _cache: {
-        units: null,
-        regimentsOfRenown: null,
-        armyName: null,
-        leaderId: null
+        army: {
+            leaderId: null,
+            units: null,
+            armyName: null
+        },
+        regimentsOfRenown: {
+            units: null,
+            armyName: null
+        }
     },
     async fetchRor() {
-        if (this._cache.regimentsOfRenown && this._cache.armyName === this.settings.armyName) {
-            return this._cache.regimentsOfRenown;
+        if (this._cache.regimentsOfRenown.units && this._cache.regimentsOfRenown.armyName === this.settings.armyName) {
+            return this._cache.regimentsOfRenown.units;
         }
         let results = null;
         await fetch(encodeURI(`${endpoint}/regimentsOfRenown?army=${this.settings.armyName}`)).
         then(resp => resp.json()).
         then(units => results = units);
-        this._cache.regimentsOfRenown = results;
-        this._cache.armyName = this.settings.armyName;
+        this._cache.regimentsOfRenown.units = results;
+        this._cache.regimentsOfRenown.armyName = this.settings.armyName;
         return results;
     },
     async fetchUnits(leaderId = null) {
-        if (this._cache.units) {
-            if (this._cache.armyName === this.settings.armyName &&
-                this._cache.leaderId === leaderId
+        if (this._cache.army.units) {
+            if (this._cache.army.armyName === this.settings.armyName &&
+                this._cache.army.leaderId === leaderId
             ) {
-                return this._cache.units;
+                return this._cache.army.units;
             }
         }
         let response = null;
         
         let url = `${endpoint}/units`;
-        if (thisPage.settings.armyName) {
-            url = `${url}?army=${thisPage.settings.armyName}`
+        if (this.settings.armyName) {
+            url = `${url}?army=${this.settings.armyName}`
             if (leaderId) {
                 // to-do move the leader filter client side and use the same cache
                 url = `${url}&leaderId=${leaderId}`;
@@ -55,9 +60,9 @@ const unitPage = {
         await fetch(encodeURI(url)).
                     then(resp => resp.json()).
                     then(units => response = units);
-        this._cache.units = response;
-        this._cache.armyName = this.settings.armyName;
-        this._cache.leaderId = leaderId;
+        this._cache.army.units = response;
+        this._cache.army.armyName = this.settings.armyName;
+        this._cache.army.leaderId = leaderId;
         return response;
     },
     loadPage (settings) {
@@ -227,8 +232,6 @@ const unitPage = {
             if (thisPage.settings.roster) {
                 thisPage.settings.armyName = thisPage.settings.roster.army;
                 roster = thisPage.settings.roster;
-            } else {
-                roster = await getRoster(thisPage.settings.rosterId);
             }
             
             armyUnitCounts = _getUnitCounts();
@@ -369,7 +372,7 @@ const unitPage = {
         initializeFavoritesList();
         _makeUnitLayout();
         
-        if (thisPage.settings.roster || thisPage.settings.rosterId) {
+        if (thisPage.settings.roster) {
             loadUnits();
         } else {
             loadUnitsForCatalog();

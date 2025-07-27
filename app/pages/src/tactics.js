@@ -50,7 +50,8 @@ const tacticsPage = {
     
                 const item = document.createElement('div');
                 item.classList.add('selectable-item');
-                item.classList.add('not-added');
+                if (!_inCatalog)
+                    item.classList.add('not-added');
     
                 const left = document.createElement('div');
                 left.classList.add('selectable-item-left');
