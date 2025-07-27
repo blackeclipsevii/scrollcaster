@@ -313,6 +313,13 @@ const builderPage = {
                     unit.isGeneral = checkbox.checked;
                     putRoster(roster);
                     updateValidationDisplay();
+
+                    const regItem = parent.closest('.regiment-item');
+                    const btn = regItem.querySelector('.full-rectangle-button');
+                    let maxUnits = 4;
+                    if (regiment.units.length > 0 && regiment.units[0].isGeneral)
+                        maxUnits = 6;
+                    btn.disabled = regiment.units.length >= maxUnits;
                 };
             }
 
