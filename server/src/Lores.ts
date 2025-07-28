@@ -2,9 +2,16 @@ import parseCatalog from "./lib/parseCatalog.js";
 
 import Upgrade from "./Upgrade.js";
 import { UpgradeType } from './lib/Upgrade.js';
+import { BsLibrary, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
 
 export class Lore {
-    constructor(selectionEntryGroup) {
+    name: string;
+    id: string;
+    type: number;
+    unitIds: string[];
+    abilities: Upgrade[];
+    
+    constructor(selectionEntryGroup: BsSelectionEntryGroup) {
         this.id = selectionEntryGroup['@id'];
         this.name = selectionEntryGroup['@name'];
         this.abilities = [];
@@ -12,6 +19,9 @@ export class Lore {
         this.type = UpgradeType.SpellLore;
         if (selectionEntryGroup.selectionEntries) {
             selectionEntryGroup.selectionEntries.forEach(selectionEntry => {
+                if (selectionEntry.profiles === undefined)
+                    return;
+                
                 const typename = selectionEntry.profiles[0]['@typeName'].toLowerCase();
                 let type = UpgradeType.SpellLore;
                 if (typename.includes('prayer'))
@@ -33,17 +43,44 @@ export class Lore {
     }
 }
 
+export interface LoreLUTInterf {
+    [key: string]: Lore;
+}
+
+export class LoreLUT {
+    spell: LoreLUTInterf;
+    prayer: LoreLUTInterf;
+    manifestation: LoreLUTInterf;
+    constructor() {
+        this.spell = {};
+        this.prayer = {};
+        this.manifestation = {};
+    }
+}
+
+export class UniversalLoreLU {
+    id: string;
+    points: number;
+    type: number;
+    constructor() {
+        this.id = '';
+        this.points = 0;
+        this.type = UpgradeType.ManifestationLore;
+    }
+}
+
 export default class Lores {
-    constructor(dir) {
+    catalogue: BsLibrary;
+    lores: LoreLUT;
+    universal: UniversalLoreLU[];
+    constructor(dir: string) {
         this.universal = [];
-        this.lores = {
-            spell: {},
-            prayer: {},
-            manifestation: {}
-        };
-        this.catalogue = parseCatalog(`${dir}/Lores.cat`);
-        if (!this.catalogue)
-            return;
+        this.lores = new LoreLUT;
+        
+        const _cat = parseCatalog(`${dir}/Lores.cat`) as BsLibrary | null;
+        if (!_cat)
+            throw `Unable to parse ${dir}/Lores.cat`
+        this.catalogue = _cat;
 
         this.catalogue.sharedSelectionEntryGroups.forEach(group => {
             if (group['@name'] === 'Manifestation Lores') {
@@ -52,35 +89,27 @@ export default class Lores {
             }
 
             const lore = new Lore(group);
-
-            let typeText = 'spell';
             if (lore.type === UpgradeType.ManifestationLore)
-                typeText = 'manifestation';
+                this.lores.manifestation[lore.id] = lore;
             else if (lore.type === UpgradeType.PrayerLore)
-                typeText = 'prayer';
-
-            this.lores[typeText][lore.id] = lore;
+                this.lores.prayer[lore.id] = lore;
+            else
+                this.lores.spell[lore.id] = lore;
         });
     }
 
-    _doUniversalLores(group) {
+    _doUniversalLores(group: BsSelectionEntryGroup) {
         group.selectionEntries.forEach(entry => {
-            const lu = {
-                id: '',
-                points: 0,
-                type: UpgradeType.ManifestationLore
-            };
-            entry.entryLinks.forEach(link =>{
-                lu.id = link['@targetId'];
-            });
+            const lu = new UniversalLoreLU;
+            if (entry.entryLinks)
+                entry.entryLinks.forEach(link => lu.id = link['@targetId']);
+
             if (entry.costs) {
                 entry.costs.forEach(cost => {
-                    if (cost['@name'] === 'pts') {
+                    if (cost['@name'] === 'pts')
                         lu.points = Number(cost['@value']);
-                    }
                 });
             }
-            console.log(`added universal lore : ${entry['@name']} ${lu.id}`);
             this.universal.push(lu);
         });
     }

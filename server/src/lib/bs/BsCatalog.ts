@@ -79,13 +79,18 @@ export interface BsProfile extends BsIdentifiable, BsNamed {
 export interface BsSelectionEntry extends BsIdentifiable, BsNamed, BsTyped{
     '@import': string,
     '@hidden': string,
-    profiles: BsProfile[];
+    costs: BsCost[] | undefined;
+    profiles: BsProfile[] | undefined;
+    entryLinks: BsEntryLink[] | undefined;
+    categoryLinks: BsCategoryLink[] | undefined;
+    selectionEntries: BsSelectionEntry[] | undefined;
 }
 
-export interface BsSelectionEntryGroup extends BsIdentifiable {
+export interface BsSelectionEntryGroup extends BsNamed, BsIdentifiable {
     '@hidden': string,
     selectionEntries: BsSelectionEntry[];
     constraints: BsConstraintInter[];
+    entryLinks: BsEntryLink[] | undefined;
 }
 
 export interface BsCost extends BsNamed {
@@ -104,6 +109,11 @@ export interface BsEntryLink extends BsIdentifiable, BsLink {
 
 export interface BsCatalogueLink extends BsIdentifiable, BsLink {
     '@importRootEntries': string;
+}
+
+export interface BsCategoryLink extends BsNamed, BsIdentifiable, BsLink {
+    '@primary': string;
+    '@hidden': string;
 }
 
 export interface BsCategoryEntry extends BsIdentifiable {
