@@ -19,10 +19,7 @@ const upgradePage = {
         if (this._cache.upgrades && this._cache.armyName === armyName) {
             return this._cache.upgrades;
         }
-        let result = null;
-        await fetch(encodeURI(`${endpoint}/upgrades?army=${armyName}`)).
-            then(resp => resp.json()).
-            then(allUpgrades => result = allUpgrades);
+        const result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/upgrades?army=${armyName}`));
         this._cache.upgrades = result;
         this._cache.armyName = armyName;
         return result;
@@ -72,7 +69,7 @@ const upgradePage = {
             const item = document.createElement('div');
             item.classList.add('selectable-item');
             
-            if (roster) {
+            if (roster && !_inCatalog) {
                 item.classList.add('not-added');
             }
         
@@ -170,9 +167,8 @@ const upgradePage = {
         async function loadUniversalLores() {
             setHeaderTitle('Universal Manifestation Lores');
             hidePointsOverlay();
-            await fetch(encodeURI(`${endpoint}/lores`)).
-            then(resp => resp.json()).
-            then(loreObject => {
+            await fetchWithLoadingDisplay(encodeURI(`${endpoint}/lores`),
+            loreObject => {
                 loreObject.universal.forEach(ulut => {
                     const lore = loreObject.lores.manifestation[ulut.id];
                     displayUpgrade(lore);

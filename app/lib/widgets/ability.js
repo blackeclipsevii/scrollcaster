@@ -30,14 +30,25 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     if (!ability.timing)
         ability.timing = 'Passive';
 
-    let color = '#5A5E5A';
+    let invertPng = false;
+    let headerFontColor = getVar('header-font-color');
+    let color = getVar('section-font-color');
     let icon = '../../resources/abSpecial.png';
+    let cssColor = 'gray';
     if (ability.metadata && ability.metadata.color) {
-        let cssColor = ability.metadata.color.toLowerCase();
-        cssColor = getVar(`${cssColor}-ability`);
-        if (cssColor && cssColor.length > 0)
-            color = cssColor;
+        cssColor = ability.metadata.color.toLowerCase();
+        console.log(ability.metadata.color);
     }
+
+    let theColor = getVar(`${cssColor}-ability`);
+    if (theColor && theColor.length > 0)
+        color = theColor;
+    
+    theColor = getVar(`${cssColor}-ability-header-font-color`);
+    if (theColor && theColor.length > 0)
+        headerFontColor = theColor;
+
+    invertPng = getVar(`${cssColor}-invert-png`) ? true : false;
 
     if (ability.metadata && ability.metadata.type) {
         let type = ability.metadata.type;
@@ -53,9 +64,14 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     img.src = icon;
     img.className = 'ability-icon';
     img.style.display = 'inline-block';
+    if (invertPng) {
+        img.classList.add('invert-img');
+    }
     if (icon);
     titleBar.appendChild(img);
     addSection('h3', 'timing', '', titleBar, color);
+    titleBar.style.color = headerFontColor;
+    console.log(headerFontColor);
     div.appendChild(titleBar);
 
     addSection('h4', 'name', '');

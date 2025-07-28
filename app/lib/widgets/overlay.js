@@ -23,14 +23,18 @@ const addOverlayListener = () => {
 }
 
 const enableOverlay = (style) => {
-  //  document.body.classList.add('no-scroll');
+    //  document.body.classList.add('no-scroll');
+    const modal = overlay.querySelector('.modal');
+    modal.removeAttribute('style');
+    overlay.removeAttribute('style');
+    modal.className = 'modal';
+    overlay.className = 'overlay';
     overlay.style.display = style;
 }
 
 const disableOverlay = () => {
   //  document.body.classList.remove('no-scroll');
     const modal = overlay.querySelector('.modal');
-    modal.style.marginLeft = '';
     overlay.style.display = 'none';
 }
 

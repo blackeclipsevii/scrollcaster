@@ -14,7 +14,7 @@
     --border-radius: 6px;
 
     --yellow-ability: #D7B21D;
-    --grey-ability: #5A5E5A;
+    --gray-ability: #5A5E5A;
     --blue-ability: #055C72;
     --orange-ability: #DB571A;
     --red-ability: #A10000;
@@ -25,7 +25,7 @@
 :root {
     --shadow-color: rgb(0,0,0,0);
     --red-color: #fa7970;
-    --blue-color: #77bdfb;
+    --blue-color: #a2d2fb;
     --green-color: #7ce38b;
     --white-color: #ecf2f8;
 
@@ -63,13 +63,42 @@
     --border-radius: 6px;
 
     /* ability colors */
+/*
     --yellow-ability: #D7B21D;
-    --grey-ability: #5A5E5A;
+    --gray-ability: #5A5E5A;
     --blue-ability: #055C72;
     --orange-ability: #DB571A;
     --red-ability: #A10000;
     --purple-ability:#642A8D;
-    --black-ability: var(--black-color);
+    --green-ability: #2A7E10;
+    --black-ability: #000000;
+    --gray-ability-header-font-color: var(--black-1);
+    --gray-invert-png: true;
+    */
+    --yellow-ability: #EDD171;
+    --gray-ability: #737A82;
+    --black-ability: #000000;
+    --orange-ability: #faa356;
+    --purple-ability:#cea5fb;
+    --blue-ability: var(--blue-color);
+    --red-ability: #E06D65;
+    --green-ability: #6EC97B;
+    --yellow-ability-header-font-color: var(--black-1);
+    --yellow-invert-png: true;
+    --green-ability-header-font-color: var(--black-1);
+    --green-invert-png: true;
+    --blue-ability-header-font-color: var(--black-1);
+    --blue-invert-png: true;
+    --red-ability-header-font-color: var(--black-1);
+    --red-invert-png: true;
+    --orange-ability-header-font-color: var(--black-1);
+    --orange-invert-png: true;
+    --purple-ability-header-font-color: var(--black-1);
+    --purple-invert-png: true;
+}
+
+.invert-img {
+  filter: invert(1);
 }
 
 
@@ -336,7 +365,7 @@ footer {
 }
 
 .loader {
-  border: .5em solid var(--hover-color); /* Light grey */
+  border: .5em solid var(--hover-color); /* Light gray */
   border-top: .5em solid var(--blue-color); /* Blue */
   border-radius: 50%;
   width: 2em;
@@ -380,8 +409,8 @@ footer {
 }
 
 .ability-label {
-    color: var(--selectable-item-font-color);
-    background-color: var(--grey-ability);
+    color: var(--black-2);
+    background-color: var(--white-3);
     top: 15%;
     right: 0%;
     white-space: nowrap;

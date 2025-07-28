@@ -17,7 +17,7 @@ const builderPage = {
         if(this._cache.upgrades && this._cache.armyName === this.roster.army)
             return this._cache.upgrades;
         const url = encodeURI(`${endpoint}/upgrades?army=${this.roster.army}`);
-        const result = await fetch(url).then(resp => resp.json()).catch(_ => null);
+        const result = await fetchWithLoadingDisplay(url, null);
         if (result){
             this._cache.upgrades = result;
             this._cache.armyName = this.roster.army;
@@ -730,8 +730,8 @@ const builderPage = {
             }
 
             try {
-                const result = await fetch(encodeURI(url));
-                return result.status === 200 ? result.json() : null;
+                const result = await fetchWithLoadingDisplay(encodeURI(url));
+                return result;
             } catch (error) {
                 return null;
             }

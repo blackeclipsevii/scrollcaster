@@ -19,7 +19,6 @@ const validateRegiment = async (armyName, regiment) => {
         return strArr;
     }
     const regArg = encodeURI(`${endpoint}/validate?${reg2Args()}&army=${armyName}`);
-    console.log(regArg);
     await fetch(regArg,{
         method: "GET" // default, so we can ignore
     })

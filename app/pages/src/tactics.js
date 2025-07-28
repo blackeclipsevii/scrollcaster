@@ -10,8 +10,7 @@ const tacticsPage = {
     async fetchTactics() {
         if (this._cache.tactics)
             return this._cache.tactics;
-        let result = await fetch(encodeURI(`${endpoint}/tactics`)).
-                           then(resp => resp.json());
+        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/tactics`));
         this._cache.tactics = result;
         return result;
     },

@@ -14,10 +14,7 @@ const catalogPage = {
         if (this._cache.regimentsOfRenown) {
             //return this._cache.regimentsOfRenown;
         }
-        let result = null;
-        await fetch(encodeURI(`${endpoint}/regimentsOfRenown`)).
-              then(resp => resp.json()).
-              then(units => result = units);
+        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/regimentsOfRenown`));
         this._cache.regimentsOfRenown = result;
         return result;
     },
@@ -110,9 +107,7 @@ const catalogPage = {
             const _loadFaction = async (subFactionName) => {
                 resetLists();
                 const url = `${endpoint}/armies?army=${subFactionName}`;
-                await fetch(encodeURI(url)).
-                then(resp => resp.json()).
-                then(army => {           
+                await fetchWithLoadingDisplay(encodeURI(url), (army) => {
                     h2.textContent = army.name;
         
                     if (Object.getOwnPropertyNames(army.units).length > 0) {

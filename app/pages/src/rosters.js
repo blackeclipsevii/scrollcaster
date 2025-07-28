@@ -106,17 +106,8 @@ const rosterPage = {
       armySelect.disabled = true;
       const option = document.createElement("option");
       option.value = '';
-      const msgIdx = Math.floor(Math.random() * 6);
-      const msgs = [
-        'Waking the deadwalkers...',
-        'Gathering warpstone...',
-        'Reforging...',
-        'Mustering reinforcements...',
-        'Loading...',
-        'Kicking the server...'
-      ];
       option.id = 'loading';
-      option.textContent = msgs[msgIdx];
+      option.textContent = getLoadingMessage();
       armySelect.appendChild(option);
 
       const ruleset = document.getElementById("ruleset");
@@ -126,7 +117,7 @@ const rosterPage = {
     const toggleOverlay = overlayToggleFactory('flex', async () =>{
       setOverlayContents();
       if (thisPage._armies.length === 0) {
-        await fetchArmies(_populateArmies);
+        await fetchArmies(_populateArmies, false);
       } else {
         _populateArmies(null);
       }
@@ -208,7 +199,7 @@ const rosterPage = {
       const entry = document.createElement("div");
       entry.innerHTML = `
       <strong>${roster.name}</strong>
-      <span style='margin-left: 1.5em; margin-bottom: 0; background-color: grey;' class='points-label'>${currentPts} points</span> 
+      <span style='margin-left: 1.5em; margin-bottom: 0; background-color: gray;' class='points-label'>${currentPts} points</span> 
       <br/>
       ${armyName}${roster.battleFormation ? ' | ' + roster.battleFormation.name: ''}<br/>
       ${roster.description.length ? roster.description + '<br/>' : ''}
@@ -435,7 +426,7 @@ const rosterPage = {
       }
 
       let roster = await getNewRoster(army);
-      console.log(JSON.stringify(roster));
+      //console.log(JSON.stringify(roster));
       roster.name = name;
       roster.id = generateId();
       roster.ruleset = ruleset;
@@ -479,7 +470,7 @@ const rosterPage = {
 dynamicPages['rosters'] = rosterPage;
 
 // this is the first page
-(() => {
+(async () => {
   const settings = new RosterSettings;
   _linkStack['roster'].currentSettings = settings;
   dynamicGoTo(settings);

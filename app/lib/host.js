@@ -4,7 +4,7 @@ const endpoint = port ? `${hostname}:${port}` : hostname;
 var roster = null;
 var dynamicPages = {};
 var previousUrl = document.referrer;
-var version = '0.4.2beta';
+var version = '0.4.3beta';
 let _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
 const getVar = (varName) => {
@@ -56,19 +56,87 @@ const rosterTotalPoints = (roster) => {
   return total;
 }
 
-const fetchArmies = async (callback, retry = 10) => {
-  await fetch(`${endpoint}/armies`).
-  then(resp => {
-    if (resp.status !== 200)
-      throw 'retry';
-    return resp.json()
-  }).
-  then(data => callback(data))
-  .catch(() => {
-    if (retry > 0) {
-      setTimeout(fetchArmies, 500, callback, retry-1);
-    }
+const getLoadingMessage = () => {
+    const msgs = [
+    'Waking the deadwalkers...',
+    'Gathering warpstone...',
+    'Reforging...',
+    'Mustering reinforcements...',
+    'Loading...',
+    'Kicking the server...',
+    'Consulting the scrolls...'
+  ];
+  const msgIdx = Math.floor(Math.random() * msgs.length);
+  return msgs[msgIdx];
+}
+
+const fetchWithLoadingDisplay = async (url, callback=null, showLoadingDisplay=true) => { 
+  const retryInterval = 500;
+  const maxRetryTime = 10000;
+  let retry = maxRetryTime / retryInterval;
+ // url = 'foo.bar'
+  let done = false;
+  let result = null;
+  _internalFetch = async () => {
+    await fetch(url).
+    then(async resp => {
+      if (resp.status === 500)
+        throw 'bad';
+      if (resp.status !== 200)
+        return null;
+      return resp.json();
+    }).then(async (obj) =>{
+      if (callback) {
+        await callback(obj);
+      }
+      done = true;
+      result = obj;
+    })
+    .catch((error) => {
+      console.log(`${url}\n${error}`);
+    });
+  }
+  const modal = document.querySelector('.modal');
+
+  const loadingOverlay = overlayToggleFactory('flex', () => {
+    modal.innerHTML = `
+    <div style='border-radius: 4vh; background-color: rgb(0,0,0,.5); display: flex; align-items: center; justify-content: center;'>
+    <div id="loader-box" style="display: inline-block; width: 1em; height: 1em; margin-right: 3em; margin-top: -2em;">
+      <div id="loader" class="loader"></div>
+    </div>
+    <h3 style="display: inline-block;">${getLoadingMessage()}</h3>
+    </div>
+    `;
+    modal.style.display = 'flex';
+    modal.style.justifyContent = 'center';
+    modal.style.flexDirection = 'column';
+    modal.style.height ='20em';
+    modal.style.width ='20em';
+    modal.style.backgroundImage = `URL(${absoluteUrl('resources/dropped-scrolls.jpg')})`
+    modal.style.backgroundSize = 'cover';
+    modal.style.backgroundPosition = 'center';
   });
+
+  const timeoutDisplayOverlay = () => {
+    if (!done && showLoadingDisplay) {
+      loadingOverlay();
+    }
+  }
+  setTimeout(timeoutDisplayOverlay, 250);
+  await _internalFetch();
+
+  while (retry > 0 && !done) {
+    await new Promise(resolve => setTimeout(resolve, retryInterval));
+    await _internalFetch();
+  }
+  if (showLoadingDisplay)
+    disableOverlay();
+
+  return result;
+}
+
+const fetchArmies = async (callback, displayModalLoad=true) => {
+  return await fetchWithLoadingDisplay(`${endpoint}/armies`, callback, displayModalLoad);
 }
 
 const displayPoints = (pointsElement, points, pts='pts') => {
@@ -81,10 +149,6 @@ const displayPoints = (pointsElement, points, pts='pts') => {
 }
 
 function generateId() {
-    //if (typeof crypto !== undefined) {
-    //    return crypto.randomUUID();
-    //}
-
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         const r = Math.random() * 16 | 0;
         const v = c === 'x' ? r : (r & 0x3 | 0x8);

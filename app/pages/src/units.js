@@ -30,13 +30,11 @@ const unitPage = {
         if (this._cache.regimentsOfRenown.units && this._cache.regimentsOfRenown.armyName === this.settings.armyName) {
             return this._cache.regimentsOfRenown.units;
         }
-        let results = null;
-        await fetch(encodeURI(`${endpoint}/regimentsOfRenown?army=${this.settings.armyName}`)).
-        then(resp => resp.json()).
-        then(units => results = units);
-        this._cache.regimentsOfRenown.units = results;
+        const url = `${endpoint}/regimentsOfRenown?army=${this.settings.armyName}`;
+        const response = await fetchWithLoadingDisplay(encodeURI(url));
+        this._cache.regimentsOfRenown.units = response;
         this._cache.regimentsOfRenown.armyName = this.settings.armyName;
-        return results;
+        return response;
     },
     async fetchUnits(leaderId = null) {
         if (this._cache.army.units) {
@@ -46,8 +44,7 @@ const unitPage = {
                 return this._cache.army.units;
             }
         }
-        let response = null;
-        
+
         let url = `${endpoint}/units`;
         if (this.settings.armyName) {
             url = `${url}?army=${this.settings.armyName}`
@@ -56,10 +53,7 @@ const unitPage = {
                 url = `${url}&leaderId=${leaderId}`;
             }
         }
-
-        await fetch(encodeURI(url)).
-                    then(resp => resp.json()).
-                    then(units => response = units);
+        const response = await fetchWithLoadingDisplay(encodeURI(url));
         this._cache.army.units = response;
         this._cache.army.armyName = this.settings.armyName;
         this._cache.army.leaderId = leaderId;
@@ -142,7 +136,7 @@ const unitPage = {
                 quantityEle.style.display = '';
                 selectableItem.classList.remove('not-added');
                 labelItem.style.color = '';
-                labelItem.style.backgroundColr = '';
+                labelItem.style.backgroundColor = '';
             } else {
                 quantityEle.textContent = 'None';
                 quantityEle.style.display = 'none';
@@ -292,7 +286,7 @@ const unitPage = {
             const availableUnits = Object.values(units);
             availableUnits.forEach(unit => {
                 if (unit._tags.length > 0) {
-                    console.log (`${unit.name} has tags: ${unit._tags.join(', ')}`);
+                   // console.log (`${unit.name} has tags: ${unit._tags.join(', ')}`);
                 }
                 if (!thisPage.settings.displayLegends && unit.keywords.includes('Legends'))
                     return;

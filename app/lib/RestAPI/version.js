@@ -3,9 +3,7 @@ async function getVersion (of=null){
     if (of !== null) 
         url =`${url}?of=${of}`;
 
-    return await fetch(encodeURI(url), { method: "GET" })
-                 .then(response => response.json())
-                 .catch(_ => console.log(`Unable to retrieve version of ${of}`));
+    return await fetchWithLoadingDisplay(encodeURI(url), null);
 }
 
 const getServerVersion = async () => {
