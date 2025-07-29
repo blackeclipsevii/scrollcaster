@@ -32,12 +32,26 @@ const warscrollPage = {
             if (!unit.Health)
                 return;
             
-            const headers = ['Move', 'Health', 'Control', 'Save'];
+            let headers = ['Move', 'Health', 'Control', 'Save'];
+            let ward = null;
+            unit.keywords.every(keyword => {
+                if (keyword.startsWith('WARD')) {
+                    ward = keyword.match(/\(([^)]+)\)/)[1].trim();
+                    return false;
+                }
+                return true;
+            });
+
+            if (ward) {
+                headers.push('Ward');
+            }
 
             const hdrRow = document.createElement("tr");
             headers.forEach(cellData => {
                 const cell = document.createElement("th");
                 cell.className = 'characteristics';
+                if (ward)
+                    cell.style.width = '20%';
                 cell.textContent = cellData;
                 hdrRow.appendChild(cell);
             });
@@ -47,7 +61,9 @@ const warscrollPage = {
             headers.forEach(cellData => {
                 const cell = document.createElement("td");
                 cell.className = 'characteristics';
-                cell.textContent = unit[cellData];
+                if (ward)
+                    cell.style.width = '20%';
+                cell.textContent = cellData === 'Ward' ? ward : unit[cellData];
                 dataRow.appendChild(cell);
             });
             tbody.appendChild(dataRow);
@@ -69,6 +85,7 @@ const warscrollPage = {
             _initializeWeaponsDiv(qualifier);
 
             const header = document.getElementById(qualifier + "WeaponsHeader");
+            header.style.marginTop = '0';
             const container = document.getElementById(qualifier + "Weapons");
             const title = document.getElementById(qualifier + "WeaponsTitle");
             let headers;
@@ -175,8 +192,8 @@ const warscrollPage = {
             container.id = qualifier + 'Weapons';
 
             div.appendChild(title);
-            div.appendChild(container);
             container.appendChild(header);
+            div.appendChild(container);
             return div;
         }
 

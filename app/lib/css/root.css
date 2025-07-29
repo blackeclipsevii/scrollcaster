@@ -455,19 +455,48 @@ h4.melee-weapons-header {
     margin-left: 0;
     gap: .5em;
     height: fit-content;
-    background-color: var(--black-color);
+    background-color: var(--black-1);
 }
 #ranged-weapons-section,
 #melee-weapons-section {
     padding: 0px;
 }
 
-#meleeWeaponsHeader,
-#rangedWeaponsHeader,
 #rangedWeapons,
 #meleeWeapons {
     padding-left: 1em;
+    padding-right: 1em;
     padding-bottom: 1em;
+}
+
+#rangedWeapons h3,
+#meleeWeapons h3 {
+    padding-top: 0em;
+    padding-bottom: 0em;
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
+
+#rangedWeapons table,
+#meleeWeapons table {
+    padding-top: 0em;
+    padding-bottom: 0em;
+    margin-bottom: 1em;
+    margin-top: 0em;
+}
+
+#meleeWeaponsHeader,
+#rangedWeaponsHeader {
+    margin-top: 0;
+    margin-bottom: 0;
+    background-color: var(--hover-color);
+}
+
+#abilities-section,
+#keywords-section {
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 .ability-container {
