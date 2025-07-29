@@ -1,6 +1,5 @@
 const displayTacticsOverlay = overlayToggleFactory('block', (tacticCard) =>{
     const modal = document.querySelector(".modal");
-    modal.innerHTML = '';
 
     const section = document.createElement('div');
     section.className = 'section';
@@ -28,6 +27,4 @@ const displayTacticsOverlay = overlayToggleFactory('block', (tacticCard) =>{
         section.appendChild(section2);
     });
     modal.appendChild(section);
-    const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
-    modal.style.marginLeft = `${offset}px`;
 });

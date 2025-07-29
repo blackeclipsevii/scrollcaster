@@ -266,7 +266,6 @@ const rosterPage = {
         Delete: async (e) => {
             const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
-              modal.innerHTML = '';
 
               const section = document.createElement('p');
               section.innerHTML = `
@@ -286,8 +285,6 @@ const rosterPage = {
 
               modal.appendChild(section);
               modal.appendChild(button);
-              const offset = (window.innerWidth - modal.clientWidth) / 2.0;
-              modal.style.marginLeft = `${offset}px`;
           });
           toggle();
         }

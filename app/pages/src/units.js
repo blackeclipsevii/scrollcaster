@@ -248,7 +248,7 @@ const unitPage = {
                     const countMessage = 'Regiment in Army';
 
                     const displayInfoOnClick = () => {
-                        displayUpgradeOverlay(regimentOfRenown.upgrades);
+                        displayRorOverlay(regimentOfRenown);
                     }
 
                     const addButtonOnClick = async (event) => {

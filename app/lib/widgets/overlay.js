@@ -22,16 +22,6 @@ const addOverlayListener = () => {
     });
 }
 
-const enableOverlay = (style) => {
-    //  document.body.classList.add('no-scroll');
-    const modal = overlay.querySelector('.modal');
-    modal.removeAttribute('style');
-    overlay.removeAttribute('style');
-    modal.className = 'modal';
-    overlay.className = 'overlay';
-    overlay.style.display = style;
-}
-
 const disableOverlay = () => {
   //  document.body.classList.remove('no-scroll');
     const modal = overlay.querySelector('.modal');
@@ -39,13 +29,31 @@ const disableOverlay = () => {
 }
 
 const overlayToggleFactory = (visibleStyle, ondisplay) => {
+    const _enableOverlay = (style) => {
+        //  document.body.classList.add('no-scroll');
+        const modal = overlay.querySelector('.modal');
+        modal.innerHTML = '';
+        modal.removeAttribute('style');
+        overlay.removeAttribute('style');
+        modal.className = 'modal';
+        overlay.className = 'overlay';
+        overlay.style.display = style;
+    }
+
     const toggleFunc = (data) => {
+        visibleStyle = 'flex';
         const overlay = document.getElementById("overlay");
         if (overlay.style.display === visibleStyle) {
             disableOverlay();
         } else {
-            enableOverlay(visibleStyle);
+            _enableOverlay(visibleStyle);
             ondisplay(data);
+            
+            if (visibleStyle !== 'flex') {
+                const modal = overlay.querySelector('.modal');
+                const offset = (window.innerWidth - modal.clientWidth - getScrollbarWidth()) / 2.0;
+                modal.style.marginLeft = `${offset}px`;
+            }
         }
     };
     return toggleFunc;

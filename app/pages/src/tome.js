@@ -93,7 +93,7 @@ const catalogPage = {
             const units = Object.values(unitsLUT);
             units.forEach(regimentOfRenown => {
                 makeItem(regimentOfRenown.name, () => {
-                    displayUpgradeOverlay(regimentOfRenown.upgrades);
+                    displayRorOverlay(regimentOfRenown);
                 }, 'army-list', regimentOfRenown.points);
             });
         }

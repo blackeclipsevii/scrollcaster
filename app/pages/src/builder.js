@@ -250,7 +250,6 @@ const builderPage = {
         const exportListAndDisplay = overlayToggleFactory('block', () =>{
             const text = exportRoster(roster);
             const modal = document.querySelector(".modal");
-            modal.innerHTML = '';
 
             const section = document.createElement('textarea');
             section.innerHTML = text;
@@ -267,8 +266,6 @@ const builderPage = {
 
             modal.appendChild(section);
             modal.appendChild(copyButton);
-            const offset = (window.innerWidth - modal.clientWidth- getScrollbarWidth()) / 2.0;
-            modal.style.marginLeft = `${offset}px`;
         });
 
         function removeSection(section, className) {
@@ -543,8 +540,8 @@ const builderPage = {
                     event.stopPropagation();
                     arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
                 }
-                updateSelectableItemPrototype(newUsItem, regimentOfRenown, true, () => {
-                    displayUpgradeOverlay(thisPage.roster.regimentOfRenown.upgrades);
+                updateSelectableItemPrototype(newUsItem, regiment, true, () => {
+                    displayRorOverlay(regiment);
                 });
                 // these are all for units
                 removeSection(newUsItem, 'is-general');
@@ -1279,7 +1276,14 @@ const builderPage = {
                 'Faction Terrain'
             ];
 
-            updateHeaderContextMenu({ 'Export List': exportListAndDisplay });
+            updateHeaderContextMenu({
+                'Battle View': () => {
+                    const bvs = new BattleSettings;
+                    bvs.roster = thisPage.roster;
+                    dynamicGoTo(bvs);
+                },
+                'Export List': exportListAndDisplay 
+            });
             makeLayout(sections, factory);
 
             let btn = document.getElementById('battle-traits-&-formation-add-button');

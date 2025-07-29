@@ -35,10 +35,9 @@ async function updateValidationDisplay() {
     const postfix = hasErrors ? 'invalid' : 'valid';
     pointsOverlay.className = `points-overlay-${postfix}`;
 
-    pointsOverlay.onclick = overlayToggleFactory('block', () =>{
+    pointsOverlay.onclick = overlayToggleFactory('flex', () =>{
         const modal = document.querySelector(".modal");
-        modal.innerHTML = '';
-    
+
         const title = document.createElement('h3');
         title.innerHTML = 'Validation Errors';
         modal.appendChild(title);
@@ -59,8 +58,6 @@ async function updateValidationDisplay() {
         }
     
         modal.appendChild(section);
-        const offset = (window.innerWidth - modal.clientWidth) / 2.0;
-        modal.style.marginLeft = `${offset}px`;
     });
 };
 
