@@ -446,3 +446,38 @@ test('Legion of the First Prince', () =>{
         "Legion of the First Prince Screamers of Tzeentch",
     ]);
 });
+
+
+test('FEC Nagash', () =>{
+    // Eternus has a title, but can be referenced by Eternus
+    const aos = getAos();
+    const army = aos.getArmy('Flesh-eater Courts');
+    expect(army).toBeTruthy();
+
+    const leaderId = "4898-ff01-e50e-4325";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Nagash, Supreme Lord of the Undead")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+       "Crypt Haunter Courtier",
+       "Crypt Infernal Courtier",
+       "Grand Justice Gormayne",
+       "Marrowscroll Herald",
+       "Royal Decapitator",
+       "Varghulf Courtier",
+       "Crypt Horrors",
+       "Crypt Flayers",
+       "Crypt Ghouls",
+       "Cryptguard",
+       "Morbheg Knights",
+       "Royal Beastflayers",
+       "Royal Terrorgheist",
+       "Royal Zombie Dragon",
+    ]);
+});

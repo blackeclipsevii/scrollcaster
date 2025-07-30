@@ -220,7 +220,12 @@ export default class Army {
             }
 
             if (ageOfSigmar.battleProfiles) {
-                unit.battleProfile = ageOfSigmar.battleProfiles.get(unit.name);
+                const baseArmyName = armyName.split(' - ')[0];
+                if (!ageOfSigmar.battleProfiles.hasProfilesFor(baseArmyName)) {
+                    throw `Missing battle profiles for ${baseArmyName}`;
+                }
+                
+                unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
                 if (!unit.battleProfile) {
                     console.log(`profile not found for ${unit.name}`);
                 }

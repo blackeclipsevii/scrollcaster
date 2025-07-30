@@ -54,11 +54,26 @@ export default class AgeOfSigmar {
             _modName(name) {
                 return name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '');
             },
-            put: function (profile) {
-                this[this._modName(profile.name)] = profile;
+            put: function (army, profile) {
+                const lc = army.toLowerCase();
+                let armyset = this[lc];
+                if (!armyset) {
+                    armyset = {};
+                    this[lc] = armyset;
+                }
+                armyset[this._modName(profile.name)] = profile;
             },
-            get: function (name) {
-                return this[this._modName(name)];
+            get: function (army, name) {
+                const lc = army.toLowerCase();
+                const armyset = this[lc];
+                if (!armyset)
+                    return null;
+                return armyset[this._modName(name)];
+            },
+            hasProfilesFor(army) {
+                const lc = army.toLowerCase();
+                const armyset = this[lc];
+                return armyset !== null && armyset !== undefined;
             }
         };
         this._parseBattleProfiles();
@@ -502,19 +517,17 @@ export default class AgeOfSigmar {
         const profileFiles = fs.readdirSync(profileDir);
         const armyCatNames = Object.getOwnPropertyNames(this._database.armies);
         // populate the armies and seperate the libraries
-        let allProfiles = [];
+        const aos = this;
         profileFiles.forEach(file => {
             const lc = file.toLowerCase();
             if (path.extname(lc) === '.json') {
+                const armyName = path.basename(lc).split('.json')[0];
                 const json = fs.readFileSync(path.join(profileDir, file));
                 const profileList = JSON.parse(json);
-                allProfiles = allProfiles.concat(profileList);
+                profileList.forEach(profile => {
+                    aos.battleProfiles.put(armyName, profile);
+                });
             }
-        });
-
-        let aos = this;
-        allProfiles.forEach(profile => {
-            aos.battleProfiles.put(profile);
         });
     }
 
