@@ -12,13 +12,6 @@ const warscrollPage = {
         }
         this.settings = settings;
         const thisPage = this;
-        const _limitString = (str, max = 5) => {
-            if (typeof str !== 'string')
-                return '';
-            if (str.toLowerCase().includes('see'))
-                return '*';
-            return str.length <= max ? str : str.slice(0, max);
-        }
 
         const displayChars = (unit) => {
             whClearDiv('char');
@@ -69,121 +62,6 @@ const warscrollPage = {
             tbody.appendChild(dataRow);
         }
 
-        const displayWeapons = (qualifier, unit) => {
-            
-            whClearDiv(qualifier);
-
-            const isTypeFilter = (weapon) => {
-                if (qualifier === 'melee')
-                    return weapon.type === 0;
-                return weapon.type === 1;
-            }
-
-            const weaponList = unit.weapons.filter(isTypeFilter);
-            unit.optionSets.forEach(optionSet => {
-                if (optionSet.selection !== null) {
-                    optionSet.selection.weapons.forEach(weapon => {
-                        if (isTypeFilter(weapon)) {
-                            weaponList.push(weapon);
-                        };
-                    });
-                }
-            });
-
-            const section = document.getElementById(`${qualifier}-weapons-section`);
-            if (!weaponList || weaponList.length === 0) {
-                section.style.display = 'none';
-                return;
-            }
-
-            section.style.display = '';
-            _initializeWeaponsDiv(qualifier);
-
-            const header = document.getElementById(qualifier + "WeaponsHeader");
-            header.style.marginTop = '0';
-            const container = document.getElementById(qualifier + "Weapons");
-            const title = document.getElementById(qualifier + "WeaponsTitle");
-            let headers;
-            const lut = {
-                '':'name', 
-                'RANGE':'Rng', 
-                'A':'Atk',
-                'HIT':'Hit',
-                'W':'Wnd',
-                'R':'Rnd',
-                'D':'Dmg'
-            };
-
-            let className = null;
-            if (qualifier === 'ranged') {
-                className = 'ranged-weapon';
-                title.innerHTML = `
-                <div class='melee-weapons-header'>
-                    <img src='../../resources/abShooting.png'></img>
-                    <h4>Ranged Weapons</h4>
-                </div>
-                `;
-                headers = ['RANGE', 'A', 'HIT', 'W', 'R', 'D'];
-                
-            } else {        
-                className = 'melee-weapon';
-                title.innerHTML = `
-                <div class='melee-weapons-header'>
-                    <img src='../../resources/abOffensive.png'></img>
-                    <h4>Melee Weapons</h4>
-                </div>
-                `;
-                headers = ['A', 'HIT', 'W', 'R', 'D'];
-            }
-
-            const hdrRow = document.createElement("tr");
-            headers.forEach(cellData => {
-                const cell = document.createElement("th");
-                cell.className = className;
-                cell.textContent = cellData;
-                hdrRow.appendChild(cell);
-            });
-            header.appendChild(hdrRow);
-
-            for (let i = 0; i < weaponList.length; ++i) {
-                let dataRow = document.createElement("tr");
-                let cell = document.createElement("td");
-
-                const weaponNameH = document.createElement('h3');
-                weaponNameH.textContent = weaponList[i].name;
-                container.appendChild(weaponNameH);
-
-                const profileTable = document.createElement('table');
-                profileTable.className = className;
-
-                dataRow = document.createElement("tr");
-                headers.forEach(cellData => {
-                    cell = document.createElement("td");
-                    cell.className = className;
-                    if (cellData === 'R' && weaponList[i][lut[cellData]] !== 0 &&
-                        !weaponList[i][lut[cellData]].startsWith('-')) 
-                        cell.textContent = _limitString(`-${weaponList[i][lut[cellData]]}`);
-                    else
-                        cell.textContent = _limitString(weaponList[i][lut[cellData]]);
-                    dataRow.appendChild(cell);
-                });
-                profileTable.appendChild(dataRow);
-                container.appendChild(profileTable);
-
-                if (weaponList[i].Ability && weaponList[i].Ability !== '-') {
-                    let abilities = weaponList[i].Ability;
-                    abilities = abilities.split(",");
-                    for (let i = 0; i < abilities.length; ++i) {
-                        const abilityLabel = document.createElement('div');
-                        abilityLabel.innerHTML = abilities[i].trim();
-                        abilityLabel.className = 'ability-label';
-                        container.appendChild(abilityLabel);
-                    }
-                }
-
-            }
-        }
-
         const displayKeywords = (unit) => {
             whClearDiv('keywords');
             _initializeKeywordsDiv();
@@ -193,24 +71,6 @@ const warscrollPage = {
             // Clear existing rows
             title.innerHTML = "Keywords";
             keywords.innerHTML = unit['keywords'].join(', ');
-        }
-
-        const _initializeWeaponsDiv = (qualifier) => {
-            const div = document.getElementById(qualifier + '-weapons-section');
-            
-            let title = document.createElement('div');
-            title.id = qualifier + 'WeaponsTitle';
-
-            let header = document.createElement('table');
-            header.id = qualifier + 'WeaponsHeader';
-
-            let container = document.createElement('div');
-            container.id = qualifier + 'Weapons';
-
-            div.appendChild(title);
-            container.appendChild(header);
-            div.appendChild(container);
-            return div;
         }
 
         const _clear = () => {
@@ -248,6 +108,39 @@ const warscrollPage = {
             return div;
         }
 
+        const filterWeapons = (unit, qualifier) => {
+            const isTypeFilter = (weapon) => {
+                if (qualifier === 'melee')
+                    return weapon.type === 0;
+                return weapon.type === 1;
+            }
+
+            const weaponList = unit.weapons.filter(isTypeFilter);
+            unit.optionSets.forEach(optionSet => {
+                if (DYNAMIC_WARSCROLL && optionSet.selection) {
+                    optionSet.selection.weapons.forEach(weapon => {
+                        if (isTypeFilter(weapon)) {
+                            weaponList.push(weapon);
+                        };
+                    });
+                }
+                else {
+                    // display all options
+                    const options = Object.values(optionSet.options);
+                    options.forEach(option => {
+                        option.weapons.forEach(weapon => {
+                            if (isTypeFilter(weapon)) {
+                                const clone = JSON.parse(JSON.stringify(weapon));
+                                clone.name = `${weapon.name} <${optionSet.name}>`
+                                weaponList.push(clone);
+                            }
+                        });
+                    });
+                }
+            });
+            return weaponList;
+        }
+
         async function readUnit() {
             if (thisPage.settings.local) {
                 const json = localStorage.getItem(thisPage.settings.local);
@@ -257,8 +150,10 @@ const warscrollPage = {
             const _display = (unit) => {
                 setHeaderTitle(unit.name);
                 displayChars(unit);
-                displayWeapons('ranged', unit);
-                displayWeapons('melee', unit);
+                const rangedWeapons = filterWeapons(unit, 'ranged');
+                const meleeWeapons = filterWeapons(unit, 'melee');
+                widgetWeaponsDisplayWeapons(rangedWeapons);
+                widgetWeaponsDisplayWeapons(meleeWeapons);
                 widgetAbilityDisplayAbilities(unit, unit);
                 const abSec = document.getElementById('abilities-section');
                 abSec.style.display = '';

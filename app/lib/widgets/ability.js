@@ -123,11 +123,21 @@ const widgetAbilityDisplayAbilities = (unit, title='Abilities') => {
             widgetsAbilityNewAbilityDiv(ability);
         }
 
-        if (singleUnit.optionSet) {
-            singleUnit.optionSet.forEach(set => {
-                if (set.selection && set.selection.abilities.length > 0) {
+        if (singleUnit.optionSets) {
+            singleUnit.optionSets.forEach(set => {
+                // disable dynamic warscroll content
+                if (DYNAMIC_WARSCROLL && set.selection) {
                     set.selection.abilities.forEach(ability => {
                         widgetsAbilityNewAbilityDiv(ability);
+                    });
+                }
+                else {
+                    // none selected
+                    const options = Object.values(set.options);
+                    options.forEach(option => {
+                        option.abilities.forEach(ability => {
+                            widgetsAbilityNewAbilityDiv(ability);
+                        });
                     });
                 }
             });

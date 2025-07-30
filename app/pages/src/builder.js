@@ -206,11 +206,24 @@ const builderPage = {
 
                 const label = upgradeDiv.querySelector(`.upgrade-button`);
                 label.onclick = () => {
-                    displayUpgradeOverlay(option);
+                    if (option.weapons.length > 0) {
+                        displayWeaponOverlay({
+                            name: option.name,
+                            weapons: option.weapons
+                        });
+                    }
+                    
+                    if (option.abilities.length > 0)
+                        displayUpgradeOverlay(option);
                 };
 
+                if (option.weapons.length === 0 &&
+                    option.abilities.length === 0) {
+                    label.style.display = 'none';
+                }
+
                 const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
-                if (optionSet.selection !== null && optionSet.selection.name === option.name) {
+                if (optionSet.selection && optionSet.selection.name === option.name) {
                     checkbox.checked = true;
                 }
 
@@ -231,7 +244,7 @@ const builderPage = {
 
                 checkbox.onchange = () => {
                     if (checkbox.checked) {
-                        if (optionSet.selection === null) {
+                        if (!optionSet.selection) {
                             optionSet.selection = option;
                             handlechange(option.points, false);
                         }
@@ -239,7 +252,7 @@ const builderPage = {
                             checkbox.checked = false;
                         }
                     } else {
-                        if (optionSet.selection !== null && optionSet.selection.name === option.name) {
+                        if (optionSet.selection && optionSet.selection.name === option.name) {
                             optionSet.selection = null;
                             handlechange(option.points, true);
                         }

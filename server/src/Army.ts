@@ -2,12 +2,21 @@
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from './lib/Upgrade.js';
-import { Lore } from './Lores.js';
+import Lores, { Lore, LoreLUTInterf } from './Lores.js';
+import AgeOfSigmar from './AgeOfSigmar.js';
+import { BsCatalog, BsLibrary, BsSelectionEntry } from './lib/bs/BsCatalog.js';
+import BattleProfile from './BattleProfile.js';
+import { Force } from './Force.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
 
-const upgradeLUT = {
+interface UpgradeLUTEntry {
+    alias: string;
+    type: number;
+}
+
+const upgradeLUT: {[name:string]: UpgradeLUTEntry} = {
     'battle formation': {
         alias: 'battleFormations',
         type: UpgradeType.BattleFormation
@@ -42,9 +51,39 @@ const upgradeLUT = {
     }
 };
 
+export interface UpgradeLUT {
+    [name: string]: Upgrade;
+}
+
+export interface ArmyUpgrades {
+    [name:string]: UpgradeLUT | null | unknown;
+    artefacts: UpgradeLUT;
+    battleFormations: UpgradeLUT;
+    heroicTraits: UpgradeLUT;
+    monstrousTraits: UpgradeLUT;
+    battleTraits: UpgradeLUT;
+    lores: {
+        [name:string]: LoreLUTInterf;
+        manifestation: LoreLUTInterf;
+        spell: LoreLUTInterf;
+        prayer: LoreLUTInterf;
+    };
+}
+
 export default class Army {
-    constructor(ageOfSigmar, armyName) {
+    id: string;
+    name: string;
+    points: {[name:string]: number};
+    units: {[name:string]: Unit};
+    upgrades: ArmyUpgrades;
+    keywordLUT: {[name:string]: string};
+    regimentsOfRenown: Force[];
+    _tags: {[name:string]: string};
+    isArmyOfRenown: boolean;
+
+    constructor(ageOfSigmar: AgeOfSigmar, armyName: string) {
         // the name of the army
+        this.id = '';
         this.name = armyName;
 
         // upgrades available to the army
@@ -80,14 +119,14 @@ export default class Army {
         this._parse(ageOfSigmar, armyName);
     }
 
-    _parse(ageOfSigmar, armyName) {
-        const data = ageOfSigmar._database.armies[armyName];
+    _parse(ageOfSigmar: AgeOfSigmar, armyName: string) {
+        const data = (ageOfSigmar._database as {[name: string]: any}).armies[armyName];
         if (!data) {
             console.log (`ERROR: data not found for ${armyName}`);
             return;
         }
 
-        const catalogue = data.catalog;
+        const catalogue = data.catalog as BsCatalog;
         if (!catalogue) {
             console.log (`ERROR: catalogue not found for ${armyName}`);
             return;
@@ -95,12 +134,12 @@ export default class Army {
 
         this.id = catalogue['@id'];
 
-        const _libraryUnits = {};
+        const _libraryUnits: {[name: string]: Unit} = {};
 
         // read all the units out of the libraries
         const names = Object.getOwnPropertyNames(data.libraries);
         names.forEach(name => {
-            data.libraries[name].sharedSelectionEntries.forEach(entry => {
+            (data.libraries[name] as BsLibrary).sharedSelectionEntries.forEach(entry => {
                 if (entry['@type'] === 'unit' &&
                     entry['@publicationId'] !== LegendsPub
                 ) {
@@ -118,42 +157,41 @@ export default class Army {
 
         const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
 
-        const addUpgrade = (upgrades, key, element) => {
+        const addUpgrade = (upgrades: ArmyUpgrades, key: string, element: BsSelectionEntry) => {
             const lu = upgradeLUT[key];
-            let upgrade = null
-            if (lu.type === UpgradeType.ManifestationLore ||
-                lu.type === UpgradeType.SpellLore ||
-                lu.type === UpgradeType.PrayerLore) {
-                if (element.entryLinks) {
-                    const targetId = element.entryLinks[0]['@targetId'];
-                    if (targetId) {
-                        upgrade = ageOfSigmar.lores.lores[lu.alias][targetId];
-                        if (upgrade && upgrade.unitIds) {
-                            upgrade.unitIds.forEach(uuid => {
-                                const unit = _libraryUnits[uuid];
-                                if (!unit) {
-                                    console.log(`WARNING: Unable to find unit link in library: ${uuid}`);
-                                    return;
-                                }
-                                this.units[uuid] = unit;
-                            });
-                        }
-                    }
-                }
-                else
-                {   // if it's not in the lore don't add it
+            const isLore = (lu.type === UpgradeType.ManifestationLore ||
+                            lu.type === UpgradeType.SpellLore ||
+                            lu.type === UpgradeType.PrayerLore);
+
+            if (isLore) {
+                // add lore upgrade
+                // lores are in their own catalog so they're pre populated
+                if (!element.entryLinks) 
                     return false;
-                }
+
+                const targetId = element.entryLinks[0]['@targetId'];
+                if (!targetId)
+                    return false;
+                
+                const lore = (ageOfSigmar.lores as Lores).lores[lu.alias][targetId];
+                if (!lore)
+                    return false;
+                
+                lore.unitIds.forEach(unitId => {
+                    const unit = _libraryUnits[unitId];
+                    if (!unit) {
+                        console.log(`WARNING: Unable to find unit link in library: ${unitId}`);
+                        return false;
+                    }
+                    this.units[unitId] = unit;
+                });
+                
+                upgrades.lores[lu.alias][lore.name] = lore;
+                return true;
             }
 
-            if (!upgrade) {
-                upgrade = new Upgrade(element, lu.type);
-            }
-
-            if (key.includes('lore'))
-                upgrades.lores[lu.alias][upgrade.name] = upgrade;
-            else
-                upgrades[lu.alias][upgrade.name] = upgrade;
+            const upgrade = new Upgrade(element, lu.type);
+            (upgrades[lu.alias] as UpgradeLUT)[upgrade.name] = upgrade;
         }
         
         catalogue.sharedSelectionEntries.forEach(entry => {
@@ -250,9 +288,11 @@ export default class Army {
                     // console.log(entry, null, 2);
                     if (entry.selectionEntryGroups) {
                         entry.selectionEntryGroups.forEach(group => {
-                            group.selectionEntries.forEach(element => {
-                                addUpgrade(this.upgrades, key, element);
-                            });
+                            if (group.selectionEntries) {
+                                group.selectionEntries.forEach(element => {
+                                    addUpgrade(this.upgrades, key, element);
+                                });
+                            }
                         });
                     } else if (entry.selectionEntries) {
                         entry.selectionEntries.forEach(element => {
@@ -274,9 +314,11 @@ export default class Army {
         // to-do maybe this can be an endpoint that we only present if asked
         const rorIds = Object.getOwnPropertyNames(ageOfSigmar.regimentsOfRenown);
         rorIds.forEach(rorId => {
-            const ror = ageOfSigmar.regimentsOfRenown[rorId];
+            if (!ageOfSigmar.regimentsOfRenown)
+                return false;
+            const ror = (ageOfSigmar.regimentsOfRenown as {[name:string]: Force})[rorId];
             ror.selectableIn.forEach(id => {
-                const name = ageOfSigmar._database.armyLUT[id];
+                const name = (ageOfSigmar._database.armyLUT as {[name: string]: string})[id];
                 if (armyName === name) {
                     this.regimentsOfRenown.push(ror);
                 }

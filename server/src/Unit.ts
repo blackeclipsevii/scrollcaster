@@ -7,6 +7,7 @@ import { BsCategoryLink, BsCharacteristic, BsProfile, BsSelectionEntry, BsSelect
 import Upgrade from "./Upgrade.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
+import BattleProfile from "./BattleProfile.js";
 
 export class Option {
     name: string;
@@ -46,6 +47,7 @@ export default class Unit {
 
     canHaveHeroicTrait: boolean;
     canHaveArtefact: boolean;
+    canBeGeneral: boolean;
     canBeReinforced: boolean;
     
     points: number;
@@ -58,12 +60,14 @@ export default class Unit {
     optionSets: OptionSet[];
     abilities: Ability[];
     keywords: string[];
+    battleProfile: BattleProfile | null;
     _tags: string[];
 
     constructor(ageOfSigmar: AgeOfSigmar, selectionEntry: BsSelectionEntry) {
         this.name = selectionEntry['@name'];
         this.id = selectionEntry['@id'];
         
+        this.canBeGeneral = true;
         this.isGeneral = false;
         this.isWarmaster = false; // must be general if able
 
@@ -82,6 +86,7 @@ export default class Unit {
         this.weapons = [];
         this.abilities = [];
         this.keywords = [];
+        this.battleProfile = null;
 
         this.points = 0;
         this._parse(ageOfSigmar, selectionEntry);

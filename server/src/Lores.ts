@@ -8,6 +8,7 @@ export class Lore {
     name: string;
     id: string;
     type: number;
+    points: number;
     unitIds: string[];
     abilities: Upgrade[];
     
@@ -17,6 +18,7 @@ export class Lore {
         this.abilities = [];
         this.unitIds = [];
         this.type = UpgradeType.SpellLore;
+        this.points = 0;
         if (selectionEntryGroup.selectionEntries) {
             selectionEntryGroup.selectionEntries.forEach(selectionEntry => {
                 if (selectionEntry.profiles === undefined)
@@ -49,6 +51,7 @@ export interface LoreLUTInterf {
 }
 
 export class LoreLUT {
+    [name: string]: LoreLUTInterf;
     spell: LoreLUTInterf;
     prayer: LoreLUTInterf;
     manifestation: LoreLUTInterf;

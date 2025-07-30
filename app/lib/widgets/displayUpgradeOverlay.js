@@ -4,9 +4,13 @@ const _initAbSection = () => {
         section = document.createElement('div');
         section.id = 'abilities-section';
         section.className = 'section';
-        section.style.border = '0px';
+
+        // fill the modal window
+        section.style.border = `2px solid ${getVar('hover-color')}`;
+        section.style.margin = '0px';
 
         const modal = document.querySelector('.modal');
+        modal.style.padding = '0';
         modal.appendChild(section);
     }
 }

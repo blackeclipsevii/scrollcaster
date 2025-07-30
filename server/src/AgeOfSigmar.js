@@ -358,54 +358,55 @@ export default class AgeOfSigmar {
         });
 
         // the forces
-        const ghb2526id = 'f079-501a-2738-6845';
         const regiment = '376a-6b97-8699-dd59';
         const aux = '4063-b3a6-e7e1-383f';
         const parsedForces = {};
-        this.gameSystem.forceEntries.forEach(gsForceEntry => {
-            if (gsForceEntry['@id'] === ghb2526id) {
-                gsForceEntry.forceEntries.forEach(forceEntry => {
-                    // skip these
-                    if (forceEntry['@id'] === regiment || forceEntry['@id'] === aux) {
-                        return;
-                    }
+        this.gameSystem.forceEntries.forEach(forceEntry => {
+            // skip these
+            if (forceEntry['@id'] === regiment || forceEntry['@id'] === aux) {
+                return;
+            }
 
-                    // we want special stuff
-                    const force = {};
-                    force.selectableIn = [];
-                    force.id = forceEntry['@id'];
-                    force.name = forceEntry['@name'];
-                    force.unitContainers = [];
-                    force.upgrades = [];
-                    
-                    // where do i put it
-                    forceEntry.modifiers.forEach(modifier => {
-                        if (modifier['@type'] === "set") {
-                            modifier.conditionGroups.forEach(cgParent => {
-                                // this should be a group pairing AOS with the other parents
-                                cgParent.conditionGroups.forEach(cgArmies => {
-                                    cgArmies.conditions.forEach(condition => {
-                                        if (condition['@type'] === 'instanceOf' &&
-                                            condition['@field'] === 'selections' &&
-                                            condition['@scope'] === 'parent') {
-                                            force.selectableIn.push(condition['@childId']);
-                                        }
-                                        
-                                    });
+            // we want special stuff
+            const force = {};
+            force.selectableIn = [];
+            force.id = forceEntry['@id'];
+            force.name = forceEntry['@name'];
+            force.unitContainers = [];
+            force.upgrades = [];
+            
+            // where do i put it
+            if (forceEntry.modifiers) {
+                forceEntry.modifiers.forEach(modifier => {
+                    if (modifier['@type'] === "set") {
+                        modifier.conditionGroups.forEach(cgParent => {
+                            // this should be a group pairing AOS with the other parents
+                            cgParent.conditionGroups.forEach(cgArmies => {
+                                cgArmies.conditions.forEach(condition => {
+                                    if (condition['@type'] === 'instanceOf' &&
+                                        condition['@field'] === 'selections' &&
+                                        condition['@scope'] === 'parent') {
+                                        force.selectableIn.push(condition['@childId']);
+                                    }
+                                    
                                 });
                             });
-                        }
-                    });
-
-                    forceEntry.costs.forEach(cost => {
-                        if (cost['@name'] === 'pts') {
-                            force.points = Number(cost['@value']);
-                        }
-                    });
-
-                    parsedForces[forceEntry['@id']] = force;
+                        });
+                    }
                 });
             }
+
+            if (forceEntry.costs) {
+                forceEntry.costs.forEach(cost => {
+                    if (cost['@name'] === 'pts') {
+                        force.points = Number(cost['@value']);
+                    }
+                });
+            }
+
+            if (force.selectableIn.length > 0)
+                parsedForces[forceEntry['@id']] = force;
+
         });
         
         rorData.catalog.entryLinks.forEach(entryLink => {
