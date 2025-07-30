@@ -24,11 +24,12 @@ export default class Ability {
             }
         });
 
-        profile.attributes.forEach((attrib) => {
-            if (attrib['#text'])
-                this.metadata[attrib['@name'].toLowerCase()] = attrib['#text'];
-        });
-
+        if (profile.attributes) {
+            profile.attributes.forEach((attrib) => {
+                if (attrib['#text'])
+                    this.metadata[attrib['@name'].toLowerCase()] = attrib['#text'];
+            });
+        }
         
         const charsMd = bsCharacteristicArrToMetadata(profile.characteristics);
 

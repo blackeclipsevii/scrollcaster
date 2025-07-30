@@ -49,6 +49,7 @@ const version = (()=>{
         roster.meta.profileVersion = await this.getBattleProfileVersion();
     },
     async isOutdated(roster) {
+        return true;
         if (roster.meta.serverVersion !== await this.getServerVersion())
             return true;
         if (roster.meta.profileVersion !== await this.getBattleProfileVersion())

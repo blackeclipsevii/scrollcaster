@@ -12,7 +12,9 @@ const getAos = () => {
 
 test('initialize AgeOfSigmar', () => {
     const aos = getAos();
-    expect(aos.getArmyNames()).toEqual([
+    expect(aos.getArmyNames()).toEqual([                                                                                                                                        
+        "Blades of Khorne - Gorechosen Champions",
+        "Blades of Khorne - The Baleful Lords",
         "Blades of Khorne",
         "Cities of Sigmar",
         "Daughters of Khaine - The Croneseer's Pariahs",
@@ -35,6 +37,8 @@ test('initialize AgeOfSigmar', () => {
         "Ironjawz - Zoggrok's Ironmongerz",
         "Ironjawz",
         "Kharadron Overlords - Grundstok Expeditionary Force",
+        "Kharadron Overlords - Pioneer Outpost",
+        "Kharadron Overlords - The Magnate's Crew",
         "Kharadron Overlords",
         "Kruleboyz - Big Waaagh!",
         "Kruleboyz - Murkvast Menagerie",

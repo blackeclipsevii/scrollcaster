@@ -56,6 +56,14 @@ function exportRoster(roster) {
         if (unit.monstrousTrait) {
             text += `  ${indent}* Monstrous Trait: ${unit.monstrousTrait.name}\n`;
         }
+
+        if (unit.optionSets) {
+            unit.optionSets.forEach(optionSet => {
+                if (optionSet.selection) {
+                    text += `  ${indent}* ${optionSet.selection.name}\n`;
+                }
+            });
+        }
     };
 
     for(let i = 0; i < roster.regiments.length; ++i) {

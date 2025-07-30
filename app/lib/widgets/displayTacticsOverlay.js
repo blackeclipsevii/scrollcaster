@@ -1,8 +1,12 @@
 const displayTacticsOverlay = overlayToggleFactory('block', (tacticCard) =>{
     const modal = document.querySelector(".modal");
+    modal.style.padding = '0';
 
     const section = document.createElement('div');
     section.className = 'section';
+    // fill the modal window
+    section.style.border = `2px solid ${getVar('hover-color')}`;
+    section.style.margin = '0px';
 
     let ele = document.createElement('h3');
     ele.innerHTML = tacticCard.name;

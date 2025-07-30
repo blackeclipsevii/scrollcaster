@@ -176,6 +176,93 @@ const builderPage = {
             }
         }
 
+        async function displayWarscrollOption(unit, optionSet, newUsItem) {
+            const details = newUsItem.querySelector('.unit-details');
+            const warOptDiv = document.createElement('div');
+            warOptDiv.className = 'section upgrade-section';
+            warOptDiv.innerHTML = `
+                <h3 class="section-title">${optionSet.name}:</h3>
+            `;
+            const options = Object.values(optionSet.options);
+            options.forEach(option => {
+                const upgradeDiv = document.createElement('div');
+                upgradeDiv.className = 'upgrade-group';
+                upgradeDiv.innerHTML = `
+                <div class='upgrade-group-left'>
+                    <label class="upgrade-label">
+                        <input type="checkbox" class="upgrade-checkbox">${option.name}
+                    </label>
+                </div>
+                <div class='upgrade-group-right'>
+                    <button class="upgrade-button">🔎</button>
+                    <div style='display: inline-block' class='upgrade-points points-label'>${option.points} PTS</div>
+                </div>`;
+
+                const costsPoints = option.points && option.points > 0;
+                if (!costsPoints) {
+                    const pl = upgradeDiv.querySelector('.points-label');
+                    pl.style.display = 'none';
+                }
+
+                const label = upgradeDiv.querySelector(`.upgrade-button`);
+                label.onclick = () => {
+                    if (option.weapons.length > 0) {
+                        displayWeaponOverlay({
+                            name: option.name,
+                            weapons: option.weapons
+                        });
+                    }
+                    
+                    if (option.abilities.length > 0)
+                        displayUpgradeOverlay(option);
+                };
+
+                if (option.weapons.length === 0 &&
+                    option.abilities.length === 0) {
+                    label.style.display = 'none';
+                }
+
+                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
+                if (optionSet.selection && optionSet.selection.name === option.name) {
+                    checkbox.checked = true;
+                }
+
+                const handlechange = (points, subtract=false) => {
+                    if (costsPoints) {
+                        const unitPoints = unitTotalPoints(unit);
+                        const usPoints = newUsItem.querySelector('.unit-slot-points');
+                        displayPoints(usPoints, unitPoints, 'PTS');
+                        if (subtract)
+                            totalPoints -= points;
+                        else
+                            totalPoints += points;
+                        refreshPointsOverlay(thisPage.roster.id);
+                    }
+                    updateValidationDisplay();
+                    putRoster(roster);
+                }
+
+                checkbox.onchange = () => {
+                    if (checkbox.checked) {
+                        if (!optionSet.selection) {
+                            optionSet.selection = option;
+                            handlechange(option.points, false);
+                        }
+                        else if (optionSet.selection.name !== option.name) {
+                            checkbox.checked = false;
+                        }
+                    } else {
+                        if (optionSet.selection && optionSet.selection.name === option.name) {
+                            optionSet.selection = null;
+                            handlechange(option.points, true);
+                        }
+                    }
+                };
+                warOptDiv.appendChild(upgradeDiv);
+            });
+            details.appendChild(warOptDiv);
+        }
+
         async function displayEnhancements(unit, newUsItem, type) {
             const details = newUsItem.querySelector(`.available-${type}s`);
             const allUpgrades = await thisPage.fetchUpgrades();
@@ -359,7 +446,13 @@ const builderPage = {
                     refreshPointsOverlay(thisPage.roster.id);
                     updateValidationDisplay();
                 };
+            }
 
+            if (unit.optionSets && unit.optionSets.length > 0) {
+                ++numOptions;
+                unit.optionSets.forEach(optionSet => {
+                    displayWarscrollOption(unit, optionSet, newUsItem);
+                });
             }
 
             if (!unit.canHaveArtefact) {

@@ -19,6 +19,14 @@ const rosterState = {
             enhancements.forEach(enhancement => {
                 unitState[enhancement] = unit[enhancement] ? unit[enhancement].id : null;
             });
+            unitState.options = {};
+            if (unit.optionSets) {
+                unit.optionSets.forEach(optionSet => {
+                    if (optionSet.selection) {
+                        unitState.options[optionSet.name] = optionSet.selection.name;
+                    }
+                })
+            }
             return unitState;
         };
 
@@ -128,6 +136,16 @@ const rosterState = {
                     unit[enhancement] = pool[state[enhancement]];
                 }
             });
+
+            
+            if (unit.optionSets) {
+                unit.optionSets.forEach(optionSet => {
+                    const selection = state.options[optionSet.name];
+                    if (selection) {
+                        optionSet.selection = optionSet.options[selection];
+                    }
+                })
+            }
             return unit;
         };
 

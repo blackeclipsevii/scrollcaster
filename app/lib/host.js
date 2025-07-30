@@ -1,6 +1,11 @@
-const hostname = "https://army-thing.fly.dev";
-const port = null;
+const hostname = "http://localhost";
+const port = 3000;
 const endpoint = port ? `${hostname}:${port}` : hostname;
+
+// if warscroll options are selected
+// only those will be displayed
+const DYNAMIC_WARSCROLL = false;
+
 var roster = null;
 var dynamicPages = {};
 var previousUrl = document.referrer;
