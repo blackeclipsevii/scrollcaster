@@ -4,7 +4,7 @@
     "name": "Alchemite Warforger",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "Any <Human Infantry>",
+    "regimentOptions": "Any <Human> <Infantry>",
     "notes": null,
     "baseSize": "32mm"
   },
@@ -22,7 +22,7 @@
     "name": "Battlemage",
     "unitSize": 1,
     "points": 90,
-    "regimentOptions": "Any <Human Infantry>",
+    "regimentOptions": "Any <Human> <Infantry>",
     "notes": null,
     "baseSize": "25mm"
   },
@@ -31,7 +31,7 @@
     "name": "Battlemage on Celestial Hurricanum",
     "unitSize": 1,
     "points": 220,
-    "regimentOptions": "Any <Human Infantry>, Any <Human Cavalry>",
+    "regimentOptions": "Any <Human> <Infantry>, Any <Human> <Cavalry>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -49,7 +49,7 @@
     "name": "Battlemage on Luminark of Hysh",
     "unitSize": 1,
     "points": 260,
-    "regimentOptions": "Any <Human Infantry>, Any <Human Cavalry>",
+    "regimentOptions": "Any <Human> <Infantry>, Any <Human> <Cavalry>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -67,7 +67,7 @@
     "name": "Callis and Toll",
     "unitSize": 2,
     "points": 210,
-    "regimentOptions": "<Toll’s Companions> (required), Any <Human Infantry>",
+    "regimentOptions": "<Toll’s Companions> (required), Any <Human> <Infantry>",
     "notes": "This unit cannot be reinforced.",
     "baseSize": "28.5mm"
   },
@@ -130,7 +130,7 @@
     "name": "Galen ven Denst",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "<Doralia ven Denst> (required), Any <Human Infantry>",
+    "regimentOptions": "<Doralia ven Denst> (required), Any <Human> <Infantry>",
     "notes": null,
     "baseSize": "28.5mm"
   },
@@ -148,7 +148,7 @@
     "name": "Pontifex Zenestra, Matriarch of the Great Wheel",
     "unitSize": 1,
     "points": 170,
-    "regimentOptions": "Any <Human Infantry>, Any <Human Cavalry>",
+    "regimentOptions": "Any <Human> <Infantry>, Any <Human> <Cavalry>",
     "notes": null,
     "baseSize": "90 × 52mm"
   },

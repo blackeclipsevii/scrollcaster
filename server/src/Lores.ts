@@ -24,11 +24,12 @@ export class Lore {
                 
                 const typename = selectionEntry.profiles[0]['@typeName'].toLowerCase();
                 let type = UpgradeType.SpellLore;
-                if (typename.includes('prayer'))
-                    type = UpgradeType.PrayerLore;
-                else if (selectionEntry['@name'].includes('Summon'))
+                if (selectionEntry['@name'].includes('Summon'))
                     type = UpgradeType.ManifestationLore;
+                else if (typename.includes('prayer'))
+                    type = UpgradeType.PrayerLore;
                 const upgrade = new Upgrade(selectionEntry, type);
+                
                 this.abilities.push(upgrade);
             });
             this.type = this.abilities[0].type;
@@ -99,6 +100,9 @@ export default class Lores {
     }
 
     _doUniversalLores(group: BsSelectionEntryGroup) {
+        if (!group.selectionEntries)
+            return;
+        
         group.selectionEntries.forEach(entry => {
             const lu = new UniversalLoreLU;
             if (entry.entryLinks)

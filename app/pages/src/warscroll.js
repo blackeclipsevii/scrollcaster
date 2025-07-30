@@ -73,7 +73,21 @@ const warscrollPage = {
             
             whClearDiv(qualifier);
 
-            const weaponList = unit[qualifier];
+            const isTypeFilter = (weapon) => {
+                if (qualifier === 'melee')
+                    return weapon.type === 0;
+                return weapon.type === 1;
+            }
+
+            const weaponList = unit.weapons.filter(isTypeFilter);
+
+            unit.weaponOptions.forEach(optionSet => {
+                optionSet.forEach(choice => {
+                    if (isTypeFilter(choice)) {
+                        weaponList.push(choice);
+                    };
+                });
+            });
 
             const section = document.getElementById(`${qualifier}-weapons-section`);
             if (!weaponList || weaponList.length === 0) {
@@ -145,7 +159,8 @@ const warscrollPage = {
                 headers.forEach(cellData => {
                     cell = document.createElement("td");
                     cell.className = className;
-                    if (cellData === 'R' && weaponList[i][lut[cellData]] !== 0) 
+                    if (cellData === 'R' && weaponList[i][lut[cellData]] !== 0 &&
+                        !weaponList[i][lut[cellData]].startsWith('-')) 
                         cell.textContent = _limitString(`-${weaponList[i][lut[cellData]]}`);
                     else
                         cell.textContent = _limitString(weaponList[i][lut[cellData]]);

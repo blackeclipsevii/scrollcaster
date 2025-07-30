@@ -21,3 +21,22 @@ test('Monstrous Traits', () => {
         "Big 'Un",
     ]);
 });
+
+test('Prayer Manifestations', () => {
+    const aos = getAos();
+    const army = aos.getArmy('Fyreslayers');
+    expect(army).toBeTruthy();
+    const manifestation = army.upgrades.lores.manifestation;
+    expect(Object.getOwnPropertyNames(manifestation)).toEqual([
+        "UNIVERSAL-Aetherwrought Machineries",
+        "UNIVERSAL-Forbidden Power",
+        "UNIVERSAL-Krondspine Incarnate",
+        "UNIVERSAL-Morbid Conjuration",
+        "UNIVERSAL-Twilit Sorceries",
+        "UNIVERSAL-Primal Energy",
+        "Magmic Invocations"
+    ]);
+
+    const prayerManifest = manifestation["Magmic Invocations"];
+    expect(prayerManifest.abilities.length).toEqual(3);
+});

@@ -381,6 +381,35 @@ test('Vanari Lord Regent regiment options', () =>{
       ]);
 });
 
+test('Cities of sigmar regiment options', () =>{
+    // hero via faction catagory (lumineth paragon)
+    // keyword that is also in unit names
+    const aos = getAos();
+    const army = aos.getArmy('Cities of Sigmar');
+    expect(army).toBeTruthy();
+
+    const leaderId = "708d-414f-a3f-3734";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Pontifex Zenestra, Matriarch of the Great Wheel")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+       "Freeguild Steelhelms",
+       "Freeguild Command Corps",
+       "Flagellants",
+       "Freeguild Cavaliers",
+       "Freeguild Fusiliers",
+       "Toll's Companions",
+       "Wildercorps Hunters",
+       "Freeguild Cavaliers (Scourge of Ghyran)"
+      ]);
+});
+
 test('Legion of the First Prince', () =>{
     // Eternus has a title, but can be referenced by Eternus
     const aos = getAos();

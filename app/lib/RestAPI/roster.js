@@ -31,14 +31,15 @@ async function getRosters() {
 }
 
 async function getNewRoster(army) {
-    let roster = null;
     const endpoint = rosterEndpoint();
-    await fetch(encodeURI(`${endpoint}&army=${army}`), {
+    const roster = await fetch(encodeURI(`${endpoint}&army=${army}`), {
         method: "GET" // default, so we can ignore
-    }).then(response => { 
-        console.log(response);
-        roster = response.json();
-    });
+    }).then(response => response.json());
+
+    if (roster) {
+        await version.stampVersion(roster);
+    }
+
     return roster;
 }
 

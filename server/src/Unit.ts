@@ -3,7 +3,7 @@ import Weapon from "./Weapon.js";
 
 import { UnitType, strToUnitType } from "./types/UnitType.js";
 import { WeaponType } from "./Weapon.js";
-import { BsCategoryLink, BsCharacteristic, BsProfile, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
+import { BsCategoryLink, BsCharacteristic, BsProfile, BsSelectionEntry, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
 import Upgrade from "./Upgrade.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 
@@ -25,8 +25,8 @@ export default class Unit {
     monstrousTraits: Upgrade | null;
     heroicTrait: Upgrade | null;
     artefact: Upgrade | null;
-    ranged: Weapon[];
-    melee: Weapon[];
+    weapons: Weapon[];
+    weaponOptions: (Weapon[])[];
     abilities: Ability[];
     keywords: string[];
     _tags: string[];
@@ -49,8 +49,8 @@ export default class Unit {
         this.canBeReinforced = false;
         this.isReinforced = false;
 
-        this.ranged = [];
-        this.melee = [];
+        this.weapons = [];
+        this.weaponOptions = [];
         this.abilities = [];
         this.keywords = [];
 
@@ -89,34 +89,61 @@ export default class Unit {
         }
     }
 
-    _parseWeapons(selectionEntries: BsSelectionEntry[]) {
+    _parseModels(modelEntries: BsSelectionEntry[]) {
         const parseProfiles = (profiles: BsProfile[]) => {
             profiles.forEach(profile => {
-                const myWeapon = new Weapon(profile);
-                if (myWeapon.type === WeaponType.Ranged) {
-                    this.ranged.push(myWeapon);
-                } else {
-                    this.melee.push(myWeapon);
+                if (profile["@typeName"].includes('Weapon')) {
+                    const myWeapon = new Weapon(profile);
+                    this.weapons.push(myWeapon);
                 }
             });
         }
 
-        selectionEntries.forEach(se => {
-            if (se.selectionEntries) {
-                for (let j = 0; j < se.selectionEntries.length; ++j) {
-                    const entry = se.selectionEntries[j];
+        modelEntries.forEach(modelEntry => {
+            // weapons ?
+            if (modelEntry.selectionEntries) {
+                for (let j = 0; j < modelEntry.selectionEntries.length; ++j) {
+                    const entry = modelEntry.selectionEntries[j];
                     if (entry.profiles)
                         parseProfiles(entry.profiles)
                 }
             }
-            if (se.profiles) {
-                parseProfiles(se.profiles);
+            // weapons ?
+            if (modelEntry.profiles) {
+                parseProfiles(modelEntry.profiles);
             }
-        })
+
+            if (modelEntry.selectionEntryGroups) {
+                this._parseOptions(modelEntry.selectionEntryGroups);
+            }
+        });
+    }
+
+    _parseOptions(selectionEntryGroups: BsSelectionEntryGroup[]) {
+        selectionEntryGroups.forEach(seg => {
+            if (!seg.selectionEntries)
+                return;
+
+            const options: Weapon[] = [];
+            seg.selectionEntries.forEach(segEntry => {
+                if (segEntry.profiles) {
+                    segEntry.profiles.forEach(profile => {
+                        if (profile["@typeName"].includes('Ability')) {
+                            this.abilities.push(new Ability(profile));
+                        } 
+                        if (profile["@typeName"].includes('Weapon')) {
+                            const myWeapon = new Weapon(profile);
+                            options.push(myWeapon);
+                        }
+                    });
+                }
+            });
+            this.weaponOptions.push(options);
+        });
     }
 
     _parse(selectionEntry: BsSelectionEntry) {
-        if (selectionEntry.categoryLinks !== undefined) 
+        if (selectionEntry.categoryLinks) 
             this._parseKeywords(selectionEntry.categoryLinks);
 
         // to-do profiles of different types?
@@ -133,7 +160,7 @@ export default class Unit {
             }
 
         if (selectionEntry.selectionEntries) {
-            this._parseWeapons(selectionEntry.selectionEntries);
+            this._parseModels(selectionEntry.selectionEntries);
         }
     }
 }

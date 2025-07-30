@@ -297,9 +297,10 @@ const rosterPage = {
     }
 
     async function createHeaderMenu() {
-      const serverVersion = await getServerVersion();
-      const bsdataRevision = await getBsDataVersion();
-      const bpVersion = await getBattleProfileVersion();
+      const clientVersion = await version.getClientVersion();
+      const serverVersion = await version.getServerVersion();
+      const bsdataRevision = await version.getBsDataVersion();
+      const bpVersion = await version.getBattleProfileVersion();
 
       const right = document.querySelector('.header-right');
       const callbackMap = {
@@ -310,7 +311,7 @@ const rosterPage = {
 
               const section = document.createElement('p');
               section.innerHTML = `
-                <b>Client Version:</b> ${version} <br/>
+                <b>Client Version:</b> ${clientVersion} <br/>
                 <b>Server Version:</b> ${serverVersion} <br/>
                 <b>Battle Profile Version:</b> ${bpVersion} <br/>
                 <b>BSData:</b> ${bsdataRevision} <br/>
@@ -393,7 +394,16 @@ const rosterPage = {
 
       const rosters = await getRosters();
       for (let i = 0; i < rosters.length; ++i) {
-          const roster = await getRoster(rosters[i]);
+          let roster = await getRoster(rosters[i]);
+          if (await version.isOutdated(roster)) {
+            // update the roster with the latest server data
+            const state = rosterState.serialize(roster);
+            const newRoster = await rosterState.deserialize(state, roster.id);
+            if (newRoster) {
+              roster = newRoster;
+              putRoster(roster);
+            }
+          }
           displayRoster(roster);
       }
     }

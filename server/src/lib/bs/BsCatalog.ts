@@ -84,11 +84,12 @@ export interface BsSelectionEntry extends BsIdentifiable, BsNamed, BsTyped{
     entryLinks: BsEntryLink[] | undefined;
     categoryLinks: BsCategoryLink[] | undefined;
     selectionEntries: BsSelectionEntry[] | undefined;
+    selectionEntryGroups: BsSelectionEntryGroup[] | undefined;
 }
 
 export interface BsSelectionEntryGroup extends BsNamed, BsIdentifiable {
     '@hidden': string,
-    selectionEntries: BsSelectionEntry[];
+    selectionEntries: BsSelectionEntry[] | undefined | null;
     constraints: BsConstraintInter[];
     entryLinks: BsEntryLink[] | undefined;
 }

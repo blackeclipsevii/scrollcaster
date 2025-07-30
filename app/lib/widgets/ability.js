@@ -37,7 +37,6 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     let cssColor = 'gray';
     if (ability.metadata && ability.metadata.color) {
         cssColor = ability.metadata.color.toLowerCase();
-        console.log(ability.metadata.color);
     }
 
     let theColor = getVar(`${cssColor}-ability`);
@@ -67,11 +66,9 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     if (invertPng) {
         img.classList.add('invert-img');
     }
-    if (icon);
     titleBar.appendChild(img);
     addSection('h3', 'timing', '', titleBar, color);
     titleBar.style.color = headerFontColor;
-    console.log(headerFontColor);
     div.appendChild(titleBar);
 
     addSection('h4', 'name', '');

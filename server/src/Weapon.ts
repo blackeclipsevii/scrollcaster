@@ -17,8 +17,10 @@ export default class Weapon {
     Dmg: string;
     Ability: string;
     constructor(profileXml: BsProfile) {
-        if (!profileXml["@typeName"].includes('Weapon'))
+        if (!profileXml["@typeName"].includes('Weapon')) {
+            console.log(JSON.stringify(profileXml));
             throw `Invalid type for constructing Weapon: ${profileXml["@typeName"]}`;
+        }
 
         this.name = profileXml['@name'];
         const chars = profileXml.characteristics;

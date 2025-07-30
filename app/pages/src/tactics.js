@@ -67,8 +67,6 @@ const tacticsPage = {
                 typeEle.className = 'selectable-item-type ability-label';
                 typeEle.style.display = 'inline-block';
                 typeEle.textContent = 'Battle Tactic Card';
-                typeEle.style.marginTop = '.5em';
-                typeEle.style.marginRight = '1em';
                 left.appendChild(typeEle);
         
     

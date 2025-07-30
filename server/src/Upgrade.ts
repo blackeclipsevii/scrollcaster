@@ -17,7 +17,7 @@ export default class Upgrade {
             const profiles: BsProfile[] = selectionEntry.profiles;
             profiles.forEach(profile => {
                 this.abilities.push(new Ability(profile));
-            })
+            });
         }
         this.points = 0;
         if (selectionEntry.costs) {

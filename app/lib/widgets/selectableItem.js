@@ -47,8 +47,6 @@ const makeSelectableItemType = (typedObj, isUnit=true) => {
         roleEle.textContent = unitTypeToString(typedObj);
     else
         roleEle.textContent = upgradeTypeToStr(typedObj);
-    roleEle.style.marginTop = '.5em';
-    roleEle.style.marginRight = '1em';
     return roleEle;
 }
 

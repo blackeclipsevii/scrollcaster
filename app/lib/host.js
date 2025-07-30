@@ -4,7 +4,6 @@ const endpoint = port ? `${hostname}:${port}` : hostname;
 var roster = null;
 var dynamicPages = {};
 var previousUrl = document.referrer;
-var version = '0.4.3beta';
 let _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
 const getVar = (varName) => {
