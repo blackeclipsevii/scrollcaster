@@ -104,7 +104,7 @@ export default class Army {
                 if (entry['@type'] === 'unit' &&
                     entry['@publicationId'] !== LegendsPub
                 ) {
-                    const unit = new Unit(entry);
+                    const unit = new Unit(ageOfSigmar, entry);
                     _libraryUnits[unit.id] = unit;
                 }
             });
@@ -159,7 +159,7 @@ export default class Army {
         catalogue.sharedSelectionEntries.forEach(entry => {
             const lc = entry['@name'].toLowerCase();
             if (entry['@type'] === 'unit') {
-                const unit = new Unit(entry);
+                const unit = new Unit(ageOfSigmar, entry);
                 _libraryUnits[unit.id] = unit;
             } else {
                 ulKeys.forEach(key => {
@@ -176,8 +176,8 @@ export default class Army {
             // this is the global library for the faction
             let unit = _libraryUnits[link['@targetId']];
             if (!unit) {
-                console.log (`unable to find unitid: ${link['@targetId']}`);
-                console.log(`name :${link['@name']}`);
+              //  console.log (`unable to find unitid: ${link['@targetId']}`);
+              //  console.log(`name :${link['@name']}`);
                 return;
             }
 

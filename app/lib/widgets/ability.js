@@ -122,6 +122,16 @@ const widgetAbilityDisplayAbilities = (unit, title='Abilities') => {
             const ability = singleUnit.abilities[i];
             widgetsAbilityNewAbilityDiv(ability);
         }
+
+        if (singleUnit.optionSet) {
+            singleUnit.optionSet.forEach(set => {
+                if (set.selection && set.selection.abilities.length > 0) {
+                    set.selection.abilities.forEach(ability => {
+                        widgetsAbilityNewAbilityDiv(ability);
+                    });
+                }
+            });
+        }
     };
     
     if (Array.isArray(unit)) {

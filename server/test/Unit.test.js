@@ -15,9 +15,14 @@ test('Optional wargear', () => {
     const army = aos.getArmy('Slaves to Darkness');
     expect(army).toBeTruthy();
     // chaos chariot has wargear options
-    const unit = army.units['e161-b68c-7d8c-9513'];
+    let unit = army.units['e161-b68c-7d8c-9513'];
     expect(unit.name).toEqual('Chaos Chariot');
     expect(unit).toBeTruthy();
     expect(unit.weapons.length).toEqual(2);
-    expect(unit.weaponOptions.length).toEqual(1);
+    expect(unit.optionSets.length).toEqual(1);
+
+    unit = army.units['22ef-99c8-eb17-973f'];
+    expect(unit.name).toEqual('Daemon Prince');
+    expect(unit).toBeTruthy();
+    expect(unit.optionSets.length).toEqual(2);
 });

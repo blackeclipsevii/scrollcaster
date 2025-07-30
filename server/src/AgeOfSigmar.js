@@ -42,12 +42,14 @@ export default class AgeOfSigmar {
             armies: {}
         }
         this.regimentsOfRenown = null;
+        this.battleTacticCards = [];
+        this.keywordLUT = {};
+        this.units = {};
         this.lores = new Lores(path);
 
         this.gameSystem = parseGameSystem(`${path}/Age of Sigmar 4.0.gst`);
-
+        this._parseKeywords();
         this._populateLibraries(path);
-        this.battleTacticCards = [];
         this.battleProfiles = {
             _modName(name) {
                 return name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '');
@@ -59,10 +61,6 @@ export default class AgeOfSigmar {
                 return this[this._modName(name)];
             }
         };
-        this.units = {};
-
-        this.keywordLUT = {};
-        this._parseKeywords();
         this._parseBattleProfiles();
     }
 
@@ -353,7 +351,7 @@ export default class AgeOfSigmar {
         names.forEach(name => {
             rorData.libraries[name].sharedSelectionEntries.forEach(entry => {
                 if (entry['@type'] === 'unit') {
-                    const unit = new Unit(entry);
+                    const unit = new Unit(this, entry);
                     motherloadOfUnits[unit.id] = unit;
                 }
             });
@@ -623,7 +621,7 @@ export default class AgeOfSigmar {
                 });
             }
             if (entry['@type'] === 'unit') {
-                const unit = new Unit(entry);
+                const unit = new Unit(this, entry);
                 this.units[unit.id] = unit;
             }
         });
@@ -631,7 +629,7 @@ export default class AgeOfSigmar {
         
         this.gameSystem.sharedSelectionEntries.forEach(entry => {
             if (entry['@type'] === 'unit') {
-                const unit = new Unit(entry);
+                const unit = new Unit(this, entry);
              //   console.log(`${unit.name} ${unit.id}`);
                 this.units[unit.id] = unit;
             }

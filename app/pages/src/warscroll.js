@@ -80,13 +80,14 @@ const warscrollPage = {
             }
 
             const weaponList = unit.weapons.filter(isTypeFilter);
-
-            unit.weaponOptions.forEach(optionSet => {
-                optionSet.forEach(choice => {
-                    if (isTypeFilter(choice)) {
-                        weaponList.push(choice);
-                    };
-                });
+            unit.optionSets.forEach(optionSet => {
+                if (optionSet.selection !== null) {
+                    optionSet.selection.weapons.forEach(weapon => {
+                        if (isTypeFilter(weapon)) {
+                            weaponList.push(weapon);
+                        };
+                    });
+                }
             });
 
             const section = document.getElementById(`${qualifier}-weapons-section`);
