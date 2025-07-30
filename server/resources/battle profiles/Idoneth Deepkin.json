@@ -12,8 +12,8 @@
     "type": "Hero",
     "name": "Akhelian Thrallmaster",
     "unitSize": 1,
-    "points": 120,
-    "regimentOptions": "Any <Namarti>",
+    "points": 90,
+    "regimentOptions": "Any <Idoneth Deepkin>",
     "notes": "This Hero can join an eligible regiment as an <Akhelian Raidmaster>.",
     "baseSize": "32mm"
   },
@@ -57,7 +57,7 @@
     "type": "Hero",
     "name": "Isharann Tidecaster",
     "unitSize": 1,
-    "points": 150,
+    "points": 120,
     "regimentOptions": "0-1 <Isharann Emissary>, Any <Namarti>",
     "notes": null,
     "baseSize": "32mm"
@@ -66,16 +66,16 @@
     "type": "Hero",
     "name": "Lotann, Warden of the Soul Ledgers",
     "unitSize": 1,
-    "points": 100,
+    "points": 110,
     "regimentOptions": "Any <Idoneth Deepkin>",
-    "notes": "This Hero can join an eligible regiment as an <Isharann Emissary>.",
+    "notes": null,
     "baseSize": "40mm"
   },
   {
     "type": "Hero",
     "name": "Volturnos, High King of the Deep",
     "unitSize": 1,
-    "points": 250,
+    "points": 230,
     "regimentOptions": "0-1 <Akhelian Raidmaster> or <Isharann Emissary>, Any <Idoneth Deepkin>",
     "notes": null,
     "baseSize": "60mm"

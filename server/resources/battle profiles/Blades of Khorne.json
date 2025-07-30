@@ -13,7 +13,7 @@
     "name": "Bloodmaster, Herald of Khorne",
     "unitSize": 1,
     "points": 120,
-    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Daemon>",
+    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne> <Daemon>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -39,8 +39,8 @@
     "type": "Hero",
     "name": "Bloodthirster of Insensate Rage",
     "unitSize": 1,
-    "points": 460,
-    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne>",
+    "points": 420,
+    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne> <Daemon>",
     "notes": "This Hero can join an eligible regiment as a <Baleful Lord>.",
     "baseSize": "120 × 92mm"
   },
@@ -48,16 +48,16 @@
     "type": "Hero",
     "name": "Bloodthirster of Unfettered Fury",
     "unitSize": 1,
-    "points": 450,
-    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne>",
+    "points": 410,
+    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne> <Daemon>",
     "notes": "This Hero can join an eligible regiment as a <Baleful Lord>.",
     "baseSize": "120 × 92mm"
   },
   {
     "type": "Hero",
-    "name": "Exalted Deathbringer",
+    "name": "Deathbringer",
     "unitSize": 1,
-    "points": 100,
+    "points": 120,
     "regimentOptions": "Any <Bloodbound>",
     "notes": "This Hero can join an eligible regiment as a <Bloodbound Warmonger>.",
     "baseSize": "40mm"
@@ -66,8 +66,8 @@
     "type": "Hero",
     "name": "Herald of Khorne on Blood Throne",
     "unitSize": 1,
-    "points": 200,
-    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Daemon>",
+    "points": 160,
+    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne> <Daemon>",
     "notes": null,
     "baseSize": "120 × 92mm"
   },
@@ -76,7 +76,7 @@
     "name": "Karanak",
     "unitSize": 1,
     "points": 110,
-    "regimentOptions": "0-1 <Mighty Lord of Khorne>, Any <Claws of Karanak>, Any <Flesh Hounds>",
+    "regimentOptions": "Any <Claws of Karanak>, Any <Flesh Hounds>",
     "notes": null,
     "baseSize": "75 × 42mm"
   },
@@ -93,8 +93,8 @@
     "type": "Hero",
     "name": "Mighty Lord of Khorne",
     "unitSize": 1,
-    "points": 130,
-    "regimentOptions": "Any <Bloodbound Warmonger>, 0-1 <Karanak>, Any <Blades of Khorne>",
+    "points": 150,
+    "regimentOptions": "Any <Bloodbound Warmonger>, 0-1 <Bloodbound>",
     "notes": null,
     "baseSize": "60mm"
   },
@@ -111,8 +111,8 @@
     "type": "Hero",
     "name": "Skarbrand",
     "unitSize": 1,
-    "points": 470,
-    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne>",
+    "points": 450,
+    "regimentOptions": "0-1 <Slaughter Seeker>, Any <Blades of Khorne> <Daemon>",
     "notes": null,
     "baseSize": "100mm"
   },
@@ -129,7 +129,7 @@
     "type": "Hero",
     "name": "Skullgrinder",
     "unitSize": 1,
-    "points": 110,
+    "points": 100,
     "regimentOptions": "Any <Bloodbound>",
     "notes": "This Hero can join an eligible regiment as a <Bloodbound Warmonger>.",
     "baseSize": "40mm"
@@ -147,8 +147,8 @@
     "type": "Hero",
     "name": "Skulltaker",
     "unitSize": 1,
-    "points": 130,
-    "regimentOptions": "Any <Daemon>",
+    "points": 120,
+    "regimentOptions": "Any <Blades of Khorne> <Daemon>",
     "notes": "This Hero can join an eligible regiment as a <Slaughter Seeker>.",
     "baseSize": "40mm"
   },
@@ -156,7 +156,7 @@
     "type": "Hero",
     "name": "Slaughterpriest",
     "unitSize": 1,
-    "points": 160,
+    "points": 130,
     "regimentOptions": "Any <Bloodbound>",
     "notes": null,
     "baseSize": "40mm"
@@ -165,7 +165,7 @@
     "type": "Hero",
     "name": "Wrath of Khorne Bloodthirster",
     "unitSize": 1,
-    "points": 400,
+    "points": 410,
     "regimentOptions": "0-1 <Slaughter Seeker>, 0-1 <Baleful Lord>, Any <Blades of Khorne>",
     "notes": null,
     "baseSize": "120 × 92mm"
@@ -175,7 +175,7 @@
     "name": "Mighty Lord of Khorne (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 180,
-    "regimentOptions": "Any <Bloodbound Warmonger>, 0-1 <Karanak>, Any <Blades of Khorne>",
+    "regimentOptions": "Any <Bloodbound Warmonger>, Any <Bloodbound>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "60mm"
   }
