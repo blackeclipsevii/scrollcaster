@@ -11,10 +11,11 @@ import path from 'path';
 import Upgrade from './Upgrade.js';
 import { UpgradeType } from './lib/Upgrade.js';
 import BsConstraint, { ConstraintType, getConstraints, BsModifierAttrObj } from './lib/bs/BsConstraint.js';
-import { UnitType } from './types/UnitType.js';
 import { BsCatalog, BsGameSystem, BsLibrary } from './lib/bs/BsCatalog.js';
 import BattleProfile from './BattleProfile.js';
 import { Force } from './Force.js';
+
+import { RegimentValidator } from './RegimentValidation.js';
 
 // intermediate step
 interface MyConstraints {
@@ -56,11 +57,6 @@ export interface AosDatabase {
     path: string;
     armyLUT: {[name: string]: string};
     armies: {[name: string]: ArmyData};
-}
-
-export interface KeyOpt {
-    keyword: string;
-    index: number;
 }
 
 export class BattleProfileCollection {
@@ -130,6 +126,26 @@ export default class AgeOfSigmar {
         this._parseBattleProfiles();
     }
 
+    // combine army and aos keywords, all uppercase
+    _getAvailableKeywords(army: Army) {
+        // aos keywords
+        let keywords = Object.values(this.keywordLUT);
+        // army keywords
+        keywords.concat(Object.values(army.keywordLUT));
+        keywords = keywords.join(',').toUpperCase().split(',');
+        return keywords;
+    }
+
+    getRegimentOptions(army: Army, leaderId: string) {
+        const allKeywords = this._getAvailableKeywords(army);
+        return RegimentValidator.getRegimentOptions(army, leaderId, allKeywords);
+    }
+
+    validateRegiment(army: Army, regiment: string[]) {
+        const allKeywords = this._getAvailableKeywords(army);
+        return RegimentValidator.validateRegiment(army, regiment, allKeywords);
+    }
+
     getArmyAlliances() {
         interface ArmyAllianceInterf {
             name: string,
@@ -175,279 +191,6 @@ export default class AgeOfSigmar {
 
         data.army = new Army(this, armyName);
         return data.army;
-    }
-
-    // combine army and aos keywords, all uppercase
-    _getAvailableKeywords(army: Army) {
-        // aos keywords
-        let keywords = Object.values(this.keywordLUT);
-        // army keywords
-        keywords.concat(Object.values(army.keywordLUT));
-        keywords = keywords.join(',').toUpperCase().split(',');
-        return keywords;
-    }
-
-    // check if a keyword is a non (really only seraphon)
-    _hasNonPrefix = (options: string, keyOpt: KeyOpt) => {
-        // Check if the 4 characters before the needle are 'non-'
-        const substr = options.slice(keyOpt.index - 4, keyOpt.index).toUpperCase().trim();
-        return substr.startsWith('NON');
-    }
-    
-    getKeywordsFromOption = (option: string): KeyOpt[] => {
-        option = option.trim();
-        // let optionQualifier = option.split(' ')[0];
-        const regex = /<([^>]+)>/g;
-        const optionKeywords: KeyOpt[] = [];
-        for (const match of option.matchAll(regex)) {
-            optionKeywords.push({
-                keyword: match[1].toUpperCase(),
-                index: match.index
-            });
-        }
-        return optionKeywords;
-    }
-
-    meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], availableKeywords: string[]) => {
-        const testKeyOpt = (allTags: string[], keyOpt: KeyOpt) => {
-            const isNon = this._hasNonPrefix(option, keyOpt);
-
-            if (allTags.includes(keyOpt.keyword)) {
-                return !isNon;
-            }
-            
-            if (!availableKeywords.includes(keyOpt.keyword))
-            {
-                let name = unit.name.toUpperCase();
-                if (keyOpt.keyword === unit.name.toUpperCase()) {
-                    return !isNon;
-                }
-                
-                if (name.includes(',')) {
-                    const nameNoTitle = name.split(',')[0];
-                    if (keyOpt.keyword === nameNoTitle) {
-                        return !isNon;
-                    }
-                }
-            }
-
-            return isNon
-        }
-        
-        const getAllTags = (unit: Unit) => {
-            let allTags = unit._tags;
-            if (unit.type !== 0)  // only look at every keyword if it's not a hero
-                allTags = allTags.concat(unit.keywords);
-
-            // normalize on uppercase and sort
-            return allTags.join(',').toUpperCase().split(',');
-        }
-
-        const itrFunc = option.includes(' OR ') ? 'some' : 'every';
-        const allTags = getAllTags(unit);
-
-        return optionKeywords[itrFunc]((keyOpt: KeyOpt) => {
-            return testKeyOpt(allTags, keyOpt);
-        });
-    }
-
-    validateRegiment(army: Army, regiment: string[]) {
-        const leader = army.units[regiment[0]];
-        if (!leader) {
-            console.log(`where are you ${regiment[0]}`)
-            return ['critical error'];
-        }
-
-        const availableKeywords = this._getAvailableKeywords(army);
-        const options = leader.battleProfile?.regimentOptions.split(',');
-        if (!options)
-            return `${leader.name} cannot lead. They have no regiment options.`;
-
-        const aos = this;
-        class _Slot {
-            originalOption: string;
-            min: number;
-            max: number;
-            conditional: string;
-            keywords: KeyOpt[];
-            units: Unit[];
-            priority: number;
-            constructor(option: string) {
-                const optionUC = option.trim().toUpperCase();
-                const qualifier = (() => {
-                    const requiredStr = '(REQUIRED)';
-                    if (optionUC.includes(requiredStr))
-                        return 'REQUIRED';
-
-                    return optionUC.split(' ')[0];
-                })();
-                const isRequired = qualifier === 'REQUIRED';
-
-                this.originalOption = option;
-                this.min = isRequired ? 1 : 0;
-                this.max = isRequired ? 1 : 100;
-                this.conditional = optionUC.includes(' OR ') ? 'or' : 'and';
-                this.keywords = aos.getKeywordsFromOption(option.toUpperCase());
-                this.units = [];
-                this.priority = isRequired ? 100 : 50; //0-100
-                
-                if (qualifier.includes('-')) {
-                    const minMax = qualifier.split('-');
-                    this.min = Number(minMax[0]);
-                    this.max = Number(minMax[1]);
-                }
-            }
-
-            meetsKeywordRequirements(unit: Unit) {
-                return aos.meetsOption(unit, this.originalOption.toUpperCase(), this.keywords, availableKeywords)
-            }
-
-            canAdd(unit: Unit) {
-                if (this.units.length === this.max) {
-                    const error = `You can only select ${this.originalOption}`;
-                    console.log(error);
-                    return error;
-                }
-
-                return null;
-            }
-
-            add(unit: Unit) {
-                this.units.push(unit);
-            }
-
-            areRequirementsMet() {
-                if (this.min > this.units.length) {
-                    return false;
-                }
-                return true;
-            }
-        }
-
-        let slots: _Slot[] = []
-        // initialize the expect slots
-        const canLead = options.every(option => {
-            const optionUc = option.trim().toUpperCase();
-            if (optionUc === 'NONE')
-                return false;
-
-            const slot = new _Slot(option);
-            slots.push(slot);
-            return true;
-        });
-        if (!canLead) {
-            if (leader.battleProfile?.notes)
-                return [`${leader.name} cannot be a leader: ${leader.battleProfile.notes}`];
-            else
-                return [`${leader.name} cannot be a leader!`];
-        }
-        slots = slots.sort((a, b) => b.priority - a.priority);
-
-        // sort on spaces so we don't hit any keywords that match substrings of other keywords
-        // longer keywords also take presidence
-        //const sortedKeywords = sortKeywords(keywords);
-        const slotUnit = (unit: Unit) => {
-            const genericError = `Invalid Unit Selection: ${unit.name}`;
-            if (unit.type === UnitType.Manifestation ||
-                unit.type === UnitType.Terrain ||
-                unit.type === UnitType.Unknown
-            ) {// it literally shouldn't be possible to hit this error
-                return genericError;
-            }
-            
-            let lastError: string | null = genericError;
-            for (let i = 0; i < slots.length; ++i) {
-                if (slots[i].meetsKeywordRequirements(unit)) {
-                    const slotError = slots[i].canAdd(unit);
-                    lastError = slotError;
-                    if (!slotError) {
-                        console.log(`${unit.name} met requirement for : ${slots[i].originalOption}`);
-                        slots[i].add(unit);
-                        return null;
-                    }
-                }
-            }
-            return lastError;
-        }
-
-        const errors: string[] = [];
-
-        regiment.forEach((unitId, idx) => {
-            if (idx === 0) // leader
-                return;
-
-            const armyUnit = army.units[unitId];
-            if (!armyUnit) {
-                errors.push(`Unit id could not be found to verify regiment: ${unitId}`);
-                return;
-            }
-
-            const message = slotUnit(armyUnit);
-            if (message)
-                errors.push(message);
-        });
-
-        slots.forEach(slot => {
-            if (!slot.areRequirementsMet())
-                errors.push(slot.originalOption);
-        });
-
-        return errors;
-    }
-
-    // get all the units available to a leader's regiment
-    getRegimentOptions(army: Army, leaderId: string) {
-        // to-do literally just make a schema tehre are too many spaces in the plain text
-        const leader = army.units[leaderId];
-        if (!leader) {
-            console.log(`where are you ${leaderId}`)
-            return;
-        }
-
-        const availableKeywords = this._getAvailableKeywords(army);
-        const options = leader.battleProfile?.regimentOptions.toUpperCase().split(',');
-        if(!options) {
-            console.log(`${leader.name} as no regiment options.`);
-            return;
-        }
-
-        const armyUnits = Object.values(army.units);
-        const allUnitNames = [];
-        armyUnits.forEach(aUnit => {
-            allUnitNames.push(aUnit.name.toUpperCase());
-        });
-
-        // sort on spaces so we don't hit any keywords that match substrings of other keywords
-        // longer keywords also take presidence
-        //const sortedKeywords = sortKeywords(keywords);
-        const canFieldUnit = (unit: Unit) => {
-            if (unit.type === UnitType.Manifestation ||
-                unit.type === UnitType.Terrain ||
-                unit.type === UnitType.Unknown
-            ) { // these don't go in a regiment
-                return false;
-            }
-
-            // const requiredStr = '(REQUIRED)';
-            let ok: boolean = false;
-            options.forEach(option => {
-                if (ok) return true;
-
-                option = option.trim();
-                const optionKeywords = this.getKeywordsFromOption(option);
-                ok = ok || this.meetsOption(unit, option, optionKeywords, availableKeywords);
-            });
-
-            return ok;
-        }
-
-        let units: Unit[] = [];
-        armyUnits.forEach(unit => {
-            if (canFieldUnit(unit)) {
-                units.push(unit);
-            }
-        });
-        return units;
     }
 
     _loadRegimentsOfRenown(rorData: RorData) {
@@ -570,7 +313,7 @@ export default class AgeOfSigmar {
                         const forceId = condition['@childId'];
                         const force = parsedForces[forceId];
                         if (!force) {
-                            console.log(`force not found when loading ror units: ${forceId}`);
+                            //console.log(`force not found when loading ror units: ${forceId}`);
                             return;
                         }
                         force.unitContainers.push(obj);

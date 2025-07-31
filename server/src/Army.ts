@@ -6,6 +6,7 @@ import Lores, { LoreLUTInterf } from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
 import { BsCatalog, BsLibrary, BsSelectionEntry } from './lib/bs/BsCatalog.js';
 import { Force } from './Force.js';
+import { UnitType } from './types/UnitType.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -224,9 +225,11 @@ export default class Army {
                     throw `Missing battle profiles for ${baseArmyName}`;
                 }
                 
-                unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
-                if (!unit.battleProfile) {
-                    console.log(`profile not found for ${unit.name}`);
+                if (unit.type === UnitType.Hero) {
+                    unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
+                    if (!unit.battleProfile) {
+                        console.log(`profile not found for ${unit.name}`);
+                    }
                 }
             }
 

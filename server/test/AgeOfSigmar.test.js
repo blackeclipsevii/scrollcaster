@@ -12,7 +12,11 @@ const getAos = () => {
 
 test('initialize AgeOfSigmar', () => {
     const aos = getAos();
-    expect(aos.getArmyNames()).toEqual([                                                                                                                                        
+    const alliances = aos.getArmyAlliances();
+    const names = [];
+    alliances.forEach(alliance => names.push(alliance.name));
+    names.sort((a,b) => a.localeCompare(b));
+    const truth = [
         "Blades of Khorne - Gorechosen Champions",
         "Blades of Khorne - The Baleful Lords",
         "Blades of Khorne",
@@ -69,7 +73,9 @@ test('initialize AgeOfSigmar', () => {
         "Stormcast Eternals",
         "Sylvaneth - The Evergreen Hunt",
         "Sylvaneth"
-    ]);
+    ];
+    truth.sort((a,b) => a.localeCompare(b));
+    expect(names).toEqual(truth);
 });
 
 test('Morathi regiment options', () =>{
@@ -479,5 +485,39 @@ test('FEC Nagash', () =>{
        "Royal Beastflayers",
        "Royal Terrorgheist",
        "Royal Zombie Dragon",
+    ]);
+});
+
+test('Runefather on Magmadroth', () =>{
+    // Eternus has a title, but can be referenced by Eternus
+    const aos = getAos();
+    const army = aos.getArmy('Fyreslayers');
+    expect(army).toBeTruthy();
+
+    const leaderId = "37e2-9685-abe9-bc10";
+    const leader = army.units[leaderId];
+    expect(leader).toBeTruthy();
+    expect(leader.name).toEqual("Auric Runefather on Magmadroth")
+    const unitOptions = aos.getRegimentOptions(army, leaderId);
+    expect(unitOptions).toBeTruthy();
+    const names = [];
+    unitOptions.forEach(option => {
+        names.push(option.name);
+    });
+    expect(names).toEqual([
+        "Grimwrath Berzerker",
+        "Auric Runefather on Magmadroth",
+        "Auric Runeson",
+        "Auric Runeson on Magmadroth",
+        "Battlesmith",
+        "Doomseeker",
+        "Grimhold Exile",
+        "Auric Hearthguard",
+        "Hearthguard Berzerkers with Berzerker Broadaxes",
+        "Hearthguard Berzerkers with Flamestrike Poleaxes",
+        "Vulkite Berzerkers with Bladed Slingshields",
+        "Vulkite Berzerkers with Fyresteel Weapons",
+        "Vulkyn Flameseekers",
+        "Auric Runeson on Magmadroth (Scourge of Ghyran)"
     ]);
 });

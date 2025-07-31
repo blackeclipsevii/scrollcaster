@@ -85,6 +85,8 @@ export default class Unit {
         this.weapons = [];
         this.abilities = [];
         this.keywords = [];
+        // tags used for logic, like Leader or Lumineth Paragon
+        this._tags = [];
         this.battleProfile = null;
 
         this.points = 0;
@@ -96,9 +98,6 @@ export default class Unit {
                 type < this.type)
                 this.type = type;
         });
-
-        // tags used for logic, like Leader or Lumineth Paragon
-        this._tags = [];
     }
 
     _parseKeywords(categoryLinks: BsCategoryLink[]) {
