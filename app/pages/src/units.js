@@ -341,6 +341,8 @@ const unitPage = {
         _makeUnitLayout();
         
         if (thisPage.settings.roster) {
+            totalPoints = rosterTotalPoints(thisPage.settings.roster);
+            refreshPointsOverlay(thisPage.settings.roster.id);
             loadUnits();
         } else {
             loadUnitsForCatalog();
