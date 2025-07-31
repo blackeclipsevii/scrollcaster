@@ -6,6 +6,7 @@ import express from 'express'
 
 import AgeOfSigmar from './server/dist/AgeOfSigmar.js';
 import Roster from './server/dist/Roster.js';
+import Users from './server/dist/lib/Users.js'
 
 import installCatalog, { getCommitIdUsed } from './server/dist/lib/installCatalog.js'
 
@@ -21,6 +22,8 @@ var version = {
   minor: 3,
   patch: 2
 };
+
+const users = new Users;
 
 /*
 var rosters = {};
@@ -117,6 +120,8 @@ server.get('/version', (req, res) => {
       return
     }
   } else {
+    users.logUser(req);
+    console.log(`Server Version: ${JSON.stringify(version)}`);
     res.end(JSON.stringify(version));
   }
 

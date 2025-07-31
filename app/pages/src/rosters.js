@@ -297,14 +297,15 @@ const rosterPage = {
     }
 
     async function createHeaderMenu() {
-      const clientVersion = await version.getClientVersion();
-      const serverVersion = await version.getServerVersion();
-      const bsdataRevision = await version.getBsDataVersion();
-      const bpVersion = await version.getBattleProfileVersion();
-
-      const right = document.querySelector('.header-right');
+      const me = this;
+      // const right = document.querySelector('.header-right');
       const callbackMap = {
-        'About': () => {
+        'About': async () => {
+            const clientVersion = await me.getClientVersion();
+            const serverVersion = await me.getServerVersion();
+            const bsdataRevision = await me.getBsDataVersion();
+            const bpVersion = await me.getBattleProfileVersion();
+
             const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';

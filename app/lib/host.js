@@ -1,5 +1,5 @@
-const hostname = "https://army-thing.fly.dev";
-const port = null;
+const hostname = 'http://localhost';//"https://army-thing.fly.dev";
+const port = 3000;
 const endpoint = port ? `${hostname}:${port}` : hostname;
 
 // if warscroll options are selected
