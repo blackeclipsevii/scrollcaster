@@ -17,7 +17,8 @@ const addOverlayListener = () => {
 
     overlay.addEventListener('click', function(event) {
         if (event.target === overlay) {
-            disableOverlay();
+            if (!overlay.classList.contains('block-close'))
+                disableOverlay();
         }
     });
 }

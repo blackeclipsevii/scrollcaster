@@ -119,6 +119,7 @@ const fetchWithLoadingDisplay = async (url, callback=null, showLoadingDisplay=tr
     modal.style.backgroundImage = `URL(${absoluteUrl('resources/dropped-scrolls.jpg')})`
     modal.style.backgroundSize = 'cover';
     modal.style.backgroundPosition = 'center';
+    modal.closest('.overlay').classList.add('block-close');
   });
 
   const timeoutDisplayOverlay = () => {
