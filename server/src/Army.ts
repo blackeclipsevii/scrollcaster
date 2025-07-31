@@ -2,10 +2,9 @@
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
 import { UpgradeType } from './lib/Upgrade.js';
-import Lores, { Lore, LoreLUTInterf } from './Lores.js';
+import Lores, { LoreLUTInterf } from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
 import { BsCatalog, BsLibrary, BsSelectionEntry } from './lib/bs/BsCatalog.js';
-import BattleProfile from './BattleProfile.js';
 import { Force } from './Force.js';
 
 // id designation the legends publication

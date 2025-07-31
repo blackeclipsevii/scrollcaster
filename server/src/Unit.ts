@@ -2,7 +2,6 @@ import Ability from "./Ability.js";
 import Weapon from "./Weapon.js";
 
 import { UnitType, strToUnitType } from "./types/UnitType.js";
-import { WeaponType } from "./Weapon.js";
 import { BsCategoryLink, BsCharacteristic, BsProfile, BsSelectionEntry, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
 import Upgrade from "./Upgrade.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
