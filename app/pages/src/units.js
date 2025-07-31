@@ -208,8 +208,13 @@ const unitPage = {
             refreshPointsOverlay(roster.id);
             updateValidationDisplay();
 
-            const isNewRegiment = thisPage.settings.hasRegimentIndex() && 
-                                  roster.regiments[thisPage.settings.regimentIndex].units.length === 0;
+            let isNewRegiment = false;
+            let isSelectingLeader = false;
+            if (thisPage.settings.hasRegimentIndex()) {
+                const reg = roster.regiments[thisPage.settings.regimentIndex];
+                isSelectingLeader = reg.leader === null;
+                isNewRegiment = isSelectingLeader && reg.units.length === 0;
+            }
 
             const loadRor = async () => {
                 const units = await thisPage.fetchRor();
@@ -253,8 +258,8 @@ const unitPage = {
             let leaderId = null;
             if (thisPage.settings.hasRegimentIndex()){
                 regiment = roster.regiments[thisPage.settings.regimentIndex];
-                if (regiment.units.length > 0)
-                    leaderId = regiment.units[0].id;
+                if (regiment.leader)
+                    leaderId = regiment.leader.id;
             }
             const units = await unitsApi.get(this.roster.army, leaderId);
             const availableUnits = Object.values(units);
@@ -271,7 +276,7 @@ const unitPage = {
                 if (thisPage.settings.type === null && unit.type > 5)
                     return;
 
-                if (isNewRegiment) {
+                if (isSelectingLeader) {
                     // cant lead without a profile
                     if (!unit.battleProfile)
                         return;
@@ -299,11 +304,15 @@ const unitPage = {
                         roster.terrainFeature = unit;
                     } else {
                         const regiment = roster.regiments[thisPage.settings.regimentIndex];
-                        regiment.units.push(unit);
+                        if (isSelectingLeader) {
+                            regiment.leader = unit;
+                        } else {
+                            regiment.units.push(unit);
+                        }
                     }
 
                     await putRoster(roster);
-                    if (isNewRegiment || unit.type == 7) {
+                    if (isSelectingLeader || unit.type == 7) {
                         goBack();
                     } else {
                         armyUnitCounts.updateCount(unit);

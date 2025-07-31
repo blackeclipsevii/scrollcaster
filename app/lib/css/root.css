@@ -379,6 +379,7 @@ footer {
   100% { transform: rotate(360deg); }
 }
 
+.leader-label,
 .ability-label,
 .points-label,
 .general-label,
@@ -409,6 +410,7 @@ footer {
     display: inline-block;
 }
 
+.leader-label,
 .ability-label {
     color: var(--black-2);
     background-color: var(--white-3);

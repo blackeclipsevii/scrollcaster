@@ -67,11 +67,12 @@ async function exportRoster(roster) {
     };
 
     for(let i = 0; i < roster.regiments.length; ++i) {
-        if (roster.regiments[i].units.length === 0)
+        if (roster.regiments[i].leader === null)
             continue;
 
-        if (roster.regiments[i].units[0].isGeneral) {
+        if (roster.regiments[i].leader.isGeneral) {
             text += `\nGeneral's Regiment: \n`;
+            unitToText(roster.regiments[i].leader, '  ');
             roster.regiments[i].units.forEach(unit => {
                 unitToText(unit, '  ');
             });
@@ -81,16 +82,18 @@ async function exportRoster(roster) {
 
     let regIdx = 1;
     roster.regiments.forEach((regiment, _)=> {
-        if (regiment.units.length === 0)
+        if (!regiment.leader && regiment.units.length === 0)
             return;
 
-        if (regiment.units[0].isGeneral) {
+        if (regiment.leader && regiment.leader.isGeneral) {
           return;
         } else {
           text += `\nRegiment ${regIdx}: \n`;
           regIdx += 1;
         }
-        
+
+        if (regiment.leader)
+            unitToText(regiment.leader, '  ');
         regiment.units.forEach(unit => {
             unitToText(unit, '  ');
         });

@@ -81,6 +81,7 @@ const builderPage = {
                 <div class='unit-slot-selectable-item-wrapper'>
                     <div class="selectable-item unit-slot-selectable-item">
                         <div class="selectable-item-left">
+                            <span class="leader-label" style="display: none;">Leader</span>
                             <span class="general-label" style="display: none;">GENERAL</span>
                             <span class="reinforced-label" style="display: none;">REINFORCED</span>
                         </div>
@@ -387,12 +388,21 @@ const builderPage = {
         }
 
         async function createUnitSlot(parent, unit, idx, callbackMap, onclick, isUnit){
+            if (!unit)
+                return;
             const newUsItem = clonePrototype('unit-slot-prototype');
             
             const hiddenIdx = newUsItem.querySelector('.unit-idx');
             hiddenIdx.textContent = idx;
 
-            let numOptions = 5;
+            let numOptions = 6;
+            if (idx === -1) {
+                const leaderLabel = newUsItem.querySelector('.leader-label');
+                leaderLabel.style.display = '';
+            } else {
+                --numOptions;
+            }
+
             const canBeGeneral = !(unit.type !== 0 || !parent.className.includes('regiment'));
             if (unit.type !== 0 || !parent.className.includes('regiment')) {
                 removeSection(newUsItem, 'is-general');
@@ -421,10 +431,10 @@ const builderPage = {
 
                     const regItem = parent.closest('.regiment-item');
                     const btn = regItem.querySelector('.add-unit-button');
-                    let maxUnits = 4;
-                    if (regiment.units.length > 0 && regiment.units[0].isGeneral)
-                        maxUnits = 5;
-                    btn.disabled = regiment.units.length >= maxUnits;
+                    let maxUnits = 3;
+                    if (regiment.leader && regiment.leader.isGeneral)
+                        maxUnits = 4;
+                    btn.disabled = (regiment.units.length >= maxUnits) && regiment.leader;
                 };
             }
 
@@ -554,10 +564,10 @@ const builderPage = {
             if (typeof callbackMap === 'string') {
                 const toggleUnitAddButton = (regItem, _regiment) => {
                     const btn = regItem.querySelector('.add-unit-button');
-                    let maxUnits = 4;
-                    if (_regiment.units.length > 0 && _regiment.units[0].isGeneral)
-                        maxUnits = 5;
-                    btn.disabled = _regiment.units.length >= maxUnits;
+                    let maxUnits = 3;
+                    if ( _regiment.leader && _regiment.leader.isGeneral)
+                        maxUnits = 4;
+                    btn.disabled = (_regiment.units.length >= maxUnits) && _regiment.leader;
                 }
                 
                 const regItem = parent.closest('.regiment-item');
@@ -587,38 +597,40 @@ const builderPage = {
                     updateValidationDisplay();
                 };
 
-                if (idx > 0) {
-                    callbackMap.Delete = async (e) => {
-                        // get the regiment index, dont assume it hasnt changed
-                        const regItem = parent.closest('.regiment-item');
-                        let _div = regItem.querySelector('.regiment-idx');
-                        const _currentRegIdx = Number(_div.textContent);
+                callbackMap.Delete = async (e) => {
+                    // get the regiment index, dont assume it hasnt changed
+                    const regItem = parent.closest('.regiment-item');
+                    let _div = regItem.querySelector('.regiment-idx');
+                    const _currentRegIdx = Number(_div.textContent);
 
-                        // get the unit index, don't assume it hasn't changed
-                        _div = newUsItem.querySelector('.unit-idx');
-                        const _currentIdx = Number(_div.textContent);
+                    // get the unit index, don't assume it hasn't changed
+                    _div = newUsItem.querySelector('.unit-idx');
+                    const _currentIdx = Number(_div.textContent);
 
-                        // remove from the object
+                    // remove from the object
+                    if (_currentIdx === -1) {
+                        thisPage.roster.regiments[_currentRegIdx].leader = null;
+                    } else {
                         thisPage.roster.regiments[_currentRegIdx].units.splice(_currentIdx, 1);
-                        putRoster(roster);
-                        
-                        toggleUnitAddButton(regItem, thisPage.roster.regiments[_currentRegIdx]);
-
-                        // update the points
-                        totalPoints -= unitTotalPoints(unit);
-                        refreshPointsOverlay();
-                        updateValidationDisplay();
-
-                        // remove the div and move all of the other unit indices
-                        parent.removeChild(newUsItem);
-                        const slots = parent.querySelectorAll('.unit-slot');
-                        slots.forEach((slot, newIdx) => {
-                            const hiddenIdx = slot.querySelector('.unit-idx');
-                            hiddenIdx.textContent = newIdx;
-                        });
-                        toggleUnitAddButton(parent, thisPage.roster.regiments[_currentRegIdx]);
                     }
-                } // to-do add replace to unit 0
+                    putRoster(roster);
+                    
+                    toggleUnitAddButton(regItem, thisPage.roster.regiments[_currentRegIdx]);
+
+                    // update the points
+                    totalPoints -= unitTotalPoints(unit);
+                    refreshPointsOverlay();
+                    updateValidationDisplay();
+
+                    // remove the div and move all of the other unit indices
+                    parent.removeChild(newUsItem);
+                    const slots = parent.querySelectorAll('.unit-slot');
+                    slots.forEach((slot, newIdx) => {
+                        const hiddenIdx = slot.querySelector('.unit-idx');
+                        hiddenIdx.textContent = newIdx;
+                    });
+                    toggleUnitAddButton(parent, thisPage.roster.regiments[_currentRegIdx]);
+                }
             }
             if (callbackMap) {
                 const menu = createContextMenu(callbackMap);
@@ -754,7 +766,15 @@ const builderPage = {
             const content = newRegItem.querySelector('.regiment-content');
 
             let points = 0;
-            let uniqueId = thisPage.roster.id;
+            if (regiment.leader) {
+                await createUnitSlot(content, regiment.leader, -1, 'defaults', () => {
+                    const settings = new WarscrollSettings;
+                    settings.unit = regiment.leader;
+                    dynamicGoTo(settings);
+                }, true);
+                points += unitTotalPoints(regiment.leader);
+            }
+
             for(let i = 0; i < regiment.units.length; ++i) {
                 const unit = regiment.units[i];
                 
@@ -763,9 +783,7 @@ const builderPage = {
                     settings.unit = unit;
                     dynamicGoTo(settings);
                 }, true);
-                uniqueId += unit.id;
-                const unitsPoints = unitTotalPoints(unit);
-                points += unitsPoints;
+                points += unitTotalPoints(unit);
             };
 
             const pointsSpan = newRegItem.querySelector('.regiment-item-points');
@@ -796,6 +814,7 @@ const builderPage = {
                     const _div = newRegItem.querySelector('.regiment-idx');
                     const _currentIdx = Number(_div.textContent);
                     const reg = thisPage.roster.regiments[_currentIdx];
+                    totalPoints -= unitTotalPoints(reg.leader);
                     reg.units.forEach(unit => {
                         totalPoints -= unitTotalPoints(unit);
                     });
@@ -1287,7 +1306,7 @@ const builderPage = {
                     if (adjustedName === 'regiments') {
                         let nRegiments = (thisPage.roster.regimentOfRenown ? 1 : 0) + thisPage.roster.regiments.length;
                         if (nRegiments < 5) {
-                            thisPage.roster.regiments.push({ units: [] });
+                            thisPage.roster.regiments.push({ leader: null, units: [] });
                             const idx = thisPage.roster.regiments.length - 1;
                             // displayRegiment(idx);
                             await putRoster(roster);

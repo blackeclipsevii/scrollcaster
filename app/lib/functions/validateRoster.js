@@ -9,12 +9,9 @@ const formatMessageText = (message) => {
 const validateRegiment = async (armyName, regiment) => {
     let errors = ['bad request'];
     const reg2Args = () => {
-        strArr = '';
+        strArr = `leader=${regiment.leader.id}`
         regiment.units.forEach((ele,idx) => {
-            if (strArr.length === 0)
-                strArr = `leader=${ele.id}`
-            else
-                strArr = `${strArr}&unit${idx-1}=${ele.id}`
+            strArr = `${strArr}&unit${idx}=${ele.id}`
         });
         return strArr;
     }
@@ -70,7 +67,12 @@ const validateRoster = async (roster) => {
             continue;
         }
         
-        const leader = reg.units[0];
+        const leader = reg.leader;
+        if (leader === null) {
+            errors.push(`Regiment ${idx+1} is missing a leader`);
+            continue;
+        }
+        
         if (leader.isWarmaster) {
             // keep track of the forced generals
             warmasters.push(leader.name);
@@ -83,31 +85,34 @@ const validateRoster = async (roster) => {
             numGenerals += 1;
         }
 
-        if (nunits > 4 && !reg.units[0].isGeneral) {
-            // 3 excluding leader
+        if (nunits > 3 && !reg.leader.isGeneral) {
             let errorMsg = `Regiment ${idx+1} contains more than 3 units.`;
             errors.push(errorMsg);
         }
         
-        if (nunits > 5 && reg.units[0].isGeneral) {
-            // 5 excluding leader
+        if (nunits > 4 && reg.leader.isGeneral) {
             let errorMsg = `The general's regiment contains more than 5 units.`;
             errors.push(errorMsg);
         }
 
-        reg.units.forEach(unit => {
-            if (unit.keywords.includes('UNIQUE')) {
-                validateUnique(unit);
+        const checkUnit = (_unit) => {
+            if (_unit.keywords.includes('UNIQUE')) {
+                validateUnique(_unit);
             } else {
-                if (unit.artefact)
+                if (_unit.artefact)
                     numArtefacts += 1;
 
-                if (unit.heroicTrait)
+                if (_unit.heroicTrait)
                     numTraits += 1;
 
-                if (unit.monstrousTrait)
+                if (_unit.monstrousTrait)
                     numMonstrousTraits += 1;
             }
+        }
+
+        checkUnit(reg.leader);
+        reg.units.forEach(unit => {
+            checkUnit(unit);
         });
 
         const vrErrors = await validateRegiment(roster.army, reg);
