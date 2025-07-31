@@ -102,6 +102,20 @@ const upgradePage = {
         
             if (thisPage.settings.roster) {
                 const addBtn = document.createElement('button');
+    
+                const setSelected = () => {
+                    const typeEle = document.createElement('span');
+                    typeEle.className = 'ability-label';
+                    typeEle.style.display = 'inline-block';
+                    typeEle.textContent = 'Selected';
+                    typeEle.style.backgroundColor = getVar('section-color');
+                    typeEle.style.color = getVar('green-color');
+                    typeEle.style.border = `1px solid ${typeEle.style.color}`;
+                    left.appendChild(typeEle);
+                    item.classList.remove('not-added');
+                    addBtn.disabled = true;
+                }
+                
                 addBtn.classList.add('rectangle-button');
                 addBtn.textContent = '+';
                 addBtn.addEventListener('click', async (e) => {
@@ -118,11 +132,51 @@ const upgradePage = {
                     } else if (upgrade.type == 6) {
                         roster.lores.prayer = upgrade;
                     }
-                    if (roster)
-                        item.classList.remove('not-added');
                     await putRoster(roster);
+
+                    if (upgrade.type === 3 || upgrade.type === 4 || upgrade.type === 6) {
+                        if ((!roster.lores.spell && roster.lores.canHaveSpell) || 
+                            (!roster.lores.prayer && roster.lores.canHavePrayer) || 
+                            (!roster.lores.manifestation && roster.lores.canHaveManifestation)) {
+                            const allItems = section.querySelectorAll('.selectable-item');
+                            allItems.forEach(si => {
+                                if (roster) {
+                                    if(!si.classList.contains('not-added')) {
+                                        si.classList.add('not-added');
+                                        const siBtn = si.querySelector('button');
+                                        siBtn.disabled = false;
+                                        const labels = si.querySelectorAll('.ability-label');
+                                        labels.forEach(l => {
+                                            if (l.textContent.toLowerCase().localeCompare('selected') === 0) {
+                                                l.parentElement.removeChild(l);
+                                            }
+                                        })
+                                    }
+                                }
+                            });
+                            
+                            setSelected();
+                            return;
+                        }
+                    }
                     goBack();
                 });
+
+                if (upgrade.type === 3 && roster.lores.spell) {
+                    if (upgrade.id.localeCompare(roster.lores.spell.id) === 0) {
+                        setSelected();
+                    }
+                } 
+                else if (upgrade.type === 4 && roster.lores.manifestation) {
+                    if (upgrade.id.localeCompare(roster.lores.manifestation.id) === 0) {
+                        setSelected();
+                    }
+                }
+                else if (upgrade.type === 6 && roster.lores.prayer) {
+                    if (upgrade.id.localeCompare(roster.lores.prayer.id) === 0) {
+                        setSelected();
+                    }
+                }
         
                 right.append(points, addBtn);
             } else {
@@ -211,8 +265,7 @@ const upgradePage = {
     
                 const loreNames = Object.getOwnPropertyNames(roster.lores);
                 loreNames.forEach(loreName => {
-                    if (!roster.lores[loreName])
-                        upgradeList.push(allUpgrades.lores[loreName]);
+                    upgradeList.push(allUpgrades.lores[loreName]);
                 });
     
             } else {

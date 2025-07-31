@@ -1028,9 +1028,6 @@ const builderPage = {
                     
                     const ele = document.getElementById('spell-slot');
                     ele.parentElement.removeChild(ele);
-
-                    const btn = document.getElementById('lores-add-button');
-                    btn.disabled = false;
                 }
             };
             
@@ -1057,9 +1054,6 @@ const builderPage = {
                     
                     const ele = document.getElementById('prayer-slot');
                     ele.parentElement.removeChild(ele);
-
-                    const btn = document.getElementById('lores-add-button');
-                    btn.disabled = false;
                 }
             };
 
@@ -1152,8 +1146,6 @@ const builderPage = {
                     thisPage.roster.lores.manifestation = null;
                     putRoster(roster);
                     parent.removeChild(newUsItem);
-                    const btn = document.getElementById('lores-add-button');
-                    btn.disabled = false;
                 }
             };
             
@@ -1265,32 +1257,14 @@ const builderPage = {
             if (thisPage.roster.battleFormation) 
                 displayBattleFormation();
 
-
-            let nLores = 1;
-            if (Object.getOwnPropertyNames(upgrades.lores.spell).length > 0)
-                nLores ++;
-            if (Object.getOwnPropertyNames(upgrades.lores.prayer).length > 0)
-                nLores ++;
-
-            if (thisPage.roster.lores.spell) {
+            if (thisPage.roster.lores.spell)
                 displaySpellLore();
-                nLores --;
-            }
 
-            if (thisPage.roster.lores.prayer) {
+            if (thisPage.roster.lores.prayer)
                 displayPrayerLore();
-                nLores --;
-            }
 
-            if (thisPage.roster.lores.manifestation) {
+            if (thisPage.roster.lores.manifestation)
                 displayManifestLore();
-                nLores --;
-            }
-
-            if (nLores === 0) {
-                const btn = document.getElementById('lores-add-button');
-                btn.disabled = true;
-            }
 
             if (thisPage.roster.battleTacticCards.length > 0)
                 displayTactics();
@@ -1345,15 +1319,10 @@ const builderPage = {
                         dynamicGoTo(settings);
                     }
                     else if (adjustedName.includes('lores')) {
-                        if((!thisPage.roster.lores.spell && thisPage.roster.lores.canHaveSpell) || 
-                            (!thisPage.roster.lores.manifestation && thisPage.roster.lores.canHaveManifestation) || 
-                            (!thisPage.roster.lores.prayer && thisPage.roster.lores.canHavePrayer)) {
-                            
-                            const settings = new UpgradeSettings;
-                            settings.type = 'spellLore';
-                            settings.roster = thisPage.roster;
-                            dynamicGoTo(settings);
-                        }
+                        const settings = new UpgradeSettings;
+                        settings.type = 'spellLore';
+                        settings.roster = thisPage.roster;
+                        dynamicGoTo(settings);
                     }
                     else if (adjustedName.includes('formation')) {
                         const settings = new UpgradeSettings;
@@ -1402,6 +1371,8 @@ const builderPage = {
             let btn = document.getElementById('battle-traits-&-formation-add-button');
             btn.textContent = '⚙︎';
             btn = document.getElementById('faction-terrain-add-button');
+            btn.textContent = '⚙︎';
+            btn = document.getElementById('lores-add-button');
             btn.textContent = '⚙︎';
            // let title = document.getElementById('battle-traits-section-title');
            // title.textContent = 'Battle Traits';
