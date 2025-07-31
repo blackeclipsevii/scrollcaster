@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@tsconfig/node20": "^20.1.6",
+    "@types/express": "^5.0.3",
     "axios": "^1.10.0",
     "express": "^5.1.0",
     "extract-zip": "^2.0.1",
@@ -14,7 +15,6 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/express": "^5.0.3",
     "jest": "^30.0.4"
   },
   "scripts": {
