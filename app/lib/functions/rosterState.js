@@ -80,17 +80,6 @@ const rosterState = {
             const url = `${endpoint}/regimentsOfRenown?army=${armyName}`;
             return await fetchWithLoadingDisplay(encodeURI(url));
         };
-        const fetchUnits = async (armyName = null, leaderId = null) => {
-            let url = `${endpoint}/units`;
-            if (armyName) {
-                url = `${url}?army=${armyName}`
-                if (leaderId) {
-                    // to-do move the leader filter client side and use the same cache
-                    url = `${url}&leaderId=${leaderId}`;
-                }
-            }
-            return await fetchWithLoadingDisplay(encodeURI(url));
-        };
         const fetchUpgrades = async (armyName) => {
             return await fetchWithLoadingDisplay(encodeURI(`${endpoint}/upgrades?army=${armyName}`));
         };
@@ -113,7 +102,7 @@ const rosterState = {
             });
         }
 
-        const unitPool = await fetchUnits(state.army);
+        const unitPool = await unitsApi.get(state.army);
         
         const lores = ['spell', 'prayer', 'manifestation'];
         lores.forEach(lore => {

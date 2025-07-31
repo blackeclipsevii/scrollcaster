@@ -10,17 +10,24 @@ const builderPage = {
     roster: null,
     settings: null,
     _cache: {
-        upgrades: null,
-        armyName: null
+        upgrades: {
+            upgrades: null,
+            armyName: null
+        },
+        units: {
+            units: null,
+            armyName: null,
+            leaderId: null
+        }
     },
     async fetchUpgrades() {
-        if(this._cache.upgrades && this._cache.armyName === this.roster.army)
-            return this._cache.upgrades;
+        if(this._cache.upgrades.upgrades && this._cache.upgrades.armyName === this.roster.army)
+            return this._cache.upgrades.upgrades;
         const url = encodeURI(`${endpoint}/upgrades?army=${this.roster.army}`);
         const result = await fetchWithLoadingDisplay(url, null);
         if (result){
-            this._cache.upgrades = result;
-            this._cache.armyName = this.roster.army;
+            this._cache.upgrades.upgrades = result;
+            this._cache.upgrades.armyName = this.roster.army;
         }
         return result;
     },
@@ -1240,8 +1247,18 @@ const builderPage = {
             for (let i = 0; i< thisPage.roster.auxiliaryUnits.length; ++i)
                 displayAux(i);
 
-            if (thisPage.roster.terrainFeature)
+            if (thisPage.roster.terrainFeature) {
                 displayTerrain();
+            } else {
+                const result = await unitsApi.get(this.roster.army);
+                const units = Object.values(result);
+                const terrain = units.some(unit => unit.type === 7);
+                if (!terrain) {
+                    const terrainSection = document.getElementById('faction-terrain-section');
+                    const tb = terrainSection.querySelector('button');
+                    tb.disabled = true;
+                }
+            }
 
             displayBattleTraits();
 

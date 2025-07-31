@@ -16,11 +16,6 @@ class UnitSettings {
 const unitPage = {
     settings: null,
     _cache: {
-        army: {
-            leaderId: null,
-            units: null,
-            armyName: null
-        },
         regimentsOfRenown: {
             units: null,
             armyName: null
@@ -34,29 +29,6 @@ const unitPage = {
         const response = await fetchWithLoadingDisplay(encodeURI(url));
         this._cache.regimentsOfRenown.units = response;
         this._cache.regimentsOfRenown.armyName = this.settings.armyName;
-        return response;
-    },
-    async fetchUnits(leaderId = null) {
-        if (this._cache.army.units) {
-            if (this._cache.army.armyName === this.settings.armyName &&
-                this._cache.army.leaderId === leaderId
-            ) {
-                return this._cache.army.units;
-            }
-        }
-
-        let url = `${endpoint}/units`;
-        if (this.settings.armyName) {
-            url = `${url}?army=${this.settings.armyName}`
-            if (leaderId) {
-                // to-do move the leader filter client side and use the same cache
-                url = `${url}&leaderId=${leaderId}`;
-            }
-        }
-        const response = await fetchWithLoadingDisplay(encodeURI(url));
-        this._cache.army.units = response;
-        this._cache.army.armyName = this.settings.armyName;
-        this._cache.army.leaderId = leaderId;
         return response;
     },
     loadPage (settings) {
@@ -205,7 +177,7 @@ const unitPage = {
 
         const loadUnitsForCatalog = async () => {
             hidePointsOverlay();
-            const units = await thisPage.fetchUnits();
+            const units = await unitsApi.get(this.settings.armyName);
             let unitIds = Object.getOwnPropertyNames(units);
             unitIds.forEach(id => {
                 const unit = units[id];
@@ -282,7 +254,7 @@ const unitPage = {
                 if (regiment.units.length > 0)
                     leaderId = regiment.units[0].id;
             }
-            const units = await thisPage.fetchUnits(leaderId);
+            const units = await unitsApi.get(this.roster.army, leaderId);
             const availableUnits = Object.values(units);
             availableUnits.forEach(unit => {
                 if (unit._tags.length > 0) {
