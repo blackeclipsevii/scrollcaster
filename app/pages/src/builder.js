@@ -355,14 +355,15 @@ const builderPage = {
             });
         }
 
-        const exportListAndDisplay = overlayToggleFactory('block', () =>{
-            const text = exportRoster(roster);
+        const exportListAndDisplay = overlayToggleFactory('block', async () =>{
+            const text = await exportRoster(roster);
             const modal = document.querySelector(".modal");
 
             const section = document.createElement('textarea');
             section.innerHTML = text;
             section.style.height = '30em';
             section.style.width = '95%';
+            section.style.fontSize = '14px';
 
             const copyButton = document.createElement('button');
             copyButton.className = 'full-rectangle-button';

@@ -1,5 +1,5 @@
 
-function exportRoster(roster) {
+async function exportRoster(roster) {
     let text = `${roster.name} (${totalPoints} points) - GHB 2025-26\n\n`
     text += `${roster.army}\n`;
     if (roster.battleFormation)
@@ -102,6 +102,10 @@ function exportRoster(roster) {
     roster.auxiliaryUnits.forEach(unit => {
         unitToText(unit, '  ');
     });
+
+    text += '\n\n';
+    text += 'Created with Scrollcaster\n'
+    text += `Client: ${await version.getClientVersion()} | BSData: ${await version.getBsDataVersion()}\n`;
 
     return text;
 }
