@@ -43,7 +43,9 @@ const makeSelectableItemType = (typedObj, isUnit=true) => {
     const roleEle = document.createElement('span');
     roleEle.className = 'selectable-item-type ability-label';
     roleEle.style.display = 'inline-block';
-    if (isUnit)
+    if (typeof typedObj === 'string')
+        roleEle.textContent = typedObj;
+    else if (isUnit)
         roleEle.textContent = unitTypeToString(typedObj);
     else
         roleEle.textContent = upgradeTypeToStr(typedObj);
@@ -52,9 +54,12 @@ const makeSelectableItemType = (typedObj, isUnit=true) => {
 
 // Standard method of making the name text
 const makeSelectableItemName = (namedObj) => {
+    let name = namedObj;
+    if (typeof namedObj !== 'string')
+        name = namedObj.name;
     const nameEle = document.createElement('p');
     nameEle.className = 'selectable-item-name';
-    nameEle.textContent = namedObj.name;
+    nameEle.textContent = name;
     nameEle.style.padding = '0px';
     nameEle.style.margin = '0px';
     return nameEle;

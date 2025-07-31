@@ -18,9 +18,9 @@ const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 
 var ageOfSigmar = null;
 var version = {
-  major: 1,
-  minor: 3,
-  patch: 2
+  major: 2,
+  minor: 0,
+  patch: 0
 };
 
 const users = new Users;
@@ -88,7 +88,7 @@ server.get('/armies', (req, res) => {
     return;
   }
 
-  const result = aos.getArmyNames();
+  const result = aos.getArmyAlliances();
   res.end(JSON.stringify(result));
 });
 

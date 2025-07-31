@@ -24,10 +24,17 @@ const catalogPage = {
         this.settings = settings;
         const thisPage = this;
 
+        const alliancesVisible = (visible) => {
+            document.getElementById('army-section').style.display = visible ? 'none' : '';
+            ['order', 'chaos', 'death', 'destruction'].forEach(type =>
+            document.getElementById(`${type}-section`).style.display = visible ? '' : 'none');
+        }
+
         const coreVisible = (visible) => {
             visible ? disableBackButton() : enableBackButton();
             const sec = document.getElementById('core-section');
             sec.style.display = visible ? '' : 'none';
+            alliancesVisible(visible);
         }
         
         const resetLists = () => {
@@ -45,7 +52,9 @@ const catalogPage = {
         
             const left = document.createElement('div');
             left.classList.add('selectable-item-left');
-            left.textContent = name;
+            
+            const nameEle = makeSelectableItemName(name);
+            left.appendChild(nameEle);
         
             const right = document.createElement('div');
             right.classList.add('selectable-item-right');
@@ -59,6 +68,7 @@ const catalogPage = {
         
             item.append(left, right);
             itemList.appendChild(item);
+            return item;
         }
         
         async function loadCore() {
@@ -180,8 +190,9 @@ const catalogPage = {
         
             if (doSub) {
                 const subfactions = [];
-                await fetchArmies(async (allArmies) => {
-                    allArmies.forEach(army => {
+                await fetchArmies(async (armyAlliances) => {
+                    armyAlliances.forEach(alliance => {
+                        const army = alliance.name;
                         if (army.includes(thisPage.settings.armyName)) {
                             subfactions.push(army);
                         }
@@ -224,11 +235,9 @@ const catalogPage = {
         
         async function loadArmies() {
             coreVisible(true);
-            const h2 = document.getElementById('army-section').querySelector('.section-title');
+            alliancesVisible(true);
 
-            h2.textContent = 'Armies';
-        
-            makeItem('Age of Sigmar', async () => {
+            let item = makeItem('Age of Sigmar', async () => {
                 const settings = new CatalogSettings;
                 settings.core = true;
                 dynamicGoTo(settings, true, false); // update history but dont go
@@ -237,8 +246,10 @@ const catalogPage = {
                 thisPage.settings = settings;
                 await loadCore();
             }, 'core-list');
-            
-            makeItem('Regiments of Renown', () => {
+            //let right = item.querySelector('.selectable-item-right');
+            //let type = makeSelectableItemType('CORE');
+            //right.appendChild(type);
+            item = makeItem('Regiments of Renown', () => {
                 const settings = new CatalogSettings;
                 settings.armyName = 'ror';
                 dynamicGoTo(settings, true, false); // update history but dont go
@@ -247,16 +258,20 @@ const catalogPage = {
                 thisPage.settings = settings;
                 loadRor();
             }, 'core-list');
-        
+            //right = item.querySelector('.selectable-item-right');
+            //type = makeSelectableItemType('CORE');
+            //right.appendChild(type);
+
             const loader = document.getElementById('armies-loader-box');
             //loader.style.display = 'block';
-            await fetchArmies(async (allArmies) => {
-              //  loader.style.display = 'none';
-                allArmies.forEach(army => {
+
+            await fetchArmies(async (alliances) => {
+                alliances.forEach(alliance => {
+                    const army = alliance.name;
                     if (army.includes(' - '))
                         return;
-        
-                    makeItem(army, () => {
+
+                    item = makeItem(army, () => {
                         const settings = new CatalogSettings;
                         settings.armyName = army;
                         dynamicGoTo(settings, true, false); // update history but dont go
@@ -264,39 +279,42 @@ const catalogPage = {
                         resetLists();
                         thisPage.settings = settings;
                         loadTome();
-                    }, 'army-list');
+                    }, `${alliance.alliance.toLowerCase()}-list`);
+                    if (false) {
+                    right = item.querySelector('.selectable-item-right');
+                    type = makeSelectableItemType(alliance.alliance);
+                    let color = 'gray';
+                    if (alliance.alliance === 'ORDER') {
+                        color = 'blue';
+                    } else if (alliance.alliance === 'CHAOS') {
+                        color = 'green';
+                    } else if (alliance.alliance === 'DEATH') {
+                        color = 'purple';
+                    } else {
+                        color = 'red';
+                    }
+                    color = getVar(`${color}-ability`);
+                    type.style.backgroundColor = getVar('section-color');
+                    //type.style.border = `1px solid ${color}`
+                    type.style.color = color;
+                    right.appendChild(type);
+                    }
                 });
             });
         }
         
         const loadTomePage = async () => {
-            const _makeSection = (main, name) => {
-                const section = document.createElement('div');
-                section.style.display = 'none';
-                section.id = `${name.toLowerCase()}-section`;
-                section.className = 'section';
-                section.innerHTML = `
-                    <div>
-                    <h3 class="section-title">${name}</h3>
-                    <div id="${name.toLowerCase()}-loader-box" style="display: none; margin: 1em; width: 1em; height: 1em;">
-                        <div id="${name.toLowerCase()}-loader" class="loader"></div>
-                    </div>
-                    </div>
-                    <div class="item-list" id="${name.toLowerCase().replace(/ /g, '-')}-list"></div>
-                `;
-                main.appendChild(section);
-            }   
-        
             const sections = [
-                'Core', 'Army'
+                'Core', 'Army', 'Order', 'Chaos', 'Death', 'Destruction'
             ];
             if (document.getElementById('core-section')) {
                 clearLayout();
             }
             makeLayout(sections);
+
             disableHeaderContextMenu();
             hidePointsOverlay();
-            document.getElementById('army-section').style.display = 'block';
+            document.getElementById('army-section').style.display = '';
 
             if (thisPage.settings.armyName)
                 thisPage.settings.armyName === 'ror' ? await loadRor() : await loadTome();

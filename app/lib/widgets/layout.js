@@ -1,10 +1,12 @@
 // make html page layout
-const makeLayout = (sections, factory=null) => {
+
+const makeLayout = (sections, factory=null, parent=null, show=false) => {
     if (factory === null)
-        factory  = (main, name) => {
+        factory = (main, name) => {
             const adjustedName = name.toLowerCase().replace(/ /g, '-');
             const section = document.createElement('div');
-            section.style.display = 'none';
+            if (!show)
+                section.style.display = 'none';
             section.className = 'section';
             section.id = `${adjustedName}-section`;
             section.innerHTML = `
@@ -20,7 +22,7 @@ const makeLayout = (sections, factory=null) => {
             main.appendChild(section);
         }   
 
-    const main = document.getElementById('loading-content');
+    const main = parent ? parent : document.getElementById('loading-content');
     sections.forEach(name => {
         factory(main, name);
     });

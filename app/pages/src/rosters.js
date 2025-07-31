@@ -5,18 +5,18 @@ class RosterSettings {
 const rosterPage = {
   settings: null,
   _ror: {},
-  _armies: [],
+  _alliances: [],
   async loadPage(settings) {
     if (!settings)
       settings = new RosterSettings;
     this.settings = settings;
     const thisPage = this;
 
-    const _populateArmies = (data) => {
-      if (data) {
-        thisPage._armies = data;
+    const _populateArmies = (alliances) => {
+      if (alliances) {
+        thisPage._alliances = alliances;
       }
-      if (!thisPage._armies) {
+      if (!thisPage._alliances) {
         console.log('no armies to populate');
         return;
       }
@@ -28,7 +28,19 @@ const rosterPage = {
       let armySelect = document.getElementById("army");
       armySelect.innerHTML = '';
       armySelect.disabled = false;
-      thisPage._armies.forEach((army)=> {
+      let currentAlliance = '';
+      this._alliances.forEach((alliance)=> {
+        const army = alliance.name;
+        if (alliance.alliance !== currentAlliance) {
+          const option = document.createElement("option");
+          option.disabled = true;
+          option.value = alliance.alliance;
+          option.textContent = alliance.alliance;
+          option.style.fontWeight = 'bold';
+          armySelect.appendChild(option);
+          currentAlliance = alliance.alliance; 
+        }
+
         if (!army.includes(' - ')) {
           const option = document.createElement("option");
           option.value = army;
@@ -116,7 +128,7 @@ const rosterPage = {
 
     const toggleOverlay = overlayToggleFactory('flex', async () =>{
       setOverlayContents();
-      if (thisPage._armies.length === 0) {
+      if (thisPage._alliances.length === 0) {
         await fetchArmies(_populateArmies, false);
       } else {
         _populateArmies(null);
