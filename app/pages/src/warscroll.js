@@ -73,14 +73,6 @@ const warscrollPage = {
             keywords.innerHTML = unit['keywords'].join(', ');
         }
 
-        const _clear = () => {
-            whClearDiv('char');
-            whClearDiv('ranged');
-            whClearDiv('melee');
-            whClearDiv('abilities');
-            whClearDiv('keywords');
-        }
-
         const _initializeKeywordsDiv = () => {
             const div = document.getElementById('keywords-section');
             div.style.display = '';
@@ -94,6 +86,36 @@ const warscrollPage = {
             div.appendChild(kwTitle);
             div.appendChild(keywords);
             return div;
+        }
+
+        const displayUnitDetails = (unit) => {
+            // hero
+            if (unit.type !== 0 || !unit.battleProfile)  {
+                return;
+            }
+            
+            const formatText = (message) => {
+                return message.replace(/</g, "#")
+                            .replace(/>/g, '%')
+                            .replace(/#/g, '<b>')
+                            .replace(/%/g, '</b>');
+            }
+
+            const div = document.getElementById('unit-details-section');
+            div.style.display = '';
+            
+            let title = document.createElement('h3');
+            title.textContent ='Regiment Options';
+
+            unit.battleProfile.regimentOptions;
+            const options = formatText(unit.battleProfile.regimentOptions).split(',');
+            div.appendChild(title);
+            let content = document.createElement('p');
+            content.style.paddingLeft = '1em';
+            options.forEach(option => {
+                content.innerHTML = `${content.innerHTML}\u2022 ${option.trim()}<br/>`;
+            });
+            div.appendChild(content);
         }
 
         const _initializeCharDiv = () => {
@@ -157,6 +179,7 @@ const warscrollPage = {
                 widgetAbilityDisplayAbilities(unit, unit);
                 const abSec = document.getElementById('abilities-section');
                 abSec.style.display = '';
+                displayUnitDetails(unit);
                 displayKeywords(unit);
             }
 
@@ -168,7 +191,8 @@ const warscrollPage = {
                 'Characteristics', 
                 'Ranged Weapons', 
                 'Melee Weapons', 
-                'Abilities', 
+                'Abilities',
+                'Unit Details',
                 'Keywords'
             ];
             makeLayout(sections);

@@ -107,12 +107,14 @@ const unitPage = {
                 quantityEle.textContent = `${armyUnitCounts[identifiableObj.id]}x ${message}`;
                 quantityEle.style.display = '';
                 selectableItem.classList.remove('not-added');
+                selectableItem.classList.add('added');
                 labelItem.style.color = '';
                 labelItem.style.backgroundColor = '';
             } else {
                 quantityEle.textContent = 'None';
                 quantityEle.style.display = 'none';
                 selectableItem.classList.add('not-added');
+                selectableItem.classList.remove('added');
                 labelItem.style.color = getVar('white-3');
                 labelItem.style.backgroundColor = getVar('black-2');
             }

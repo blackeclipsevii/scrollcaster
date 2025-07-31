@@ -69,40 +69,82 @@ const deleteFavoritesList = () => {
     }
 }
 
-const newFavoritesOnChange = (selectableList, item, itemName) => {
+const _insertABetSorted = (listElement, item, itemName, skipHearts=false) => {
+    const children = listElement.querySelectorAll('.selectable-item');
+    let doInsert = true;
+    children.forEach(child => {
+            const _left = child.querySelector('.selectable-item-left');
+            const ne = _left.querySelector('.selectable-item-name');
+            
+            const _right = child.querySelector('.selectable-item-right');
+            const heart = _right.querySelector('.heart-checkbox');
+            if (skipHearts && heart.checked)
+                return;
+            
+            if (doInsert && 
+                (itemName.localeCompare(ne.textContent, undefined, { numeric: true }) < 0)) {
+                doInsert = false;
+                listElement.insertBefore(item, child);
+            }
+    });
+
+    if (doInsert) {
+        listElement.appendChild(item);
+    }
+}
+
+const _insertHeartSorted = (listElement, item, itemName) => {
+    const children = listElement.querySelectorAll('.selectable-item');
+    let doInsert = true;
+    children.forEach(child => {
+        const _right = child.querySelector('.selectable-item-right');
+        const heart = _right.querySelector('.heart-checkbox');
+        if (doInsert &&  !heart.check) {
+            doInsert = false;
+            listElement.insertBefore(item, child);
+        }
+    });
+
+    if (doInsert) {
+        listElement.appendChild(item);
+    }
+}
+
+// just move favorites to top of list
+const _inplaceFavorites = (selectableList, item, itemName) => {
+    const onchange = (isChecked, id, type) => {
+        if (isChecked) {
+            _insertHeartSorted(selectableList, item, itemName);
+        } else {
+            _insertABetSorted(selectableList, item, itemName, true);
+        }
+    };
+    return onchange;
+}
+
+// uses the favorites section
+const _seperateFavorites = (selectableList, item, itemName) => {
     const onchange = (isChecked, id, type) => {
         const ul = document.getElementById('favorites-list');
         const ulSec = ul.closest('.section');
 
-        const _insertSorted = (listElement) => {
-            const children = listElement.querySelectorAll('.selectable-item');
-            let doInsert = true;
-            children.forEach(child => {
-                const _left = child.querySelector('.selectable-item-left');
-                const ne = _left.querySelector('.selectable-item-name');
-                if (doInsert && 
-                    (itemName.localeCompare(ne.textContent, undefined, { numeric: true }) < 0)) {
-                    doInsert = false;
-                    listElement.insertBefore(item, child);
-                }
-            });
-
-            if (doInsert) {
-                listElement.appendChild(item);
-            }
-        }
-
         if (isChecked) {
             ulSec.style.display = 'block';
-            _insertSorted(ul);
+            _insertABetSorted(ul, item, itemName);
         } else {
-            _insertSorted(selectableList);
+            _insertABetSorted(selectableList, item, itemName);
             const anyItem = ul.querySelector('.selectable-item');
             if (!anyItem)
                 ulSec.style.display = 'none'
         }
     };
     return onchange;
+}
+
+const newFavoritesOnChange = (selectableList, item, itemName, useFavoritesSection=true) => {
+    if (useFavoritesSection)
+        return _seperateFavorites(selectableList, item, itemName);
+    return _inplaceFavorites(selectableList, item, itemName);
 }
 
 const newFavoritesCheckbox = (favoriteId, favoriteType, onchange=null, checkboxId=null) => {

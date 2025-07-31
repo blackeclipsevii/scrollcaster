@@ -23,6 +23,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .unit-slot-selectable-item-wrapper {

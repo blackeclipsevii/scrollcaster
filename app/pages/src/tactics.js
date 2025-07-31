@@ -36,12 +36,11 @@ const tacticsPage = {
         
             const tactics = await thisPage.fetchTactics();
             tactics.forEach(tacticCard => {
-                let disableTactic = false;
+                let currentPosition = -1;
                 if (thisPage.settings.roster) {
-                    thisPage.settings.roster.battleTacticCards.forEach(bt => {
-                        if (tacticCard.name === bt.name) {
-                            disableTactic = true;
-                        }
+                    thisPage.settings.roster.battleTacticCards.forEach((bt, idx) => {
+                        if (tacticCard.name === bt.name)
+                            currentPosition = idx;
                     });
                 }
     
@@ -77,50 +76,73 @@ const tacticsPage = {
                 right.classList.add('selectable-item-right');
     
                 const onchange = newFavoritesOnChange(tacticList, item, tacticCard.name);
+
+                const toggleDisableUnchecked = (disabled) => {
+                    const checkboxes = section.querySelectorAll('.tactic-checkbox');
+                    checkboxes.forEach(box => {
+                        if (!box.checked) {
+                            box.disabled = disabled;
+                        }
+                    });
+                }
     
                 // tactic card id not unique? doesn't exist?
-                const heart = newFavoritesCheckbox(tacticCard.name, 'tactic', onchange);
-    
-                right.append(heart);
-
+                let heart = null;
                 if (thisPage.settings.roster) {
-                    const addBtn = document.createElement('button');
-                    
-                    const setSelected = () => {
-                        const typeEle = document.createElement('span');
-                        typeEle.className = 'ability-label';
-                        typeEle.style.display = 'inline-block';
-                        typeEle.textContent = 'Selected';
-                        typeEle.style.backgroundColor = getVar('section-color');
-                        typeEle.style.color = getVar('green-color');
-                        typeEle.style.border = `1px solid ${typeEle.style.color}`;
-                        left.appendChild(typeEle);
-                        item.classList.remove('not-added');
-                        addBtn.disabled = true;
+                    const tacticCheckbox = document.createElement('input');
+                    tacticCheckbox.type = 'checkbox';
+                    tacticCheckbox.classList.add('tactic-checkbox');
+                    tacticCheckbox.style.transform = 'scale(1.5)';
+                    const notAdded = 'not-added';
+                    const added = 'added';
+                    if (currentPosition !== -1) {
+                        item.classList.remove(notAdded);
+                        item.classList.add(added);
+                        tacticCheckbox.checked = true;
                     }
-        
-                    addBtn.classList.add('rectangle-button');
-                    addBtn.textContent = '+';
-                    addBtn.addEventListener('click', async (e) => {
+    
+                    tacticCheckbox.addEventListener('change', async (e) => {
                         e.stopPropagation(); // Prevents click from triggering page change
-                        roster.battleTacticCards.push(tacticCard);
-                        setSelected();
+                        if (e.target.checked) {
+                            if (roster.battleTacticCards.length >= 2){
+                                tacticCheckbox.checked = false;
+                                return;
+                            }
+                            item.classList.remove(notAdded);
+                            item.classList.add(added);
+                            roster.battleTacticCards.push(tacticCard);
+                        } else {
+                            item.classList.add(notAdded);
+                            item.classList.remove(added);
+                            if (roster.battleTacticCards.length === 1) {
+                                roster.battleTacticCards = [];
+                            } else {
+                                for (let i = 0; i < roster.battleTacticCards.length; ++i) {
+                                    if (roster.battleTacticCards[i].id === tacticCard.id) {
+                                        roster.battleTacticCards.splice(i, 1);
+                                        break
+                                    }
+                                }
+                            }
+                        }
                         await putRoster(thisPage.settings.roster);
-                        if (roster.battleTacticCards.length >= 2)
-                            goBack();
+
+                        toggleDisableUnchecked(roster.battleTacticCards.length > 1);
                     });
 
-                    if (disableTactic) {
-                        setSelected();
-                    }
-    
-                    right.append(addBtn);
+                    right.append(tacticCheckbox);
+                } else {
+                    // to-do sort out upgrade favorites
+                    heart = newFavoritesCheckbox(tacticCard.name, 'tactic', onchange);
+                    right.append(heart);
                 }
     
                 item.append(left, right);
                 tacticList.appendChild(item);
-                if (heart.checked)
+                if (heart && heart.checked)
                     onchange(true, tacticCard.name, 'tactic');
+
+                toggleDisableUnchecked(roster.battleTacticCards.length > 1);
             });
         }
         setHeaderTitle('Battle Tactic Cards');

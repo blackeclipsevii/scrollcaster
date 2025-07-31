@@ -55,6 +55,20 @@ const builderPage = {
         // to-do remove
         roster = thisPage.roster;
 
+        const disableArrow = (arrow) => {
+            arrow.textContent = '\u2022'; //'\u29BF';
+            arrow.style.fontSize = '2em';
+            arrow.style.cursor = 'default';
+        }
+
+        const clearDetailsSection = (item) => {
+            removeSection(item, 'is-general');
+            removeSection(item, 'is-reinforced');
+            removeSection(item, 'available-artefacts');
+            removeSection(item, 'available-heroicTraits');
+            removeSection(item, 'available-monstrousTraits');
+        }
+
         function _newUnitSlot() {
             const unitSlot = document.createElement('div');
 
@@ -492,8 +506,7 @@ const builderPage = {
                 // removeSection(newUsItem, "arrow");
                 removeSection(newUsItem, "unit-details");
                 const arrow = newUsItem.querySelector('.arrow');
-                arrow.textContent = '\u2022'; //'\u29BF';
-                arrow.style.fontSize = '2em';
+                disableArrow(arrow);
             } else {
                 const arrow = newUsItem.querySelector('.arrow');
                 arrow.onclick = (event) => {
@@ -635,7 +648,6 @@ const builderPage = {
                 const newUsItem = clonePrototype('unit-slot-prototype');
                 
                 const arrow = newUsItem.querySelector('.arrow');
-                //arrow.textContent = '\u2022'; //'\u29BF';
                 arrow.onclick = (event) => {
                     event.stopPropagation();
                     arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
@@ -643,12 +655,9 @@ const builderPage = {
                 updateSelectableItemPrototype(newUsItem, regiment, true, () => {
                     displayRorOverlay(regiment);
                 });
+
                 // these are all for units
-                removeSection(newUsItem, 'is-general');
-                removeSection(newUsItem, 'is-reinforced');
-                removeSection(newUsItem, 'available-artefacts');
-                removeSection(newUsItem, 'available-heroicTraits');
-                removeSection(newUsItem, 'available-monstrousTraits');
+                clearDetailsSection(newUsItem);
 
                 const usPoints = newUsItem.querySelector('.unit-slot-points');
                 displayPoints(usPoints, regiment.points, 'PTS');
@@ -680,8 +689,7 @@ const builderPage = {
                 // remove toggle
                 removeSection(newUsItem, "unit-details");
                 const arrow = newUsItem.querySelector('.arrow');
-                arrow.textContent = '\u2022'; //'\u29BF';
-                arrow.style.fontSize = '2em';
+                disableArrow(arrow);
         
                 const usPoints = newUsItem.querySelector('.unit-slot-points');
                 usPoints.style.display = 'none';
@@ -957,8 +965,7 @@ const builderPage = {
 
             removeSection(newUsItem, "unit-details");
             const arrow = newUsItem.querySelector('.arrow');
-            arrow.textContent = '\u2022'; //'\u29BF';
-            arrow.style.fontSize = '2em';
+            disableArrow(arrow);
             
             let unitHdr = newUsItem.querySelector(".selectable-item-right");
             // does nothing but helps positioning be consistant
@@ -988,8 +995,6 @@ const builderPage = {
             };
 
             displaySingleton(typename, callbackMap, thisPage.roster.battleFormation, 900, onclick, false);
-            const btn = document.getElementById('battle-traits-&-formation-add-button');
-            btn.disabled = true;
         }
 
         async function displayLore(name, callbackMap, onclick) {
@@ -1087,14 +1092,9 @@ const builderPage = {
                     
                     updateSelectableItemPrototype(subUsItem, unit, true, onclick);
 
-                    removeSection(subUsItem, 'is-general');
-                    removeSection(subUsItem, 'is-reinforced');
-                    removeSection(subUsItem, 'available-artefacts');
-                    removeSection(subUsItem, 'available-heroicTraits');
-                    removeSection(subUsItem, 'available-monstrousTraits');
+                    clearDetailsSection(subUsItem);
                     const arrow = subUsItem.querySelector('.arrow');
-                    arrow.textContent = '\u2022'; //'\u29BF';
-                    arrow.style.fontSize = '2em';
+                    disableArrow(arrow);
 
                     const unitPoints = unitTotalPoints(unit);
                     const usPoints = subUsItem.querySelector('.unit-slot-points');
@@ -1128,12 +1128,7 @@ const builderPage = {
             usName.textContent = lore.name;
 
             // these are all for units
-            removeSection(newUsItem, 'is-general');
-            removeSection(newUsItem, 'is-reinforced');
-            removeSection(newUsItem, 'available-artefacts');
-            removeSection(newUsItem, 'available-heroicTraits');
-            removeSection(newUsItem, 'available-monstrousTraits');
-            //arrow.textContent = '\u2022'; //'\u29BF';
+            clearDetailsSection(newUsItem);
 
             const unitPoints = unitTotalPoints(lore);
             const usPoints = newUsItem.querySelector('.unit-slot-points');
@@ -1196,9 +1191,6 @@ const builderPage = {
                                 parent.removeChild(slot);
                             }
                         });
-
-                        const btn = document.getElementById('battle-tactics-add-button');
-                        btn.disabled = false;
                     }
                 };
 
@@ -1268,11 +1260,6 @@ const builderPage = {
 
             if (thisPage.roster.battleTacticCards.length > 0)
                 displayTactics();
-
-            if (thisPage.roster.battleTacticCards.length === 2) {
-                const btn = document.getElementById('battle-tactics-add-button');
-                btn.disabled = true;
-            }
             
             setHeaderTitle(thisPage.roster.name);
             refreshPointsOverlay(thisPage.roster.id);
@@ -1368,14 +1355,14 @@ const builderPage = {
             });
             makeLayout(sections, factory);
 
-            let btn = document.getElementById('battle-traits-&-formation-add-button');
-            btn.textContent = '⚙︎';
-            btn = document.getElementById('faction-terrain-add-button');
-            btn.textContent = '⚙︎';
-            btn = document.getElementById('lores-add-button');
-            btn.textContent = '⚙︎';
-           // let title = document.getElementById('battle-traits-section-title');
-           // title.textContent = 'Battle Traits';
+            const isConfig = [
+                'battle-traits-&-formation', 'faction-terrain',
+                'lores', 'battle-tactics'
+            ];
+            isConfig.forEach(sectionName => {
+                let btn = document.getElementById(`${sectionName}-add-button`);
+                btn.textContent = '⚙︎';
+            })
 
             await loadArmy(true);
             swapLayout();

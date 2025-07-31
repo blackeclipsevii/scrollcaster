@@ -93,99 +93,83 @@ const upgradePage = {
             const points = document.createElement('span');
             points.className = 'points-label';
             displayPoints(points, upgrade.points);
-        
-            const onchange = newFavoritesOnChange(upgradeList, item, upgrade.name);
-            // battle formation doesn't have id?
-            const useableId = upgrade.name; //upgrade.type === 2 ? upgrade.name : upgrade.id; 
-            const heart = newFavoritesCheckbox(useableId, 'upgrade', onchange);
-            right.append(heart);
-        
+            
+            let heart = null;
             if (thisPage.settings.roster) {
-                const addBtn = document.createElement('button');
-    
-                const setSelected = () => {
-                    const typeEle = document.createElement('span');
-                    typeEle.className = 'ability-label';
-                    typeEle.style.display = 'inline-block';
-                    typeEle.textContent = 'Selected';
-                    typeEle.style.backgroundColor = getVar('section-color');
-                    typeEle.style.color = getVar('green-color');
-                    typeEle.style.border = `1px solid ${typeEle.style.color}`;
-                    left.appendChild(typeEle);
-                    item.classList.remove('not-added');
-                    addBtn.disabled = true;
-                }
-                
-                addBtn.classList.add('rectangle-button');
-                addBtn.textContent = '+';
-                addBtn.addEventListener('click', async (e) => {
-                    e.stopPropagation(); // Prevents click from triggering page change
-                    const type = thisPage.settings.type;
-                    if (type.includes('battleFormation')) {
-                        roster.battleFormation = upgrade;
-                    } else if (type.includes('tactic')) {
-                        roster.battleTacticCards.push(upgrade);
-                    } else if (upgrade.type == 3) {
-                        roster.lores.spell = upgrade;   
-                    } else if (upgrade.type == 4) {
-                        roster.lores.manifestation = upgrade;
-                    } else if (upgrade.type == 6) {
-                        roster.lores.prayer = upgrade;
-                    }
-                    await putRoster(roster);
+                const checkbox = document.createElement('input');
+                checkbox.classList.add('upgrade-checkbox');
+                checkbox.type = "radio";
+                checkbox.name = `${upgrade.type}`;
+                checkbox.style.transform = 'scale(1.5)';
 
-                    if (upgrade.type === 3 || upgrade.type === 4 || upgrade.type === 6) {
-                        if ((!roster.lores.spell && roster.lores.canHaveSpell) || 
-                            (!roster.lores.prayer && roster.lores.canHavePrayer) || 
-                            (!roster.lores.manifestation && roster.lores.canHaveManifestation)) {
-                            const allItems = section.querySelectorAll('.selectable-item');
-                            allItems.forEach(si => {
-                                if (roster) {
-                                    if(!si.classList.contains('not-added')) {
-                                        si.classList.add('not-added');
-                                        const siBtn = si.querySelector('button');
-                                        siBtn.disabled = false;
-                                        const labels = si.querySelectorAll('.ability-label');
-                                        labels.forEach(l => {
-                                            if (l.textContent.toLowerCase().localeCompare('selected') === 0) {
-                                                l.parentElement.removeChild(l);
-                                            }
-                                        })
-                                    }
-                                }
-                            });
-                            
-                            setSelected();
-                            return;
+                //checkbox.textContent = '+';
+                checkbox.addEventListener('change', async (e) => {
+                    e.stopPropagation(); // Prevents click from triggering page change
+                    
+                    const type = thisPage.settings.type;
+                    if (e.target.checked) {
+                        const allSelectables = section.querySelectorAll('.selectable-item');
+                        allSelectables.forEach(selectable => {
+                            if (!selectable.classList.contains('not-added')) {
+                                selectable.classList.add('not-added');
+                                selectable.classList.remove('added');
+                            }
+                        });
+                        item.classList.remove('not-added');
+                        item.classList.add('added');
+                        if (type.includes('battleFormation')) {
+                            roster.battleFormation = upgrade;
+                        } else if (upgrade.type == 3) {
+                            roster.lores.spell = upgrade;   
+                        } else if (upgrade.type == 4) {
+                            roster.lores.manifestation = upgrade;
+                        } else if (upgrade.type == 6) {
+                            roster.lores.prayer = upgrade;
                         }
                     }
-                    goBack();
+                    await putRoster(roster);
                 });
+
+                const doEnable = () => {
+                    checkbox.checked = true;
+                    item.classList.remove('not-added');
+                    item.classList.add('added');
+                }
 
                 if (upgrade.type === 3 && roster.lores.spell) {
                     if (upgrade.id.localeCompare(roster.lores.spell.id) === 0) {
-                        setSelected();
+                        doEnable();
                     }
                 } 
                 else if (upgrade.type === 4 && roster.lores.manifestation) {
                     if (upgrade.id.localeCompare(roster.lores.manifestation.id) === 0) {
-                        setSelected();
+                        doEnable();
                     }
                 }
                 else if (upgrade.type === 6 && roster.lores.prayer) {
                     if (upgrade.id.localeCompare(roster.lores.prayer.id) === 0) {
-                        setSelected();
+                        doEnable();
+                    }
+                }
+                else if (roster.battleFormation) {
+                    if (upgrade.id.localeCompare(roster.battleFormation.id) === 0) {
+                        doEnable();
                     }
                 }
         
-                right.append(points, addBtn);
+                right.append(points, checkbox);
             } else {
-                right.append(points);
+                // to-do this being a radio makes favorites weird
+                const onchange = newFavoritesOnChange(upgradeList, item, upgrade.name);
+                // battle formation doesn't have id?
+                const useableId = upgrade.name; //upgrade.type === 2 ? upgrade.name : upgrade.id; 
+                heart = newFavoritesCheckbox(useableId, 'upgrade', onchange);
+                right.append(heart, points);
             }
             item.append(left, right);
             upgradeList.appendChild(item);
             
-            if (heart.checked)
+            if (heart && heart.checked)
                 onchange(true, useableId, 'upgrade');
         }
         

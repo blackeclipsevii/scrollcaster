@@ -35,9 +35,13 @@
 
 .selectable-item.not-added {
     color: var(--white-3);
-    border: 2px dashed var(--white-3);
+    border: 1px dashed var(--white-3);
     background-color: var(--section-background);
     box-shadow: none;
+}
+
+.selectable-item.added {
+    border: 1px solid var(--blue-color);
 }
 
 .selectable-item-left {
@@ -49,6 +53,11 @@
     display: flex;
     gap: .25rem;
     align-items: center;
+}
+
+input.tactic-checkbox,
+input.upgrade-checkbox {
+    accent-color: var(--blue-ability);
 }
 
 button.add-btn {

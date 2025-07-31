@@ -490,10 +490,15 @@ h4.melee-weapons-header {
     background-color: var(--hover-color);
 }
 
+#unit-details-section,
 #abilities-section,
 #keywords-section {
     padding-left: 1em;
     padding-right: 1em;
+}
+
+#unit-details-section p {
+    font-size: 14px;
 }
 
 .ability-container {
