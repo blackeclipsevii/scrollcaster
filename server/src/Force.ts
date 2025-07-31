@@ -6,4 +6,5 @@ export interface Force {
     name: string;
     unitContainers: unknown[];
     upgrades: Upgrade[];
+    points: number;
 }

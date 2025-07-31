@@ -1,6 +1,3 @@
-import { BsCondition } from "./BsConstraint.js";
-
-//
 
 export interface BsNamed {
     '@name': string;
@@ -15,7 +12,7 @@ export interface BsTyped {
 }
 
 
-export interface BsLink extends BsIdentifiable, BsTyped {
+export interface BsLink extends BsNamed, BsIdentifiable, BsTyped {
     '@targetId': string;
 }
 
@@ -31,18 +28,20 @@ export interface BsConditionInterf extends BsTyped {
 
 export interface BsConditionGroup extends BsTyped {
     conditions: BsConditionInterf[];
+    conditionGroups: BsConditionGroup[] | undefined;
 }
 
 export interface BsModifier extends BsTyped {
     '@value': string;
     '@field': string;
     '@scope': string | undefined;
+    conditions: BsConditionInterf[] | undefined;
     conditionGroups: BsConditionGroup[];
 }
 
 export interface BsModifierGroup extends BsTyped {
     modifiers: BsModifier[];
-    conditions: BsCondition[];
+    conditions: BsConditionInterf[];
 }
 
 export interface BsAttribute extends BsNamed {
@@ -104,7 +103,7 @@ export interface BsCost extends BsNamed {
     '@value': string;
 }
 
-export interface BsEntryLink extends BsNamed, BsLink {
+export interface BsEntryLink extends BsLink {
     '@import': string;
     '@hidden': string;
     entryLinks: BsEntryLink[];
@@ -117,7 +116,7 @@ export interface BsCatalogueLink extends BsLink {
     '@importRootEntries': string;
 }
 
-export interface BsCategoryLink extends BsNamed,  BsLink {
+export interface BsCategoryLink extends BsLink {
     '@primary': string;
     '@hidden': string;
 }
@@ -128,7 +127,35 @@ export interface BsCategoryEntry extends BsIdentifiable, BsNamed {
     constraints: BsConstraintInter[];
 }
 
+export interface BsForceEntryLink extends BsLink {
+    '@hidden': string;
+    '@type': string;
+    modifiers: BsModifier[] | undefined;
+}
+
+export interface BsDescription {
+    '#text': string;
+}
+
+export interface BsRule extends BsIdentifiable, BsNamed {
+    '@hidden': string;
+    description: BsDescription;
+}
+
+export interface BsPublication extends BsNamed, BsIdentifiable {
+    '@hidden': string;
+}
+
+export interface BsForceEntry extends BsIdentifiable, BsNamed {
+    categoryLinks: BsCategoryLink[];
+    modifiers: BsModifier[];
+    constraints: BsConstraintInter[];
+    costs: BsCost[];
+    forceEntryLinks: BsForceEntryLink[] | undefined;
+}
+
 export interface BsCatalog extends BsIdentifiable, BsNamed {
+    '@library': string;
     sharedSelectionEntryGroups: BsSelectionEntryGroup[];
     sharedSelectionEntries: BsSelectionEntry[];
     entryLinks: BsEntryLink[];
@@ -138,7 +165,18 @@ export interface BsCatalog extends BsIdentifiable, BsNamed {
 };
 
 export interface BsLibrary extends BsIdentifiable, BsNamed {
+    '@library': string;
     sharedSelectionEntryGroups: BsSelectionEntryGroup[];
     sharedSelectionEntries: BsSelectionEntry[];
     catalogueLinks: BsCatalogueLink[] | undefined;
+}
+
+export interface BsGameSystem extends BsIdentifiable, BsNamed {
+    categoryEntries: BsCategoryEntry[];
+    forceEntries: BsForceEntry[];
+    sharedSelectionEntries: BsSelectionEntry[];
+    sharedRules: BsRule[];
+    sharedProfiles: BsProfile[];
+    publications: BsPublication[];
+    selectionEntries: BsSelectionEntry[];
 }

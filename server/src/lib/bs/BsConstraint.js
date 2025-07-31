@@ -19,7 +19,7 @@ export const Scope = {
     force: "force"
 }
 
-export class BsModifier extends BsAttrObj {
+export class BsModifierAttrObj extends BsAttrObj {
     constructor(bsXml) {
         super(bsXml);
     }
@@ -63,6 +63,9 @@ export const getConstraints = (xml) => {
 export default class BsConstraint extends BsAttrObj {
     constructor(bsXml) {
         super(bsXml);
+        if (!this.type) {
+            this.type = '';
+        }
     }
 
     applyModifier(modifierObj) {

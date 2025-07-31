@@ -4,78 +4,112 @@ import Army from './Army.js';
 import BattleTacticCard from './BattleTacticCard.js';
 import Unit from './Unit.js';
 
-import { bsLayoutSmoother } from './lib/bs/BsSmoother.js';
-
 import fs from 'fs';
-import { XMLParser, XMLValidator} from "fast-xml-parser";
-import parseCatalog from './lib/parseCatalog.js';
+import parseCatalog, { parseGameSystem } from './lib/parseCatalog.js';
 
 import path from 'path';
 import Upgrade from './Upgrade.js';
 import { UpgradeType } from './lib/Upgrade.js';
-import { BsModifier, ConstraintType, getConstraints } from './lib/bs/BsConstraint.js';
+import BsConstraint, { ConstraintType, getConstraints, BsModifierAttrObj } from './lib/bs/BsConstraint.js';
 import { UnitType } from './types/UnitType.js';
+import { BsCatalog, BsGameSystem, BsLibrary } from './lib/bs/BsCatalog.js';
+import BattleProfile from './BattleProfile.js';
+import { Force } from './Force.js';
 
-function parseGameSystem(path) {
-    const xmlContent = fs.readFileSync(path, 'utf8');
-    const options = {
-        ignoreAttributes: false,
-        attributeNamePrefix : "@",
-        allowBooleanAttributes: true
+// intermediate step
+interface MyConstraints {
+    LUT: string[];
+    constraints: {[name:string]: BsConstraint};
+}
+
+interface ArmyData {
+    catalog: BsCatalog,
+    librariesLUT: {[name:string]: string},
+    libraries: {[name:string]: BsLibrary},
+    army: Army | null
+}
+
+interface RorData {
+    catalog: BsCatalog,
+    librariesLUT: {[name:string]:string};
+    libraries: {[name:string]: BsLibrary};
+}
+
+export interface AosDatabase {
+    path: string;
+    armyLUT: {[name: string]: string};
+    armies: {[name: string]: ArmyData};
+}
+
+export interface KeyOpt {
+    keyword: string;
+    index: number;
+}
+
+export class BattleProfileCollection {
+    _collection: {
+        [name:string]: {[name:string]:BattleProfile}
     };
-    
-    const result = XMLValidator.validate(xmlContent, options);
-    if (!result)
-        return null;
-
-    const parser = new XMLParser(options);
-    let root = parser.parse(xmlContent);
-    root = bsLayoutSmoother(root);
-    return root.gameSystem;
+    constructor() {
+        this._collection = {};
+    }
+    _modName(name: string) {
+        return name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '');
+    }
+    put(army: string, profile: BattleProfile) {
+        const lc = army.toLowerCase();
+        let armyset = this._collection[lc];
+        if (!armyset) {
+            armyset = {};
+            this._collection[lc] = armyset;
+        }
+        armyset[this._modName(profile.name)] = profile;
+    }
+    get(army: string, name: string) {
+        const lc = army.toLowerCase();
+        const armyset = this._collection[lc];
+        if (!armyset)
+            return null;
+        return armyset[this._modName(name)];
+    }
+    hasProfilesFor(army: string) {
+        const lc = army.toLowerCase();
+        const armyset = this._collection[lc];
+        return armyset !== null && armyset !== undefined;
+    }
 }
 
 export default class AgeOfSigmar {
-    constructor(path) {
+    _database: AosDatabase;
+    regimentsOfRenown: {[name:string]: Force};
+    battleTacticCards: BattleTacticCard[];
+    keywordLUT: {[name: string]: string};
+    units: {[name: string]: Unit};
+    lores: Lores;
+    gameSystem: BsGameSystem;
+    battleProfiles: BattleProfileCollection;
+
+    constructor(path: string) {
         this._database = {
             path: path,
             armyLUT: {},
             armies: {}
         }
-        this.regimentsOfRenown = null;
+        this.regimentsOfRenown = {};
         this.battleTacticCards = [];
         this.keywordLUT = {};
         this.units = {};
         this.lores = new Lores(path);
 
-        this.gameSystem = parseGameSystem(`${path}/Age of Sigmar 4.0.gst`);
+        const gs = parseGameSystem(`${path}/Age of Sigmar 4.0.gst`);
+        if (!gs) {
+            throw 'Unable to read AOS gst';
+        }
+
+        this.gameSystem = gs;
         this._parseKeywords();
         this._populateLibraries(path);
-        this.battleProfiles = {
-            _modName(name) {
-                return name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, '');
-            },
-            put: function (army, profile) {
-                const lc = army.toLowerCase();
-                let armyset = this[lc];
-                if (!armyset) {
-                    armyset = {};
-                    this[lc] = armyset;
-                }
-                armyset[this._modName(profile.name)] = profile;
-            },
-            get: function (army, name) {
-                const lc = army.toLowerCase();
-                const armyset = this[lc];
-                if (!armyset)
-                    return null;
-                return armyset[this._modName(name)];
-            },
-            hasProfilesFor(army) {
-                const lc = army.toLowerCase();
-                const armyset = this[lc];
-                return armyset !== null && armyset !== undefined;
-            }
-        };
+        this.battleProfiles = new BattleProfileCollection;
         this._parseBattleProfiles();
     }
 
@@ -87,7 +121,7 @@ export default class AgeOfSigmar {
         });
     }
 
-    getArmy(armyName) {
+    getArmy(armyName: string) {
         const data = this._database.armies[armyName];
         // if it isn't parsed, it doesn't exist
         if (!data)
@@ -101,7 +135,7 @@ export default class AgeOfSigmar {
     }
 
     // combine army and aos keywords, all uppercase
-    _getAvailableKeywords(army) {
+    _getAvailableKeywords(army: Army) {
         // aos keywords
         let keywords = Object.values(this.keywordLUT);
         // army keywords
@@ -111,17 +145,17 @@ export default class AgeOfSigmar {
     }
 
     // check if a keyword is a non (really only seraphon)
-    _hasNonPrefix = (options, keyOpt) => {
+    _hasNonPrefix = (options: string, keyOpt: KeyOpt) => {
         // Check if the 4 characters before the needle are 'non-'
         const substr = options.slice(keyOpt.index - 4, keyOpt.index).toUpperCase().trim();
         return substr.startsWith('NON');
     }
     
-    getKeywordsFromOption = (option) => {
+    getKeywordsFromOption = (option: string): KeyOpt[] => {
         option = option.trim();
         // let optionQualifier = option.split(' ')[0];
         const regex = /<([^>]+)>/g;
-        const optionKeywords = [];
+        const optionKeywords: KeyOpt[] = [];
         for (const match of option.matchAll(regex)) {
             optionKeywords.push({
                 keyword: match[1].toUpperCase(),
@@ -131,8 +165,8 @@ export default class AgeOfSigmar {
         return optionKeywords;
     }
 
-    meetsOption = (unit, option, optionKeywords, availableKeywords) => {
-        const testKeyOpt = (allTags, keyOpt) => {
+    meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], availableKeywords: string[]) => {
+        const testKeyOpt = (allTags: string[], keyOpt: KeyOpt) => {
             const isNon = this._hasNonPrefix(option, keyOpt);
 
             if (allTags.includes(keyOpt.keyword)) {
@@ -157,7 +191,7 @@ export default class AgeOfSigmar {
             return isNon
         }
         
-        const getAllTags = (unit) => {
+        const getAllTags = (unit: Unit) => {
             let allTags = unit._tags;
             if (unit.type !== 0)  // only look at every keyword if it's not a hero
                 allTags = allTags.concat(unit.keywords);
@@ -169,12 +203,12 @@ export default class AgeOfSigmar {
         const itrFunc = option.includes(' OR ') ? 'some' : 'every';
         const allTags = getAllTags(unit);
 
-        return optionKeywords[itrFunc]((keyOpt) => {
+        return optionKeywords[itrFunc]((keyOpt: KeyOpt) => {
             return testKeyOpt(allTags, keyOpt);
         });
     }
 
-    validateRegiment(army, regiment) {
+    validateRegiment(army: Army, regiment: string[]) {
         const leader = army.units[regiment[0]];
         if (!leader) {
             console.log(`where are you ${regiment[0]}`)
@@ -182,10 +216,20 @@ export default class AgeOfSigmar {
         }
 
         const availableKeywords = this._getAvailableKeywords(army);
-        const options = leader.battleProfile.regimentOptions.split(',');
+        const options = leader.battleProfile?.regimentOptions.split(',');
+        if (!options)
+            return `${leader.name} cannot lead. They have no regiment options.`;
+
         const aos = this;
         class _Slot {
-            constructor(option) {
+            originalOption: string;
+            min: number;
+            max: number;
+            conditional: string;
+            keywords: KeyOpt[];
+            units: Unit[];
+            priority: number;
+            constructor(option: string) {
                 const optionUC = option.trim().toUpperCase();
                 const qualifier = (() => {
                     const requiredStr = '(REQUIRED)';
@@ -211,11 +255,11 @@ export default class AgeOfSigmar {
                 }
             }
 
-            meetsKeywordRequirements(unit) {
+            meetsKeywordRequirements(unit: Unit) {
                 return aos.meetsOption(unit, this.originalOption.toUpperCase(), this.keywords, availableKeywords)
             }
 
-            canAdd(unit) {
+            canAdd(unit: Unit) {
                 if (this.units.length === this.max) {
                     const error = `You can only select ${this.originalOption}`;
                     console.log(error);
@@ -225,7 +269,7 @@ export default class AgeOfSigmar {
                 return null;
             }
 
-            add(unit) {
+            add(unit: Unit) {
                 this.units.push(unit);
             }
 
@@ -237,7 +281,7 @@ export default class AgeOfSigmar {
             }
         }
 
-        let slots = []
+        let slots: _Slot[] = []
         // initialize the expect slots
         const canLead = options.every(option => {
             const optionUc = option.trim().toUpperCase();
@@ -249,17 +293,17 @@ export default class AgeOfSigmar {
             return true;
         });
         if (!canLead) {
-            if (leader.battleProfile.notes)
+            if (leader.battleProfile?.notes)
                 return [`${leader.name} cannot be a leader: ${leader.battleProfile.notes}`];
             else
                 return [`${leader.name} cannot be a leader!`];
         }
-        slots = slots.sort((a, b) => b.priorty - a.priority);
+        slots = slots.sort((a, b) => b.priority - a.priority);
 
         // sort on spaces so we don't hit any keywords that match substrings of other keywords
         // longer keywords also take presidence
         //const sortedKeywords = sortKeywords(keywords);
-        const slotUnit = (unit) => {
+        const slotUnit = (unit: Unit) => {
             const genericError = `Invalid Unit Selection: ${unit.name}`;
             if (unit.type === UnitType.Manifestation ||
                 unit.type === UnitType.Terrain ||
@@ -268,7 +312,7 @@ export default class AgeOfSigmar {
                 return genericError;
             }
             
-            let lastError = genericError;
+            let lastError: string | null = genericError;
             for (let i = 0; i < slots.length; ++i) {
                 if (slots[i].meetsKeywordRequirements(unit)) {
                     const slotError = slots[i].canAdd(unit);
@@ -280,11 +324,10 @@ export default class AgeOfSigmar {
                     }
                 }
             }
-
             return lastError;
         }
 
-        const errors = [];
+        const errors: string[] = [];
 
         regiment.forEach((unitId, idx) => {
             if (idx === 0) // leader
@@ -310,7 +353,7 @@ export default class AgeOfSigmar {
     }
 
     // get all the units available to a leader's regiment
-    getRegimentOptions(army, leaderId) {
+    getRegimentOptions(army: Army, leaderId: string) {
         // to-do literally just make a schema tehre are too many spaces in the plain text
         const leader = army.units[leaderId];
         if (!leader) {
@@ -319,7 +362,11 @@ export default class AgeOfSigmar {
         }
 
         const availableKeywords = this._getAvailableKeywords(army);
-        const options = leader.battleProfile.regimentOptions.toUpperCase().split(',');
+        const options = leader.battleProfile?.regimentOptions.toUpperCase().split(',');
+        if(!options) {
+            console.log(`${leader.name} as no regiment options.`);
+            return;
+        }
 
         const armyUnits = Object.values(army.units);
         const allUnitNames = [];
@@ -330,7 +377,7 @@ export default class AgeOfSigmar {
         // sort on spaces so we don't hit any keywords that match substrings of other keywords
         // longer keywords also take presidence
         //const sortedKeywords = sortKeywords(keywords);
-        const canFieldUnit = (unit) => {
+        const canFieldUnit = (unit: Unit) => {
             if (unit.type === UnitType.Manifestation ||
                 unit.type === UnitType.Terrain ||
                 unit.type === UnitType.Unknown
@@ -339,19 +386,19 @@ export default class AgeOfSigmar {
             }
 
             // const requiredStr = '(REQUIRED)';
-            let ok = false;
+            let ok: boolean = false;
             options.forEach(option => {
                 if (ok) return true;
 
                 option = option.trim();
                 const optionKeywords = this.getKeywordsFromOption(option);
-                ok |= this.meetsOption(unit, option, optionKeywords, availableKeywords);
+                ok = ok || this.meetsOption(unit, option, optionKeywords, availableKeywords);
             });
 
             return ok;
         }
 
-        let units = [];
+        let units: Unit[] = [];
         armyUnits.forEach(unit => {
             if (canFieldUnit(unit)) {
                 units.push(unit);
@@ -360,8 +407,8 @@ export default class AgeOfSigmar {
         return units;
     }
 
-    _loadRegimentsOfRenown(rorData) {
-        const motherloadOfUnits = {};
+    _loadRegimentsOfRenown(rorData: RorData) {
+        const motherloadOfUnits: {[name: string]: Unit} = {};
         const names = Object.getOwnPropertyNames(rorData.libraries);
         names.forEach(name => {
             rorData.libraries[name].sharedSelectionEntries.forEach(entry => {
@@ -375,7 +422,7 @@ export default class AgeOfSigmar {
         // the forces
         const regiment = '376a-6b97-8699-dd59';
         const aux = '4063-b3a6-e7e1-383f';
-        const parsedForces = {};
+        const parsedForces: {[name:string]: Force} = {};
         this.gameSystem.forceEntries.forEach(forceEntry => {
             // skip these
             if (forceEntry['@id'] === regiment || forceEntry['@id'] === aux) {
@@ -383,12 +430,14 @@ export default class AgeOfSigmar {
             }
 
             // we want special stuff
-            const force = {};
-            force.selectableIn = [];
-            force.id = forceEntry['@id'];
-            force.name = forceEntry['@name'];
-            force.unitContainers = [];
-            force.upgrades = [];
+            const force: Force = {
+                selectableIn: [],
+                id: forceEntry['@id'],
+                name: forceEntry['@name'],
+                unitContainers: [],
+                upgrades: [],
+                points: 0
+            };
             
             // where do i put it
             if (forceEntry.modifiers) {
@@ -396,16 +445,18 @@ export default class AgeOfSigmar {
                     if (modifier['@type'] === "set") {
                         modifier.conditionGroups.forEach(cgParent => {
                             // this should be a group pairing AOS with the other parents
-                            cgParent.conditionGroups.forEach(cgArmies => {
-                                cgArmies.conditions.forEach(condition => {
-                                    if (condition['@type'] === 'instanceOf' &&
-                                        condition['@field'] === 'selections' &&
-                                        condition['@scope'] === 'parent') {
-                                        force.selectableIn.push(condition['@childId']);
-                                    }
-                                    
+                            if (cgParent.conditionGroups) {
+                                cgParent.conditionGroups.forEach(cgArmies => {
+                                    cgArmies.conditions.forEach(condition => {
+                                        if (condition['@type'] === 'instanceOf' &&
+                                            condition['@field'] === 'selections' &&
+                                            condition['@scope'] === 'parent') {
+                                            force.selectableIn.push(condition['@childId']);
+                                        }
+                                        
+                                    });
                                 });
-                            });
+                            }
                         });
                     }
                 });
@@ -432,7 +483,7 @@ export default class AgeOfSigmar {
                 return;
             }
 
-            const myConstraints = getConstraints(entryLink);
+            const myConstraints = getConstraints(entryLink) as MyConstraints;
 
             // this is probably wildly overkill as most (all?) ror are fixed in size
             entryLink.modifierGroups.forEach(modGroup => {
@@ -440,7 +491,7 @@ export default class AgeOfSigmar {
                 modGroup.modifiers.forEach(mod => {
                     const cObj = myConstraints.constraints[mod['@field']];
                     if (cObj) {
-                        const mObj = new BsModifier(mod);
+                        const mObj = new BsModifierAttrObj(mod);
                         cObj.applyModifier(mObj);
                     }
                 });
@@ -490,20 +541,24 @@ export default class AgeOfSigmar {
         rorData.catalog.sharedSelectionEntries.forEach(entry => {
             if (entry['@type'] === 'upgrade') {
                 const upgrade = new Upgrade(entry, UpgradeType.RegimentOfRenown);
-                entry.modifiers.forEach(mod => {
-                    mod.conditions.forEach(condition => {
-                        if (condition['@field'] === 'selections' &&
-                            condition['@scope'] === 'roster') {
-                            const childId = condition['@childId'];
-                            const force = parsedForces[childId];
-                            if (!force) {
-                               // console.log(`upgrade missing its force? ${upgrade.id} ${upgrade.name}`);
-                                return;
-                            }
-                            force.upgrades.push(upgrade);
+                if (entry.modifiers) {
+                    entry.modifiers.forEach(mod => {
+                        if (mod.conditions) {
+                            mod.conditions.forEach(condition => {
+                                if (condition['@field'] === 'selections' &&
+                                    condition['@scope'] === 'roster') {
+                                    const childId = condition['@childId'];
+                                    const force = parsedForces[childId];
+                                    if (!force) {
+                                    // console.log(`upgrade missing its force? ${upgrade.id} ${upgrade.name}`);
+                                        return;
+                                    }
+                                    force.upgrades.push(upgrade);
+                                }
+                            });
                         }
                     });
-                })
+                }
             }
         });
 
@@ -522,8 +577,8 @@ export default class AgeOfSigmar {
             const lc = file.toLowerCase();
             if (path.extname(lc) === '.json') {
                 const armyName = path.basename(lc).split('.json')[0];
-                const json = fs.readFileSync(path.join(profileDir, file));
-                const profileList = JSON.parse(json);
+                const json = fs.readFileSync(path.join(profileDir, file)).toString();
+                const profileList = JSON.parse(json) as BattleProfile[];
                 profileList.forEach(profile => {
                     aos.battleProfiles.put(armyName, profile);
                 });
@@ -531,10 +586,10 @@ export default class AgeOfSigmar {
         });
     }
 
-    _populateLibraries(dir) {
+    _populateLibraries(dir: string) {
         const catFiles = fs.readdirSync(dir);
-        const libraries = {}
-        let rorData = null;
+        const libraries: {[name:string]: BsLibrary} = {}
+        let rorData: RorData | null = null;
         // populate the armies and seperate the libraries
         catFiles.forEach(file => {
             const lc = file.toLowerCase();
@@ -542,7 +597,7 @@ export default class AgeOfSigmar {
             if (path.extname(lc) === '.cat') {
                 // console.log(lc);
                 const fullPath = `${dir}/${file}`;
-                const data = parseCatalog(fullPath);
+                const data = parseCatalog(fullPath) as BsCatalog | null;
                 if (data) {
                     const isCatalog = data['@library'] !== "true";
                     if (isCatalog) {
@@ -570,25 +625,27 @@ export default class AgeOfSigmar {
             }
         });
 
-        const attachLibraries = (data) => {
-            const _attachLibrary = (cat) => { 
-                cat.catalogueLinks.forEach(link => {
-                    const name = link['@name'].toLowerCase();
-                    // lores we handle seperately
-                    // don't tackle narrative right now
-                    if (!name.includes(' lores') &&
-                        !name.includes('path to glory')) {
-                        const targetId = link['@targetId'];
-                        const library = libraries[targetId];
-                        if (library) {
-                            data.libraries[link['@name']] = library;
-                            data.librariesLUT[targetId] = link['@name'];
-                            if (library.catalogueLinks) {
-                                _attachLibrary(library);
+        const attachLibraries = (data: RorData) => {
+            const _attachLibrary = (cat: BsCatalog | BsLibrary) => { 
+                if (cat.catalogueLinks) {
+                    cat.catalogueLinks.forEach(link => {
+                        const name = link['@name'].toLowerCase();
+                        // lores we handle seperately
+                        // don't tackle narrative right now
+                        if (!name.includes(' lores') &&
+                            !name.includes('path to glory')) {
+                            const targetId = link['@targetId'];
+                            const library = libraries[targetId];
+                            if (library) {
+                                data.libraries[link['@name']] = library;
+                                data.librariesLUT[targetId] = link['@name'];
+                                if (library.catalogueLinks) {
+                                    _attachLibrary(library);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             }
 
             // big waaagh!
@@ -597,7 +654,7 @@ export default class AgeOfSigmar {
                 const targetId = data.catalog.catalogueLinks[0]['@targetId'];
                 const library = libraries[targetId];
                 if (library) {
-                    data.catalog = library;
+                    data.catalog = library as BsCatalog;
                 }
             }
 
@@ -611,9 +668,10 @@ export default class AgeOfSigmar {
             attachLibraries(data);
         });
 
-        attachLibraries(rorData);
-
-        this._loadRegimentsOfRenown(rorData);
+        if (rorData !== null) {
+            attachLibraries(rorData);
+            this._loadRegimentsOfRenown(rorData);
+        }
     }
 
     _parseKeywords() {
@@ -627,12 +685,16 @@ export default class AgeOfSigmar {
 
         this.gameSystem.selectionEntries.forEach(entry => {
             if (entry['@name'] === 'Battle Tactic Cards') {
-                entry.selectionEntryGroups.forEach(group => {
-                    group.selectionEntries.forEach(tacticEntry => {
-                        const btCard = new BattleTacticCard(tacticEntry);
-                        this.battleTacticCards.push(btCard);
+                if (entry.selectionEntryGroups) {
+                    entry.selectionEntryGroups.forEach(group => {
+                        if (group.selectionEntries) {
+                            group.selectionEntries.forEach(tacticEntry => {
+                                const btCard = new BattleTacticCard(tacticEntry);
+                                this.battleTacticCards.push(btCard);
+                            });
+                        }
                     });
-                });
+                }
             }
             if (entry['@type'] === 'unit') {
                 const unit = new Unit(this, entry);
