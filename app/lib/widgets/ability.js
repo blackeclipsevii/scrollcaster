@@ -76,9 +76,11 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     if (color !== '')
         abilityName.style.paddingTop = '.5em';
 
-    addSection('p', 'cost', '<b>Cost:</b> ')
-    addSection('p', 'casting value', '<b>Casting Value:</b> ')
-    addSection('p', 'chanting value', '<b>Chanting Value:</b> ')
+    let costAdded = addSection('p', 'casting value', '<b>Casting Value:</b> ')
+    if (!costAdded)
+        costAdded = addSection('p', 'chanting value', '<b>Chanting Value:</b> ')
+    if (!costAdded)
+        addSection('p', 'cost', '<b>Cost:</b> ')
     addSection('p', 'declare', '<b>Declare:</b> ');
     addSection('p', 'effect', '<b>Effect:</b> ');
     addSection('h5', 'keywords', 'Keywords: ');
