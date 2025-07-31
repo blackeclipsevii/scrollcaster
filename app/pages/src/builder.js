@@ -81,7 +81,6 @@ const builderPage = {
                 <div class='unit-slot-selectable-item-wrapper'>
                     <div class="selectable-item unit-slot-selectable-item">
                         <div class="selectable-item-left">
-                            <span class="leader-label" style="display: none;">Leader</span>
                             <span class="general-label" style="display: none;">GENERAL</span>
                             <span class="reinforced-label" style="display: none;">REINFORCED</span>
                         </div>
@@ -395,14 +394,7 @@ const builderPage = {
             const hiddenIdx = newUsItem.querySelector('.unit-idx');
             hiddenIdx.textContent = idx;
 
-            let numOptions = 6;
-            if (idx === -1) {
-                const leaderLabel = newUsItem.querySelector('.leader-label');
-                leaderLabel.style.display = '';
-            } else {
-                --numOptions;
-            }
-
+            let numOptions = 5;
             const canBeGeneral = !(unit.type !== 0 || !parent.className.includes('regiment'));
             if (unit.type !== 0 || !parent.className.includes('regiment')) {
                 removeSection(newUsItem, 'is-general');
@@ -568,6 +560,13 @@ const builderPage = {
                     if ( _regiment.leader && _regiment.leader.isGeneral)
                         maxUnits = 4;
                     btn.disabled = (_regiment.units.length >= maxUnits) && _regiment.leader;
+
+                    if (!_regiment.leader) {
+                        btn.textContent = 'Add Leader +';
+                        const leaderBtnColor = getVar('red-color');
+                        btn.style.borderColor = leaderBtnColor;
+                        btn.style.color = leaderBtnColor;
+                    }
                 }
                 
                 const regItem = parent.closest('.regiment-item');
@@ -773,6 +772,9 @@ const builderPage = {
                     dynamicGoTo(settings);
                 }, true);
                 points += unitTotalPoints(regiment.leader);
+            } else {
+                const btn = newRegItem.querySelector('.add-unit-button');
+                btn.textContent = 'Add Leader +';
             }
 
             for(let i = 0; i < regiment.units.length; ++i) {
