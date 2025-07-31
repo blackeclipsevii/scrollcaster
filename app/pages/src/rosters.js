@@ -65,6 +65,14 @@ const rosterPage = {
 
         const values = thisPage._ror[armySelect.value.trim()]
         const rorSelect = document.getElementById("ror");
+        rorSelect.onchange = () => {
+          let name = '';
+          if (rorSelect.value.includes('(Optional)'))
+            name = armySelect.value;
+          else
+            name = rorSelect.value.split(' - ')[1];
+          nameField.placeholder = `Name (Default: ${name})`;
+        };
         if (values && values.length > 0) {
           rorSelect.disabled = false;
           rorSelect.style.display = '';
