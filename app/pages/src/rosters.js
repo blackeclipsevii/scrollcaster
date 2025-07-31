@@ -289,6 +289,8 @@ const rosterPage = {
               button.className = 'full-rectangle-button';
               button.textContent = 'Delete Roster';
               button.style.backgroundColor = 'red';
+              button.style.color = getVar('white-1');
+              button.style.fontWeight = 'bold';
               button.onclick = async () => {
                 await deleteRoster(roster.id);
                 disableOverlay();
@@ -381,6 +383,8 @@ const rosterPage = {
               button.className = 'full-rectangle-button';
               button.textContent = 'Delete All Rosters';
               button.style.backgroundColor = 'red';
+              button.style.color = getVar('white-1');
+              button.style.fontWeight = 'bold';
               button.onclick = () => {
                   deleteRosters();
                   const armies = document.getElementById("rosters-list");
