@@ -36,15 +36,13 @@ const tacticsPage = {
         
             const tactics = await thisPage.fetchTactics();
             tactics.forEach(tacticCard => {
-                let skipTactic = false;
+                let disableTactic = false;
                 if (thisPage.settings.roster) {
                     thisPage.settings.roster.battleTacticCards.forEach(bt => {
                         if (tacticCard.name === bt.name) {
-                            skipTactic = true;
+                            disableTactic = true;
                         }
                     });
-                    if (skipTactic)
-                        return;
                 }
     
                 const item = document.createElement('div');
@@ -84,18 +82,37 @@ const tacticsPage = {
                 const heart = newFavoritesCheckbox(tacticCard.name, 'tactic', onchange);
     
                 right.append(heart);
-    
+
                 if (thisPage.settings.roster) {
                     const addBtn = document.createElement('button');
+                    
+                    const setSelected = () => {
+                        const typeEle = document.createElement('span');
+                        typeEle.className = 'ability-label';
+                        typeEle.style.display = 'inline-block';
+                        typeEle.textContent = 'Selected';
+                        typeEle.style.backgroundColor = getVar('section-color');
+                        typeEle.style.color = getVar('green-color');
+                        typeEle.style.border = `1px solid ${typeEle.style.color}`;
+                        left.appendChild(typeEle);
+                        item.classList.remove('not-added');
+                        addBtn.disabled = true;
+                    }
+        
                     addBtn.classList.add('rectangle-button');
                     addBtn.textContent = '+';
                     addBtn.addEventListener('click', async (e) => {
                         e.stopPropagation(); // Prevents click from triggering page change
-                        item.classList.remove('not-added');
                         roster.battleTacticCards.push(tacticCard);
+                        setSelected();
                         await putRoster(thisPage.settings.roster);
-                        goBack();
+                        if (roster.battleTacticCards.length >= 2)
+                            goBack();
                     });
+
+                    if (disableTactic) {
+                        setSelected();
+                    }
     
                     right.append(addBtn);
                 }

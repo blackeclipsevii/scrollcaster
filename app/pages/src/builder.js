@@ -1184,7 +1184,10 @@ const builderPage = {
                     },
 
                     Delete: async (e) => {
-                        thisPage.roster.battleTacticCards.splice(i, 1);
+                        if(thisPage.roster.battleTacticCards.length == 2)
+                            thisPage.roster.battleTacticCards.splice(i, 1);
+                        else
+                            thisPage.roster.battleTacticCards = [];
                         await putRoster(roster);
 
                         const slots = parent.querySelectorAll('.unit-slot');
