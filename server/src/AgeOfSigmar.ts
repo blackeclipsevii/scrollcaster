@@ -22,17 +22,34 @@ interface MyConstraints {
     constraints: {[name:string]: BsConstraint};
 }
 
-interface ArmyData {
-    catalog: BsCatalog,
-    librariesLUT: {[name:string]: string},
-    libraries: {[name:string]: BsLibrary},
-    army: Army | null
+export enum GrandAlliance {
+    ORDER = "ORDER",
+    CHAOS = "CHAOS",
+    DEATH = "DEATH",
+    DESTRUCTION = "DESTRUCTION",
+    UNKNOWN = "UNKNOWN"
 }
 
-interface RorData {
-    catalog: BsCatalog,
+class RorData {
+    catalog: BsCatalog;
     librariesLUT: {[name:string]:string};
     libraries: {[name:string]: BsLibrary};
+    constructor(catalog: BsCatalog) {
+        this.catalog = catalog;
+        this.librariesLUT = {};
+        this.libraries = {};
+    }
+}
+
+class ArmyData extends RorData {
+    alliance: GrandAlliance;
+    army: Army | null
+
+    constructor(catalog: BsCatalog) {
+        super(catalog);
+        this.alliance = GrandAlliance.UNKNOWN;
+        this.army = null
+    }
 }
 
 export interface AosDatabase {
@@ -113,12 +130,38 @@ export default class AgeOfSigmar {
         this._parseBattleProfiles();
     }
 
-    getArmyNames() {
+    getArmyAlliances() {
+        interface ArmyAllianceInterf {
+            name: string,
+            alliance: GrandAlliance
+        };
         const names = Object.getOwnPropertyNames(this._database.armies);
-        return names.filter(name => {
+        const result: ArmyAllianceInterf[] = [];
+        names.forEach(name => {
             const lc = name.toLowerCase();
-            return !(lc.includes('regiments of renown') || lc.includes('[legends]'));
+            if (lc.includes('regiments of renown') || lc.includes('[legends]'))
+                return;
+            result.push({
+                name: name,
+                alliance: this._database.armies[name].alliance
+            });
         });
+        const allianceNumber = (alliance: GrandAlliance) => {
+            if (alliance === GrandAlliance.ORDER)
+                return 0;
+            if (alliance === GrandAlliance.CHAOS)
+                return 1;
+            if (alliance === GrandAlliance.DEATH)
+                return 2;
+            return 3;
+        }
+        result.sort((a, b) => {
+            const result = allianceNumber(a.alliance) - allianceNumber(b.alliance);
+            if (result === 0)
+                return a.name.localeCompare(b.name);
+            return result;
+        });
+        return result
     }
 
     getArmy(armyName: string) {
@@ -602,21 +645,11 @@ export default class AgeOfSigmar {
                     const isCatalog = data['@library'] !== "true";
                     if (isCatalog) {
                         if ((rorData === null) && data['@name'].includes('Regiments of Renown')) {
-                            rorData = {
-                                catalog: data,
-                                librariesLUT: {},
-                                libraries: {}
-                            };
+                            rorData = new RorData(data);
                         } else {
                             this._database.armyLUT[data['@id']] = data['@name'];
-                            this._database.armies[data['@name']] = {
-                                catalog: data,
-                                librariesLUT: {},
-                                libraries: {},
-                                army: null
-                            }
+                            this._database.armies[data['@name']] = new ArmyData(data);
                         }
-                        
                     } 
                     else  {
                         libraries[data['@id']] = data;
@@ -625,7 +658,7 @@ export default class AgeOfSigmar {
             }
         });
 
-        const attachLibraries = (data: RorData) => {
+        const attachLibraries = (data: RorData | ArmyData) => {
             const _attachLibrary = (cat: BsCatalog | BsLibrary) => { 
                 if (cat.catalogueLinks) {
                     cat.catalogueLinks.forEach(link => {
@@ -639,6 +672,25 @@ export default class AgeOfSigmar {
                             if (library) {
                                 data.libraries[link['@name']] = library;
                                 data.librariesLUT[targetId] = link['@name'];
+                                if (data instanceof ArmyData && data.alliance === GrandAlliance.UNKNOWN) {
+                                    // determine the alliance
+                                    library.sharedSelectionEntries.every(entry => {
+                                        let cont = true;
+                                        if(entry['@type'] === 'unit') {
+                                            entry.categoryLinks?.every(link => {
+                                                if (link['@name'] === GrandAlliance.CHAOS ||
+                                                    link['@name'] === GrandAlliance.DEATH ||
+                                                    link['@name'] === GrandAlliance.ORDER ||
+                                                    link['@name'] === GrandAlliance.DESTRUCTION) {
+                                                    data.alliance = link['@name'];
+                                                    cont = false;
+                                                }
+                                                return cont;
+                                            });
+                                        }
+                                        return cont;
+                                    });
+                                }
                                 if (library.catalogueLinks) {
                                     _attachLibrary(library);
                                 }
