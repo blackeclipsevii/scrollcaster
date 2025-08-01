@@ -13,6 +13,9 @@ const initializeDraggable = (pageId) => {
         });
     }
 
+    const LONG_PRESS_DELAY = 500;
+    let pressTimer = null;
+
     let dragged = null;
     let isDragging = false;
     let offsetX = 0, offsetY = 0;
@@ -21,7 +24,7 @@ const initializeDraggable = (pageId) => {
     const dragThreshold = 5; // in pixels
 
     document.querySelectorAll('.draggable').forEach(elem => {
-        elem.addEventListener('mousedown', (e) => {
+        function handleClickAction(e) {
             if (e.target.closest('.selectable-item')) return; // bail on interactive sub-elements
             dragged = elem;
             const rect = elem.getBoundingClientRect();
@@ -30,6 +33,24 @@ const initializeDraggable = (pageId) => {
             startY = e.clientY;
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
+        }
+
+        elem.addEventListener('mousedown', (e) => {
+            handleClickAction(e);
+        });
+        // Touch long press
+        elem.addEventListener('touchstart', (e) => {
+            pressTimer = setTimeout(() => {
+                handleClickAction(e);
+            }, LONG_PRESS_DELAY);
+        });
+
+        elem.addEventListener('touchend', () => {
+            clearTimeout(pressTimer);
+        });
+
+        elem.addEventListener('touchcancel', () => {
+            clearTimeout(pressTimer);
         });
     });
 
