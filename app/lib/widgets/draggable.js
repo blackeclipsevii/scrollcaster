@@ -12,7 +12,8 @@ const initializeDraggable = (pageId) => {
             if (elem) container.appendChild(elem);
         });
     }
-
+    const LONG_PRESS_DELAY = 500;
+    let pressTimer = null;
     let dragged = null;
     let isDragging = false;
     let offsetX = 0, offsetY = 0;
