@@ -1,0 +1,28 @@
+
+.draggable {
+  cursor: grab;
+}
+/*
+.draggable:hover {
+  transform: rotate(-1deg);
+  transition: transform 0.2s ease;
+}
+*/
+.ghost-slot {
+  border: 2px dashed var(--white-1);
+  background: transparent;
+  margin: 4px 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 0.7;
+  transform: scaleY(0.95);
+}
+
+.shift-left {
+  transform: translateX(-110px);
+  transition: transform 0.25s ease;
+}
+.shift-right {
+  transform: translateX(110px);
+  transition: transform 0.25s ease;
+}
