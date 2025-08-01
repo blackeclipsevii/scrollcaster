@@ -1,5 +1,18 @@
+const clearDraggableOrder = () => {
+    localStorage.removeItem('draggableOrder');
+}
 
-const initializeDraggable = () => {
+const initializeDraggable = (pageId) => {
+    const container = document.getElementById('visible-content');
+    let savedOrder = JSON.parse(localStorage.getItem(`draggableOrder`));
+    if (savedOrder && savedOrder[pageId]) {
+        savedOrder[pageId].forEach(id => {
+            console.log(id);
+            const elem = container.querySelector(`[id="${id}"]`);
+            if (elem) container.appendChild(elem);
+        });
+    }
+
     let dragged = null;
     let isDragging = false;
     let offsetX = 0, offsetY = 0;
@@ -64,7 +77,7 @@ const initializeDraggable = () => {
                 const rect = sibling.getBoundingClientRect();
                 return draggedCenterY < rect.top + rect.height / 2;
             });
-            
+
             dragged.style.margin = '';
             dragged.style.position = '';
             dragged.style.zIndex = '';
@@ -81,6 +94,16 @@ const initializeDraggable = () => {
             }
 
             ghost.remove();
+
+            const currentOrder = Array.from(container.children)
+            .filter(el => el.classList.contains('draggable'))
+            .map(el => el.id);
+
+            if (!savedOrder)
+                savedOrder = {};
+
+            savedOrder[pageId] = currentOrder;
+            localStorage.setItem(`draggableOrder`, JSON.stringify(savedOrder));
         }
         dragged = null;
         isDragging = false;

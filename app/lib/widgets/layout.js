@@ -10,7 +10,7 @@ const makeLayout = (sections, factory=null, parent=null, show=false) => {
             section.className = 'section draggable';
             section.id = `${adjustedName}-section`;
             section.innerHTML = `
-                <h3 class="section-title drag-handle">${name}</h3>
+                <h3 class="section-title">${name}</h3>
                 <div class="item-list" id="${adjustedName}-list"></div>
             `;
 

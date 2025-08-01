@@ -1383,7 +1383,7 @@ const builderPage = {
 
             await loadArmy(true);
             swapLayout();
-            initializeDraggable();
+            initializeDraggable('builder');
         }
 
         await armyLoadPage();

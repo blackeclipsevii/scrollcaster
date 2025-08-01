@@ -213,7 +213,7 @@ const warscrollPage = {
         readUnit();
         window.scrollTo(0, 0);
         swapLayout();
-        initializeDraggable();
+        initializeDraggable('warscroll');
     }
 };
 

@@ -151,7 +151,7 @@ const tacticsPage = {
         _makeTacticLayout();
         await loadTactics();
         swapLayout();
-        initializeDraggable();
+        initializeDraggable('tactics');
     }
 }
 

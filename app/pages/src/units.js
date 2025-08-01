@@ -357,7 +357,7 @@ const unitPage = {
             loadUnitsForCatalog();
         }
         swapLayout();
-        initializeDraggable();
+        initializeDraggable('units');
     }
 }
 

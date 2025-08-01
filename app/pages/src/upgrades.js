@@ -280,7 +280,7 @@ const upgradePage = {
                 loadUniversalLores();
             
             swapLayout();
-            initializeDraggable();
+            initializeDraggable('upgrades');
         }
         
         loadUpgradesPage();

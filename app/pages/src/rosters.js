@@ -369,8 +369,34 @@ const rosterPage = {
               button.className = 'full-rectangle-button';
               button.textContent = 'Clear Favorites';
               button.style.backgroundColor = 'red';
+              button.style.color = getVar('white-1');
+              button.style.fontWeight = 'bold';
               button.onclick = () => {
                 clearFavorites();
+                disableOverlay();
+              };
+
+              modal.appendChild(section);
+              modal.appendChild(button);
+          });
+          toggle();
+        },
+        'Reset Page Layout': () => {
+          const toggle = overlayToggleFactory('flex', () => {
+              const modal = document.querySelector(".modal");
+              modal.innerHTML = '';
+
+              const section = document.createElement('p');
+              section.innerHTML = 'Reset page page layouts to their default settings?<br/><br/><strong>This cannot be undone.</strong>';
+
+              const button = document.createElement('button');
+              button.className = 'full-rectangle-button';
+              button.textContent = 'Reset Layouts';
+              button.style.backgroundColor = 'red';
+              button.style.color = getVar('white-1');
+              button.style.fontWeight = 'bold';
+              button.onclick = () => {
+                clearDraggableOrder();
                 disableOverlay();
               };
 
@@ -495,7 +521,7 @@ const rosterPage = {
     _makePage();
     await viewRosters();
     swapLayout();
-    initializeDraggable();
+    initializeDraggable('roster');
   }
 };
 

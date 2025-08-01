@@ -273,7 +273,7 @@ const battlePage = {
             makeLayout(sections);
             await loadArmy(true);
             swapLayout();
-            initializeDraggable();
+            initializeDraggable('battle');
         }
 
         await battleLoadPage();
