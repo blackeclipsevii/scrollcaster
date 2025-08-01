@@ -1291,9 +1291,14 @@ const builderPage = {
                 section.className = 'section draggable';
                 section.id = `${adjustedName}-section`;
                 section.innerHTML = `
-                    <h3 id="${adjustedName}-section-title" class="section-title">${name}
-                    <button id="${adjustedName}-add-button" class="rectangle-button">+</button>
-                    </h3>
+                    <div class="section-header">
+                        <div class="draggable-grip">
+                            <span class="grip-icon">⋮⋮⋮</span>
+                            <h3 id="${adjustedName}-section-title" class="section-title">${name}</h3>
+                        </div>
+                        <button id="${adjustedName}-add-button" class="rectangle-button">+</button>
+                    </div>
+                    
                     <div class="section-container" id="${adjustedName}-container"></div>
                 `;
                 main.appendChild(section);

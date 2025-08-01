@@ -30,13 +30,16 @@ const initializeDraggable = (pageId) => {
                 document.body.classList.add('noselect');
                 dragged = elem;
                 const rect = elem.getBoundingClientRect();
-                width = rect.width;
+                width = rect.width * .98; // non-scientific math accounting for the angled width difference
                 startX = e.clientX;
                 startY = e.clientY;
                 offsetX = e.clientX - rect.left;
                 offsetY = e.clientY - rect.top;
-                
-                dragged.style.transform = 'rotate(-1deg)';
+                dragged.style.width = `${width}px`;
+                dragged.style.border = `2px dashed ${getVar('white-3')}`
+                dragged.style.maxHeight = '33vh';
+                dragged.style.overflow = 'hidden';
+                dragged.style.transform = 'rotate(1deg)';
                 dragged.style.transition = 'transform 0.2s ease';
             }, LONG_PRESS_DELAY);
         });
@@ -71,9 +74,8 @@ const initializeDraggable = (pageId) => {
             dragged.style.margin = '0px';
             dragged.style.left = `${startX - offsetX - parentRect.left}px`;
             dragged.style.top = `${startY - offsetY - parentRect.top}px`;
-            dragged.style.width = `${width}px`;
             dragged.style.zIndex = 1000;
-            dragged.style.transform = 'rotate(-3deg)';
+            dragged.style.transform = 'rotate(3deg)';
             dragged.style.transition = 'transform 0.2s ease';
         }
 
@@ -111,8 +113,6 @@ const initializeDraggable = (pageId) => {
             dragged.style.left = '';
             dragged.style.top = '';
             dragged.style.width = '';
-            dragged.style.transform = '';
-            dragged.style.transition = '';
 
             if (insertBefore) {
                 parent.insertBefore(dragged, insertBefore);
@@ -131,6 +131,13 @@ const initializeDraggable = (pageId) => {
 
             savedOrder[pageId] = currentOrder;
             localStorage.setItem(`draggableOrder`, JSON.stringify(savedOrder));
+        }
+        if (dragged) {
+            dragged.style.border = ``
+            dragged.style.maxHeight = '';
+            dragged.style.overflow = '';
+            dragged.style.transform = '';
+            dragged.style.transition = '';
         }
         dragged = null;
         isDragging = false;

@@ -270,12 +270,16 @@ footer {
   width: 100%;
 }
 
+
 .section-title {
     margin: .5em;
+    color: var(--white-1);
+}
+
+.section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    color: var(--white-1);
 }
 
 .back-btn,

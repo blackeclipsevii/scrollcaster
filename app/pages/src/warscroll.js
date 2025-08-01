@@ -200,11 +200,14 @@ const warscrollPage = {
             const main = document.getElementById('loading-content');
             const _sections = main.querySelectorAll('.section');
             _sections.forEach(section => {
-                const title = section.querySelector('.section-title');
-                section.removeChild(title);
+                //const title = section.querySelector('.section-title');
+                //title.parentElement.removeChild(title);
+
+                const dragGrip = section.querySelector('.draggable-grip');
+                dragGrip.parentElement.removeChild(dragGrip);
 
                 const itemList = section.querySelector('.item-list');
-                section.removeChild(itemList);
+                itemList.parentElement.removeChild(itemList);
             })
         }
         _makeUnitLayout();
