@@ -324,6 +324,7 @@ const catalogPage = {
                 await loadArmies();
             
             swapLayout();
+            initializeDraggable();
         }
         setHeaderTitle('Catalog');
         await loadTomePage();

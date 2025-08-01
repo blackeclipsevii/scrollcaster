@@ -1288,7 +1288,7 @@ const builderPage = {
                 const adjustedName = name.toLowerCase().replace(/ /g, '-');
                 const section = document.createElement('div');
                 // section.style.display = 'none';
-                section.className = 'section';
+                section.className = 'section draggable';
                 section.id = `${adjustedName}-section`;
                 section.innerHTML = `
                     <h3 id="${adjustedName}-section-title" class="section-title">${name}
@@ -1383,6 +1383,7 @@ const builderPage = {
 
             await loadArmy(true);
             swapLayout();
+            initializeDraggable();
         }
 
         await armyLoadPage();

@@ -1,0 +1,116 @@
+
+const initializeDraggable = () => {
+    let dragged = null;
+    let isDragging = false;
+    let offsetX = 0, offsetY = 0;
+    let startX = 0, startY = 0;
+    let width = 0;
+    const dragThreshold = 5; // in pixels
+
+    document.querySelectorAll('.draggable').forEach(elem => {
+        elem.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.selectable-item')) return; // bail on interactive sub-elements
+            dragged = elem;
+            const rect = elem.getBoundingClientRect();
+            width = rect.width;
+            startX = e.clientX;
+            startY = e.clientY;
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+        });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!dragged) return;
+
+        const movedX = Math.abs(e.clientX - startX);
+        const movedY = Math.abs(e.clientY - startY);
+
+        // Only start dragging after threshold exceeded
+        if (!isDragging && (movedX > dragThreshold || movedY > dragThreshold)) {
+            isDragging = true;
+            const parentRect = dragged.parentElement.getBoundingClientRect();
+            dragged.style.position = 'absolute';
+            dragged.style.margin = '0px';
+            dragged.style.left = `${startX - offsetX - parentRect.left}px`;
+            dragged.style.top = `${startY - offsetY - parentRect.top}px`;
+            dragged.style.width = `${width}px`;
+            dragged.style.zIndex = 1000;
+            dragged.style.transform = 'rotate(-3deg)';
+            dragged.style.transition = 'transform 0.2s ease';
+        }
+
+        if (isDragging) {
+            const parentRect = dragged.parentElement.getBoundingClientRect();
+            const newTop = e.clientY - offsetY - parentRect.top;
+            dragged.style.top = `${newTop}px`;
+
+            const siblings = Array.from(dragged.parentElement.children).filter(c => c !== dragged && c !== ghost);
+            updateGhostPosition(dragged, siblings);
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isDragging && dragged) {
+
+            // 🧠 Decide new sibling position
+            const parent = dragged.parentElement;
+            const siblings = Array.from(parent.children).filter(child => child !== dragged);
+
+            const draggedRect = dragged.getBoundingClientRect();
+            const draggedCenterY = draggedRect.top + draggedRect.height / 2;
+
+            let insertBefore = siblings.find(sibling => {
+                const rect = sibling.getBoundingClientRect();
+                return draggedCenterY < rect.top + rect.height / 2;
+            });
+            
+            dragged.style.margin = '';
+            dragged.style.position = '';
+            dragged.style.zIndex = '';
+            dragged.style.left = '';
+            dragged.style.top = '';
+            dragged.style.width = '';
+            dragged.style.transform = '';
+            dragged.style.transition = '';
+
+            if (insertBefore) {
+                parent.insertBefore(dragged, insertBefore);
+            } else {
+                parent.appendChild(dragged);
+            }
+
+            ghost.remove();
+        }
+        dragged = null;
+        isDragging = false;
+    });
+
+    let ghost = document.createElement('div');
+    ghost.className = 'ghost-slot';
+
+    function updateGhostPosition(dragged, siblings) {
+        const draggedCenterY = dragged.getBoundingClientRect().top + dragged.offsetHeight / 2;
+        const parent = dragged.parentElement;
+
+        let insertBefore = siblings.find(sibling => {
+            const rect = sibling.getBoundingClientRect();
+            const centerY = rect.top + rect.height / 2;
+            return draggedCenterY < centerY;
+        });
+
+        // If not already in the DOM, insert ghost
+        if (!parent.contains(ghost)) {
+            ghost.style.height = `${dragged.offsetHeight}px`;
+            ghost.style.width = `${dragged.offsetWidth}px`;
+            parent.appendChild(ghost);
+        }
+
+        // Move ghost to the new spot
+        if (insertBefore) {
+            parent.insertBefore(ghost, insertBefore);
+        } else {
+            parent.appendChild(ghost);
+        }
+    }
+}

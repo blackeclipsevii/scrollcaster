@@ -280,6 +280,7 @@ const upgradePage = {
                 loadUniversalLores();
             
             swapLayout();
+            initializeDraggable();
         }
         
         loadUpgradesPage();

@@ -495,6 +495,7 @@ const rosterPage = {
     _makePage();
     await viewRosters();
     swapLayout();
+    initializeDraggable();
   }
 };
 
