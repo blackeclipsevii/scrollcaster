@@ -379,6 +379,7 @@ footer {
   100% { transform: rotate(360deg); }
 }
 
+.leader-label,
 .ability-label,
 .points-label,
 .general-label,

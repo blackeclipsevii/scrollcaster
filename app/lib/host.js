@@ -17,21 +17,21 @@ const getVar = (varName) => {
 }
 
 function unitTotalPoints(unit) {
-    if (!unit.points)
-        return 0;
+  if (!unit || !unit.points)
+      return 0;
 
-    let pts = unit.points;
-    
-    if (unit.isReinforced)
-        pts += unit.points;
+  let pts = unit.points;
+  
+  if (unit.isReinforced)
+      pts += unit.points;
 
-    const enhancements = ['heroicTrait', 'artefact', 'monstrousTrait'];
-    enhancements.forEach(e => {
-    if ( unit[e] && unit[e].points)
-            pts += unit[e].points;
-    });
-    
-    return pts;
+  const enhancements = ['heroicTrait', 'artefact', 'monstrousTrait'];
+  enhancements.forEach(e => {
+  if ( unit[e] && unit[e].points)
+          pts += unit[e].points;
+  });
+  
+  return pts;
 }
 
 const rosterTotalPoints = (roster) => {

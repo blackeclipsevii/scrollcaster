@@ -11,7 +11,7 @@ const version = (()=>{
     _server: null,
     _bsdata: null,
     _profiles: null,
-    _client: '0.4.4beta',
+    _client: '0.4.5beta',
     async getClientVersion() {
         return this._client;
     },
