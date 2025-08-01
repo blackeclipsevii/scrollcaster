@@ -69,6 +69,21 @@ const builderPage = {
             removeSection(item, 'available-monstrousTraits');
         }
 
+        const toggleUnitAddButton = (regItem, _regiment) => {
+            const btn = regItem.querySelector('.add-unit-button');
+            let maxUnits = 3;
+            if ( _regiment.leader && _regiment.leader.isGeneral)
+                maxUnits = 4;
+            btn.disabled = (_regiment.units.length >= maxUnits) && _regiment.leader;
+
+            if (!_regiment.leader) {
+                btn.textContent = 'Add Leader +';
+                const leaderBtnColor = getVar('red-color');
+                btn.style.borderColor = leaderBtnColor;
+                btn.style.color = leaderBtnColor;
+            }
+        }
+
         function _newUnitSlot() {
             const unitSlot = document.createElement('div');
 
@@ -415,18 +430,14 @@ const builderPage = {
                     div = checkbox.closest(".unit-slot");
                     div = div.querySelector(".unit-idx");
                     const unitIdx = Number(div.textContent);
-                    const unit = regiment.units[unitIdx];
+                    const unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
 
                     unit.isGeneral = checkbox.checked;
                     putRoster(roster);
                     updateValidationDisplay();
 
                     const regItem = parent.closest('.regiment-item');
-                    const btn = regItem.querySelector('.add-unit-button');
-                    let maxUnits = 3;
-                    if (regiment.leader && regiment.leader.isGeneral)
-                        maxUnits = 4;
-                    btn.disabled = (regiment.units.length >= maxUnits) && regiment.leader;
+                    toggleUnitAddButton(regItem, regiment);
                 };
             }
 
@@ -448,7 +459,6 @@ const builderPage = {
 
                     crown.style.display = checkbox.checked ? 'inline' : 'none';
 
-                    // to-do what about aux general???
                     let div = checkbox.closest(".regiment-item");
                     div = div.querySelector(".regiment-idx");
                     const regIdx = Number(div.textContent);
@@ -457,7 +467,7 @@ const builderPage = {
                     div = checkbox.closest(".unit-slot");
                     div = div.querySelector(".unit-idx");
                     const unitIdx = Number(div.textContent);
-                    const unit = regiment.units[unitIdx];
+                    const unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
 
                     const ptsBefore = unitTotalPoints(unit);
                     unit.isReinforced = checkbox.checked;
@@ -554,21 +564,6 @@ const builderPage = {
 
             let unitHdr = newUsItem.querySelector(".selectable-item-right");
             if (typeof callbackMap === 'string') {
-                const toggleUnitAddButton = (regItem, _regiment) => {
-                    const btn = regItem.querySelector('.add-unit-button');
-                    let maxUnits = 3;
-                    if ( _regiment.leader && _regiment.leader.isGeneral)
-                        maxUnits = 4;
-                    btn.disabled = (_regiment.units.length >= maxUnits) && _regiment.leader;
-
-                    if (!_regiment.leader) {
-                        btn.textContent = 'Add Leader +';
-                        const leaderBtnColor = getVar('red-color');
-                        btn.style.borderColor = leaderBtnColor;
-                        btn.style.color = leaderBtnColor;
-                    }
-                }
-                
                 const regItem = parent.closest('.regiment-item');
                 if (regItem) {
                     const _div = regItem.querySelector('.regiment-idx');

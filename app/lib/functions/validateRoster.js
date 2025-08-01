@@ -61,26 +61,25 @@ const validateRoster = async (roster) => {
     {
         const reg = roster.regiments[idx];
         const nunits = reg.units.length;
-        if (reg.units.length === 0) {
+        if (!reg.leader && reg.units.length === 0) {
             let errorMsg = `Regiment ${idx+1} is empty`;
             errors.push(errorMsg);
             continue;
         }
-        
-        const leader = reg.leader;
-        if (leader === null) {
+
+        if (reg.leader === null) {
             errors.push(`Regiment ${idx+1} is missing a leader`);
             continue;
         }
         
-        if (leader.isWarmaster) {
+        if (reg.leader.isWarmaster) {
             // keep track of the forced generals
-            warmasters.push(leader.name);
+            warmasters.push(reg.leader.name);
         }
 
-        if (leader.isGeneral) {
+        if (reg.leader.isGeneral) {
             if (!warmasterIsGeneral) {
-                warmasterIsGeneral = leader.isWarmaster;
+                warmasterIsGeneral = reg.leader.isWarmaster;
             }
             numGenerals += 1;
         }
@@ -117,7 +116,7 @@ const validateRoster = async (roster) => {
 
         const vrErrors = await validateRegiment(roster.army, reg);
         if (vrErrors.length > 0) {
-            errors.push(`${formatMessageText(vrErrors.join(', '))} for <b>${leader.name}</b>'s regiment.`);
+            errors.push(`${formatMessageText(vrErrors.join(', '))} for <b>${reg.leader.name}</b>'s regiment.`);
         }
     };
 
