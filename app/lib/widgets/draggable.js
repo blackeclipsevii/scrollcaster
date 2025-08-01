@@ -13,9 +13,6 @@ const initializeDraggable = (pageId) => {
         });
     }
 
-    const LONG_PRESS_DELAY = 500;
-    let pressTimer = null;
-
     let dragged = null;
     let isDragging = false;
     let offsetX = 0, offsetY = 0;
@@ -24,7 +21,7 @@ const initializeDraggable = (pageId) => {
     const dragThreshold = 5; // in pixels
 
     document.querySelectorAll('.draggable').forEach(elem => {
-        function handleClickAction(e) {
+        elem.addEventListener('pointerdown', (e) => {
             if (e.target.closest('.selectable-item')) return; // bail on interactive sub-elements
             dragged = elem;
             const rect = elem.getBoundingClientRect();
@@ -33,28 +30,10 @@ const initializeDraggable = (pageId) => {
             startY = e.clientY;
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
-        }
-
-        elem.addEventListener('mousedown', (e) => {
-            handleClickAction(e);
-        });
-        // Touch long press
-        elem.addEventListener('touchstart', (e) => {
-            pressTimer = setTimeout(() => {
-                handleClickAction(e);
-            }, LONG_PRESS_DELAY);
-        });
-
-        elem.addEventListener('touchend', () => {
-            clearTimeout(pressTimer);
-        });
-
-        elem.addEventListener('touchcancel', () => {
-            clearTimeout(pressTimer);
         });
     });
 
-    document.addEventListener('mousemove', (e) => {
+    document.addEventListener('pointermove', (e) => {
         if (!dragged) return;
 
         const movedX = Math.abs(e.clientX - startX);
@@ -84,7 +63,7 @@ const initializeDraggable = (pageId) => {
         }
     });
 
-    document.addEventListener('mouseup', () => {
+    document.addEventListener('pointerup', () => {
         if (isDragging && dragged) {
 
             // 🧠 Decide new sibling position
