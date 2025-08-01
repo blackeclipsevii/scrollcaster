@@ -23,6 +23,7 @@ const initializeDraggable = (pageId) => {
     document.querySelectorAll('.draggable').forEach(elem => {
         elem.addEventListener('pointerdown', (e) => {
             if (e.target.closest('.selectable-item')) return; // bail on interactive sub-elements
+<<<<<<< Updated upstream
             dragged = elem;
             const rect = elem.getBoundingClientRect();
             width = rect.width;
@@ -30,10 +31,26 @@ const initializeDraggable = (pageId) => {
             startY = e.clientY;
             offsetX = e.clientX - rect.left;
             offsetY = e.clientY - rect.top;
+=======
+            pressTimer = setTimeout(() => {
+                dragged = elem;
+                const rect = elem.getBoundingClientRect();
+                width = rect.width;
+                startX = e.clientX;
+                startY = e.clientY;
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+                
+                dragged.style.transform = 'rotate(-1deg)';
+                dragged.style.transition = 'transform 0.2s ease';
+            }, LONG_PRESS_DELAY);
+>>>>>>> Stashed changes
         });
     });
 
     document.addEventListener('pointermove', (e) => {
+        clearTimeout(pressTimer);
+
         if (!dragged) return;
 
         const movedX = Math.abs(e.clientX - startX);
@@ -64,6 +81,8 @@ const initializeDraggable = (pageId) => {
     });
 
     document.addEventListener('pointerup', () => {
+        clearTimeout(pressTimer);
+
         if (isDragging && dragged) {
 
             // 🧠 Decide new sibling position
