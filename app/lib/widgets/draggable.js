@@ -25,6 +25,7 @@ const initializeDraggable = (pageId) => {
         elem.addEventListener('pointerdown', (e) => {
             if (e.target.closest('.selectable-item')) return; // bail on interactive sub-elements
             pressTimer = setTimeout(() => {
+                document.body.classList.add('noselect');
                 dragged = elem;
                 const rect = elem.getBoundingClientRect();
                 width = rect.width;
@@ -69,6 +70,7 @@ const initializeDraggable = (pageId) => {
             const siblings = Array.from(dragged.parentElement.children).filter(c => c !== dragged && c !== ghost);
             updateGhostPosition(dragged, siblings);
         }
+        
     });
 
     document.addEventListener('pointerup', () => {
@@ -117,6 +119,7 @@ const initializeDraggable = (pageId) => {
         }
         dragged = null;
         isDragging = false;
+        document.body.classList.remove('noselect');
     });
 
     let ghost = document.createElement('div');

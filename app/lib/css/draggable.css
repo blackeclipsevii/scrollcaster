@@ -2,12 +2,7 @@
 .draggable {
   cursor: grab;
 }
-/*
-.draggable:hover {
-  transform: rotate(-1deg);
-  transition: transform 0.2s ease;
-}
-*/
+
 .ghost-slot {
   border: 2px dashed var(--white-1);
   background: transparent;
@@ -18,11 +13,8 @@
   transform: scaleY(0.95);
 }
 
-.shift-left {
-  transform: translateX(-110px);
-  transition: transform 0.25s ease;
-}
-.shift-right {
-  transform: translateX(110px);
-  transition: transform 0.25s ease;
+.noselect {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
