@@ -13,6 +13,8 @@ const initializeDraggable = (pageId) => {
         });
     }
     const LONG_PRESS_DELAY = 500;
+    const scrollSpeed = 10;      // pixels per frame
+    const scrollThreshold = 50;  // distance from edge in px
     let pressTimer = null;
     let dragged = null;
     let isDragging = false;
@@ -44,6 +46,19 @@ const initializeDraggable = (pageId) => {
         clearTimeout(pressTimer);
 
         if (!dragged) return;
+
+        const doScroll = () => {
+            const y = e.clientY;
+            const windowHeight = window.innerHeight;
+
+            if (y < scrollThreshold) {
+                window.scrollBy(0, -scrollSpeed);
+            } else if (y > windowHeight - scrollThreshold) {
+                window.scrollBy(0, scrollSpeed);
+            }
+        }
+        // perform a scroll if the drag goes close to the edge
+        doScroll();
 
         const movedX = Math.abs(e.clientX - startX);
         const movedY = Math.abs(e.clientY - startY);
