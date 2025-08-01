@@ -12,7 +12,8 @@ const initializeDraggable = (pageId) => {
             if (elem) container.appendChild(elem);
         });
     }
-
+    const LONG_PRESS_DELAY = 500;
+    let pressTimer = null;
     let dragged = null;
     let isDragging = false;
     let offsetX = 0, offsetY = 0;
@@ -23,13 +24,15 @@ const initializeDraggable = (pageId) => {
     document.querySelectorAll('.draggable').forEach(elem => {
         elem.addEventListener('pointerdown', (e) => {
             if (e.target.closest('.selectable-item')) return; // bail on interactive sub-elements
-            dragged = elem;
-            const rect = elem.getBoundingClientRect();
-            width = rect.width;
-            startX = e.clientX;
-            startY = e.clientY;
-            offsetX = e.clientX - rect.left;
-            offsetY = e.clientY - rect.top;
+            pressTimer = setTimeout(() => {
+                dragged = elem;
+                const rect = elem.getBoundingClientRect();
+                width = rect.width;
+                startX = e.clientX;
+                startY = e.clientY;
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+            }, LONG_PRESS_DELAY);
         });
     });
 
