@@ -102,12 +102,14 @@ const widgetAbilityInitializeAbilitiesDiv = (name=null) => {
     }
 
     let section = document.getElementById('abilities-section');
-    
-    let title = document.createElement('h3');
-    title.className = 'abilitiesTitle';
-    title.innerHTML = isString(name) ? name : 'Abilities';
+    let title = section.querySelector('.section-title');
 
-    section.appendChild(title);
+    if (!title) {
+        title = document.createElement('h3');
+        title.innerHTML = isString(name) ? name : 'Abilities';
+        section.appendChild(title);
+    }
+    
     return section;
 }
 

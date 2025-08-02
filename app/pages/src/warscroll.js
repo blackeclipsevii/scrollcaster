@@ -66,24 +66,17 @@ const warscrollPage = {
             whClearDiv('keywords');
             _initializeKeywordsDiv();
             const keywords = document.getElementById("keywords");
-            const title = document.getElementById("keywordTitle");
-            
-            // Clear existing rows
-            title.innerHTML = "Keywords";
             keywords.innerHTML = unit['keywords'].join(', ');
+            keywords.style.margin = '1em';
         }
 
         const _initializeKeywordsDiv = () => {
             const div = document.getElementById('keywords-section');
             div.style.display = '';
 
-            let kwTitle = document.createElement('h3');
-            kwTitle.id = 'keywordTitle';
-
             let keywords = document.createElement('h5');
             keywords.id = 'keywords';
 
-            div.appendChild(kwTitle);
             div.appendChild(keywords);
             return div;
         }
@@ -104,12 +97,11 @@ const warscrollPage = {
             const div = document.getElementById('unit-details-section');
             div.style.display = '';
             
-            let title = document.createElement('h3');
-            title.textContent ='Regiment Options';
+            let title = div.querySelector('.section-title');
+            title.textContent = 'Regiment Options';
 
             unit.battleProfile.regimentOptions;
             const options = formatText(unit.battleProfile.regimentOptions).split(',');
-            div.appendChild(title);
             let content = document.createElement('p');
             content.style.paddingLeft = '1em';
             options.forEach(option => {
@@ -121,6 +113,9 @@ const warscrollPage = {
         const _initializeCharDiv = () => {
             let div = document.getElementById('characteristics-section');
             div.style.display = '';
+
+            const title = div.querySelector('.draggable-grip');
+            title.style.display = 'none';
 
             let characteristics = document.createElement('table');
             characteristics.id = 'characteristics';
@@ -200,12 +195,6 @@ const warscrollPage = {
             const main = document.getElementById('loading-content');
             const _sections = main.querySelectorAll('.section');
             _sections.forEach(section => {
-                //const title = section.querySelector('.section-title');
-                //title.parentElement.removeChild(title);
-
-                const dragGrip = section.querySelector('.draggable-grip');
-                dragGrip.parentElement.removeChild(dragGrip);
-
                 const itemList = section.querySelector('.item-list');
                 itemList.parentElement.removeChild(itemList);
             })

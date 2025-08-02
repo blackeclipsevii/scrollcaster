@@ -22,8 +22,14 @@ const _displayWeapons = (qualifier, weaponList) => {
     const _initializeWeaponsDiv = () => {
         const div = document.getElementById(`${qualifier}-weapons-section`);
         
-        let title = document.createElement('div');
-        title.id = qualifier + 'WeaponsTitle';
+        if (!div.querySelector('.draggable-grip')) {
+            let title = document.createElement('div');
+            title.class = 'draggable-grip';
+            title.innerHTML = `
+                <h3 class='section-title'></h3>
+            `
+            div.appendChild(title);
+        }
 
         let header = document.createElement('table');
         header.id = qualifier + 'WeaponsHeader';
@@ -31,7 +37,6 @@ const _displayWeapons = (qualifier, weaponList) => {
         let container = document.createElement('div');
         container.id = qualifier + 'Weapons';
 
-        div.appendChild(title);
         container.appendChild(header);
         div.appendChild(container);
         return div;
@@ -51,7 +56,33 @@ const _displayWeapons = (qualifier, weaponList) => {
     const header = document.getElementById(qualifier + "WeaponsHeader");
     header.style.marginTop = '0';
     const container = document.getElementById(qualifier + "Weapons");
-    const title = document.getElementById(qualifier + "WeaponsTitle");
+    
+    let grip = section.querySelector('.draggable-grip');
+    if (!grip) {
+        grip = document.createElement('div');
+        grip.className = 'draggable-grip';
+        grip.style.padding = '.5em';
+        grip.style.paddingLeft = '1em';
+        grip.innerHTML = `
+        <h3 class="section-title"></h3>
+        `;
+        section.insertBefore(grip, section.firstChild);
+    }
+    grip.style.backgroundColor = getVar('black-1');
+    grip.style.borderTopLeftRadius = getVar('border-radius');
+    grip.style.borderTopRightRadius = getVar('border-radius');
+
+    const title = section.querySelector('.section-title');
+    title.textContent = qualifier === 'ranged' ? `Ranged Weapons` : `Melee Weapons`;
+
+    const icon = document.createElement('img');
+    icon.style.paddingRight = '.5em';
+    if (qualifier === 'ranged')
+        icon.src = '../../resources/abShooting.png';
+    else
+        icon.src = '../../resources/abOffensive.png';
+    grip.insertBefore(icon, title);
+
     let headers;
     const lut = {
         '':'name', 
@@ -66,22 +97,10 @@ const _displayWeapons = (qualifier, weaponList) => {
     let className = null;
     if (qualifier === 'ranged') {
         className = 'ranged-weapon';
-        title.innerHTML = `
-        <div class='melee-weapons-header'>
-            <img src='../../resources/abShooting.png'></img>
-            <h4>Ranged Weapons</h4>
-        </div>
-        `;
         headers = ['RANGE', 'A', 'HIT', 'W', 'R', 'D'];
         
     } else {        
         className = 'melee-weapon';
-        title.innerHTML = `
-        <div class='melee-weapons-header'>
-            <img src='../../resources/abOffensive.png'></img>
-            <h4>Melee Weapons</h4>
-        </div>
-        `;
         headers = ['A', 'HIT', 'W', 'R', 'D'];
     }
 
@@ -102,7 +121,7 @@ const _displayWeapons = (qualifier, weaponList) => {
         const nameDiv = document.createElement('div');
         nameDiv.style.justifyContent = 'center';
         const nameObj = _getOptionName(weaponList[i].name);
-        const weaponNameH = document.createElement('h3');
+        const weaponNameH = document.createElement('h4');
         weaponNameH.style.display = 'inline-block';
         weaponNameH.textContent = nameObj.weaponName;
         nameDiv.appendChild(weaponNameH);
