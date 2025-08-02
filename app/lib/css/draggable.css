@@ -1,8 +1,4 @@
 
-.draggable {
-  cursor: grab;
-}
-
 .ghost-slot {
   border: 2px dashed var(--white-3);
   border-radius: var(--border-radius);
@@ -28,12 +24,15 @@
     justify-content: start;
     text-align: center;
     align-items: center;
-    max-width: 80%;
-    /*
-    background-color: var(--black-1);
-    border-top-left-radius: 1vh;
-    border-top-right-radius: 1vh;
-    */
+    cursor: grab;
+}
+
+/* for when the grip needs to wrap more */
+.draggable-grip-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: grab;
 }
 
 .draggable-grip .grip-icon {
@@ -41,6 +40,5 @@
   padding-left: .5em;
   margin: 0px;
   font-size: 1em;
-  cursor: grab;
   color: var(--white-3);
 }

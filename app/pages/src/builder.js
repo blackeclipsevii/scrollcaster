@@ -1291,7 +1291,7 @@ const builderPage = {
                 section.className = 'section draggable';
                 section.id = `${adjustedName}-section`;
                 section.innerHTML = `
-                    <div class="section-header">
+                    <div class="draggable-grip-wrapper">
                         <div class="draggable-grip">
                             <span class="grip-icon">⋮⋮⋮</span>
                             <h3 id="${adjustedName}-section-title" class="section-title">${name}</h3>

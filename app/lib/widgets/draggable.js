@@ -23,29 +23,28 @@ const initializeDraggable = (pageId) => {
     let width = 0;
     const dragThreshold = 5; // in pixels
 
-    document.querySelectorAll('.draggable').forEach(elem => {
-        elem.addEventListener('pointerdown', (e) => {
-            if (e.target.closest('.selectable-item')) return; // bail on interactive sub-elements
-            pressTimer = setTimeout(() => {
-                document.body.classList.add('noselect');
-                dragged = elem;
-                const rect = elem.getBoundingClientRect();
-                width = rect.width * .98; // non-scientific math accounting for the angled width difference
-                startX = e.clientX;
-                startY = e.clientY;
-                offsetX = e.clientX - rect.left;
-                offsetY = e.clientY - rect.top;
-                dragged.style.width = `${width}px`;
-                dragged.style.border = `2px dashed ${getVar('white-3')}`
-                dragged.style.maxHeight = '33vh';
-                dragged.style.overflow = 'hidden';
-                dragged.style.transform = 'rotate(1deg)';
-                dragged.style.transition = 'transform 0.2s ease';
-            }, LONG_PRESS_DELAY);
-        });
-    });
 
-    document.addEventListener('pointermove', (e) => {
+    const onStart = (e, elem) => {
+        pressTimer = setTimeout(() => {
+            
+            document.body.classList.add('noselect');
+            dragged = elem;
+            const rect = elem.getBoundingClientRect();
+            width = rect.width * .98; // non-scientific math accounting for the angled width difference
+            startX = e.clientX;
+            startY = e.clientY;
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            dragged.style.width = `${width}px`;
+            dragged.style.border = `2px dashed ${getVar('white-3')}`
+            dragged.style.maxHeight = '33vh';
+            dragged.style.overflow = 'hidden';
+            dragged.style.transform = 'rotate(1deg)';
+            dragged.style.transition = 'transform 0.2s ease';
+        }, LONG_PRESS_DELAY);
+    };
+
+    const onMove = (e) => {
         clearTimeout(pressTimer);
 
         if (!dragged) return;
@@ -87,10 +86,9 @@ const initializeDraggable = (pageId) => {
             const siblings = Array.from(dragged.parentElement.children).filter(c => c !== dragged && c !== ghost);
             updateGhostPosition(dragged, siblings);
         }
-        
-    });
+    }
 
-    document.addEventListener('pointerup', () => {
+    const onEnd = (e) => {
         clearTimeout(pressTimer);
 
         if (isDragging && dragged) {
@@ -142,7 +140,46 @@ const initializeDraggable = (pageId) => {
         dragged = null;
         isDragging = false;
         document.body.classList.remove('noselect');
+    }
+
+    document.querySelectorAll('.draggable-grip, .draggable-grip-wrapper').forEach(elem => {
+        elem.addEventListener('mousedown', (e) => {
+            if (e.target.closest('button'))
+                return; // bail on interactive sub-elements
+            
+            const draggable = e.target.closest('.draggable');
+            onStart(e, draggable);
+        });
+
+        elem.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 1) return;
+
+            if (e.touches[0].target.closest('button'))
+                return; // bail on interactive sub-elements
+            
+            e.preventDefault(); //Prevent scrolling
+
+            const draggable = e.target.closest('.draggable');
+            onStart(e.touches[0], draggable);
+        });
     });
+
+    document.addEventListener('touchmove', (e) => {
+        if (dragged) e.preventDefault(); //Prevent scrolling
+        onMove(e.touches[0]);
+    });
+
+    document.addEventListener('touchend', (e) => {
+        onEnd(e.touches[0]);
+    });
+
+    document.addEventListener('touchcancel', (e) => {
+        onEnd(e.touches[0]);
+    });
+
+    document.addEventListener('mousemove', onMove);
+
+    document.addEventListener('mouseup', onEnd);
 
     let ghost = document.createElement('div');
     ghost.className = 'ghost-slot';

@@ -276,12 +276,6 @@ footer {
     color: var(--white-1);
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 .back-btn,
 .export-btn {
     width: 40px;
