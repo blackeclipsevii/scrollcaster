@@ -12,9 +12,17 @@ const initializeDraggable = (pageId) => {
             if (elem) container.appendChild(elem);
         });
     }
+
+    const getVisibleOffset = () => {
+        const vc = document.getElementById('visible-content')
+        const style = getComputedStyle(vc);
+        return parseFloat(style.marginTop);
+    }
+
     const LONG_PRESS_DELAY = 500;
     const scrollSpeed = 10;      // pixels per frame
     const scrollThreshold = 50;  // distance from edge in px
+    const visibleOffset = getVisibleOffset();
     let pressTimer = null;
     let dragged = null;
     let isDragging = false;
@@ -65,22 +73,21 @@ const initializeDraggable = (pageId) => {
         const movedX = Math.abs(e.clientX - startX);
         const movedY = Math.abs(e.clientY - startY);
 
+        const parentRect = dragged.parentElement.getBoundingClientRect();
         // Only start dragging after threshold exceeded
         if (!isDragging && (movedX > dragThreshold || movedY > dragThreshold)) {
             isDragging = true;
-            const parentRect = dragged.parentElement.getBoundingClientRect();
             dragged.style.position = 'absolute';
             dragged.style.margin = '0px';
             dragged.style.left = `${startX - offsetX - parentRect.left}px`;
-            dragged.style.top = `${startY - offsetY - parentRect.top}px`;
+            //dragged.style.top = `${startY - offsetY - parentRect.top + visibleOffset}px`;
             dragged.style.zIndex = 1000;
             dragged.style.transform = 'rotate(3deg)';
             dragged.style.transition = 'transform 0.2s ease';
         }
-
+        
         if (isDragging) {
-            const parentRect = dragged.parentElement.getBoundingClientRect();
-            const newTop = e.clientY - offsetY - parentRect.top;
+            const newTop = e.clientY - offsetY - parentRect.top + visibleOffset;
             dragged.style.top = `${newTop}px`;
 
             const siblings = Array.from(dragged.parentElement.children).filter(c => c !== dragged && c !== ghost);
