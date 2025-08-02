@@ -24,7 +24,6 @@
     justify-content: start;
     text-align: center;
     align-items: center;
-    cursor: grab;
 }
 
 /* for when the grip needs to wrap more */
@@ -32,13 +31,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: grab;
 }
 
 .draggable-grip .grip-icon {
-  padding: 0px;
-  padding-left: .5em;
+  cursor: grab;
+  padding: .5em;
   margin: 0px;
   font-size: 1em;
   color: var(--white-3);
+}
+
+.draggable-grip .section-title {
+  margin-left: 0;
 }

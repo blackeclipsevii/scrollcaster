@@ -142,7 +142,7 @@ const initializeDraggable = (pageId) => {
         document.body.classList.remove('noselect');
     }
 
-    document.querySelectorAll('.draggable-grip, .draggable-grip-wrapper').forEach(elem => {
+    document.querySelectorAll('.grip-icon').forEach(elem => {
         elem.addEventListener('mousedown', (e) => {
             if (e.target.closest('button'))
                 return; // bail on interactive sub-elements
