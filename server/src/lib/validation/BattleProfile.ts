@@ -7,4 +7,5 @@ export default interface BattleProfile {
     regimentOptions: string;
     notes: string | null;
     baseSize: string;
+    replace: boolean | undefined;
 }

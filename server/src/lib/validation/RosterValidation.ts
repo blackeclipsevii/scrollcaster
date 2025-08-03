@@ -24,5 +24,6 @@ export const validateRoster = (roster: Roster, availableKeywords: string[]) => {
             armyErrs.push(errMsg);
         }
     });
+
     return armyErrs;
 }

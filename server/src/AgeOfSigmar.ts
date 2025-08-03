@@ -16,6 +16,7 @@ import BattleProfile from './lib/validation/BattleProfile.js';
 import { Force } from './Force.js';
 
 import { RegimentValidator } from './lib/validation/RegimentValidation.js';
+import { registerAllValidators } from './lib/validation/validators/registerValidators.js';
 
 // intermediate step
 interface MyConstraints {
@@ -61,7 +62,7 @@ export interface AosDatabase {
 
 export class BattleProfileCollection {
     _collection: {
-        [name:string]: {[name:string]:BattleProfile}
+        [name:string]: {[name:string]: Partial<BattleProfile>}
     };
     constructor() {
         this._collection = {};
@@ -78,12 +79,15 @@ export class BattleProfileCollection {
         }
         armyset[this._modName(profile.name)] = profile;
     }
-    get(army: string, name: string) {
+    getPartial(army: string, name: string): Partial < BattleProfile > | null {
         const lc = army.toLowerCase();
         const armyset = this._collection[lc];
         if (!armyset)
             return null;
-        return armyset[this._modName(name)];
+        return armyset[this._modName(name)] as BattleProfile;
+    }
+    get(army: string, name: string): BattleProfile | null {
+        return this.getPartial(army, name) as BattleProfile | null;
     }
     hasProfilesFor(army: string) {
         const lc = army.toLowerCase();
@@ -123,7 +127,14 @@ export default class AgeOfSigmar {
         this._parseKeywords();
         this._populateLibraries(path);
         this.battleProfiles = new BattleProfileCollection;
-        this._parseBattleProfiles();
+
+        const battleProfilesDir = './server/resources/battle profiles';
+        this._parseBattleProfiles(battleProfilesDir);
+
+        // armies of renown supplimental profiles
+        this._parseBattleProfiles(`${battleProfilesDir}/armies of renown`)
+        
+        registerAllValidators();
     }
 
     // combine army and aos keywords, all uppercase
@@ -347,11 +358,10 @@ export default class AgeOfSigmar {
         this.regimentsOfRenown = parsedForces;
     }
 
-    _parseBattleProfiles() {
+    _parseBattleProfiles(profileDir: string) {
         // relative to server.js
-        const profileDir = './server/resources/battle profiles';
         const profileFiles = fs.readdirSync(profileDir);
-        const armyCatNames = Object.getOwnPropertyNames(this._database.armies);
+        // const armyCatNames = Object.getOwnPropertyNames(this._database.armies);
         // populate the armies and seperate the libraries
         const aos = this;
         profileFiles.forEach(file => {

@@ -205,8 +205,18 @@ server.post('/validate', (req, res) => {
 
   const army = aos.getArmy(roster.army);
   const keywords = aos._getAvailableKeywords(army);
-  const errors = validateRoster(roster, keywords);
-  res.end(JSON.stringify(errors));
+  let errs = [];
+  let subErrs = validateRoster(roster, keywords);
+  if (subErrs && subErrs.length > 0) 
+    errs = errs.concat(subErrs);
+
+  if (army.validator) {
+    subErrs = army.validator.validate(army, roster);
+    if (subErrs && subErrs.length > 0) 
+      errs = errs.concat(subErrs);
+  }
+  
+  res.end(JSON.stringify(errs));
   res.status(200);
   return;
 })

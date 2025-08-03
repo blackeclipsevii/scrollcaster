@@ -7,6 +7,7 @@ import AgeOfSigmar from './AgeOfSigmar.js';
 import { BsCatalog, BsLibrary, BsSelectionEntry } from './lib/bs/BsCatalog.js';
 import { Force } from './Force.js';
 import { UnitType } from './types/UnitType.js';
+import { ArmyValidator, armyValidatorCollection } from './lib/validation/ArmyValidator.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -80,11 +81,20 @@ export default class Army {
     regimentsOfRenown: Force[];
     _tags: {[name:string]: string};
     isArmyOfRenown: boolean;
+    validator: ArmyValidator | null;
 
     constructor(ageOfSigmar: AgeOfSigmar, armyName: string) {
         // the name of the army
         this.id = '';
         this.name = armyName;
+
+        this.validator = null;
+        
+        let shortName = armyName;
+        if (shortName.includes(' - '))
+            shortName = shortName.split(' - ')[1];
+
+        this.validator = armyValidatorCollection.get(shortName);
 
         // upgrades available to the army
         this.upgrades = {
@@ -214,13 +224,13 @@ export default class Army {
             // this is the global library for the faction
             let unit = _libraryUnits[link['@targetId']];
             if (!unit) {
-              //  console.log (`unable to find unitid: ${link['@targetId']}`);
-              //  console.log(`name :${link['@name']}`);
                 return;
             }
 
             if (ageOfSigmar.battleProfiles) {
-                const baseArmyName = armyName.split(' - ')[0];
+                const armySplit = armyName.split(' - ');
+                const baseArmyName = armySplit[0];
+                const supplimentalArmyName = armySplit.length > 1 ? armySplit[1] : null;
                 if (!ageOfSigmar.battleProfiles.hasProfilesFor(baseArmyName)) {
                     throw `Missing battle profiles for ${baseArmyName}`;
                 }
@@ -229,6 +239,26 @@ export default class Army {
                     unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
                     if (!unit.battleProfile) {
                         console.log(`profile not found for ${unit.name}`);
+                        return;
+                    }
+
+                    if (supplimentalArmyName) {
+                        const aorProfile = ageOfSigmar.battleProfiles.getPartial(supplimentalArmyName, unit.name);
+                        if (aorProfile) {
+                            if (aorProfile.replace) {
+                                unit.battleProfile.notes = aorProfile.notes ? aorProfile.notes : null;
+                                unit.battleProfile.regimentOptions = aorProfile.regimentOptions ? aorProfile.regimentOptions : '';
+                            } else {
+                                const addPart = (unitStr: string | null, aorStr: string | null | undefined, joinStr: string) => {
+                                    if (aorStr)
+                                        return (unitStr && unitStr.length > 0) ? `${unitStr}${joinStr}${aorStr}` : aorStr;
+                                    return unitStr;
+                                }
+                                unit.battleProfile.notes = addPart(unit.battleProfile.notes, aorProfile.notes, '. ');
+                                unit.battleProfile.regimentOptions = addPart(unit.battleProfile.regimentOptions, aorProfile.regimentOptions, ', ') || '';
+                                console.log(`update profile for ${unit.name}`);
+                            }
+                        }
                     }
                 }
             }
