@@ -38,7 +38,6 @@ const upgradeTypeToStr = (unit) => {
     return 'Unknown';
 }
 
-// Standard method of making the name text
 const makeSelectableItemType = (typedObj, isUnit=true) => {
     const roleEle = document.createElement('span');
     roleEle.className = 'selectable-item-type ability-label';
@@ -52,7 +51,6 @@ const makeSelectableItemType = (typedObj, isUnit=true) => {
     return roleEle;
 }
 
-// Standard method of making the name text
 const makeSelectableItemName = (namedObj) => {
     let name = namedObj;
     if (typeof namedObj !== 'string')

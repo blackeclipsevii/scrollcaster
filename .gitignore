@@ -4,3 +4,4 @@ package-lock.json
 saveData.json
 main.zip
 dist/
+output/
