@@ -6,7 +6,7 @@ import { BsCategoryLink, BsCharacteristic, BsProfile, BsSelectionEntry, BsSelect
 import Upgrade from "./Upgrade.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
-import BattleProfile from "./BattleProfile.js";
+import BattleProfile from "./lib/validation/BattleProfile.js";
 
 export class Option {
     name: string;

@@ -5,6 +5,7 @@ import Army, { UpgradeLUT } from "./Army.js";
 import Unit from "./Unit.js";
 import BattleTacticCard from "./BattleTacticCard.js";
 import { Lore, LoreLUT } from "./Lores.js";
+import { Force } from "./Force.js";
 import Upgrade from "./Upgrade.js";
 
 export class LoreSlots {
@@ -22,6 +23,11 @@ export class LoreSlots {
         this.canHaveSpell = true;
         this.canHavePrayer = true;
     }
+}
+
+export interface Regiment {
+    leader: Unit | null,
+    units: Unit[]
 }
 
 export default class Roster {
@@ -45,11 +51,11 @@ export default class Roster {
 
     // army battle traits
     battleTraits: UpgradeLUT;
-    battleFormation: | null;
+    battleFormation: Upgrade | null;
     battleTacticCards: BattleTacticCard[];
 
-    regiments: (Unit[])[];
-    regimentOfRenown: Upgrade | null;
+    regiments: Regiment[];
+    regimentOfRenown: Force | null;
     auxiliaryUnits: Unit[];
     terrainFeature: Unit | null;
     lores: LoreSlots;    

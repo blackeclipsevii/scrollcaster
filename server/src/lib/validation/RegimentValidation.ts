@@ -1,6 +1,7 @@
-import Army from "./Army.js";
-import Unit from "./Unit.js";
-import { UnitType } from "./types/UnitType.js";
+import Army from "../../Army.js";
+import { Regiment } from "../../Roster.js";
+import Unit from "../../Unit.js";
+import { UnitType } from "../../types/UnitType.js";
 
 interface KeyOpt {
     keyword: string;
@@ -78,12 +79,10 @@ const meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], avail
 }
 
 export const RegimentValidator = {
-    validateRegiment: (army: Army, regiment: string[], availableKeywords: string[]) => {
-        const leader = army.units[regiment[0]];
-        if (!leader) {
-            console.log(`where are you ${regiment[0]}`)
-            return ['critical error'];
-        }
+    validateRegiment: (regiment: Regiment, availableKeywords: string[]) => {
+        const leader = regiment.leader;
+        if (!leader)
+            return `No leader`;
 
         const options = leader.battleProfile?.regimentOptions.split(',');
         if (!options)
@@ -197,16 +196,7 @@ export const RegimentValidator = {
 
         const errors: string[] = [];
 
-        regiment.forEach((unitId, idx) => {
-            if (idx === 0) // leader
-                return;
-
-            const armyUnit = army.units[unitId];
-            if (!armyUnit) {
-                errors.push(`Unit id could not be found to verify regiment: ${unitId}`);
-                return;
-            }
-
+        regiment.units.forEach((armyUnit) => {
             const message = slotUnit(armyUnit);
             if (message)
                 errors.push(message);

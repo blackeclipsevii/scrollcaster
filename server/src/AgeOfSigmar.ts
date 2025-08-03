@@ -12,10 +12,10 @@ import Upgrade from './Upgrade.js';
 import { UpgradeType } from './lib/Upgrade.js';
 import BsConstraint, { ConstraintType, getConstraints, BsModifierAttrObj } from './lib/bs/BsConstraint.js';
 import { BsCatalog, BsGameSystem, BsLibrary } from './lib/bs/BsCatalog.js';
-import BattleProfile from './BattleProfile.js';
+import BattleProfile from './lib/validation/BattleProfile.js';
 import { Force } from './Force.js';
 
-import { RegimentValidator } from './RegimentValidation.js';
+import { RegimentValidator } from './lib/validation/RegimentValidation.js';
 
 // intermediate step
 interface MyConstraints {
@@ -139,11 +139,6 @@ export default class AgeOfSigmar {
     getRegimentOptions(army: Army, leaderId: string) {
         const allKeywords = this._getAvailableKeywords(army);
         return RegimentValidator.getRegimentOptions(army, leaderId, allKeywords);
-    }
-
-    validateRegiment(army: Army, regiment: string[]) {
-        const allKeywords = this._getAvailableKeywords(army);
-        return RegimentValidator.validateRegiment(army, regiment, allKeywords);
     }
 
     getArmyAlliances() {

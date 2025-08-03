@@ -1,4 +1,6 @@
 import AgeOfSigmar from "../dist/AgeOfSigmar.js";
+import { RegimentValidator } from "../dist/lib/validation/RegimentValidation.js";
+import { deserializeRegiment } from "../dist/lib/RosterState.js";
 import path from 'path'
 
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
@@ -8,6 +10,14 @@ const getAos = () => {
     if (!_aos)
         _aos = new AgeOfSigmar(directoryPath);
     return _aos;
+}
+
+const validateSerializedRegiment = (sReg, army, keywords) => {
+    sReg.leader = {unit: sReg.leader};
+    for (let i = 0; i < sReg.units.length; ++i)
+        sReg.units[i] = {unit: sReg.units[i]};
+    const reg = deserializeRegiment(army, sReg);
+    return RegimentValidator.validateRegiment(reg, keywords);
 }
 
 test('initialize AgeOfSigmar', () => {
@@ -82,6 +92,7 @@ test('Morathi regiment options', () =>{
     // (required)
     const aos = getAos();
     const dok = aos.getArmy('Daughters of Khaine');
+    const keywords = aos._getAvailableKeywords(dok);
     expect(dok).toBeTruthy();
     const morathiId = "cb92-4063-ab41-97d5";
     const morathiUnit = dok.units[morathiId];
@@ -112,24 +123,25 @@ test('Morathi regiment options', () =>{
 
     
     // morathi requires the shadow queen
-    const invalidRegiment = [
-        morathiUnit.id
-    ];
+    const invalidRegiment ={ 
+        leader: morathiUnit.id,
+        units: []
+    };
 
-    let errorMsgs = aos.validateRegiment(dok, invalidRegiment);
+    let errorMsgs = validateSerializedRegiment(invalidRegiment, dok, keywords);
     expect(errorMsgs.length).toBe(1);
 
     // shadow queen cannot be a leader
-    invalidRegiment[0] = unitOptions[0].id;
-    errorMsgs = aos.validateRegiment(dok, invalidRegiment);
+    invalidRegiment.leader = unitOptions[0].id;
+    errorMsgs = validateSerializedRegiment(invalidRegiment, dok, keywords);
     expect(errorMsgs.length).toBe(1);
 
     // shadow queen good under morathi
-    const validRegiment = [
-        morathiUnit.id,
-        unitOptions[0].id
-    ]    
-    errorMsgs = aos.validateRegiment(dok, validRegiment);
+    const validRegiment = {
+        leader: morathiUnit.id,
+        units: [unitOptions[0].id]
+    };
+    errorMsgs = validateSerializedRegiment(validRegiment, dok, keywords);
     expect(errorMsgs.length).toBe(0);
 });
 
@@ -179,6 +191,7 @@ test('Skink Starpriest regiment options', () =>{
     const army = aos.getArmy('Seraphon');
     expect(army).toBeTruthy();
 
+    const keywords = aos._getAvailableKeywords(army);
     const leaderId = "abb5-c657-a20e-6e47";
     const leader = army.units[leaderId];
     expect(leader).toBeTruthy();
@@ -209,22 +222,26 @@ test('Skink Starpriest regiment options', () =>{
 
     
     // two monsters should fail
-    const invalidRegiment = [
-        leader.id,
-        unitOptions[0].id,
-        unitOptions[2].id
-    ];
+    const invalidRegiment = {
+        leader: leader.id,
+        units: [
+            unitOptions[0].id,
+            unitOptions[2].id
+        ]
+    };
 
-    let errorMsgs = aos.validateRegiment(army, invalidRegiment);
+    let errorMsgs = validateSerializedRegiment(invalidRegiment, army, keywords);
     expect(errorMsgs.length).toBe(1);
 
     // one monster pass
-    const validRegiment = [
-        leader.id,
-        unitOptions[0].id,
-        unitOptions[10].id
-    ]    
-    errorMsgs = aos.validateRegiment(army, validRegiment);
+    const validRegiment = {
+        leader: leader.id,
+        units: [
+            unitOptions[0].id,
+            unitOptions[10].id
+        ]
+    }
+    errorMsgs = validateSerializedRegiment(validRegiment, army, keywords);
     expect(errorMsgs.length).toBe(0);
 });
 
@@ -234,6 +251,7 @@ test('Terradon Chief regiment options', () =>{
     const army = aos.getArmy('Seraphon');
     expect(army).toBeTruthy();
 
+    const keywords = aos._getAvailableKeywords(army);
     const leaderId = "767f-699-a82d-ca70";
     const leader = army.units[leaderId];
     expect(leader).toBeTruthy();
@@ -264,6 +282,7 @@ test('Akhelian King regiment options', () =>{
     const army = aos.getArmy('Idoneth Deepkin');
     expect(army).toBeTruthy();
 
+    const keywords = aos._getAvailableKeywords(army);
     const leaderId = "1d8e-2553-5bf3-901b";
     const leader = army.units[leaderId];
     expect(leader).toBeTruthy();
@@ -291,29 +310,35 @@ test('Akhelian King regiment options', () =>{
     ]);
 
     // picking both of or is bad (max 1)
-    let badReg = [
-        leader.id,
-        unitOptions[0].id,
-        unitOptions[1].id
-    ];
-    let errorMsgs = aos.validateRegiment(army, badReg);
+    let badReg = {
+        leader: leader.id,
+        units: [
+            unitOptions[0].id,
+            unitOptions[1].id
+        ]
+    };
+    let errorMsgs = validateSerializedRegiment(badReg, army, keywords);
     expect(errorMsgs.length).toBe(1);
 
     // two of one is bad
-    badReg = [
-        leader.id,
-        unitOptions[0].id,
-        unitOptions[0].id
-    ];
-    errorMsgs = aos.validateRegiment(army, badReg);
+    badReg = {
+        leader: leader.id,
+        units: [
+            unitOptions[0].id,
+            unitOptions[0].id
+        ]
+    };
+    errorMsgs = validateSerializedRegiment(badReg, army, keywords);
     expect(errorMsgs.length).toBe(1);
 
-    const goodReg = [
-        leader.id,
-        unitOptions[0].id,
-        unitOptions[3].id
-    ];
-    errorMsgs = aos.validateRegiment(army, goodReg);
+    const goodReg = {
+        leader: leader.id,
+        units: [
+            unitOptions[0].id,
+            unitOptions[3].id
+        ]
+    };
+    errorMsgs = validateSerializedRegiment(goodReg, army, keywords);
     expect(errorMsgs.length).toBe(0);
 });
 
@@ -323,6 +348,7 @@ test('Scinari Enlightener regiment options', () =>{
     const army = aos.getArmy('Lumineth Realm-lords');
     expect(army).toBeTruthy();
 
+    const keywords = aos._getAvailableKeywords(army);
     const leaderId = "c36-bd13-c06d-5fe";
     const leader = army.units[leaderId];
     expect(leader).toBeTruthy();
@@ -341,22 +367,26 @@ test('Scinari Enlightener regiment options', () =>{
     ]);
 
     // two riverblads should fail
-    const invalidRegiment = [
-        leader.id,
-        unitOptions[0].id,
-        unitOptions[0].id
-    ];
+    const invalidRegiment = {
+        leader: leader.id,
+        units: [
+            unitOptions[0].id,
+            unitOptions[0].id
+        ]
+    };
 
-    let errorMsgs = aos.validateRegiment(army, invalidRegiment);
+    let errorMsgs = validateSerializedRegiment(invalidRegiment, army, keywords);
     expect(errorMsgs.length).toBe(1);
 
     // pass
-    const validRegiment = [
-        leader.id,
-        unitOptions[0].id,
-        unitOptions[1].id
-    ]    
-    errorMsgs = aos.validateRegiment(army, validRegiment);
+    const validRegiment = {
+        leader: leader.id,
+        units: [
+            unitOptions[0].id,
+            unitOptions[1].id
+        ]
+    };
+    errorMsgs = validateSerializedRegiment(validRegiment, army, keywords);
     expect(errorMsgs.length).toBe(0);
 });
 
