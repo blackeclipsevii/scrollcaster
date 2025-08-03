@@ -3,10 +3,13 @@ import url from 'url';
 import path from 'path'
 import fs from 'fs'
 import express from 'express'
+import  cors from 'cors'
 
 import AgeOfSigmar from './server/dist/AgeOfSigmar.js';
 import Roster from './server/dist/Roster.js';
 import Users from './server/dist/lib/Users.js'
+import { RosterState } from './server/dist/lib/RosterState.js'
+import { validateRoster } from './server/dist/lib/validation/RosterValidation.js'
 
 import installCatalog, { getCommitIdUsed } from './server/dist/lib/installCatalog.js'
 
@@ -53,13 +56,22 @@ function getAgeOfSigmar() {
   return ageOfSigmar;
 }
 
-server.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+// Matches http(s)://scrollcaster.dev, http(s)://www.scrollcaster.io, etc.
+const allowedOriginRegex = /^https?:\/\/(www\.)?scrollcaster\.(dev|io|app)$/;
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || origin.startsWith('http://127.0.0.1') || allowedOriginRegex.test(origin)) {
+      callback(null, true);
+    } else {
+      callback(`Not allowed by CORS: ${origin}`, false);
+    }
+  },
+  methods: ['GET', 'POST'],
+  credentials: false
+};
+server.use(cors(corsOptions));
 server.use(express.json());
+server.use(express.urlencoded({ extended: true }));
 
 server.get('/tactics', (req, res) => {
   const aos = getAgeOfSigmar();
@@ -175,35 +187,28 @@ server.get('/regimentsOfRenown', (req, res) =>{
   return;
 });
 
-server.get('/validate', (req, res) => {
+server.post('/validate', (req, res) => {
   const aos = getAgeOfSigmar();
-  const parsedUrl = url.parse(req.url, true);
-  
-  if (parsedUrl.query.leader && parsedUrl.query.army) {
-    const regiment = [decodeURI(parsedUrl.query.leader)];
-    for (let i = 0; i < 10; ++i) {
-      const arg = `unit${i}`;
-      if (!(parsedUrl.query[arg]))
-        break;
-      regiment.push(decodeURI(parsedUrl.query[arg]));
-    }
-    
-    const armyName = decodeURI(parsedUrl.query.army);
-    const army = aos.getArmy(armyName);
-    if (!army) {
-      res.status(404);
+  if (!req.body) {
+      console.log ('error: body is undefined');
+      res.status(400);
       res.end();
       return;
-    }
-
-    const errors = aos.validateRegiment(army, regiment);
-    res.end(JSON.stringify(errors));
-    res.status(200);
-    return;
   }
 
-  res.status(400);
-  res.end();
+  const roster = RosterState.deserialize(aos, req.body);
+  if (!roster) {
+      res.status(400);
+      res.end();
+      return;
+  }
+
+  const army = aos.getArmy(roster.army);
+  const keywords = aos._getAvailableKeywords(army);
+  const errors = validateRoster(roster, keywords);
+  res.end(JSON.stringify(errors));
+  res.status(200);
+  return;
 })
 
 server.get('/units', (req, res) => {
