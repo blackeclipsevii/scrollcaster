@@ -9,6 +9,7 @@
     "@types/express": "^5.0.3",
     "axios": "^1.10.0",
     "express": "^5.1.0",
+    "cors": "^2.8.5",
     "extract-zip": "^2.0.1",
     "fast-xml-parser": "^5.0.4",
     "typescript": "^5.8.3"
@@ -23,6 +24,7 @@
   },
   "scripts": {
     "build": "npx tsc -p ./server",
+    "server": "npm run build && node ./server.js",
     "lint": "npx eslint ./server",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },

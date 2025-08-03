@@ -41,11 +41,13 @@ const build = (outname, sourceList) => {
 // minify lib into one file
 (() => {
     const lib = [
+        "lib/endpoint.js",
         "lib/host.js",
         "lib/functions/uniqueIdentifier.js",
         "lib/RestAPI/roster.js",
         "lib/RestAPI/version.js",
         "lib/RestAPI/units.js",
+        "lib/functions/rosterState.js",
         "lib/functions/validateRoster.js",
         "lib/functions/exportRoster.js",
         "lib/widgets/warscrollHelpers.js",
@@ -63,7 +65,6 @@ const build = (outname, sourceList) => {
         "lib/widgets/header.js",
         "lib/widgets/footer.js",
         "lib/widgets/layout.js",
-        "lib/functions/rosterState.js",
         "lib/functions/copyToClipboard.js"
     ];
     build(`./${outDir}/sc-lib.js`, lib);

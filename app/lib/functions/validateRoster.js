@@ -6,23 +6,26 @@ const formatMessageText = (message) => {
                   .replace(/%/g, '</b>');
 }
 
-const validateRegiment = async (armyName, regiment) => {
-    let errors = ['bad request'];
-    const reg2Args = () => {
-        strArr = `leader=${regiment.leader.id}`
-        regiment.units.forEach((ele,idx) => {
-            strArr = `${strArr}&unit${idx}=${ele.id}`
-        });
-        return strArr;
-    }
-    const regArg = encodeURI(`${endpoint}/validate?${reg2Args()}&army=${armyName}`);
-    await fetch(regArg,{
-        method: "GET" // default, so we can ignore
+const validateRosterPOST = async (roster) => {
+    const regArg = encodeURI(`${endpoint}/validate`);
+    let errors = []
+    let result = await fetch(regArg, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: rosterState.serialize(roster)
     })
-    .then(response => response.ok ? response.json() : [])
-    .then(result => {
-        errors = result;
-    });
+    .then(response => {
+        if (response.status === 200) 
+            return response.json();
+        else
+            return ['Server failed to validate'];
+    })
+    .catch(error => {errors.concat(error)});
+    if (result)
+        errors = errors.concat(result);
     return errors;
 }
 
@@ -113,11 +116,6 @@ const validateRoster = async (roster) => {
         reg.units.forEach(unit => {
             checkUnit(unit);
         });
-
-        const vrErrors = await validateRegiment(roster.army, reg);
-        if (vrErrors.length > 0) {
-            errors.push(`${formatMessageText(vrErrors.join(', '))} for <b>${reg.leader.name}</b>'s regiment.`);
-        }
     };
 
     for (let i = 0; i < roster.auxiliaryUnits.length; ++i) {
@@ -162,6 +160,10 @@ const validateRoster = async (roster) => {
         let errorMsg = `A Battle Formation must be chosen.`;
         errors.push(errorMsg);
     }
+    
+    const serverErrors = await validateRosterPOST(roster);
+    if (serverErrors.length > 0)
+        errors = errors.concat(serverErrors);
 
     return errors;
 }
