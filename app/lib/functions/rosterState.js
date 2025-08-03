@@ -57,14 +57,14 @@ const rosterState = {
 
         roster.regiments.forEach((regiment)=> {
             // update this 8/7 to have dedicated leader
-            const regState = { units: [] };
+            const regState = { leader: null, units: [] };
             if (regiment.leader) {
-                regState.units.push(serializeUnit(regiment.leader));
+                regState.leader = serializeUnit(regiment.leader);
             }
             regiment.units.forEach(unit => {
                 regState.units.push(serializeUnit(unit));
             });
-            if (regState.units.length > 0)
+            if (regState.units.length > 0 || regState.leader)
                 state.regiments.push(regState);
         });
 
@@ -143,15 +143,17 @@ const rosterState = {
         state.regiments.forEach((regState) => {
             // update 8/7 to have leader
             const regiment = {
+                leader: null,
                 units: []
             };
+
+            if (regState.leader)
+                regiment.leader = deserializeUnit(regState.leader);
+
             regState.units.forEach((unitState, i) => {
                 const unit = deserializeUnit(unitState);
                 if (unit) {
-                    if (i === 0)
-                        regiment.leader = unit
-                    else 
-                        regiment.units.push(unit);
+                    regiment.units.push(unit);
                 }
             });
             if (regiment.leader || regiment.units.length > 0) {

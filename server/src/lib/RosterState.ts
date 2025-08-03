@@ -157,7 +157,7 @@ export const RosterState = {
 
         roster.regiments.forEach((regiment: Regiment)=> {
             const regState = serializeRegiment(regiment);
-            if (regState.units.length > 0)
+            if (regState.units.length > 0 || regState.leader)
                 state.regiments.push(regState);
         });
 
