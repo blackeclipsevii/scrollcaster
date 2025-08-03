@@ -8,6 +8,7 @@ import { BsCatalog, BsLibrary, BsSelectionEntry } from './lib/bs/BsCatalog.js';
 import { Force } from './Force.js';
 import { UnitType } from './types/UnitType.js';
 import { ArmyValidator, armyValidatorCollection } from './lib/validation/ArmyValidator.js';
+import BattleProfile from './lib/validation/BattleProfile.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -245,6 +246,8 @@ export default class Army {
                     if (supplimentalArmyName) {
                         const aorProfile = ageOfSigmar.battleProfiles.getPartial(supplimentalArmyName, unit.name);
                         if (aorProfile) {
+                            // make a copy before we edit it
+                            unit.battleProfile = JSON.parse(JSON.stringify(unit.battleProfile)) as BattleProfile;
                             if (aorProfile.replace) {
                                 unit.battleProfile.notes = aorProfile.notes ? aorProfile.notes : null;
                                 unit.battleProfile.regimentOptions = aorProfile.regimentOptions ? aorProfile.regimentOptions : '';
