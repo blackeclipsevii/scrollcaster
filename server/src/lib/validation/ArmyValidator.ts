@@ -11,7 +11,7 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
         if (!regiment.leader)
             return true;
 
-        if (regiment.leader.name === name) {
+        if (regiment.leader.name.includes(name)) {
             isIncluded = true;
             return !(regiment.leader.isGeneral);
         }

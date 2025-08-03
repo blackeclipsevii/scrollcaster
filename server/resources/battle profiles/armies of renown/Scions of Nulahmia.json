@@ -18,5 +18,10 @@
     "name": "Bloodseeker Palanquin",
     "regimentOptions": "Any <Vampire Lord>",
     "replace": false
+  },
+  {
+    "name": "Sekhar, Fang of Nulahmia (Scourge of Ghyran)",
+    "regimentOptions": "Any <Vampire Lord>",
+    "replace": false
   }
 ]

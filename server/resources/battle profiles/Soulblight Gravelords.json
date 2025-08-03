@@ -253,7 +253,7 @@
   },
   {
     "type": "Hero",
-    "name": "Scourge of Ghyran Sekhar, Fang of Nulahmia",
+    "name": "Sekhar, Fang of Nulahmia (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 220,
     "regimentOptions": "Any <Soulblight Gravelords>",
