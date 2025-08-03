@@ -18,7 +18,7 @@ const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 
 var ageOfSigmar = null;
 var version = {
-  major: 2,
+  major: 3,
   minor: 0,
   patch: 0
 };
