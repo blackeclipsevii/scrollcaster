@@ -1,0 +1,12 @@
+[
+  {
+    "type": "Hero",
+    "name": "Kragnos, the End of Empires",
+    "unitSize": 1,
+    "points": 580,
+    "regimentOptions": "0-1 <Mob Wrangler>, 0-1 <Swamp Beast>, Any <Kruleboyz>, 0-1 <Headstompa>, 0-1 <Tusk Wrangler>, Any <Ironjawz>",
+    "notes": null,
+    "baseSize": "130mm",
+    "replace": true
+  }
+]
