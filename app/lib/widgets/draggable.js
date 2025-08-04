@@ -7,7 +7,6 @@ const initializeDraggable = (pageId) => {
     let savedOrder = JSON.parse(localStorage.getItem(`draggableOrder`));
     if (savedOrder && savedOrder[pageId]) {
         savedOrder[pageId].forEach(id => {
-            console.log(id);
             const elem = container.querySelector(`[id="${id}"]`);
             if (elem) container.appendChild(elem);
         });

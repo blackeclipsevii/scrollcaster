@@ -1,8 +1,16 @@
 import Army from "../../Army.js";
 import Roster, { Regiment } from "../../Roster.js";
 
+import fs from 'fs'
+
 export interface ArmyValidator {
     validate(army: Army, roster: Roster): string[] | null;
+}
+
+// names can slightly differ between sources
+// try to standardize them
+export const processName = (name: string) => {
+    return name.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeIncluded: boolean) => {
@@ -11,7 +19,7 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
         if (!regiment.leader)
             return true;
 
-        if (regiment.leader.name.includes(name)) {
+        if (processName(regiment.leader.name).includes(processName(name))) {
             isIncluded = true;
             return !(regiment.leader.isGeneral);
         }
@@ -70,4 +78,100 @@ export class ArmyValidatorCollection {
     };
 }
 
+// just disallow ror
+export class NoRorValidator implements ArmyValidator {
+    validate(army: Army, roster: Roster): string[] | null {
+        let errors = noRegimentOfRenown(roster);
+        return errors && errors.length > 0 ? errors : null;
+    }
+};
+
+// For the army that only requires a specific general and no ror
+export class ForcedGeneralValidator {
+    generalName: string;
+    mustInclude: boolean;
+    constructor(generalName: string, mustInclude: boolean) {
+        this.generalName = generalName;
+        this.mustInclude = mustInclude;
+    }
+    validate(army: Army, roster: Roster): string[] | null {
+        let errors = mustBeYourGeneral(this.generalName, roster.regiments, this.mustInclude);
+        return errors && errors.length > 0 ? errors : null;
+    }
+};
+
+export class NoTerrainValidator {
+    validate(army: Army, roster: Roster): string[] | null {
+        let errors = noFactionTerrain(roster);
+        return errors && errors.length > 0 ? errors : null;
+    }
+}
+
+export class MultiStepValidator {
+    _validators: ArmyValidator[];
+    constructor (validators: ArmyValidator[]) {
+        this._validators = validators;
+    }
+    validate(army: Army, roster: Roster): string[] | null {
+        let errors: string[] = [];
+        for (let i = 0; i < this._validators.length; ++i) {
+            let e = this._validators[i].validate(army, roster);
+            if (e && e.length > 0)
+                errors = errors.concat(e);
+        }
+        return errors.length > 0 ? errors : null;
+    }
+}
+
+interface FactoryOptions {
+    [name:string]: unknown;
+}
+
+interface FactorySchema {
+    [name:string]: FactoryOptions;
+}
+
+export const GenericValidatorFactory = {
+    _validatorFactory(name: string, options: FactoryOptions) {
+        if (name.toUpperCase() === 'FORCEDGENERAL') {
+            const opts = options as {general: string, mustInclude:undefined|boolean};
+            const mustInclude = opts.mustInclude === undefined ? true : opts.mustInclude;
+            return new ForcedGeneralValidator(opts.general, mustInclude);
+        }
+        else if (name.toUpperCase() === 'NOTERRAIN') {
+            return new NoTerrainValidator;
+        }
+        return new NoRorValidator;
+    },
+    createValidator(schema: FactorySchema) {
+        const names = Object.getOwnPropertyNames(schema);
+        if (names.length === 0)
+            return this._validatorFactory('', {});
+
+        if (names.length === 1)
+            return this._validatorFactory(names[0], schema[names[0]]);
+
+        const validators: ArmyValidator[] = [];
+        names.forEach(name => {
+            const validatorStep = this._validatorFactory(name, schema[name]);
+            validators.push(validatorStep);
+        });
+        return new MultiStepValidator(validators);
+    }
+}
+
 export const armyValidatorCollection = new ArmyValidatorCollection;
+
+interface ValidatorJson {
+    [name: string]: FactorySchema;
+}
+
+export const registerJsonValidators = (path: string) => {
+    const json = fs.readFileSync(path);
+    const data = JSON.parse(json.toString()) as ValidatorJson;
+    const entries = Object.getOwnPropertyNames(data);
+    entries.forEach(aorName => {
+        const validator = GenericValidatorFactory.createValidator(data[aorName]);
+        armyValidatorCollection.add(aorName, validator);
+    });
+}

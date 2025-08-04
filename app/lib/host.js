@@ -34,6 +34,9 @@ function unitTotalPoints(unit) {
 const rosterTotalPoints = (roster) => {
   let total = 0;
   roster.regiments.forEach(reg => {
+    if (reg.leader) {
+      total += unitTotalPoints(reg.leader);
+    }
     reg.units.forEach(unit => {
       total += unitTotalPoints(unit);
     });

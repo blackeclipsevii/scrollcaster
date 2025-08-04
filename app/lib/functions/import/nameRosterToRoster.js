@@ -27,6 +27,7 @@ class NameRoster {
             manifestation: null
         };
         this.factionTerrain = null;
+        this.regimentOfRenown = null;
         this.regiments = [];
         this.auxUnits = [];
     }
@@ -46,7 +47,7 @@ const nameRosterToRoster = async (nameRoster) => {
         if (response.status === 200) 
             return response.json();
         else {
-            console.log(`Server failed to impot ${nameRoster.name}`);
+            console.log(`Server failed to import ${nameRoster.name}`);
             return null;
         }
     });

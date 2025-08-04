@@ -113,6 +113,7 @@ export interface RosterStateInterf {
     battleTacticCards: string[]
     auxUnits: UnitState[];
     lores: LoresState;
+    terrainFeature: string | null;
 }
 
 export const RosterState = {
@@ -129,7 +130,8 @@ export const RosterState = {
                 spell: null,
                 prayer: null,
                 manifestation: null
-            }
+            },
+            terrainFeature: null
         }
 
         if (roster.battleFormation)
@@ -154,6 +156,10 @@ export const RosterState = {
 
         if (roster.regimentOfRenown) {
             state.regimentOfRenown = roster.regimentOfRenown.id;
+        }
+
+        if (roster.terrainFeature) {
+            state.terrainFeature = roster.terrainFeature.id;
         }
 
         roster.regiments.forEach((regiment: Regiment)=> {
@@ -200,6 +206,10 @@ export const RosterState = {
         
         if (state.lores.manifestation)
             roster.lores.manifestation = army.upgrades.lores.spell[state.lores.manifestation];
+
+        if (state.terrainFeature) {
+            roster.terrainFeature = army.units[state.terrainFeature];
+        }
 
         state.regiments.forEach((regState: RegimentState) => {
             const regiment = deserializeRegiment(army, regState);

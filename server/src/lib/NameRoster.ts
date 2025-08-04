@@ -1,5 +1,6 @@
 import AgeOfSigmar from "../AgeOfSigmar.js";
 import { UpgradeLUT } from "../Army.js";
+import { LoreLUTInterf } from "../Lores.js";
 import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
 import Upgrade from "../Upgrade.js";
@@ -27,6 +28,7 @@ export interface NameRoster {
         [name: string]: string | null;
     };
     factionTerrain: string | null;
+    regimentOfRenown: string | null;
     regiments: (NameUnit[])[];
     auxUnits: NameUnit[];
 };
@@ -39,11 +41,19 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
     roster.name = nameRoster.name;
     roster.points = 2000;
 
+    const namesEqual = (a:string | null, b:string | null) => {
+        if (a === null || b === null)
+            return false;
+        const left = a.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
+        const right = b.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
+        return left === right;
+    }
+
     const units = Object.values(army.units);
     const findUnit = (name: string) => {
         let result: Unit | null = null;
         units.every(unit => {
-            if (unit.name === name) {
+            if (namesEqual(unit.name, name)) {
                 result = unit;
                 return false;
             }
@@ -52,16 +62,29 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
         return result;
     }
 
-    if (nameRoster.battleFormation) {
-        const formations = Object.values(army.upgrades.battleFormations);
-        roster.battleFormation = formations.filter(formation => {
-            return formation.name === nameRoster.battleFormation;
-        })[0];
+    const findUpgradeByName = (name: string | null, ugLUT: UpgradeLUT | LoreLUTInterf) => {
+        const upgrades = Object.values(ugLUT);
+        if (name === null)
+            return null;
+        let result = null;
+        upgrades.every(upgrade => {
+            if (namesEqual(upgrade.name, name)) {
+                result = upgrade;
+                return false;
+            }
+            return true;
+        });
+        return result;
     }
+
+    if (nameRoster.battleFormation) {
+        roster.battleFormation = findUpgradeByName(nameRoster.battleFormation, army.upgrades.battleFormations);
+    }
+
     if (nameRoster.battleTacticCards.length > 0) {
         nameRoster.battleTacticCards.forEach(tactic => {
             ageOfSigmar.battleTacticCards.every(aosBtc => {
-                if (aosBtc.name === tactic) {
+                if (namesEqual(aosBtc.name, tactic)) {
                     roster.battleTacticCards.push(aosBtc);
                     return false;
                 }
@@ -69,26 +92,31 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
             })
         });
     }
+
     if (roster.lores.canHaveSpell && nameRoster.lores.spell) {
-        const spells = Object.values(army.upgrades.lores.spell);
-        roster.lores.spell = spells.filter(spell => {
-            return spell.name === nameRoster.lores.spell;
-        })[0];
+        roster.lores.spell = findUpgradeByName(nameRoster.lores.spell, army.upgrades.lores.spell);
     }
+
     if (roster.lores.canHavePrayer && nameRoster.lores.prayer) {
-        const prayers = Object.values(army.upgrades.lores.prayer);
-        roster.lores.prayer = prayers.filter(prayer => {
-            return prayer.name === nameRoster.lores.prayer;
-        })[0];
+        roster.lores.prayer = findUpgradeByName(nameRoster.lores.prayer, army.upgrades.lores.prayer);
     }
+    
     if (roster.lores.canHaveManifestation && nameRoster.lores.manifestation) {
-        const manifestations = Object.values(army.upgrades.lores.manifestation);
-        roster.lores.manifestation = manifestations.filter(manifestation => {
-            return manifestation.name === nameRoster.lores.manifestation;
-        })[0];
+        roster.lores.manifestation = findUpgradeByName(nameRoster.lores.manifestation, army.upgrades.lores.manifestation);
     }
+
     if (nameRoster.factionTerrain) {
         roster.terrainFeature = findUnit(nameRoster.factionTerrain);
+    }
+
+    if (nameRoster.regimentOfRenown) {
+        army.regimentsOfRenown.every(force => {
+            if (namesEqual(nameRoster.regimentOfRenown, force.name)) {
+                roster.regimentOfRenown = force;
+                return false;
+            }
+            return true;
+        });
     }
 
     const nameUnitToUnit = (nameUnit: NameUnit) => {
@@ -122,7 +150,7 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
             clone.heroicTrait = findUpgrade(nameUnit.heroicTrait, army.upgrades.heroicTraits);
         }
         nameUnit.other.forEach(otherName => {
-            clone.optionSets.forEach(set => {
+            let keepLooking = clone.optionSets.every(set => {
                 const options = Object.values(set.options);
                 options.every(option => {
                     if (option.name === otherName) {
@@ -132,6 +160,33 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
                     return true;
                 });
             });
+
+            if (keepLooking) {
+                // check artifacts
+                const upgrade = findUpgrade(otherName, army.upgrades.artefacts);
+                if (upgrade) {
+                    clone.artefact = upgrade;
+                    keepLooking = false;
+                }
+            }
+
+            if (keepLooking) {
+                // check heroic
+                const upgrade = findUpgrade(otherName, army.upgrades.heroicTraits);
+                if (upgrade) {
+                    clone.heroicTrait = upgrade;
+                    keepLooking = false;
+                }
+            }
+            
+            if (keepLooking) {
+                // check heroic
+                const upgrade = findUpgrade(otherName, army.upgrades.monstrousTraits);
+                if (upgrade) {
+                    clone.monstrousTraits = upgrade;
+                    keepLooking = false;
+                }
+            }
         });
         return clone;
     }

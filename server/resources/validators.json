@@ -1,0 +1,74 @@
+{
+    "Draconith Skywing": {},
+    "Heroes of the First-Forged": {
+        "ForcedGeneral": {
+            "general": "Lord-Commander Bastian Carthalos",
+            "mustInclude": true
+        }
+    },
+    "Ruination Brotherhood": {
+        "ForcedGeneral": {
+            "general": "Iridan the Witness",
+            "mustInclude": true
+        }
+    },
+    "Barrow Legion": {},
+    "Knights of the Crimson Keep": {
+        "ForcedGeneral": {
+            "general": "Prince Vhordrai",
+            "mustInclude": false
+        },
+        "NoTerrain": {}
+    },
+    "Scions of Nulahmia": {
+        "ForcedGeneral": {
+            "general": "Sekhar, Fang of Nulahmia",
+            "mustInclude": true
+        }
+    },
+    "The Evergreen Hunt": {
+        "ForcedGeneral": {
+            "general": "Belthanos, First Thorn of Kurnoth",
+            "mustInclude": true
+        }
+    },
+    "Lofnir Drothkeepers": {
+        "NoTerrain": {}
+    },
+    "Grundstok Expeditionary Force": {},
+
+    "The Swords of Chaos": {},
+    "Tribes of the Snow Peaks": {},
+    "Great-grand Gnawhorde": {
+        "NoTerrain": {}
+    },
+    "Thanquol's Mutated Menagerie": {
+        "NoTerrain": {}
+    },
+    "Droggz's Gitmob": {
+        "ForcedGeneral": {
+            "general": "Droggz da Sunchompa",
+            "mustInclude": true
+        }
+    },
+    "Trugg's Troggherd": {
+        "ForcedGeneral": {
+            "general": "Trugg the Troggoth King",
+            "mustInclude": true
+        },
+        "NoTerrain": {}
+    },
+    "Krazogg's Grunta Stampede": {},
+    "Zoggrok's Ironmongerz": {
+        "ForcedGeneral": {
+            "general": "Zoggrok Anvilsmasha",
+            "mustInclude": true
+        }
+    },
+    "King Brodd's Stomp": {
+        "ForcedGeneral": {
+            "general": "King Brodd",
+            "mustInclude": true
+        }
+    }
+}

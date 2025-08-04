@@ -248,7 +248,7 @@ const rosterPage = {
 
                 <input value="2000" type="number" id="replacePoints" placeholder="Points" />
                 <input type="text" id="replaceName" placeholder="Name" value="${roster.name}"/>
-                <textarea id="replaceDesc" placeholder="Description">${roster.description}</textarea>
+                <textarea id="replaceDesc" placeholder="Description">${roster.description ? roster.description : ''}</textarea>
               `;
               modal.classList.add('roster-modal');
 
@@ -362,24 +362,31 @@ const rosterPage = {
 
               const section = document.createElement('textarea');
               section.innerHTML = '';
-              section.placeholder = 'Paste a list (currently only supports lists exported by scrollcaster).'
+              section.placeholder = 'Paste a list (supported formats: Official App, New Recruit, Scrollcaster).'
               section.style.height = '30em';
               section.style.width = '95%';
               section.style.fontSize = '14px';
+              
+              try {
+                const txt = await navigator.clipboard.readText();
+                if (ImportRoster.canImport(txt))
+                  section.value = ImportRoster.stripMatchingDelimiters(txt);
+              } catch (err) {
+              }
 
               const copyButton = document.createElement('button');
               copyButton.className = 'full-rectangle-button';
               copyButton.textContent = 'Import Roster';
               copyButton.onclick = async () => {
-                  try {
-                    const roster = await importRoster(section.value);
+                 // try {
+                    const roster = await ImportRoster.import(section.value);
                     if (roster) {
                       await putRoster(roster);
                       await viewRosters();
                     }
-                  } catch(e) {
-                    console.log(`Unable to import roster: ${e}`);
-                  }
+                 // } catch(e) {
+                 //   console.log(`Unable to import roster: ${e}`);
+                 // }
                   disableOverlay();
               };
 

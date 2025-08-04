@@ -9,6 +9,7 @@ const rosterState = {
         
         state.regiments = [];
         state.regimentOfRenown = null;
+        state.terrainFeature = null;
 
         const serializeUnit = (unit) => {
             const unitState = {};
@@ -55,6 +56,10 @@ const rosterState = {
             state.regimentOfRenown = roster.regimentOfRenown.id;
         }
 
+        if (roster.terrainFeature) {
+            state.terrainFeature = roster.terrainFeature.id;
+        }
+
         roster.regiments.forEach((regiment)=> {
             // update this 8/7 to have dedicated leader
             const regState = { leader: null, units: [] };
@@ -80,8 +85,16 @@ const rosterState = {
         
         const upgradePool = await fetchUpgrades(state.army);
         
-        if (state.battleFormation)
-            roster.battleFormation = upgradePool.battleFormations[state.battleFormation];
+        if (state.battleFormation) {
+            const values = Object.values(upgradePool.battleFormations);
+            values.every(value => {
+                if (value.id === state.battleFormation) {
+                    roster.battleFormation = value;
+                    return false;
+                }
+                return true;
+            });
+        }
 
         if (state.battleTacticCards) {
             const btcPool = await fetchTactics();
@@ -172,7 +185,17 @@ const rosterState = {
         
         if (state.regimentOfRenown) {
             const ror = await fetchRegimentsOfRenown(state.army);
-            roster.regimentOfRenown = ror[state.regimentOfRenown];
+            ror.every(reg => {
+                if (reg.id === state.regimentOfRenown) {
+                    roster.regimentOfRenown = reg;
+                    return false;
+                }
+                return true;
+            })
+        }
+
+        if (state.terrainFeature) {
+            roster.terrainFeature = unitPool[state.terrainFeature];
         }
 
         return roster;

@@ -1,5 +1,6 @@
 
 async function exportRoster(roster) {
+    const astrix = '•';
     let text = `${roster.name} (${totalPoints} points) - GHB 2025-26\n\n`
     text += `${roster.army}\n`;
     if (roster.battleFormation)
@@ -17,26 +18,26 @@ async function exportRoster(roster) {
     if (roster.battleTacticCards.length > 0) {
         text += '\nBattle Tactic Cards: \n'
         roster.battleTacticCards.forEach(card => {
-            text += `  * ${card.name}\n`;
+            text += `  ${astrix} ${card.name}\n`;
         });
     }
 
     if (roster.lores.manifestation) {
         text += '\nManifestation Lore: \n'
         if (roster.lores.manifestation.points && roster.lores.manifestation.points > 0)
-            text += `  * ${roster.lores.manifestation.name} (${roster.lores.manifestation.points} points)\n`;
+            text += `  ${astrix} ${roster.lores.manifestation.name} (${roster.lores.manifestation.points} points)\n`;
         else
-            text += `  * ${roster.lores.manifestation.name}\n`;
+            text += `  ${astrix} ${roster.lores.manifestation.name}\n`;
     }
 
     if (roster.lores.spell) {
         text += '\nSpell Lore: \n'
-        text += `  * ${roster.lores.spell.name}\n`;
+        text += `  ${astrix} ${roster.lores.spell.name}\n`;
     }
 
     if (roster.lores.prayer) {
         text += '\nPrayer Lore: \n'
-        text += `  * ${roster.lores.prayer.name}\n`;
+        text += `  ${astrix} ${roster.lores.prayer.name}\n`;
     }
 
     if (roster.regimentOfRenown) {
@@ -47,25 +48,25 @@ async function exportRoster(roster) {
     const unitToText = (unit, indent) => {
         text += `${indent}${unit.name} (${unitTotalPoints(unit)} points)\n`
         if (unit.isGeneral) {
-            text += `  ${indent}* GENERAL\n`;
+            text += `  ${indent}${astrix} General\n`;
         }
         if (unit.isReinforced) {
-            text += `  ${indent}* REINFORCED\n`;
+            text += `  ${indent}${astrix} Reinforced\n`;
         }
         if (unit.artefact) {
-            text += `  ${indent}* Artefact: ${unit.artefact.name}\n`;
+            text += `  ${indent}${astrix} ${unit.artefact.name}\n`;
         }
         if (unit.heroicTrait) {
-            text += `  ${indent}* Heroic Trait: ${unit.heroicTrait.name}\n`;
+            text += `  ${indent}${astrix} ${unit.heroicTrait.name}\n`;
         }
         if (unit.monstrousTrait) {
-            text += `  ${indent}* Monstrous Trait: ${unit.monstrousTrait.name}\n`;
+            text += `  ${indent}${astrix} ${unit.monstrousTrait.name}\n`;
         }
 
         if (unit.optionSets) {
             unit.optionSets.forEach(optionSet => {
                 if (optionSet.selection) {
-                    text += `  ${indent}* ${optionSet.selection.name}\n`;
+                    text += `  ${indent}${astrix} ${optionSet.selection.name}\n`;
                 }
             });
         }
@@ -114,7 +115,7 @@ async function exportRoster(roster) {
     
     if (roster.terrainFeature) {
         text += `\nFaction Terrain: \n`;
-        text += `  * ${roster.terrainFeature.name}`
+        text += `  ${astrix} ${roster.terrainFeature.name}`
         if (roster.terrainFeature.points > 0)
             text += ` (${roster.terrainFeature.points})`
     }
