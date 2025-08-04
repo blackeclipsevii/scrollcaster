@@ -6,7 +6,12 @@ async function exportRoster(roster) {
         text += `${roster.battleFormation.name}\n`;
     text += `Auxiliaries: ${roster.auxiliaryUnits.length}\n`;
 
-    const drops = (roster.regimentOfRenown ? 1 : 0) + roster.auxiliaryUnits.length + roster.regiments.length;
+    let drops = roster.auxiliaryUnits.length + (roster.regimentOfRenown ? 1 : 0);
+    // don't count empty regiments
+    roster.regiments.forEach(reg => {
+        if (reg.leader || reg.units.length > 0)
+            ++drops;
+    });
     text += `Drops: ${drops}\n`;
     
     if (roster.battleTacticCards.length > 0) {
@@ -105,6 +110,14 @@ async function exportRoster(roster) {
     roster.auxiliaryUnits.forEach(unit => {
         unitToText(unit, '  ');
     });
+
+    
+    if (roster.terrainFeature) {
+        text += `\nFaction Terrain: \n`;
+        text += `  * ${roster.terrainFeature.name}`
+        if (roster.terrainFeature.points > 0)
+            text += ` (${roster.terrainFeature.points})`
+    }
 
     text += '\n\n';
     text += 'Created with Scrollcaster\n'
