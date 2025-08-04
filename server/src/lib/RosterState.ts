@@ -23,7 +23,6 @@ export const serializeUnit = (unit: Unit) => {
         monstrousTrait: null,
         options: {}
     };
-    const enhancements = ['artefact', 'heroicTrait', 'monstrousTraits'];
     unitState.artefact = unit.artefact ? unit.artefact.id : null;
     unitState.heroicTrait = unit.heroicTrait ? unit.heroicTrait.id : null;
     unitState.monstrousTrait = unit.monstrousTraits ? unit.monstrousTraits.id : null;
@@ -51,10 +50,12 @@ export const serializeRegiment = (regiment: Regiment) => {
 }
 
 export const deserializeUnit = (army: Army, state: UnitState) => {
-    const unit: Unit | null = army.units[state.unit];
-    if (!unit)
+    const armyUnit: Unit | null = army.units[state.unit];
+    if (!armyUnit)
         return;
     
+    // we're modifying the unit, clone it
+    const unit = JSON.parse(JSON.stringify(armyUnit)) as Unit;
     unit.isGeneral = state.isGeneral ? true : false;
     unit.isReinforced = state.isReinforced ? true : false;
     unit.artefact = state.artefact ? army.upgrades.artefacts[state.artefact] : null;

@@ -282,7 +282,6 @@ const rosterPage = {
           await putRoster(clone);
           displayRoster(clone);
         },
-
         Delete: async (e) => {
             const toggle = overlayToggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
@@ -354,6 +353,38 @@ const rosterPage = {
 
               modal.appendChild(section);
               modal.appendChild(button);
+          });
+          toggle();
+        },
+        'Import Roster': async (e) => {
+            const toggle  = overlayToggleFactory('block', async () =>{
+              const modal = document.querySelector(".modal");
+
+              const section = document.createElement('textarea');
+              section.innerHTML = '';
+              section.placeholder = 'Paste a list (currently only supports lists exported by scrollcaster).'
+              section.style.height = '30em';
+              section.style.width = '95%';
+              section.style.fontSize = '14px';
+
+              const copyButton = document.createElement('button');
+              copyButton.className = 'full-rectangle-button';
+              copyButton.textContent = 'Import Roster';
+              copyButton.onclick = async () => {
+                  try {
+                    const roster = await importRoster(section.value);
+                    if (roster) {
+                      await putRoster(roster);
+                      await viewRosters();
+                    }
+                  } catch(e) {
+                    console.log(`Unable to import roster: ${e}`);
+                  }
+                  disableOverlay();
+              };
+
+              modal.appendChild(section);
+              modal.appendChild(copyButton);
           });
           toggle();
         },

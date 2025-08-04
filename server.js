@@ -10,6 +10,7 @@ import Roster from './server/dist/Roster.js';
 import Users from './server/dist/lib/Users.js'
 import { RosterState } from './server/dist/lib/RosterState.js'
 import { validateRoster } from './server/dist/lib/validation/RosterValidation.js'
+import { nameRosterToRoster } from './server/dist/lib/NameRoster.js'
 
 import installCatalog, { getCommitIdUsed } from './server/dist/lib/installCatalog.js'
 
@@ -22,7 +23,7 @@ const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 var ageOfSigmar = null;
 var version = {
   major: 3,
-  minor: 0,
+  minor: 1,
   patch: 0
 };
 
@@ -187,8 +188,7 @@ server.get('/regimentsOfRenown', (req, res) =>{
   return;
 });
 
-server.post('/validate', (req, res) => {
-  const aos = getAgeOfSigmar();
+server.post('/import', (req, res) => {
   if (!req.body) {
       console.log ('error: body is undefined');
       res.status(400);
@@ -196,6 +196,29 @@ server.post('/validate', (req, res) => {
       return;
   }
 
+  const aos = getAgeOfSigmar();
+  const roster = nameRosterToRoster(aos, req.body);
+  if (!roster) {
+    res.status(400);
+    res.end();
+    return;
+  }
+
+  const state = RosterState.serialize(roster);
+  res.end(JSON.stringify(state));
+  res.status(200);
+  return;
+});
+
+server.post('/validate', (req, res) => {
+  if (!req.body) {
+      console.log ('error: body is undefined');
+      res.status(400);
+      res.end();
+      return;
+  }
+
+  const aos = getAgeOfSigmar();
   const roster = RosterState.deserialize(aos, req.body);
   if (!roster) {
       res.status(400);

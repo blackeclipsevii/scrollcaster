@@ -11,7 +11,7 @@ const version = (()=>{
     _server: null,
     _bsdata: null,
     _profiles: null,
-    _client: '0.4.6beta',
+    _client: '0.5.0beta',
     async getClientVersion() {
         return this._client;
     },
@@ -43,12 +43,16 @@ const version = (()=>{
         return this._profiles;
     },
     async stampVersion(roster) {
+        if (!roster.meta)
+            roster.meta = {};
         roster.meta.clientVersion = await this.getClientVersion();
         roster.meta.bsdataVersion = await this.getBsDataVersion();
         roster.meta.serverVersion = await this.getServerVersion();
         roster.meta.profileVersion = await this.getBattleProfileVersion();
     },
     async isOutdated(roster) {
+        if (!roster.meta)
+            return true;
         if (roster.meta.serverVersion !== await this.getServerVersion())
             return true;
         if (roster.meta.profileVersion !== await this.getBattleProfileVersion())

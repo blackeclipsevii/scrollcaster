@@ -77,18 +77,6 @@ const rosterState = {
         roster.id = id ? id : generateId();
         roster.name = state.name;
         roster.army = state.army;
-
-        const fetchRegimentsOfRenown = async (armyName) => {
-            const url = `${endpoint}/regimentsOfRenown?army=${armyName}`;
-            return await fetchWithLoadingDisplay(encodeURI(url));
-        };
-        const fetchUpgrades = async (armyName) => {
-            return await fetchWithLoadingDisplay(encodeURI(`${endpoint}/upgrades?army=${armyName}`));
-        };
-
-        const fetchTactics = async () => {
-            return await fetchWithLoadingDisplay(encodeURI(`${endpoint}/tactics`));
-        };
         
         const upgradePool = await fetchUpgrades(state.army);
         
@@ -97,10 +85,10 @@ const rosterState = {
 
         if (state.battleTacticCards) {
             const btcPool = await fetchTactics();
-            state.battleTacticCards.forEach(tacticId => {
-                const btc = btcPool[tacticId];
-                if (btc)
-                    roster.battleTacticCards.push(btc);
+            btcPool.forEach(tactic => {
+                if (state.battleTacticCards.includes(tactic.id)) {
+                    roster.battleTacticCards.push(tactic);
+                }
             });
         }
 
@@ -108,23 +96,37 @@ const rosterState = {
         
         const lores = ['spell', 'prayer', 'manifestation'];
         lores.forEach(lore => {
-            if (state.lores[lore]) {
-                roster.lores[lore] = upgradePool.lores[lore][state.lores[lore]];
-            }
+            const values = Object.values(upgradePool.lores[lore]);
+            values.every(value => {
+                if (value.id === state.lores[lore]) {
+                    roster.lores[lore] = value;
+                    return false;
+                }
+                return true;
+            });
         })
         
         const deserializeUnit = (state) => {
-            const unit = unitPool[state.unit];
-            if (!unit)
+            const poolUnit = unitPool[state.unit];
+            if (!poolUnit)
                 return;
             
+            // copy the unit so we can modify it
+            const unit = JSON.parse(JSON.stringify(poolUnit));
             unit.isGeneral = state.isGeneral;
             unit.isReinforced = state.isReinforced;
             const enhancements = ['artefact', 'heroicTrait', 'monstrousTrait'];
             enhancements.forEach(enhancement => {
                 if (state[enhancement]) {
                     const pool = upgradePool[`${enhancement}s`];
-                    unit[enhancement] = pool[state[enhancement]];
+                    const values = Object.values(pool);
+                    values.every(value => {
+                        if (value.id === state[enhancement]) {
+                            unit[enhancement] = value;
+                            return false;
+                        }
+                        return true;
+                    })
                 }
             });
 
