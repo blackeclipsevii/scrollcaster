@@ -28,19 +28,21 @@ class DaKingsGitzValidator extends ForcedGeneralValidator {
             if (unit.keywords.includes(troggoth)) {
                 if (unit.keywords.includes(hero)) {
                     if (triggerHeroErr) {
-                        errors.push(`Only non-${hero} ${troggoth} can be added.`);
+                        errors.push(`Only non-<${hero}> <${troggoth}> can be added.`);
                         triggerHeroErr = false;
                     }
                 } else {
                     ++ nTrog;
                     if (nTrog > 2 && triggerTrogError) {
-                        errors.push(`Only 0-2 non-${hero} ${troggoth} units can be added.`);
+                        errors.push(`Only 0-2 non-<${hero}> <${troggoth}> units can be added.`);
                     }
                 }
             }
         }
 
         roster.regiments.every(reg => {
+            if (reg.leader)
+                testUnit(reg.leader);
             reg.units.forEach(unit => {
                 testUnit(unit);
             });

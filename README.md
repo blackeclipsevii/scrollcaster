@@ -1,2 +1,65 @@
-An Age of Sigmar 4 army builder and catalog built on BsData
-https://github.com/BSData/age-of-sigmar-4th
+# Scrollcaster
+
+A streamlined, mobile-first army builder for Age of Sigmar 4, designed to help players create battle-ready lists with speed and ease.
+
+**Features:**
+- Quick, intuitive, and easy to navigate interface
+- Up-to-date rules using the lastest BsData: https://github.com/BSData/age-of-sigmar-4th
+- Easily import army lists from other popular list-builders and websites
+- Ad-free
+
+## Using Scrollcaster
+
+**Browser:** https://scrollcaster.app
+
+**Android App:** https://play.google.com/store/apps/details?id=com.scrollcaster
+
+## Contribution
+
+**Android App (Github):** https://github.com/blackeclipsevii/scrollcaster-android
+
+### Client
+
+User interface with minor logical elements.
+
+Node.js for the build system.
+
+#### Building
+
+The app can be run out of the box against a local server for development.
+There is a nodejs build system is used for release.
+
+```
+// navigate to ./app
+cd app
+
+// install the dependencies
+npm install
+
+// build the release app
+npm run build
+```
+
+#### Development UI
+
+The current desktop app (desktop-ui) is just a tauri example resized to the dimentions of a phone.
+It will automatically refresh when the content of the app changes, and doesn't cache as heavily as a standard browser.
+
+*This is not a released product.*
+
+
+### Server (Node.js)
+
+Interfaces with BSData and performs more complex validation.
+
+#### Building
+
+The server uses typescript and must be built prior to running.
+
+```
+// install the dependencies
+npm install
+
+// build and run the server
+npm run server
+```

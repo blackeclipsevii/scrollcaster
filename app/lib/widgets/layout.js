@@ -39,6 +39,14 @@ const swapLayout = () => {
     const oldView = document.getElementById('visible-content');
     const newView = document.getElementById('loading-content');
     newView.className = 'main';
+    const inset = new InsetEdges;
+    if (inset.top) {
+        const top = document.querySelector('header').offsetHeight + 7;
+        newView.style.marginTop = `${top}px`;
+    } if (inset.bottom) {
+        const bottom = document.querySelector('footer').offsetHeight + 7;
+        newView.style.marginBottom = `${bottom}px`;
+    }
     newView.style.display = '';
     oldView.style.display = 'none';
     oldView.className = '';

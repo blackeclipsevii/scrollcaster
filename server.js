@@ -7,7 +7,6 @@ import  cors from 'cors'
 
 import AgeOfSigmar from './server/dist/AgeOfSigmar.js';
 import Roster from './server/dist/Roster.js';
-import Users from './server/dist/lib/Users.js'
 import { RosterState } from './server/dist/lib/RosterState.js'
 import { validateRoster } from './server/dist/lib/validation/RosterValidation.js'
 import { nameRosterToRoster } from './server/dist/lib/NameRoster.js'
@@ -26,8 +25,6 @@ var version = {
   minor: 2,
   patch: 0
 };
-
-const users = new Users;
 
 /*
 var rosters = {};
@@ -133,7 +130,6 @@ server.get('/version', (req, res) => {
       return
     }
   } else {
-    users.logUser(req);
     console.log(`Server Version: ${JSON.stringify(version)}`);
     res.end(JSON.stringify(version));
   }
@@ -228,17 +224,7 @@ server.post('/validate', (req, res) => {
 
   const army = aos.getArmy(roster.army);
   const keywords = aos._getAvailableKeywords(army);
-  let errs = [];
-  let subErrs = validateRoster(roster, keywords);
-  if (subErrs && subErrs.length > 0) 
-    errs = errs.concat(subErrs);
-
-  if (army.validator) {
-    subErrs = army.validator.validate(army, roster);
-    if (subErrs && subErrs.length > 0) 
-      errs = errs.concat(subErrs);
-  }
-  
+  let errs = validateRoster(army, roster, keywords);
   res.end(JSON.stringify(errs));
   res.status(200);
   return;

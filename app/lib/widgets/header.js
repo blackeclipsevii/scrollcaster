@@ -84,6 +84,15 @@ function initializeHeader(options) {
         <button class="export-btn" onclick="exportListAndDisplay()">⤴</button>
         `;
     }
+    
+    const insetEdges = new InsetEdges;
+    if (insetEdges.top) {
+        header.style.paddingTop = `${insetEdges.top}px`;
+        const left = header.querySelector('.header-left');
+        const right = header.querySelector('.header-right');
+        left.style.marginTop = `${insetEdges.top}px`;
+        right.style.marginTop = `${insetEdges.top}px`;
+    }
 }
 
 function setHeaderTitle(name) {

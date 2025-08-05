@@ -30,9 +30,9 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     if (!ability.timing)
         ability.timing = 'Passive';
 
-    let invertPng = false;
+    let invertPng = true;
     let headerFontColor = getVar('header-font-color');
-    let color = getVar('section-font-color');
+    let color = getVar('gray-ability');
     let icon = '../../resources/abSpecial.png';
     let cssColor = 'gray';
     if (ability.metadata && ability.metadata.color) {
@@ -47,11 +47,11 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     if (theColor && theColor.length > 0)
         headerFontColor = theColor;
 
-    invertPng = getVar(`${cssColor}-invert-png`) ? true : false;
+    invertPng = getVar(`${cssColor}-invert-png`) ? false : true;
 
     if (ability.metadata && ability.metadata.type) {
         let type = ability.metadata.type;
-        icon = `../../resources/ab${type}.png`
+        icon = `../../resources/${getVar(`ab-${type.toLowerCase()}`)}`
     }
 
     div.style.borderRadius = radius;

@@ -28,7 +28,7 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
     });
 
     if (mustBeIncluded && !isIncluded) {
-        return [`${name} must be included.`];
+        return [`<${name}> must be included.`];
     }
 
     if (!isGeneral) {
@@ -36,7 +36,7 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
         if (!isIncluded) {
             if (mustBeIncluded) {
                 // required to include but isnt
-                return [`${name} must be included and must be your general.`]
+                return [`<${name}> must be included and must be your general.`]
             } else {
                 // not included and doesn't have to be
                 return null;
@@ -44,7 +44,7 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
         }
 
         // is included but isn't the general
-        return [`${name} must be your general.`];
+        return [`<${name}> must be your general.`];
     }
 
     // is the general great job
@@ -53,14 +53,14 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
 
 export const noRegimentOfRenown = (roster: Roster) => {
     if (roster.regimentOfRenown) {
-        return ['You cannot include a regiment of renown.'];
+        return ['cannot include a regiment of renown.'];
     }
     return null;
 }
 
 export const noFactionTerrain = (roster: Roster) => {
     if (roster.terrainFeature) {
-        return ['You cannot include faction terrain.'];
+        return ['cannot include faction terrain.'];
     }
     return null;
 }

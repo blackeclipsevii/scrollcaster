@@ -31,11 +31,12 @@ const validateRosterPOST = async (roster) => {
 
 const validateRoster = async (roster) => {
     let errors = [];
+
     if (Number(totalPoints) > roster.points) {
         let errorMsg = `Total allowed points exceeded: ${totalPoints} / ${roster.points}`;
         errors.push(errorMsg);
     }
-
+    
     const regCount = (roster.regimentOfRenown ? 1 : 0) + roster.regiments.length; 
     if (regCount > 5) {
         let errorMsg = `Too many regiments exist: ${regCount} (max: 5)`;
@@ -124,7 +125,7 @@ const validateRoster = async (roster) => {
             validateUnique(unit);
         } 
     }
-
+    
     if (numGenerals === 0) {
         let errorMsg = `A General must be selected`;
         errors.push(errorMsg);
@@ -152,7 +153,7 @@ const validateRoster = async (roster) => {
     }
 
     if (roster.battleTacticCards.length !== 2) {
-        let errorMsg = `2 Battle Tactic Cards must be chosen.`;
+        let errorMsg = `Two Battle Tactic Cards must be chosen.`;
         errors.push(errorMsg);
     }
 

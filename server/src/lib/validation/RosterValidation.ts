@@ -1,3 +1,4 @@
+import Army from "../../Army.js";
 import Roster, { Regiment } from "../../Roster.js"
 import { RegimentValidator } from "./RegimentValidation.js";
 
@@ -15,7 +16,16 @@ const regimentErrorMessage = (regiment: Regiment, errors: string | string[]) => 
     return `${formatMessageText(origText)} for <b>${regiment.leader.name}</b>'s regiment.`;
 }
 
-export const validateRoster = (roster: Roster, availableKeywords: string[]) => {
+const armyErrorMessage = (armyName: string, errors: string | string[]) => {
+    const origText = typeof errors === 'string' ? errors : (errors as string[]).join(', ');
+    let name = armyName;
+    if (name.includes(' - ')) {
+        name = name.split(' - ')[1];
+    }
+    return `<b>${name}</b>: ${formatMessageText(origText)}`;
+}
+
+export const validateRoster = (army: Army, roster: Roster, availableKeywords: string[]) => {
     let armyErrs: string[]= [];
     roster.regiments.forEach(reg => {
         const regErrs = RegimentValidator.validateRegiment(reg, availableKeywords);
@@ -24,6 +34,14 @@ export const validateRoster = (roster: Roster, availableKeywords: string[]) => {
             armyErrs.push(errMsg);
         }
     });
+    
+    if (army.validator) {
+        let subErrs = army.validator.validate(army, roster);
+        if (subErrs && subErrs.length > 0) {
+            const errMsg = armyErrorMessage(army.name, subErrs);
+            armyErrs = armyErrs.concat(errMsg);
+        }
+    }
 
     return armyErrs;
 }

@@ -43,6 +43,7 @@ class ImportNewRecruitRoster extends ImportOfficialRoster {
                 nameRoster.factionTerrain = lines[i].split(' (')[0].trim();
             }
         }
+        return nameRoster;
     }
 }
 

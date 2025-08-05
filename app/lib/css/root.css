@@ -35,6 +35,15 @@
     --white-1: #ecf2f8;
     --white-2: #c6cdd5;
     --white-3: #89929b;
+
+    --ab-offensive: flaticon/001-sword.png;
+    --ab-rallying: flaticon/002-flag.png;
+    --ab-control: flaticon/003-circle.png;
+    --ab-movement: flaticon/004-cursor.png;
+    --ab-special: flaticon/005-star.png;
+    --ab-shooting: flaticon/006-archery.png;
+    --ab-defensive: flaticon/007-shield.png;
+    --ab-damage: flaticon/008-skull.png;
     
     --background-color: #000;
     --header-color: var(--black-3);
@@ -73,7 +82,7 @@
     --green-ability: #2A7E10;
     --black-ability: #000000;
     --gray-ability-header-font-color: var(--black-1);
-    --gray-invert-png: true;
+    --gray-invert-png: false;
     */
     --yellow-ability: #EDD171;
     --gray-ability: #737A82;
@@ -84,23 +93,27 @@
     --red-ability: #E06D65;
     --green-ability: #6EC97B;
     --yellow-ability-header-font-color: var(--black-1);
-    --yellow-invert-png: true;
+    --yellow-invert-png: false;
     --green-ability-header-font-color: var(--black-1);
-    --green-invert-png: true;
+    --green-invert-png: false;
     --blue-ability-header-font-color: var(--black-1);
-    --blue-invert-png: true;
+    --blue-invert-png: false;
     --red-ability-header-font-color: var(--black-1);
-    --red-invert-png: true;
+    --red-invert-png: false;
     --orange-ability-header-font-color: var(--black-1);
-    --orange-invert-png: true;
+    --orange-invert-png: false;
     --purple-ability-header-font-color: var(--black-1);
-    --purple-invert-png: true;
+    --purple-invert-png: false;
 }
 
 .invert-img {
   filter: invert(1);
 }
 
+.navigation-img {
+    height: 20px;
+    width: 20px;
+}
 
 .points-display {
     font-size: 14px;
@@ -509,6 +522,12 @@ h3.abilitytiming {
   display: inline-block;
 }
 
+.ability-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: .5em;
+}
+
 h4.abilityname {
   padding: 0px;
   margin: 0px;
@@ -541,4 +560,9 @@ h4.abilityname {
     content: "♥"; /* filled heart */
     font-size: 2em;
     transform: scale(1.1);
+  }
+
+  .attribution,
+  .license {
+    font-size: 12px;
   }

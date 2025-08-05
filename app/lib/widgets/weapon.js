@@ -76,11 +76,12 @@ const _displayWeapons = (qualifier, weaponList) => {
     title.textContent = qualifier === 'ranged' ? `Ranged Weapons` : `Melee Weapons`;
 
     const icon = document.createElement('img');
-    icon.style.paddingRight = '.5em';
+    icon.classList.add('invert-img');
+    icon.classList.add('ability-icon');
     if (qualifier === 'ranged')
-        icon.src = '../../resources/abShooting.png';
+        icon.src = `../../resources/${getVar('ab-shooting')}`;
     else
-        icon.src = '../../resources/abOffensive.png';
+        icon.src = `../../resources/${getVar('ab-offensive')}`;
     grip.insertBefore(icon, title);
 
     let headers;

@@ -52,9 +52,9 @@ class BigWaaaghValidator implements ArmyValidator {
                 reg.units.forEach(unit => {
                     if(!unit.keywords.includes(keyword)) {
                         if (errs.length === 0 && reg.leader?.name.includes('Kragnos')) {
-                            errs.push(`Kragnos can only include units with either the ${ironjawz} or ${kruelboyz} faction keyword, but not both.`);
+                            errs.push(`Kragnos can only include units with either the <${ironjawz}> or <${kruelboyz}> faction keyword, but not both.`);
                         }
-                        const err = `${unit.name} does not have the ${keyword} faction keyword required by ${reg.leader?.name}'s regiment.`;
+                        const err = `<${unit.name}> does not have the <${keyword}> faction keyword required by <${reg.leader?.name}>'s regiment.`;
                         errs.push(err);
                     }
                 });
@@ -77,7 +77,7 @@ class BigWaaaghValidator implements ArmyValidator {
         }
 
         if (nKruelboyz !== nIronjawz) {
-            errors.push(`The number of ${ironjawz} (${nIronjawz}) and ${kruelboyz} (${nKruelboyz}) regiments must be equal.`);
+            errors.push(`The number of <${ironjawz}> (<${nIronjawz}>) and <${kruelboyz}> (<${nKruelboyz}>) regiments must be equal.`);
         }
         
         return errors.length > 0 ? errors : null;

@@ -3,11 +3,11 @@ function initializeFooter(root) {
     const footer = document.createElement('footer');
     footer.innerHTML = `
       <div id='footer-left' class='footer-button footer-left'>
-        <img src='${root}/resources/abSpecial.png'></img>
+        <img class='navigation-img invert-img' src='${root}/resources/${getVar('ab-special')}'></img>
         <div id='catalog-button'>Catalog</div>
       </div>
       <div id='footer-right' class='footer-button footer-right'>
-        <img src='${root}/resources/abOffensive.png'></img>
+        <img class='navigation-img invert-img' src='${root}/resources/${getVar('ab-offensive')}'></img>
         <div id='army-button'>Rosters</div>
       </div>
     `;
@@ -41,4 +41,11 @@ function initializeFooter(root) {
           dynamicGoTo(new RosterSettings);
       }
     };
+
+    const inset = new InsetEdges;
+    if (inset.bottom) {
+        footer.style.paddingBottom = `${inset.bottom}px`;
+        left.style.marginBottom = `${inset.bottom}px`;
+        right.style.marginBottom = `${inset.bottom}px`;
+    }
 }

@@ -66,11 +66,11 @@ class MurkvastMenagerieValidator extends ForcedGeneralValidator {
         });
 
         if (nShamanAndPotGrot > nKruleboyzHeroMonsters) {
-            errors.push(`The number of ${shamanAndPotGrot} units exceeds the number of ${kruleboyz} ${hero} ${monster} units.`)
+            errors.push(`The number of <${shamanAndPotGrot}> units exceeds the number of <${kruleboyz}> <${hero}> <${monster}> units.`)
         }
 
         if (nInfantryUnit > nKruleboyzHeroMonsters) {
-            errors.push(`The number of non-${hero} ${infantry} units exceeds the number of ${kruleboyz} ${hero} ${monster} units.`)
+            errors.push(`The number of non-<${hero}> <${infantry}> units exceeds the number of <${kruleboyz}> <${hero}> <${monster}> units.`)
         }
 
         return errors.length > 0 ? errors : null;

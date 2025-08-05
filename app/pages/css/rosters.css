@@ -54,3 +54,7 @@
 .roster-modal textarea {
   height: 6em;
 }
+
+a {
+  color: var(--blue-color);
+}

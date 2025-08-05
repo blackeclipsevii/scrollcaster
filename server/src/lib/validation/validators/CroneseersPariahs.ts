@@ -20,10 +20,10 @@ class TheCroneseersPariahsValidator extends ForcedGeneralValidator {
         
         const excludeList = [
             processName('Morathi-Khaine'),
-            processName('the Shadow Queen')
+            processName('The Shadow Queen')
         ];
 
-        const genericError = 'You cannot include Morathi-Khaine or the Shadow Queen';
+        const genericError = 'cannot include <Morathi-Khaine> or <The Shadow Queen>';
         
         const checkName = (unit: Unit) => {
             let name = processName(unit.name);

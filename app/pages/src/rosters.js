@@ -326,24 +326,70 @@ const rosterPage = {
             const bsdataRevision = await version.getBsDataVersion();
             const bpVersion = await version.getBattleProfileVersion();
 
-            const toggle = overlayToggleFactory('flex', () => {
+            const toggle = overlayToggleFactory('flex', async () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
               const section = document.createElement('p');
               section.innerHTML = `
-                <b>Client Version:</b> ${clientVersion} <br/>
-                <b>Server Version:</b> ${serverVersion} <br/>
-                <b>Battle Profile Version:</b> ${bpVersion} <br/>
-                <b>BSData:</b> ${bsdataRevision} <br/>
-              `;
-              
-              const link = document.createElement("a");
-              link.textContent = "Contribute to Age of Sigmar 4th BSData (github)";
-              link.href = "https://github.com/BSData/age-of-sigmar-4th";
-              link.target = "_blank";
-              section.appendChild(link);
+                  <h3 style='width: fit-content' class='section-title'>About</h3>
+                  <div class='section' style='padding: 1em; background-color: ${getVar('hover-color')}; border: 2px solid ${getVar('background-color')}'>
+                  
+                  <h3 style='padding: 0; margin-top: 0;'>Version</h3>
+                    <b>• Client Version:</b> ${clientVersion} <br/>
+                    <b>• Server Version:</b> ${serverVersion} <br/>
+                    <b>• Battle Profile Version:</b> ${bpVersion} <br/>
+                    <b>• BSData Commit:</b> ${bsdataRevision} <br/>
+                  <br/>
 
+                  <h3 style='padding: 0; margin-top: 0;'>Contribute: </h3>
+                  <a style='color: ${getVar('blue-color')};' 
+                  target='_blank' href='https://github.com/blackeclipsevii/scrollcaster'>
+                  Contribute to Scrollcaster
+                  </a>
+                  <br/>
+                  <a style='color: ${getVar('blue-color')};' 
+                  target='_blank' href='https://github.com/blackeclipsevii/scrollcaster-android'>
+                  Contribute to Scrollcaster (Android)
+                  </a>
+                  <br/>
+                  <a style='color: ${getVar('blue-color')};' 
+                  target='_blank' href='https://github.com/BSData/age-of-sigmar-4th'>
+                  Contribute to BSData
+                  </a>
+                  <br/>
+                  <br/>
+                  
+                  <h3 style='padding-top: 0; margin: 0;'> License (GPL v3): </h3> <br/>
+                  <div class='license'>
+This file is part of Scrollcaster.
+<br/><br/>
+Copyright (C) 2025 Joseph Decker
+<br/>
+<br/>
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.
+<br/>
+<br/>
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+<br/>
+<br/>
+You should have received a copy of the GNU General Public License along with this program.
+If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/</a>.
+                  </div>
+                  <br/>
+                  <h3 style='padding: 0; margin-top: 0;'> Attribution: </h3>
+                  <div class='attribution'>
+                  <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                  <div>Icons made by <a href="https://www.flaticon.com/authors/mayor-icons" title="Mayor Icons">Mayor Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                  <div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                  <div>Icons made by <a href="https://www.flaticon.com/authors/slidicon" title="Slidicon">Slidicon</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                  <div>Icons made by <a href="https://www.flaticon.com/authors/syahrul-hidayatullah" title="Syahrul Hidayatullah">Syahrul Hidayatullah</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                  <div>Icons made by <a href="https://www.flaticon.com/authors/meaicon" title="meaicon">meaicon</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+                  </div>
+                </div>
+              `;
+
+              section.style.fontSize = '14px';
               const button = document.createElement('button');
               button.className = 'full-rectangle-button';
               button.textContent = 'Close';
@@ -351,6 +397,7 @@ const rosterPage = {
                   disableOverlay();
               };
 
+              modal.style.border = `2px solid ${getVar('hover-color')}`;
               modal.appendChild(section);
               modal.appendChild(button);
           });
@@ -367,12 +414,12 @@ const rosterPage = {
               section.style.width = '95%';
               section.style.fontSize = '14px';
               
-              try {
-                const txt = await navigator.clipboard.readText();
-                if (ImportRoster.canImport(txt))
-                  section.value = ImportRoster.stripMatchingDelimiters(txt);
-              } catch (err) {
-              }
+              //try {
+              //  const txt = await navigator.clipboard.readText();
+              //  if (ImportRoster.canImport(txt))
+              //    section.value = ImportRoster.stripMatchingDelimiters(txt);
+              //} catch (err) {
+              //}
 
               const copyButton = document.createElement('button');
               copyButton.className = 'full-rectangle-button';
@@ -545,7 +592,7 @@ const rosterPage = {
       const sections = ['Rosters'];
       makeLayout(sections);
 
-      setHeaderTitle('scrollcaster');
+      setHeaderTitle('Scrollcaster');
       hidePointsOverlay();
       disableBackButton();
 
@@ -554,6 +601,11 @@ const rosterPage = {
       button.textContent = '+';
       button.className = 'clickable-style fab';
       button.onclick = toggleOverlay;
+      const inset = new InsetEdges;
+      if (inset.bottom) {
+          button.style.bottom = `${inset.bottom + 75}px`;
+      }
+
       div.appendChild(button);
     }
     _makePage();

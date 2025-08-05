@@ -43,6 +43,7 @@ const build = (outname, sourceList) => {
     const lib = [
         "lib/endpoint.js",
         "lib/host.js",
+        "lib/widgets/insetEdges.js",
         "lib/functions/uniqueIdentifier.js",
         "lib/RestAPI/roster.js",
         "lib/RestAPI/version.js",

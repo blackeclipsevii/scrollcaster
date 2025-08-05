@@ -5,3 +5,4 @@ saveData.json
 main.zip
 dist/
 output/
+*.py
