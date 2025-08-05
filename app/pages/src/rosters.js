@@ -614,17 +614,17 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
 
       div.appendChild(button);
       
-      // const coffee = document.createElement('div');
-      // coffee.className = 'kofi-div';
-      // coffee.innerHTML = `
-      //   <a target="_blank" href="https://ko-fi.com/scrollcaster">
-      //     <img src="resources/kofi_symbol-edited.png"></img>
-      //   </a>
-      // `;
-      // if (inset.bottom) {
-      //     coffee.style.bottom = `${inset.bottom + 75}px`;
-      // }
-      // div.appendChild(coffee);
+      const coffee = document.createElement('div');
+      coffee.className = 'kofi-div';
+      coffee.innerHTML = `
+        <a target="_blank" href="https://ko-fi.com/scrollcaster">
+          <img src="resources/kofi_symbol-edited.png"></img>
+        </a>
+      `;
+      if (inset.bottom) {
+          coffee.style.bottom = `${inset.bottom + 75}px`;
+      }
+      div.appendChild(coffee);
 
     }
     _makePage();
