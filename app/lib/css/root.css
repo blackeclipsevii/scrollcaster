@@ -566,3 +566,36 @@ h4.abilityname {
   .license {
     font-size: 12px;
   }
+
+.kofi-div {
+position: fixed;
+display: flex;
+justify-content: center;
+align-items: center;
+bottom: 2em;
+width: 2em;
+height: 2em;
+font-size: 2em;
+left: 1em;
+z-index: 20;
+
+color: var(--label-font-color);
+background-color: none;
+cursor: pointer;
+}
+
+.kofi-div-nested {
+position: relative;
+display: 'inline-block';
+}
+
+
+.kofi-div-nested img {
+width: 100%;
+max-width: 30em;
+margin-bottom: 1em;
+}
+
+.kofi-div img {
+width: 1.5em;
+}

@@ -359,7 +359,13 @@ const rosterPage = {
                   </a>
                   <br/>
                   <br/>
-                  
+                  <div style='display: flex; justify-content: left; align-content: center;'>
+                  <div class='kofi-div-nested'>
+                      <a target="_blank" href="https://ko-fi.com/scrollcaster">
+                      <img src="resources/support_me_on_kofi_beige.webp"></img>
+                      </a>
+                  </div>
+                  </div>
                   <h3 style='padding-top: 0; margin: 0;'> License (GPL v3): </h3> <br/>
                   <div class='license'>
 This file is part of Scrollcaster.
@@ -607,6 +613,19 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
       }
 
       div.appendChild(button);
+      
+      // const coffee = document.createElement('div');
+      // coffee.className = 'kofi-div';
+      // coffee.innerHTML = `
+      //   <a target="_blank" href="https://ko-fi.com/scrollcaster">
+      //     <img src="resources/kofi_symbol-edited.png"></img>
+      //   </a>
+      // `;
+      // if (inset.bottom) {
+      //     coffee.style.bottom = `${inset.bottom + 75}px`;
+      // }
+      // div.appendChild(coffee);
+
     }
     _makePage();
     await viewRosters();
