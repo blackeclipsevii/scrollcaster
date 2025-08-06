@@ -36,7 +36,12 @@
         "NoTerrain": {}
     },
     "Grundstok Expeditionary Force": {},
-
+    "Gorechosen Champions": {
+        "ForcedGeneral": {
+            "general": "Mighty Lord of Khorne",
+            "mustInclude": false
+        }
+    },
     "The Swords of Chaos": {},
     "Tribes of the Snow Peaks": {},
     "Great-grand Gnawhorde": {

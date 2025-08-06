@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Aspiring Deathbringer",
+    "regimentOptions": "Any <Bloodbound Warmonger>",
+    "replace": false
+  },
+  {
+    "name": "Bloodsecrator",
+    "regimentOptions": "Any <Bloodbound Warmonger>",
+    "replace": false
+  },
+  {
+    "name": "Bloodstoker",
+    "regimentOptions": "Any <Bloodbound Warmonger>",
+    "replace": false
+  },
+  {
+    "name": "Deathbringer",
+    "regimentOptions": "Any <Bloodbound Warmonger>",
+    "replace": false
+  },
+  {
+    "name": "Realmgore Ritualist",
+    "regimentOptions": "Any <Bloodbound Warmonger>",
+    "replace": false
+  },
+  {
+    "name": "Skullgrinder",
+    "regimentOptions": "Any <Bloodbound Warmonger>",
+    "replace": false
+  },
+  {
+    "name": "Slaughterpriest",
+    "regimentOptions": "Any <Bloodbound Warmonger>",
+    "replace": false
+  }
+]
