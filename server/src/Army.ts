@@ -4,11 +4,12 @@ import Upgrade from './Upgrade.js'
 import { UpgradeType } from './lib/Upgrade.js';
 import Lores, { LoreLUTInterf } from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
-import { BsCatalog, BsLibrary, BsSelectionEntry } from './lib/bs/BsCatalog.js';
+import { BsCatalog, BsLibrary, BsSelectionEntry, BsSelectionEntryGroup } from './lib/bs/BsCatalog.js';
 import { Force } from './Force.js';
 import { UnitType } from './types/UnitType.js';
 import { ArmyValidator, armyValidatorCollection } from './lib/validation/ArmyValidator.js';
 import BattleProfile from './lib/validation/BattleProfile.js';
+import { toCamelCase } from './lib/helperFunctions.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -25,15 +26,7 @@ const upgradeLUT: {[name:string]: UpgradeLUTEntry} = {
     },
     'battle traits': {
         alias: 'battleTraits',
-        type: UpgradeType.BattleTraits
-    },
-    'artefact': {
-        alias: 'artefacts',
-        type: UpgradeType.Artifact
-    },
-    'heroic trait': {
-        alias: 'heroicTraits',
-        type: UpgradeType.HeroicTrait
+        type: UpgradeType.BattleTrait
     },
     'manifestation lore': {
         alias: 'manifestation',
@@ -47,9 +40,9 @@ const upgradeLUT: {[name:string]: UpgradeLUTEntry} = {
         alias: 'prayer',
         type: UpgradeType.PrayerLore
     },
-    'monstrous traits': {
-        alias: 'monstrousTraits',
-        type: UpgradeType.MonstrousTraits
+    'enhancements': {
+        alias: 'enhancements',
+        type: UpgradeType.Enhancement
     }
 };
 
@@ -57,12 +50,19 @@ export interface UpgradeLUT {
     [name: string]: Upgrade;
 }
 
+export interface EnhancementGroup {
+    name: string;
+    id: string;
+    upgrades: UpgradeLUT;
+}
+
+export interface Enhancements {
+    [name: string]: EnhancementGroup | null;
+}
+
 export interface ArmyUpgrades {
     [name:string]: UpgradeLUT | null | unknown;
-    artefacts: UpgradeLUT;
     battleFormations: UpgradeLUT;
-    heroicTraits: UpgradeLUT;
-    monstrousTraits: UpgradeLUT;
     battleTraits: UpgradeLUT;
     lores: {
         [name:string]: LoreLUTInterf;
@@ -70,6 +70,8 @@ export interface ArmyUpgrades {
         spell: LoreLUTInterf;
         prayer: LoreLUTInterf;
     };
+
+    enhancements: Enhancements;
 }
 
 export default class Army {
@@ -99,16 +101,14 @@ export default class Army {
 
         // upgrades available to the army
         this.upgrades = {
-            artefacts: {},
             battleFormations: {},
             battleTraits: {},
-            heroicTraits: {},
-            monstrousTraits: {},
             lores: {
                 manifestation: {},
                 spell: {},
                 prayer: {}
-            }
+            },
+            enhancements: {}
         };
 
         // LUT for point values
@@ -168,7 +168,7 @@ export default class Army {
 
         const ulKeys = Object.getOwnPropertyNames(upgradeLUT);
 
-        const addUpgrade = (upgrades: ArmyUpgrades, key: string, element: BsSelectionEntry) => {
+        const addUpgrade = (upgrades: ArmyUpgrades, key: string, element: BsSelectionEntry, parent: BsSelectionEntryGroup | null) => {
             const lu = upgradeLUT[key];
             const isLore = (lu.type === UpgradeType.ManifestationLore ||
                             lu.type === UpgradeType.SpellLore ||
@@ -184,9 +184,18 @@ export default class Army {
                 if (!targetId)
                     return false;
                 
-                const lore = (ageOfSigmar.lores as Lores).lores[lu.alias][targetId];
+                let lore = (ageOfSigmar.lores as Lores).lores[lu.alias][targetId];
                 if (!lore)
                     return false;
+
+                if (element.costs) {
+                    element.costs.forEach(cost => {
+                        if (cost['@typeId'] === 'points') {
+                            lore = JSON.parse(JSON.stringify(lore));
+                            lore.points = Number(cost['@value']);
+                        }
+                    });
+                }
                 
                 lore.unitIds.forEach(unitId => {
                     const unit = _libraryUnits[unitId];
@@ -201,8 +210,22 @@ export default class Army {
                 return true;
             }
 
-            const upgrade = new Upgrade(element, lu.type);
-            (upgrades[lu.alias] as UpgradeLUT)[upgrade.name] = upgrade;
+            
+            if (parent && key === upgradeLUT.enhancements.alias) {
+                const ccName = toCamelCase(parent['@name']);
+                if (!upgrades.enhancements[ccName]) {
+                    upgrades.enhancements[ccName] = {
+                        name: parent['@name'],
+                        id: parent['@id'],
+                        upgrades: {}
+                    };
+                }
+                const upgrade = new Upgrade(element, lu.type, parent['@name']);
+                upgrades.enhancements[ccName]!.upgrades[upgrade.name] = upgrade;
+            } else {
+                const upgrade = new Upgrade(element, lu.type, null);
+                (upgrades[lu.alias] as UpgradeLUT)[upgrade.name] = upgrade;
+            }
         }
         
         catalogue.sharedSelectionEntries.forEach(entry => {
@@ -214,11 +237,53 @@ export default class Army {
                 ulKeys.forEach(key => {
                     if (lc.includes(key)) {
                         // console.log(entry, null, 2);
-                        addUpgrade(this.upgrades, key, entry);
+                        addUpgrade(this.upgrades, key, entry, null);
                     }
                 });
             }
         })
+
+        catalogue.sharedSelectionEntryGroups.forEach(sharedGroup => {
+            const lc = sharedGroup['@name'].toLowerCase();
+            
+            // writing it this way adds a compile check that enhancements is valid
+            let key = upgradeLUT.enhancements.alias;
+            ulKeys.every(k => {
+                if (lc.includes(k)) {
+                    key = k;
+                    return false;
+                }
+                return true;
+            });
+
+            if (key === upgradeLUT.enhancements.alias) {
+                // filter out ptg
+                if (lc.includes('drained') || lc.includes('battle wounds')) {
+                    return;
+                }
+            }
+
+            if (sharedGroup.selectionEntryGroups) {
+                sharedGroup.selectionEntryGroups.forEach(group => {
+                    if (group.selectionEntries) {
+                        group.selectionEntries.forEach(element => {
+                            addUpgrade(this.upgrades, key, element, sharedGroup);
+                        });
+                    }
+                });
+            } else if (sharedGroup.selectionEntries) {
+                sharedGroup.selectionEntries.forEach(element => {
+                    addUpgrade(this.upgrades, key, element, null);
+                });
+            }
+
+            ageOfSigmar.lores.universal.forEach(itr => {
+                const universalLore = ageOfSigmar.lores.lores.manifestation[itr.id];
+                universalLore.points = itr.points;
+                universalLore.type = itr.type;
+                this.upgrades.lores.manifestation[`UNIVERSAL-${universalLore.name}`] = universalLore;
+            });
+        });
 
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
@@ -269,24 +334,33 @@ export default class Army {
             if (link.entryLinks) {
                 link.entryLinks.forEach(ele => {
                     const lc = ele['@name'].toLowerCase();
-                    if (lc.includes('heroic trait')) {
-                        unit.canHaveHeroicTrait = true;
-                        return;
-                    }
-                    if (lc.includes('artefact')) {
-                        unit.canHaveArtefact = true;
-                        return;
-                    }
+
+                    // skip these we don't support them right now
+                    if (lc.includes('battle wounds') ||
+                        lc.includes('renown') ||
+                        lc.includes('paths')) {
+                            return;
+                        }
+
                     if (lc.includes('warlord')) {
                         unit.canBeGeneral = true;
                         return;
                     }
-                    if (lc.includes('reinforced')) {
+                    else if (lc.includes('reinforced')) {
                         unit.canBeReinforced = true;
                         return;
                     }
+                    else {
+                        // add enhancement slot
+                        unit.enhancements[toCamelCase(ele['@name'])] = {
+                            name: ele['@name'],
+                            id: ele['@id'],
+                            slot: null
+                        };
+                    }
                 });
             }
+
             if (link.costs){
                 link.costs.forEach(cost => {
                     if (cost['@name'] === 'pts') {
@@ -318,36 +392,6 @@ export default class Army {
             
             // these are the units this army can use
             this.units[unit.id] = unit;
-        });
-
-        catalogue.sharedSelectionEntryGroups.forEach(entry => {
-            const lc = entry['@name'].toLowerCase();
-            
-            ulKeys.forEach(key => {
-                if (lc.includes(key)) {
-                    // console.log(entry, null, 2);
-                    if (entry.selectionEntryGroups) {
-                        entry.selectionEntryGroups.forEach(group => {
-                            if (group.selectionEntries) {
-                                group.selectionEntries.forEach(element => {
-                                    addUpgrade(this.upgrades, key, element);
-                                });
-                            }
-                        });
-                    } else if (entry.selectionEntries) {
-                        entry.selectionEntries.forEach(element => {
-                            addUpgrade(this.upgrades, key, element);
-                        });
-                    }
-                }
-            });
-
-            ageOfSigmar.lores.universal.forEach(itr => {
-                const universalLore = ageOfSigmar.lores.lores.manifestation[itr.id];
-                universalLore.points = itr.points;
-                universalLore.type = itr.type;
-                this.upgrades.lores.manifestation[`UNIVERSAL-${universalLore.name}`] = universalLore;
-            });
         });
 
         // get this armies regiments

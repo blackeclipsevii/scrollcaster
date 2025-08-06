@@ -21,10 +21,6 @@ const unitTypeToString = (unit) => {
 }
 
 const upgradeTypeToStr = (unit) => {
-    if (unit.type === 0)
-        return 'Artefact';
-    if (unit.type == 1)
-        return 'Heroic Trait';
     if (unit.type == 2)
         return 'Battle Formation';
     if (unit.type == 3)
@@ -33,8 +29,8 @@ const upgradeTypeToStr = (unit) => {
         return 'Prayer Lore';
     if (unit.type == 4)
         return 'Manifestation Lore';
-    if (unit.type == 8)
-        return 'Monstrous Trait';
+    if (unit.type == 9) 
+        return 'Enhancement';
     return 'Unknown';
 }
 
@@ -44,6 +40,8 @@ const makeSelectableItemType = (typedObj, isUnit=true) => {
     roleEle.style.display = 'inline-block';
     if (typeof typedObj === 'string')
         roleEle.textContent = typedObj;
+    else if (typedObj.typeName)
+        roleEle.textContent = typedObj.typeName
     else if (isUnit)
         roleEle.textContent = unitTypeToString(typedObj);
     else

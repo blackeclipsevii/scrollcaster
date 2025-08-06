@@ -37,6 +37,24 @@
   },
   {
     "type": "Hero",
+    "name": "Ikon of the Storm",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "Any <Idoneth Deepkin>",
+    "notes": "This Hero can join an eligible regiment as an <Akhelian Raidmaster>.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
+    "name": "Ikon of the Sea",
+    "unitSize": 1,
+    "points": 90,
+    "regimentOptions": "Any <Idoneth Deepkin>",
+    "notes": "This Hero can join an eligible regiment as an <Akhelian Raidmaster>.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
     "name": "Isharann Soulrender",
     "unitSize": 1,
     "points": 90,

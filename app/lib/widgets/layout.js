@@ -1,36 +1,39 @@
 // make html page layout
 
+const layoutDefaultFactory = (main, name, show=true) => {
+    const adjustedName = name.toLowerCase().replace(/ /g, '-');
+    const section = document.createElement('div');
+    if (!show)
+        section.style.display = 'none';
+    section.className = 'section draggable';
+    section.id = `${adjustedName}-section`;
+    section.innerHTML = `
+        <div class="draggable-grip">
+            <span class="grip-icon">⋮⋮⋮</span>
+            <h3 class="section-title">${name}</h3>
+        </div>
+        <div class="item-list" id="${adjustedName}-list"></div>
+    `;
+
+    const oldElement = document.getElementById(section.id);
+    if (oldElement) {
+        // we have to destroy it
+        oldElement.parentElement.removeChild(oldElement);
+    }
+    
+    //const snapZone = document.createElement('div');
+    //snapZone.className ='snap-zone';
+    main.append(section);
+    return section;
+}  
+
 const makeLayout = (sections, factory=null, parent=null, show=false) => {
     if (factory === null)
-        factory = (main, name) => {
-            const adjustedName = name.toLowerCase().replace(/ /g, '-');
-            const section = document.createElement('div');
-            if (!show)
-                section.style.display = 'none';
-            section.className = 'section draggable';
-            section.id = `${adjustedName}-section`;
-            section.innerHTML = `
-                <div class="draggable-grip">
-                    <span class="grip-icon">⋮⋮⋮</span>
-                    <h3 class="section-title">${name}</h3>
-                </div>
-                <div class="item-list" id="${adjustedName}-list"></div>
-            `;
-
-            const oldElement = document.getElementById(section.id);
-            if (oldElement) {
-                // we have to destroy it
-                oldElement.parentElement.removeChild(oldElement);
-            }
-            
-            //const snapZone = document.createElement('div');
-            //snapZone.className ='snap-zone';
-            main.append(section);
-        }   
+        factory = layoutDefaultFactory;
 
     const main = parent ? parent : document.getElementById('loading-content');
     sections.forEach(name => {
-        factory(main, name);
+        factory(main, name, show);
     });
 }
 

@@ -6,9 +6,7 @@ class NameUnit {
         this.name = '';
         this.isGeneral = false;
         this.isReinforced = false;
-        this.artefact = null;
-        this.heroicTrait = null;
-        this.monstrousTrait = null;
+        // this.enhancements = {};
         this.other = [];
     }
 };

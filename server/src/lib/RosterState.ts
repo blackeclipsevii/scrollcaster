@@ -7,10 +7,8 @@ export interface UnitState {
     unit: string;
     isGeneral: boolean;
     isReinforced: boolean;
-    artefact: string|null;
-    heroicTrait: string|null;
-    monstrousTrait: string|null;
-    options: {[name:string]: string};
+    enhancements: {[name: string]: string | null};
+    options: {[name:string]: string | null};
 }
 
 export const serializeUnit = (unit: Unit) => {
@@ -18,22 +16,22 @@ export const serializeUnit = (unit: Unit) => {
         unit: unit.id,
         isGeneral: unit.isGeneral,
         isReinforced: unit.isReinforced,
-        artefact: null,
-        heroicTrait: null,
-        monstrousTrait: null,
+        enhancements: {},
         options: {}
     };
-    unitState.artefact = unit.artefact ? unit.artefact.id : null;
-    unitState.heroicTrait = unit.heroicTrait ? unit.heroicTrait.id : null;
-    unitState.monstrousTrait = unit.monstrousTraits ? unit.monstrousTraits.id : null;
-    unitState.options = {};
-    if (unit.optionSets) {
-        unit.optionSets.forEach(optionSet => {
-            if (optionSet.selection) {
-                unitState.options[optionSet.name] = optionSet.selection.name;
-            }
-        })
-    }
+    
+    const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
+    enhancementNames.forEach(eName => {
+        if (unit.enhancements[eName].slot) {
+            unitState.enhancements[eName] = unit.enhancements[eName].slot.id;
+        }
+    });
+
+    unit.optionSets.forEach(optionSet => {
+        if (optionSet.selection) {
+            unitState.options[optionSet.name] = optionSet.selection.name;
+        }
+    })
     return unitState;
 };
 
@@ -58,10 +56,24 @@ export const deserializeUnit = (army: Army, state: UnitState) => {
     const unit = JSON.parse(JSON.stringify(armyUnit)) as Unit;
     unit.isGeneral = state.isGeneral ? true : false;
     unit.isReinforced = state.isReinforced ? true : false;
-    unit.artefact = state.artefact ? army.upgrades.artefacts[state.artefact] : null;
-    unit.heroicTrait = state.heroicTrait ? army.upgrades.heroicTraits[state.heroicTrait] : null;
-    unit.monstrousTraits = state.monstrousTrait ? army.upgrades.monstrousTraits[state.monstrousTrait] : null;
-    
+
+    const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
+    enhancementNames.forEach(eName => {
+        if (state.enhancements[eName]) {
+            const enhanceGroup = army.upgrades.enhancements[eName];
+            if (enhanceGroup) {
+                const upgrades = Object.values(enhanceGroup.upgrades);
+                upgrades.every(upgrade => {
+                    if (upgrade.id === state.enhancements[eName]) {
+                        unit.enhancements[eName].slot = upgrade;
+                        return false;
+                    }
+                    return true;
+                });
+            }
+        }
+    });
+
     if (unit.optionSets && state.options) {
         unit.optionSets.forEach(optionSet => {
             const selection = state.options[optionSet.name];

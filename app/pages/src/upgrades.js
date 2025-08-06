@@ -1,5 +1,6 @@
 
 class UpgradeSettings {
+    titleName = null;
     type = null;
     roster = null;
     armyName = null;
@@ -19,7 +20,7 @@ const upgradePage = {
         if (this._cache.upgrades && this._cache.armyName === armyName) {
             return this._cache.upgrades;
         }
-        const result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/upgrades?army=${armyName}`));
+        const result = await fetchUpgrades(armyName);
         this._cache.upgrades = result;
         this._cache.armyName = armyName;
         return result;
@@ -32,42 +33,33 @@ const upgradePage = {
 
         thisPage.settings = settings;
 
-        const getList = (upgrade) => {
-            let upgradeList = null;
-            if (upgrade.type === 0) {
-                upgradeList = document.getElementById('artefacts-of-power-list');
-            } else if (upgrade.type === 1) {
-                upgradeList = document.getElementById('heroic-traits-list');
-            } else if (upgrade.type === 2) {
-                upgradeList = document.getElementById('battle-formations-list');
-            } else if (upgrade.type === 3) {
-                upgradeList = document.getElementById('spell-lore-list');
-            } else if (upgrade.type === 6) {
-                upgradeList = document.getElementById('prayer-lore-list');
-            }else if (upgrade.type === 4) {
-                upgradeList = document.getElementById('manifestation-lore-list');
-            } else if (upgrade.type === 8) {
-                upgradeList = document.getElementById('monstrous-traits-list');
-            }else {
-                console.log(`upgrade: ${upgrade}`);
-                console.log(`type unknown: ${upgrade.name}`);
-                document.querySelector('.item-list');
-            }
-            return upgradeList;
-        }
-
         const isUniversal = (str) => {
             return str.startsWith("UNIVERSAL-");
         }
         
         function displayUpgrade(upgrade) {
-            let upgradeList = getList(upgrade);
+            let typeName = 'Upgrade';
+            if (upgrade.typeName) 
+                typeName = upgrade.typeName;
+            else if (upgrade.type !== undefined) {
+                typeName = upgradeTypeToStr(upgrade);
+            }
+            const adjustedName = typeName.toLowerCase().replace(/ /g, '-');
+            let section = document.getElementById(`${adjustedName}-section`);
+            if (!section) {
+                const main = document.getElementById('loading-content');
+                section = layoutDefaultFactory(main, typeName);
+            }
+            let upgradeList = section.querySelector('.item-list');
         
-            const section = upgradeList.closest('.section');
             section.style.display = 'block';
         
             const item = document.createElement('div');
             item.classList.add('selectable-item');
+            // Clicking the container navigates to details
+            item.addEventListener('click', () => {
+                displayUpgradeOverlay(upgrade);
+            });
             
             if (roster && !_inCatalog) {
                 item.classList.add('not-added');
@@ -76,11 +68,6 @@ const upgradePage = {
             const left = document.createElement('div');
             left.classList.add('selectable-item-left');
             
-            // Clicking the container navigates to details
-            left.addEventListener('click', () => {
-                displayUpgradeOverlay(upgrade);
-            });
-        
             const nameEle = makeSelectableItemName(upgrade);
             left.appendChild(nameEle);
 
@@ -102,6 +89,10 @@ const upgradePage = {
                 checkbox.name = `${upgrade.type}`;
                 checkbox.style.transform = 'scale(1.5)';
 
+                checkbox.onclick = (e) =>{
+                    e.stopPropagation();
+                }
+    
                 //checkbox.textContent = '+';
                 checkbox.addEventListener('change', async (e) => {
                     e.stopPropagation(); // Prevents click from triggering page change
@@ -162,15 +153,14 @@ const upgradePage = {
                 // to-do this being a radio makes favorites weird
                 const onchange = newFavoritesOnChange(upgradeList, item, upgrade.name);
                 // battle formation doesn't have id?
-                const useableId = upgrade.name; //upgrade.type === 2 ? upgrade.name : upgrade.id; 
-                heart = newFavoritesCheckbox(useableId, 'upgrade', onchange);
+                heart = newFavoritesCheckbox(upgrade.id, 'upgrade', onchange);
                 right.append(heart, points);
             }
             item.append(left, right);
             upgradeList.appendChild(item);
             
             if (heart && heart.checked)
-                onchange(true, useableId, 'upgrade');
+                heart.onchange(true, upgrade.id, 'upgrade');
         }
         
         function displayUpgrades(upgradeList) {
@@ -181,16 +171,18 @@ const upgradePage = {
                 let upgradeNames = Object.getOwnPropertyNames(upgrades);
                 if (thisPage.settings && thisPage.settings.isLore()) {
                     if (thisPage.settings.roster) {
-                        upgradeNames = upgradeNames
-                                        .sort((a, b) => {
-                                            // Prioritize non-UNIVERSAL strings
-                                            const aIsUniversal = isUniversal(a);
-                                            if (aIsUniversal !== isUniversal(b)) {
-                                                return aIsUniversal ? 1 : -1;
-                                            }
-                                            // Sort alphabetically within each group
-                                            return a.localeCompare(b);
-                                        });
+                        if (upgradeNames.length > 1) {
+                            upgradeNames = upgradeNames
+                                            .sort((a, b) => {
+                                                // Prioritize non-UNIVERSAL strings
+                                                const aIsUniversal = isUniversal(a);
+                                                if (aIsUniversal !== isUniversal(b)) {
+                                                    return aIsUniversal ? 1 : -1;
+                                                }
+                                                // Sort alphabetically within each group
+                                                return a.localeCompare(b);
+                                            });
+                        }
                     } else if (thisPage.settings.armyName) {
                         upgradeNames = upgradeNames.filter(name => !isUniversal(name));
                     }
@@ -215,7 +207,10 @@ const upgradePage = {
         }
         
         async function loadUpgradesCatalog() {
-            setHeaderTitle('Upgrades');
+            if (thisPage.settings.titleName)
+                setHeaderTitle(thisPage.settings.titleName);
+            else
+                setHeaderTitle('Upgrades');
             hidePointsOverlay();
             const allUpgrades = await thisPage.fetchUpgrades(thisPage.settings.armyName);
             let upgradeList = [];
@@ -229,14 +224,25 @@ const upgradePage = {
                 });
     
             } else {
-                upgradeList = [allUpgrades[thisPage.settings.type]];
+                let tmp = allUpgrades[thisPage.settings.type];
+                if (!tmp) {
+                    tmp = allUpgrades.enhancements[thisPage.settings.type];
+                    if (tmp) {
+                        upgradeList = [tmp.upgrades];
+                    }
+                } else {
+                    upgradeList = [allUpgrades[thisPage.settings.type]];
+                }
             }
             
             displayUpgrades(upgradeList);
         }
         
         async function loadUpgrades() {
-            setHeaderTitle('Upgrades');
+            if (thisPage.settings.titleName)
+                setHeaderTitle(thisPage.settings.titleName);
+            else
+                setHeaderTitle('Upgrades');
             displayPointsOverlay(thisPage.settings.roster.id);
             refreshPointsOverlay(thisPage.settings.roster.id);
             updateValidationDisplay();
@@ -253,32 +259,37 @@ const upgradePage = {
                 });
     
             } else {
-                upgradeList = [allUpgrades[thisPage.settings.type]];
+                let tmp = allUpgrades[thisPage.settings.type];
+                if (!tmp) {
+                    tmp = allUpgrades.enhancements[thisPage.settings.type];
+                    if (tmp) {
+                        upgradeList = [tmp.upgrades];
+                    }
+                } else {
+                    upgradeList = [allUpgrades[thisPage.settings.type]];
+                }
             }
             displayUpgrades(upgradeList);
         }
         
-        const loadUpgradesPage = () => {
-            const sections = [
-                'Artefacts of Power', 
-                'Heroic Traits', 
-                'Monstrous Traits', 
-                'Battle Formations', 
-                'Spell Lore', 
-                'Prayer Lore', 
-                'Manifestation Lore'
-            ];
+        const loadUpgradesPage = async () => {
+            const sections = [];
 
             makeLayout(sections);
             initializeFavoritesList();
             disableHeaderContextMenu();
             if (thisPage.settings.roster)
-                loadUpgrades();
+                await loadUpgrades();
             else if (thisPage.settings.armyName)
-                loadUpgradesCatalog();
+                await loadUpgradesCatalog();
             else
-                loadUniversalLores();
+                await loadUniversalLores();
             
+            const manLoreSect = document.getElementById('manifestation-lore-section');
+            if (manLoreSect && manLoreSect.parentElement) {
+                manLoreSect.parentElement.appendChild(manLoreSect);
+            }
+
             swapLayout();
             initializeDraggable('upgrades');
         }

@@ -22,23 +22,23 @@ async function exportRoster(roster) {
         });
     }
 
-    if (roster.lores.manifestation) {
-        text += '\nManifestation Lore: \n'
-        if (roster.lores.manifestation.points && roster.lores.manifestation.points > 0)
-            text += `  ${astrix} ${roster.lores.manifestation.name} (${roster.lores.manifestation.points} points)\n`;
-        else
-            text += `  ${astrix} ${roster.lores.manifestation.name}\n`;
+    const displayLore = (name, lore) => {
+        let text = `\n${name} Lore: \n`
+        text += `  ${astrix} ${lore.name}`;
+        if (lore.points > 0) {
+            text += ` (${lore.points})`;
+        }
+        text += `\n`;
+        return text;
     }
 
-    if (roster.lores.spell) {
-        text += '\nSpell Lore: \n'
-        text += `  ${astrix} ${roster.lores.spell.name}\n`;
-    }
-
-    if (roster.lores.prayer) {
-        text += '\nPrayer Lore: \n'
-        text += `  ${astrix} ${roster.lores.prayer.name}\n`;
-    }
+    const lores = ['Manifestation', 'Spell', 'Prayer'];
+    lores.forEach(loreName => {
+        const llc = loreName.toLowerCase();
+        if (roster.lores[llc]) {
+            text += displayLore(loreName, roster.lores[llc]);
+        }
+    });
 
     if (roster.regimentOfRenown) {
         text += `\nRegiment of Renown: \n`;
@@ -46,22 +46,20 @@ async function exportRoster(roster) {
     }
 
     const unitToText = (unit, indent) => {
-        text += `${indent}${unit.name} (${unitTotalPoints(unit)} points)\n`
+        text += `${indent}${unit.name} (${unitTotalPoints(unit)})\n`
         if (unit.isGeneral) {
             text += `  ${indent}${astrix} General\n`;
         }
         if (unit.isReinforced) {
             text += `  ${indent}${astrix} Reinforced\n`;
         }
-        if (unit.artefact) {
-            text += `  ${indent}${astrix} ${unit.artefact.name}\n`;
-        }
-        if (unit.heroicTrait) {
-            text += `  ${indent}${astrix} ${unit.heroicTrait.name}\n`;
-        }
-        if (unit.monstrousTrait) {
-            text += `  ${indent}${astrix} ${unit.monstrousTrait.name}\n`;
-        }
+
+        const enhancements = Object.values(unit.enhancements);
+        enhancements.forEach(enhance => {
+            if (enhance.slot !== null) {
+                text += `  ${indent}${astrix} ${enhance.slot.name}\n`;
+            }
+        });
 
         if (unit.optionSets) {
             unit.optionSets.forEach(optionSet => {

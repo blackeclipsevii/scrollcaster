@@ -12,15 +12,27 @@ const rosterState = {
         state.terrainFeature = null;
 
         const serializeUnit = (unit) => {
-            const unitState = {};
-            unitState.unit = unit.id;
-            unitState.isGeneral = unit.isGeneral;
-            unitState.isReinforced = unit.isReinforced;
-            const enhancements = ['artefact', 'heroicTrait', 'monstrousTrait'];
-            enhancements.forEach(enhancement => {
-                unitState[enhancement] = unit[enhancement] ? unit[enhancement].id : null;
-            });
-            unitState.options = {};
+            const unitState = {
+                unit: unit.id,
+                isGeneral: unit.isGeneral,
+                isReinforced: unit.isReinforced,
+                enhancements: {},
+                options: {}
+            };
+
+            if (Object.getOwnPropertyNames(unit).includes('heroicTrait')) {
+                // old unit format
+                unitState.enhancements['artefactsOfPower'] = unit.artefact ? unit.artefact.id : null;
+                unitState.enhancements['heroicTraits'] = unit.heroicTrait ? unit.heroicTrait.id : null;
+                unitState.enhancements['monstrousTraits'] = unit.monstrousTrait ? unit.monstrousTrait.id : null;
+            } else {
+                const enhanceNames = Object.getOwnPropertyNames(unit.enhancements);
+                enhanceNames.forEach(enhanceName => {
+                    const enhance = unit.enhancements[enhanceName];
+                    unitState.enhancements[enhanceName] = enhance.slot ? enhance.slot.id : null;
+                });
+            }
+
             if (unit.optionSets) {
                 unit.optionSets.forEach(optionSet => {
                     if (optionSet.selection) {
@@ -128,14 +140,15 @@ const rosterState = {
             const unit = JSON.parse(JSON.stringify(poolUnit));
             unit.isGeneral = state.isGeneral;
             unit.isReinforced = state.isReinforced;
-            const enhancements = ['artefact', 'heroicTrait', 'monstrousTrait'];
-            enhancements.forEach(enhancement => {
-                if (state[enhancement]) {
-                    const pool = upgradePool[`${enhancement}s`];
-                    const values = Object.values(pool);
-                    values.every(value => {
-                        if (value.id === state[enhancement]) {
-                            unit[enhancement] = value;
+
+            const enhanceNames = Object.getOwnPropertyNames(poolUnit.enhancements);
+            enhanceNames.forEach(eName => {
+                if (state.enhancements[eName]) {
+                    const enhancementGroup = upgradePool.enhancements[eName];
+                    const enhancements = Object.values(enhancementGroup.upgrades);
+                    enhancements.every(enhance => {
+                        if (enhance.id === state.enhancements[eName]) {
+                            unit.enhancements[eName].slot = enhance;
                             return false;
                         }
                         return true;
@@ -143,7 +156,6 @@ const rosterState = {
                 }
             });
 
-            
             if (unit.optionSets) {
                 unit.optionSets.forEach(optionSet => {
                     const selection = state.options[optionSet.name];

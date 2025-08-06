@@ -14,8 +14,13 @@ test('Monstrous Traits', () => {
     const aos = getAos();
     const army = aos.getArmy('Ironjawz');
     expect(army).toBeTruthy();
-    const traits = army.upgrades.monstrousTraits;
-    expect(Object.getOwnPropertyNames(traits)).toEqual([
+    expect(Object.getOwnPropertyNames(army.upgrades.enhancements)).toEqual([
+        'artefactsOfPower',
+        "heroicTraits",
+        "monstrousTraits"
+    ]);
+    const traits = Object.getOwnPropertyNames(army.upgrades.enhancements.monstrousTraits.upgrades);
+    expect(traits).toEqual([
         "Fast 'Un",
         "Mad 'Un",
         "Big 'Un",

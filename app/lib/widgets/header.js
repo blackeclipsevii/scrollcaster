@@ -58,6 +58,12 @@ function initializeHeader(options) {
         roster: new HistoryStack
     }
 
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', (event) => {
+        history.pushState(null, null, location.href);
+        goBack();
+    });
+
     const main = document.querySelector('.persist');
     const header = document.createElement('header');
     header.innerHTML = `
@@ -102,7 +108,7 @@ function setHeaderTitle(name) {
 function enableBackButton() {
     const hdr = document.querySelector('header');
     const left = hdr.querySelector('.header-left');
-    left.style.display = 'block';
+    left.style.display = '';
 }
 function disableBackButton() {
     const hdr = document.querySelector('header');

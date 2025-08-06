@@ -36,26 +36,29 @@ export class OptionSet {
     }
 }
 
+export interface EnhancementSlot {
+    name: string;
+    id: string;
+    slot: Upgrade | null;
+}
+
 export default class Unit {
     name: string;
     id: string;
 
-    isGeneral: boolean;
     isWarmaster: boolean;
+    
+    canBeGeneral: boolean;
+    isGeneral: boolean;
+
+    canBeReinforced: boolean;
     isReinforced: boolean;
 
-    canHaveHeroicTrait: boolean;
-    canHaveArtefact: boolean;
-    canBeGeneral: boolean;
-    canBeReinforced: boolean;
-    
     points: number;
     type: number;
 
-    monstrousTraits: Upgrade | null;
-    heroicTrait: Upgrade | null;
-    artefact: Upgrade | null;
     weapons: Weapon[];
+    enhancements: {[name: string]: EnhancementSlot};
     optionSets: OptionSet[];
     abilities: Ability[];
     keywords: string[];
@@ -70,14 +73,8 @@ export default class Unit {
         this.isGeneral = false;
         this.isWarmaster = false; // must be general if able
 
-        this.monstrousTraits = null;
+        this.enhancements = {};
 
-        this.canHaveHeroicTrait = false;
-        this.heroicTrait = null;
-
-        this.canHaveArtefact = false;
-        this.artefact = null;
-        
         this.canBeReinforced = false;
         this.isReinforced = false;
 
@@ -152,16 +149,18 @@ export default class Unit {
     }
 
     _parseOptions(ageOfSigmar: AgeOfSigmar, optionsGroups: BsSelectionEntryGroup[]) {
-        optionsGroups.forEach(optionGroup => {
-            if (!optionGroup.selectionEntries)
+    
+        const addOptionSet = (og: BsSelectionEntryGroup) => {
+            if (!og.selectionEntries)
                 return;
 
-            const setName = optionGroup["@name"];
+            const setName = og["@name"];
             const options = new Options;
-            optionGroup.selectionEntries.forEach(optionEntry => {
-                const optionName = optionEntry["@name"];
-                if (optionEntry.profiles) {
-                    optionEntry.profiles.forEach(profile => {
+
+            const addOptions = (entry: BsSelectionEntry) => {
+                const optionName = entry["@name"];
+                if (entry.profiles) {
+                    entry.profiles.forEach(profile => {
                         if (profile["@typeName"].includes('Ability')) {
                             const ability = new Ability(profile);
                             if (options[optionName]) {
@@ -184,9 +183,10 @@ export default class Unit {
                         }
                     });
                 }
-                if (optionEntry.modifiers) {
+            
+                if (entry.modifiers) {
                     const option = new Option(optionName);
-                    optionEntry.modifiers.forEach(modifer => {
+                    entry.modifiers.forEach(modifer => {
                         if (modifer["@type"] === 'add' &&
                             modifer["@field"] === 'category') {
                             const keywordLUT = ageOfSigmar.keywordLUT as {[key:string]: string};
@@ -196,8 +196,23 @@ export default class Unit {
                     });
                     options[optionName] = option;
                 }
+
+                if (entry.selectionEntries) {
+                    entry.selectionEntries.forEach(nestedEntry => {
+                        addOptions(nestedEntry);
+                    });
+                }
+            }
+
+            og.selectionEntries.forEach(optionEntry => {
+                addOptions(optionEntry);
             });
+
             this.optionSets.push(new OptionSet(setName, options));
+        }
+        optionsGroups.forEach(optionGroup => {
+
+            addOptionSet(optionGroup);
         });
     }
 

@@ -43,13 +43,11 @@ const validateRoster = async (roster) => {
         errors.push(errorMsg);
     }
 
-    let numArtefacts = 0;
-    let numTraits = 0;
-    let numMonstrousTraits = 0;
     let numGenerals = 0;
     let warmasterIsGeneral = false;
     let warmasters = [];
     let uniqueUnits = {};
+    let enhanceCounts = {}
 
     const validateUnique = (unit) => {
         const uniqueName = unit.name.replace(" (Scourge of Ghyran)", "");
@@ -102,14 +100,16 @@ const validateRoster = async (roster) => {
             if (_unit.keywords.includes('UNIQUE')) {
                 validateUnique(_unit);
             } else {
-                if (_unit.artefact)
-                    numArtefacts += 1;
-
-                if (_unit.heroicTrait)
-                    numTraits += 1;
-
-                if (_unit.monstrousTrait)
-                    numMonstrousTraits += 1;
+                const enhancementNames = Object.getOwnPropertyNames(_unit.enhancements);
+                enhancementNames.forEach(eName => {
+                    if (_unit.enhancements[eName].slot) {
+                        if (!enhanceCounts[_unit.enhancements[eName].name]) {
+                            enhanceCounts[_unit.enhancements[eName].name] = 1;
+                        } else {
+                            enhanceCounts[_unit.enhancements[eName].name] += 1;
+                        }
+                    }
+                });
             }
         }
 
@@ -126,42 +126,36 @@ const validateRoster = async (roster) => {
         } 
     }
     
+    const enhancementNames = Object.getOwnPropertyNames(enhanceCounts);
+    enhancementNames.forEach(eName => {
+        const count = enhanceCounts[eName];
+        if (count > 1) {
+            let errorMsg = `You have selected ${count} instances of <b>${eName}</b>. Only 1 instance of each enhancement may be selected.`;
+            errors.push(errorMsg);
+        }
+    })
+
     if (numGenerals === 0) {
-        let errorMsg = `A General must be selected`;
+        let errorMsg = `A <b>General</b> must be selected`;
         errors.push(errorMsg);
     } else if (numGenerals > 1) {
-        let errorMsg = `More than one unit is selected as your General.`;
+        let errorMsg = `More than one unit is selected as your <b>General</b>.`;
         errors.push(errorMsg);
     } else if (warmasters.length > 0 && !warmasterIsGeneral) {
         let errorMsg = `If you include any <b>WARMASTER</b> units in your roster, one of them must be your general: ${warmasters.join(', ')}`;
         errors.push(errorMsg);
     }
 
-    if (numArtefacts > 1) {
-        let errorMsg = `More than one Artefact of Power is selected.`;
-        errors.push(errorMsg);
-    }
-
-    if (numTraits > 1) {
-        let errorMsg = `More than one Heroic Trait is selected.`;
-        errors.push(errorMsg);
-    }
-
-    if (numMonstrousTraits > 1) {
-        let errorMsg = `More than one Monstrous Trait is selected.`;
-        errors.push(errorMsg);
-    }
-
-    if (roster.battleTacticCards.length !== 2) {
-        let errorMsg = `Two Battle Tactic Cards must be chosen.`;
-        errors.push(errorMsg);
-    }
-
     if (!roster.isArmyOfRenown && !roster.battleFormation) {
-        let errorMsg = `A Battle Formation must be chosen.`;
+        let errorMsg = `A <b>Battle Formation</b> must be chosen.`;
         errors.push(errorMsg);
     }
     
+    if (roster.battleTacticCards.length !== 2) {
+        let errorMsg = `Two <b>Battle Tactic Cards</b> must be chosen.`;
+        errors.push(errorMsg);
+    }
+
     const serverErrors = await validateRosterPOST(roster);
     if (serverErrors.length > 0)
         errors = errors.concat(serverErrors);

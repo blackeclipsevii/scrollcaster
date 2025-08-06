@@ -81,7 +81,7 @@ const unitPage = {
             roster.regiments.forEach(reg =>{
                 if (reg.leader)
                     armyUnitCounts.updateCount(reg.leader);
-                
+
                 reg.units.forEach(unit =>{
                     armyUnitCounts.updateCount(unit);
                 });
@@ -123,16 +123,16 @@ const unitPage = {
             }
         }
 
-        const _makeSelectableItem = (displayableObj, unitList, leftOnClick, addOnClick=null, countMessage=null) => {
+        const _makeSelectableItem = (displayableObj, unitList, itemOnClick, addOnClick=null, countMessage=null) => {
             const section = unitList.closest('.section');
             section.style.display = 'block';
 
             const item = document.createElement('div');
             item.classList.add('selectable-item');
+            item.addEventListener('click', itemOnClick);
 
             const left = document.createElement('div');
             left.classList.add('selectable-item-left');
-            left.addEventListener('click', leftOnClick);
 
             const nameEle = makeSelectableItemName(displayableObj);
             left.appendChild(nameEle);

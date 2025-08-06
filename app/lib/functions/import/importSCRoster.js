@@ -12,8 +12,14 @@ class ImportScrollcasterRoster extends ImportOfficialRoster {
         }
 
         nameRoster.name = lines[0].split('(')[0].trim();
-        nameRoster.armyName = lines[2];
-        if (!lines[3].startsWith('Auxiliaries')) {
+        
+        // move to the the next full line
+        let i = 1;
+        while (this.isEmptyOrHyphens(lines[i]))
+            ++i
+
+        nameRoster.armyName = lines[i];
+        if (!lines[i].startsWith('Auxiliaries')) {
             nameRoster.battleFormation = lines[3];
         }
 

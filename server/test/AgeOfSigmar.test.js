@@ -13,9 +13,16 @@ const getAos = () => {
 }
 
 const validateSerializedRegiment = (sReg, army, keywords) => {
-    sReg.leader = {unit: sReg.leader};
-    for (let i = 0; i < sReg.units.length; ++i)
-        sReg.units[i] = {unit: sReg.units[i]};
+    sReg.leader = {
+        unit: sReg.leader,
+        enhancements: {}
+    };
+    for (let i = 0; i < sReg.units.length; ++i) {
+        sReg.units[i] = {
+            unit: sReg.units[i],
+            enhancements: {}
+        };
+    }
     const reg = deserializeRegiment(army, sReg);
     return RegimentValidator.validateRegiment(reg, keywords);
 }

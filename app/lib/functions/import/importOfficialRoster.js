@@ -3,6 +3,9 @@ class ImportOfficialRoster {
     specialCookie() {
         return 'Created with Warhammer Age of Sigmar: The App';
     }
+    isEmptyOrHyphens = (str) => {
+        return /^-*$/.test(str.trim());
+    }
     canImport(listStr) {
         const lines = listStr.split('\n');
         for (let i = lines.length-1; i >= 0; --i) {
@@ -17,12 +20,23 @@ class ImportOfficialRoster {
         let line = lines[i].trim();
         let regiment = [];
 
-        while (line.length > 0 && line.includes(' (')) {
+        while (!this.isEmptyOrHyphens(line) && line.includes(' (')) {
             let unit = new NameUnit;
 
-            // scourge?
+            // convert sog to bsdata formatting
+            let addSoG = false;
+            const sog = 'Scourge of Ghyran';
+            if (line.includes(sog)) {
+                addSoG = true;
+                line = line.replace(/\(?Scourge of Ghyran\)?/g, "").trim();
+            }
+            
             const parts = line.split(' (');
-            unit.name = line.split(' (')[parts.length-2].trim();
+            unit.name = parts[0].trim();
+            if (addSoG) {
+                // BSData formatting
+                unit.name = `${unit.name} (${sog})`;
+            }
             ++ i;
 
             line = lines[i].trim();
@@ -51,11 +65,25 @@ class ImportOfficialRoster {
     async createNameRoster(lines){
         const nameRoster = new NameRoster();
         nameRoster.name = lines[0].split(' ').slice(0, -2).join(' ');
-        const factionParts = lines[2].split('|');
-        nameRoster.armyName = factionParts[1].trim();
-        nameRoster.battleFormation = factionParts[2].trim();
 
-        for (let i = 6; i < lines.length; ++i) {
+        // move to the the next full line
+        let i = 1;
+        while (this.isEmptyOrHyphens(lines[i]))
+            ++i
+
+        if (lines[i].includes('|')) { // iOS
+            const factionParts = lines[i].split('|');
+            nameRoster.armyName = factionParts[1].trim();
+            // official forces the battle formation pick
+            nameRoster.battleFormation = factionParts[2].trim();
+        } else {
+            nameRoster.armyName = lines[i].trim();
+            ++ i;
+            nameRoster.battleFormation = lines[i].trim();
+            ++ i;
+        }
+
+        for (;i < lines.length; ++i) {
             let line = lines[i].trim();
             if (line.includes('Battle Tactic Cards')) {
                 let cards = line.split(':')[1];
