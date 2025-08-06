@@ -30,10 +30,10 @@ class ImportScrollcasterRoster extends ImportOfficialRoster {
             if (line.includes('Battle Tactic Cards')) {
                 ++ i;
                 if (lines[i].includes('•')) { // tactic 1
-                    nameRoster.battleTacticCards.push(lines[i].split('*')[1].trim());
+                    nameRoster.battleTacticCards.push(lines[i].split('•')[1].trim());
                     ++i;
                     if (lines[i].includes('•')) {
-                        nameRoster.battleTacticCards.push(lines[i].split('*')[1].trim());
+                        nameRoster.battleTacticCards.push(lines[i].split('•')[1].trim());
                     }
                 }
             }
