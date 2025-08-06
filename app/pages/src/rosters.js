@@ -209,6 +209,7 @@ const rosterPage = {
       else
         points.className = 'general-label';
       points.style.display = 'inline-block';
+      points.style.margin = '0';
       points.textContent = `${roster.points} Points`;
       left.onclick = () => {
         goToRoster(roster);

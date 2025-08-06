@@ -132,7 +132,6 @@ function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
 
     const btn = menu.querySelector('.menu-btn');
     btn.style.color = getVar('light-text-color');
-    btn.style.top = '.5em';
     menu.style.zIndex = '1000';
     right.appendChild(menu);
     if (autoDisplay) {
