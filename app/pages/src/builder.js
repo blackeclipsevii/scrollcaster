@@ -90,9 +90,11 @@ const builderPage = {
             unitSlot.innerHTML = `
                 <span style="display: none;" class="unit-idx"></span>
                 <div class='unit-slot-display-wrapper'>
-                <span class="arrow">
-                ›
-                </span>
+                <div class='arrow-wrapper'>
+                    <span class="arrow">
+                        <p>›</p>
+                    </span>
+                </div>
                 <div class='unit-slot-selectable-item-wrapper'>
                     <div class="selectable-item unit-slot-selectable-item">
                         <div class="selectable-item-left">
