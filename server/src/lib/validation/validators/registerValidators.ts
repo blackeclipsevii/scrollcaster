@@ -4,6 +4,7 @@ import { registerCroneseersPariahs } from "./CroneseersPariahs.js";
 import { registerDaKingsGitz } from "./DaKingsGitz.js";
 import { registerMurkvastMenagerie } from "./MurkvastMenagerie.js";
 import { registerPyrofaneCult } from "./PyrofaneCult.js";
+import { registerWardensOfTheChorrileum } from "./WardensOfTheChorrileum.js";
 
 export const registerAllValidators = () => {
     registerJsonValidators('./server/resources/validators.json');
@@ -14,4 +15,5 @@ export const registerAllValidators = () => {
     registerDaKingsGitz();
     registerMurkvastMenagerie();
     registerPyrofaneCult();
+    registerWardensOfTheChorrileum();
 }
