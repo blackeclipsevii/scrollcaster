@@ -92,6 +92,23 @@ const rosterPage = {
       armySelect.onchange();
     }
 
+    const displayCreateHint = (isLoading) => {
+      const contentId = isLoading ? 'loading-content' : 'visible-content';
+      const content = document.getElementById(contentId);
+      const newSection = document.createElement('div');
+      newSection.className = 'section';
+      newSection.style.display = 'flex';
+      newSection.style.justifyContent = 'center';
+      newSection.style.alignContent = 'center';
+      newSection.style.border = `2px solid ${getVar('hover-color')}`
+      const p = document.createElement('p');
+      p.textContent = `Tap the + button to create your first Roster.`
+      //p.style.marginLeft = '1em';
+      p.style.color = getVar('white-1');
+      newSection.append(p);
+      content.appendChild(newSection);
+    }
+
     const setOverlayContents = () => {
       const modal = document.querySelector(".modal");
       modal.innerHTML = `
@@ -152,9 +169,6 @@ const rosterPage = {
     function displayRoster(roster) {
       if (!roster)
         return;
-      
-      const section = document.getElementById('rosters-section');
-      section.style.display = '';
       
       const armies = document.getElementById("rosters-list");
       let armyName = roster.army;
@@ -517,10 +531,11 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
               button.style.backgroundColor = 'red';
               button.style.color = getVar('white-1');
               button.style.fontWeight = 'bold';
-              button.onclick = () => {
+              button.onclick = async () => {
                   deleteRosters();
                   const armies = document.getElementById("rosters-list");
                   armies.innerHTML = '';
+                  await viewRosters();
                   disableOverlay();
               };
 
@@ -534,9 +549,10 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
       updateHeaderContextMenu(callbackMap);
     }
 
-    async function viewRosters() {
+    async function viewRosters(isLoading=false) {
       createHeaderMenu();
 
+      const section = document.getElementById('rosters-section');
       const armies = document.getElementById("rosters-list");
       armies.innerHTML = '';
 
@@ -553,6 +569,13 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
             }
           }
           displayRoster(roster);
+      }
+
+      if (rosters.length === 0) {
+        section.style.display = 'none';
+        displayCreateHint(isLoading);
+      } else {
+        section.style.display = '';
       }
     }
 
@@ -635,7 +658,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
 
     }
     _makePage();
-    await viewRosters();
+    await viewRosters(true);
     swapLayout();
     initializeDraggable('roster');
   }
