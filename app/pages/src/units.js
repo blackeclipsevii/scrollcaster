@@ -79,6 +79,9 @@ const unitPage = {
             }
 
             roster.regiments.forEach(reg =>{
+                if (reg.leader)
+                    armyUnitCounts.updateCount(reg.leader);
+                
                 reg.units.forEach(unit =>{
                     armyUnitCounts.updateCount(unit);
                 });
