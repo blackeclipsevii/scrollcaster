@@ -26,6 +26,12 @@
             "mustInclude": true
         }
     },
+    "The First Phalanx of Ionrach": {
+        "ForcedGeneral": {
+            "general": "Volturnos, High King of the Deep",
+            "mustInclude": true
+        }
+    },
     "The Evergreen Hunt": {
         "ForcedGeneral": {
             "general": "Belthanos, First Thorn of Kurnoth",
