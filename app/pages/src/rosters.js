@@ -92,21 +92,38 @@ const rosterPage = {
       armySelect.onchange();
     }
 
-    const displayCreateHint = (isLoading) => {
+    const hideCreateHint = (isLoading) => {
+      const hintClass = 'create-hint';
       const contentId = isLoading ? 'loading-content' : 'visible-content';
       const content = document.getElementById(contentId);
-      const newSection = document.createElement('div');
-      newSection.className = 'section';
-      newSection.style.display = 'flex';
-      newSection.style.justifyContent = 'center';
-      newSection.style.alignContent = 'center';
-      newSection.style.border = `2px solid ${getVar('hover-color')}`
+      const section = content.querySelector(`.${hintClass}`);
+      if (section) {
+        section.parentElement.removeChild(section);
+      }
+    }
+
+    const displayCreateHint = (isLoading) => {
+      const hintClass = 'create-hint';
+      const contentId = isLoading ? 'loading-content' : 'visible-content';
+      const content = document.getElementById(contentId);
+      let section = content.querySelector(`.${hintClass}`);
+      if (section) {
+        section.style.display = 'flex';
+        return;
+      }
+      section = document.createElement('div');
+      section.className = 'section';
+      section.classList.add(hintClass);
+      section.style.display = 'flex';
+      section.style.justifyContent = 'center';
+      section.style.alignContent = 'center';
+      section.style.border = `2px solid ${getVar('hover-color')}`
       const p = document.createElement('p');
       p.textContent = `Tap the + button to create your first Roster.`
       //p.style.marginLeft = '1em';
       p.style.color = getVar('white-1');
-      newSection.append(p);
-      content.appendChild(newSection);
+      section.append(p);
+      content.appendChild(section);
     }
 
     const setOverlayContents = () => {
@@ -575,6 +592,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
         section.style.display = 'none';
         displayCreateHint(isLoading);
       } else {
+        hideCreateHint(isLoading);
         section.style.display = '';
       }
     }
