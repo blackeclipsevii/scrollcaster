@@ -277,9 +277,20 @@ const rosterPage = {
           toggle();
         },
         Duplicate: async (e) => {
+          const labelCopy = (str) => {
+            const match = str.match(/\((\d+)\)$/);
+            if (match) {
+              const num = parseInt(match[1], 10);
+              return str.replace(/\(\d+\)$/, `(${num + 1})`);
+            } else {
+              return `${str} (1)`;
+            }
+          }
+
           const json = JSON.stringify(roster);
           const clone = JSON.parse(json);
           clone.id = generateId();
+          clone.name = labelCopy(clone.name);
           await putRoster(clone);
           displayRoster(clone);
         },
