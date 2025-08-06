@@ -56,9 +56,12 @@ const builderPage = {
         roster = thisPage.roster;
 
         const disableArrow = (arrow) => {
-            arrow.textContent = '\u2022'; //'\u29BF';
-            arrow.style.fontSize = '2em';
-            arrow.style.cursor = 'default';
+            const img = arrow.querySelector('img');
+            img.src = `../resources/${getVar('ab-control')}`
+            img.style.height = '.5em';
+            img.style.width = '.5em';
+            img.style.margin = '.75em';
+            arrow.closest('.arrow-wrapper').style.cursor = 'default';
         }
 
         const clearDetailsSection = (item) => {
@@ -91,9 +94,9 @@ const builderPage = {
                 <span style="display: none;" class="unit-idx"></span>
                 <div class='unit-slot-display-wrapper'>
                 <div class='arrow-wrapper'>
-                    <span class="arrow">
-                        <p>›</p>
-                    </span>
+                    <div class='arrow'>
+                        <img class='invert-img' src='../resources/${getVar('right-arrow')}'></img>
+                    </div>
                 </div>
                 <div class='unit-slot-selectable-item-wrapper'>
                     <div class="selectable-item unit-slot-selectable-item">
@@ -524,7 +527,7 @@ const builderPage = {
                 disableArrow(arrow);
             } else {
                 const arrow = newUsItem.querySelector('.arrow');
-                arrow.onclick = (event) => {
+                arrow.closest('.arrow-wrapper').onclick = (event) => {
                     event.stopPropagation();
                     arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
                 }
@@ -657,7 +660,7 @@ const builderPage = {
                 const newUsItem = clonePrototype('unit-slot-prototype');
                 
                 const arrow = newUsItem.querySelector('.arrow');
-                arrow.onclick = (event) => {
+                arrow.closest('.arrow-wrapper').onclick = (event) => {
                     event.stopPropagation();
                     arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
                 }
@@ -1094,7 +1097,7 @@ const builderPage = {
             });
 
             const arrow = newUsItem.querySelector('.arrow');
-            arrow.onclick = (event) => {
+            arrow.closest('.arrow-wrapper').onclick = (event) => {
                 event.stopPropagation();
                 arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
             }
