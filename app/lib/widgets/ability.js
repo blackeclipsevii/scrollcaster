@@ -33,7 +33,7 @@ const widgetsAbilityNewAbilityDiv = (ability) => {
     let invertPng = true;
     let headerFontColor = getVar('header-font-color');
     let color = getVar('gray-ability');
-    let icon = '../../resources/abSpecial.png';
+    let icon = `../../resources/${getVar('ab-special')}`;
     let cssColor = 'gray';
     if (ability.metadata && ability.metadata.color) {
         cssColor = ability.metadata.color.toLowerCase();
