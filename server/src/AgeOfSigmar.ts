@@ -203,6 +203,14 @@ export default class AgeOfSigmar {
         const motherloadOfUnits: {[name: string]: Unit} = {};
         const names = Object.getOwnPropertyNames(rorData.libraries);
         names.forEach(name => {
+            rorData.catalog.sharedSelectionEntries.forEach(entry => {
+                // gotrek is in here
+                if (entry['@type'] === 'unit') {
+                    const unit = new Unit(this, entry);
+                    motherloadOfUnits[unit.id] = unit;
+                }
+            });
+
             rorData.libraries[name].sharedSelectionEntries.forEach(entry => {
                 if (entry['@type'] === 'unit') {
                     const unit = new Unit(this, entry);
