@@ -185,19 +185,27 @@ const battlePage = {
                 });
             }
 
+            const addUnit = (unit) => {
+                if (!unit)
+                    return;
+
+                if (!unitSet[unit.id])
+                    unitSet[unit.id] = unit;
+                addEnhancements(unit);
+            }
+
             // units
             thisPage.roster.regiments.forEach(reg => {
+                if(reg.leader) {
+                    addUnit(reg.leader);
+                }
                 reg.units.forEach(unit => {
-                    if (!unitSet[unit.id])
-                        unitSet[unit.id] = unit;
-                    addEnhancements(unit);
+                    addUnit(unit);
                 });
             });
 
             thisPage.roster.auxiliaryUnits.forEach(unit => {
-                if (!unitSet[unit.id])
-                    unitSet[unit.id] = unit;
-                addEnhancements(unit);
+                addUnit(unit);
             });
 
             if (thisPage.roster.terrainFeature) {

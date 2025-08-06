@@ -153,6 +153,9 @@ const newFavoritesCheckbox = (favoriteId, favoriteType, onchange=null, checkboxI
     heart.type = 'checkbox';
     heart.className = 'heart-checkbox';
     heart.checked = isFavorite(favoriteId, favoriteType);
+    heart.onclick = (e) => {
+        e.stopPropagation();
+    }
     heart.onchange = () => {
         if (onchange)
             onchange(heart.checked, favoriteId, favoriteType);

@@ -23,8 +23,7 @@ const builderPage = {
     async fetchUpgrades() {
         if(this._cache.upgrades.upgrades && this._cache.upgrades.armyName === this.roster.army)
             return this._cache.upgrades.upgrades;
-        const url = encodeURI(`${endpoint}/upgrades?army=${this.roster.army}`);
-        const result = await fetchWithLoadingDisplay(url, null);
+        const result = await fetchUpgrades(this.roster.army);
         if (result){
             this._cache.upgrades.upgrades = result;
             this._cache.upgrades.armyName = this.roster.army;
@@ -54,6 +53,13 @@ const builderPage = {
 
         // to-do remove
         roster = thisPage.roster;
+
+        // Update the points display before removing a pointed object (obj.points)
+        const removeObjectPoints = (pointedObj) => {
+            totalPoints -= pointedObj.points;
+            refreshPointsOverlay(thisPage.roster.id);
+            updateValidationDisplay();
+        }
 
         const disableArrow = (arrow) => {
             const img = arrow.querySelector('img');
@@ -179,11 +185,13 @@ const builderPage = {
         }
 
         function updateSelectableItemPrototype(prototype, displayableObj, isUnit, leftOnClick) {
-            const left = prototype.querySelector('.selectable-item-left');
-            left.addEventListener('click', leftOnClick);
+            const selectableItem = prototype.querySelector('.unit-slot-selectable-item-wrapper');
+            selectableItem.addEventListener('click', leftOnClick);
 
             const nameEle = makeSelectableItemName(displayableObj);
             nameEle.classList.add('unit-text');
+
+            const left = prototype.querySelector('.selectable-item-left');
             left.appendChild(nameEle);
 
             const roleEle = makeSelectableItemType(displayableObj, isUnit);
@@ -363,8 +371,7 @@ const builderPage = {
                                 const unitPoints = unitTotalPoints(unit);
                                 const usPoints = newUsItem.querySelector('.unit-slot-points');
                                 displayPoints(usPoints, unitPoints, 'PTS');
-                                totalPoints -= upgrade.points;
-                                refreshPointsOverlay(thisPage.roster.id);
+                                removeObjectPoints(upgrade);
                             }
                             updateValidationDisplay();
                             putRoster(roster);
@@ -617,9 +624,7 @@ const builderPage = {
                     toggleUnitAddButton(regItem, thisPage.roster.regiments[_currentRegIdx]);
 
                     // update the points
-                    totalPoints -= unitTotalPoints(unit);
-                    refreshPointsOverlay();
-                    updateValidationDisplay();
+                    removeObjectPoints(unit);
 
                     // remove the div and move all of the other unit indices
                     parent.removeChild(newUsItem);
@@ -729,9 +734,8 @@ const builderPage = {
 
             const callbackMap = {
                 Delete: async (e) => {
-                    totalPoints -= regiment.points;
+                    removeObjectPoints(regiment);
                     thisPage.roster.regimentOfRenown = null;
-                    refreshPointsOverlay();
                     putRoster(roster);
                     regimentsDiv.removeChild(newRegItem);
                 }
@@ -947,13 +951,11 @@ const builderPage = {
                 },
 
                 Delete: async (e) => {
-                    const points = thisPage.roster.terrainFeature.points;
+                    removeObjectPoints(thisPage.roster.terrainFeature);
                     thisPage.roster.terrainFeature = null;
                     await putRoster(roster);
                     const terrain = document.getElementById('faction-terrain-container');
                     terrain.innerHTML = '';
-                    totalPoints -= points;
-                    refreshPointsOverlay(thisPage.roster.id);
                     const btn = document.getElementById('faction-terrain-add-button');
                     btn.disabled = false;
                 }
@@ -1010,6 +1012,7 @@ const builderPage = {
                     thisPage.roster.battleFormation = null;
                     putRoster(roster);
                     const settings = new UpgradeSettings;
+                    settings.titleName = 'Battle Formation';
                     settings.roster = thisPage.roster;
                     settings.type = 'battleFormations';
                     dynamicGoTo(settings);
@@ -1041,20 +1044,27 @@ const builderPage = {
 
             const callbackMap = {
                 Replace: async (e) => {
+                    removeObjectPoints(thisPage.roster.lores.spell);
+
                     thisPage.roster.lores.spell = null;
                     putRoster(roster);
+                    
                     const settings = new UpgradeSettings;
+                    settings.titleName = 'Lores';
                     settings.roster = thisPage.roster;
                     settings.type = 'spellLore';
                     dynamicGoTo(settings);
                 },
 
                 Delete: async (e) => {
+                    removeObjectPoints(thisPage.roster.lores.spell);
+
                     thisPage.roster.lores.spell = null;
                     await putRoster(roster);
                     
                     const ele = document.getElementById('spell-slot');
                     ele.parentElement.removeChild(ele);
+
                 }
             };
             
@@ -1068,14 +1078,21 @@ const builderPage = {
 
             const callbackMap = {
                 Replace: async (e) => {
+                    removeObjectPoints(thisPage.roster.lores.prayer);
+
                     thisPage.roster.lores.prayer = null;
                     putRoster(roster);
+
                     const settings = new UpgradeSettings;
+                    settings.titleName = 'Lores';
                     settings.roster = thisPage.roster;
+                    settings.type = 'prayerLore';
                     dynamicGoTo(settings);
                 },
 
                 Delete: async (e) => {
+                    removeObjectPoints(thisPage.roster.lores.prayer);
+
                     thisPage.roster.lores.prayer = null;
                     await putRoster(roster);
                     
@@ -1128,7 +1145,7 @@ const builderPage = {
                     const menu = createContextMenu({});
                     unitHdr.appendChild(menu);
 
-                    unitHdr = subUsItem.querySelector(".selectable-item-left");
+                    unitHdr = subUsItem.querySelector(".unit-slot-selectable-item-wrapper");
                     unitHdr.onclick = onclick;
                     details.appendChild(subUsItem);
                     subUsItem.style.display = "";
@@ -1160,6 +1177,7 @@ const builderPage = {
 
             const callbackMap = {
                 Delete: async (e) => {
+                    removeObjectPoints(thisPage.roster.lores.manifestation);
                     thisPage.roster.lores.manifestation = null;
                     putRoster(roster);
                     parent.removeChild(newUsItem);
@@ -1334,12 +1352,14 @@ const builderPage = {
                     }
                     else if (adjustedName.includes('lores')) {
                         const settings = new UpgradeSettings;
-                        settings.type = 'spellLore';
+                        settings.titleName = 'Lores';
                         settings.roster = thisPage.roster;
+                        settings.type = 'lore';
                         dynamicGoTo(settings);
                     }
                     else if (adjustedName.includes('formation')) {
                         const settings = new UpgradeSettings;
+                        settings.titleName = 'Battle Formation';
                         settings.type = 'battleFormations';
                         settings.roster = thisPage.roster;
                         dynamicGoTo(settings);
@@ -1401,11 +1421,3 @@ const builderPage = {
 };
 
 dynamicPages['builder'] = builderPage;
-
-// (async () => {
-//   const settings = new BuilderSettings
-//   roster = await getRoster('e6d0831b-d3e3-4342-87f7-1c68a2b4bebf');
-//   settings.roster = roster;
-//   _linkStack['roster'].currentSettings = settings;
-//   dynamicGoTo(settings);
-// })();

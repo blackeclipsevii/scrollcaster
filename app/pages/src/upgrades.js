@@ -1,5 +1,6 @@
 
 class UpgradeSettings {
+    titleName = null;
     type = null;
     roster = null;
     armyName = null;
@@ -19,7 +20,7 @@ const upgradePage = {
         if (this._cache.upgrades && this._cache.armyName === armyName) {
             return this._cache.upgrades;
         }
-        const result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/upgrades?army=${armyName}`));
+        const result = await fetchUpgrades(armyName);
         this._cache.upgrades = result;
         this._cache.armyName = armyName;
         return result;
@@ -68,6 +69,10 @@ const upgradePage = {
         
             const item = document.createElement('div');
             item.classList.add('selectable-item');
+            // Clicking the container navigates to details
+            item.addEventListener('click', () => {
+                displayUpgradeOverlay(upgrade);
+            });
             
             if (roster && !_inCatalog) {
                 item.classList.add('not-added');
@@ -76,11 +81,6 @@ const upgradePage = {
             const left = document.createElement('div');
             left.classList.add('selectable-item-left');
             
-            // Clicking the container navigates to details
-            left.addEventListener('click', () => {
-                displayUpgradeOverlay(upgrade);
-            });
-        
             const nameEle = makeSelectableItemName(upgrade);
             left.appendChild(nameEle);
 
@@ -102,6 +102,10 @@ const upgradePage = {
                 checkbox.name = `${upgrade.type}`;
                 checkbox.style.transform = 'scale(1.5)';
 
+                checkbox.onclick = (e) =>{
+                    e.stopPropagation();
+                }
+    
                 //checkbox.textContent = '+';
                 checkbox.addEventListener('change', async (e) => {
                     e.stopPropagation(); // Prevents click from triggering page change
@@ -215,7 +219,10 @@ const upgradePage = {
         }
         
         async function loadUpgradesCatalog() {
-            setHeaderTitle('Upgrades');
+            if (thisPage.settings.titleName)
+                setHeaderTitle(thisPage.settings.titleName);
+            else
+                setHeaderTitle('Upgrades');
             hidePointsOverlay();
             const allUpgrades = await thisPage.fetchUpgrades(thisPage.settings.armyName);
             let upgradeList = [];
@@ -236,7 +243,10 @@ const upgradePage = {
         }
         
         async function loadUpgrades() {
-            setHeaderTitle('Upgrades');
+            if (thisPage.settings.titleName)
+                setHeaderTitle(thisPage.settings.titleName);
+            else
+                setHeaderTitle('Upgrades');
             displayPointsOverlay(thisPage.settings.roster.id);
             refreshPointsOverlay(thisPage.settings.roster.id);
             updateValidationDisplay();

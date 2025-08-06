@@ -68,7 +68,7 @@ const tacticsPage = {
         
     
                 // Clicking the container navigates to details
-                left.addEventListener('click', () => {
+                item.addEventListener('click', () => {
                     displayTacticsOverlay(tacticCard);
                 });
     
@@ -99,6 +99,10 @@ const tacticsPage = {
                         item.classList.remove(notAdded);
                         item.classList.add(added);
                         tacticCheckbox.checked = true;
+                    }
+
+                    tacticCheckbox.onclick = (e) =>{
+                        e.stopPropagation();
                     }
     
                     tacticCheckbox.addEventListener('change', async (e) => {

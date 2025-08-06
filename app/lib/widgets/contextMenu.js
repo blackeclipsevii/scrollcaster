@@ -42,9 +42,26 @@ function createContextMenu(callbackMap, trackMenu=true) {
     ele.innerHTML = `<button class="menu-btn">⋯</button>`;
     ele.id = uniqueId;
 
+    const closeOtherMenus = (e) => {
+        const { pageX: x, pageY: y } = e;
+        const menus = document.getElementsByClassName('menu-wrapper');
+        
+        // Close the menu only if the click is outside the menu
+        for (const menu of menus) {
+            if (menu.style.left !== `${x-menu.offsetWidth}px` || 
+                menu.style.top !== `${y}px`) {
+                menu.style.display = 'none';
+            }
+        };
+    }
+
     const button = ele.querySelector('.menu-btn');
     button.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
+
+        closeOtherMenus(e);
+
         const { pageX: x, pageY: y } = e;
         const className = 'menu-wrapper';
         const menu = document.getElementById(`${className}-${uniqueId}`);
@@ -56,19 +73,7 @@ function createContextMenu(callbackMap, trackMenu=true) {
         menu.style.top = `${y}px`;
     });
 
-    document.addEventListener('click', (e) => {
-        const { pageX: x, pageY: y } = e;
-        const menus = document.getElementsByClassName('menu-wrapper');
-        
-        // Close the menu only if the click is outside the menu
-        for (const menu of menus) {
-            if (menu.style.left !== `${x-menu.offsetWidth}px` || 
-                menu.style.top !== `${y}px`) {
-                menu.style.display = 'none';
-            }
-        };
-        
-    });
+    document.addEventListener('click', closeOtherMenus);
 
     const div = document.createElement('div');
     div.innerHTML = `

@@ -89,6 +89,7 @@ const catalogPage = {
             makeItem('Lores', () => {
                 const settings = new UpgradeSettings;
                 settings.type = 'lores';
+                settings.titleName = 'Lores';
                 dynamicGoTo(settings);
             });
         }
@@ -142,6 +143,7 @@ const catalogPage = {
                     if (!army.isArmyOfRenown && army.upgrades.battleFormations) {
                         makeItem('Battle Formations', () => {
                             const settings = new UpgradeSettings;
+                            settings.titleName = 'Battle Formation';
                             settings.type = 'battleFormations';
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
@@ -151,6 +153,7 @@ const catalogPage = {
                     if (Object.getOwnPropertyNames(army.upgrades.artefacts).length > 0) {
                         makeItem('Artefacts of Power', () => {
                             const settings = new UpgradeSettings;
+                            settings.titleName = 'Enhancements';
                             settings.type = 'artefacts';
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
@@ -160,6 +163,7 @@ const catalogPage = {
                     if (Object.getOwnPropertyNames(army.upgrades.heroicTraits).length > 0) {
                         makeItem('Heroic Traits', () => {
                             const settings = new UpgradeSettings;
+                            settings.titleName = 'Enhancements';
                             settings.type = 'heroicTraits';
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
@@ -169,6 +173,7 @@ const catalogPage = {
                     if (Object.getOwnPropertyNames(army.upgrades.monstrousTraits).length > 0) {
                         makeItem('Monstrous Traits', () => {
                             const settings = new UpgradeSettings;
+                            settings.titleName = 'Enhancements';
                             settings.type = 'monstrousTraits';
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
@@ -180,6 +185,7 @@ const catalogPage = {
                         Object.getOwnPropertyNames(army.upgrades.lores.prayer).length > 0) {
                         makeItem('Lores', () => {
                             const settings = new UpgradeSettings;
+                            settings.titleName = 'Lores';
                             settings.type = 'lores';
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
