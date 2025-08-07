@@ -152,16 +152,18 @@ export default class Unit {
     }
 
     _parseOptions(ageOfSigmar: AgeOfSigmar, optionsGroups: BsSelectionEntryGroup[]) {
-        optionsGroups.forEach(optionGroup => {
-            if (!optionGroup.selectionEntries)
+    
+        const addOptionSet = (og: BsSelectionEntryGroup) => {
+            if (!og.selectionEntries)
                 return;
 
-            const setName = optionGroup["@name"];
+            const setName = og["@name"];
             const options = new Options;
-            optionGroup.selectionEntries.forEach(optionEntry => {
-                const optionName = optionEntry["@name"];
-                if (optionEntry.profiles) {
-                    optionEntry.profiles.forEach(profile => {
+
+            const addOptions = (entry: BsSelectionEntry) => {
+                const optionName = entry["@name"];
+                if (entry.profiles) {
+                    entry.profiles.forEach(profile => {
                         if (profile["@typeName"].includes('Ability')) {
                             const ability = new Ability(profile);
                             if (options[optionName]) {
@@ -184,9 +186,10 @@ export default class Unit {
                         }
                     });
                 }
-                if (optionEntry.modifiers) {
+            
+                if (entry.modifiers) {
                     const option = new Option(optionName);
-                    optionEntry.modifiers.forEach(modifer => {
+                    entry.modifiers.forEach(modifer => {
                         if (modifer["@type"] === 'add' &&
                             modifer["@field"] === 'category') {
                             const keywordLUT = ageOfSigmar.keywordLUT as {[key:string]: string};
@@ -196,8 +199,23 @@ export default class Unit {
                     });
                     options[optionName] = option;
                 }
+
+                if (entry.selectionEntries) {
+                    entry.selectionEntries.forEach(nestedEntry => {
+                        addOptions(nestedEntry);
+                    });
+                }
+            }
+
+            og.selectionEntries.forEach(optionEntry => {
+                addOptions(optionEntry);
             });
+
             this.optionSets.push(new OptionSet(setName, options));
+        }
+        optionsGroups.forEach(optionGroup => {
+
+            addOptionSet(optionGroup);
         });
     }
 
