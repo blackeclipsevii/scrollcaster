@@ -22,12 +22,15 @@ function unitTotalPoints(unit) {
   if (unit.isReinforced)
       pts += unit.points;
 
-  const enhancements = ['heroicTrait', 'artefact', 'monstrousTrait'];
-  enhancements.forEach(e => {
-  if ( unit[e] && unit[e].points)
-          pts += unit[e].points;
-  });
-  
+  if (unit.enhancements) {
+    const enhancements = Object.values(unit.enhancements);
+    enhancements.forEach(enhance => {
+      if (enhance.slot) {
+        pts += enhance.slot.points;
+      }
+    });
+  }
+
   return pts;
 }
 

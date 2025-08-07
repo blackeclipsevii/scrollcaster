@@ -11,9 +11,6 @@ export interface NameUnit {
     name: string;
     isGeneral: boolean;
     isReinforced: boolean;
-    artefact: string | null;
-    heroicTrait: string | null;
-    monstrousTrait: string | null;
     other: string[];
 };
 
@@ -124,7 +121,7 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
         if (!unit)
             return null;
 
-        const findUpgrade = (name: string, upgradeLut: UpgradeLUT) => {
+        const findUpgrade = (name: string, upgradeLut: UpgradeLUT): Upgrade | null => {
             let result: Upgrade | null = null;
             const upgrades = Object.values(upgradeLut);
             upgrades.every(ug => {
@@ -140,17 +137,9 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
         const clone = JSON.parse(JSON.stringify(unit)) as Unit;
         clone.isGeneral = nameUnit.isGeneral;
         clone.isReinforced = nameUnit.isReinforced;
-        if (nameUnit.artefact) {
-            clone.artefact = findUpgrade(nameUnit.artefact, army.upgrades.artefacts);
-        }
-        if (nameUnit.monstrousTrait) {
-            clone.monstrousTraits = findUpgrade(nameUnit.monstrousTrait, army.upgrades.monstrousTraits);
-        }
-        if (nameUnit.heroicTrait) {
-            clone.heroicTrait = findUpgrade(nameUnit.heroicTrait, army.upgrades.heroicTraits);
-        }
         nameUnit.other.forEach(otherName => {
-            let keepLooking = clone.optionSets.every(set => {
+            // check the option sets
+            const checkEnhancements = clone.optionSets.every(set => {
                 const options = Object.values(set.options);
                 options.every(option => {
                     if (option.name === otherName) {
@@ -161,31 +150,22 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
                 });
             });
 
-            if (keepLooking) {
-                // check artifacts
-                const upgrade = findUpgrade(otherName, army.upgrades.artefacts);
-                if (upgrade) {
-                    clone.artefact = upgrade;
-                    keepLooking = false;
-                }
-            }
+            // check the enhancements
+            if (checkEnhancements) {
+                const enhancementNames = Object.getOwnPropertyNames(clone.enhancements);
+                enhancementNames.every(eName => {
+                    const armyEnhanceGroup = army.upgrades.enhancements[eName];
+                    if (!armyEnhanceGroup)
+                        return true;
 
-            if (keepLooking) {
-                // check heroic
-                const upgrade = findUpgrade(otherName, army.upgrades.heroicTraits);
-                if (upgrade) {
-                    clone.heroicTrait = upgrade;
-                    keepLooking = false;
-                }
-            }
-            
-            if (keepLooking) {
-                // check heroic
-                const upgrade = findUpgrade(otherName, army.upgrades.monstrousTraits);
-                if (upgrade) {
-                    clone.monstrousTraits = upgrade;
-                    keepLooking = false;
-                }
+                    const upgrade = findUpgrade(otherName, armyEnhanceGroup.upgrades);
+                    if (upgrade) {
+                        clone.enhancements[eName].slot = upgrade;
+                        return false;
+                    }
+
+                    return true;
+                });
             }
         });
         return clone;

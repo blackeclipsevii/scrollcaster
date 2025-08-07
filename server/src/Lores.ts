@@ -26,11 +26,12 @@ export class Lore {
                 
                 const typename = selectionEntry.profiles[0]['@typeName'].toLowerCase();
                 let type = UpgradeType.SpellLore;
-                if (selectionEntry['@name'].includes('Summon'))
+                if (selectionEntry['@name'].includes('Summon')) {
                     type = UpgradeType.ManifestationLore;
-                else if (typename.includes('prayer'))
+                } else if (typename.includes('prayer')) {
                     type = UpgradeType.PrayerLore;
-                const upgrade = new Upgrade(selectionEntry, type);
+                }
+                const upgrade = new Upgrade(selectionEntry, type, null);
                 
                 this.abilities.push(upgrade);
             });

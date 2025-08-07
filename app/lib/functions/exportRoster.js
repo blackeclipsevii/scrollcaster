@@ -53,15 +53,13 @@ async function exportRoster(roster) {
         if (unit.isReinforced) {
             text += `  ${indent}${astrix} Reinforced\n`;
         }
-        if (unit.artefact) {
-            text += `  ${indent}${astrix} ${unit.artefact.name}\n`;
-        }
-        if (unit.heroicTrait) {
-            text += `  ${indent}${astrix} ${unit.heroicTrait.name}\n`;
-        }
-        if (unit.monstrousTrait) {
-            text += `  ${indent}${astrix} ${unit.monstrousTrait.name}\n`;
-        }
+
+        const enhancements = Object.values(unit.enhancements);
+        enhancements.forEach(enhance => {
+            if (enhance.slot !== null) {
+                text += `  ${indent}${astrix} ${enhance.slot.name}\n`;
+            }
+        });
 
         if (unit.optionSets) {
             unit.optionSets.forEach(optionSet => {

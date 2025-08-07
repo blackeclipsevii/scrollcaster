@@ -73,9 +73,6 @@ const builderPage = {
         const clearDetailsSection = (item) => {
             removeSection(item, 'is-general');
             removeSection(item, 'is-reinforced');
-            removeSection(item, 'available-artefacts');
-            removeSection(item, 'available-heroicTraits');
-            removeSection(item, 'available-monstrousTraits');
         }
 
         const toggleUnitAddButton = (regItem, _regiment) => {
@@ -91,6 +88,21 @@ const builderPage = {
                 btn.style.borderColor = leaderBtnColor;
                 btn.style.color = leaderBtnColor;
             }
+        }
+
+        function _addEnhancementUpgradeSection(newUsItem, enhancement) {
+            const div = document.createElement('div');
+            div.classList.add('section');
+            div.classList.add('upgrade-section');
+            
+            const h3 = document.createElement('h3');
+            h3.className = 'section-title';
+            h3.textContent = `${enhancement.name}:`;
+            div.appendChild(h3);
+
+            const details = newUsItem.querySelector('.unit-details');
+            details.appendChild(div);
+            return div;
         }
 
         function _newUnitSlot() {
@@ -128,18 +140,6 @@ const builderPage = {
                         <label class="upgrade-label is-reinforced">
                             <input type="checkbox" class="upgrade-checkbox reinforced-checkbox"> Reinforced
                         </label>
-                    </div>
-                    
-                    <div class="section upgrade-section available-artefacts">
-                        <h3 class="section-title">Artefacts of Power:</h3>
-                    </div>
-                    
-                    <div class="section upgrade-section available-heroicTraits">
-                        <h3 class="section-title">Heroic Traits:</h3>
-                    </div>
-
-                    <div class="section upgrade-section available-monstrousTraits">
-                        <h3 class="section-title">Monstrous Traits:</h3>
                     </div>
                 </div>
             `
@@ -313,10 +313,10 @@ const builderPage = {
         }
 
         async function displayEnhancements(unit, newUsItem, type) {
-            const details = newUsItem.querySelector(`.available-${type}s`);
+            const details =  _addEnhancementUpgradeSection(newUsItem, unit.enhancements[type]);
             const allUpgrades = await thisPage.fetchUpgrades();
-            const upgrades = allUpgrades[`${type}s`];
-            const values = Object.values(upgrades);
+            const enhancementGroup = allUpgrades.enhancements[type];
+            const values = Object.values(enhancementGroup.upgrades);
             values.forEach(upgrade => {
                 const upgradeDiv = document.createElement('div');
                 upgradeDiv.className = 'upgrade-group';
@@ -344,14 +344,14 @@ const builderPage = {
                 };
 
                 const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
-                if (unit[type] && unit[type].name === upgrade.name) {
+                if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
                     checkbox.checked = true;
                 }
 
                 checkbox.onchange = () => {
                     if (checkbox.checked) {
-                        if (!unit[type]) {
-                            unit[type] = upgrade;
+                        if (!unit.enhancements[type].slot) {
+                            unit.enhancements[type].slot = upgrade;
                             if (costsPoints) {
                                 const unitPoints = unitTotalPoints(unit);
                                 const usPoints = newUsItem.querySelector('.unit-slot-points');
@@ -361,12 +361,12 @@ const builderPage = {
                             }
                             updateValidationDisplay();
                             putRoster(roster);
-                        } else if (unit[type].name !== upgrade.name) {
+                        } else if (unit.enhancements[type].slot.id !== upgrade.id) {
                             checkbox.checked = false;
                         }
                     } else {
-                        if (unit[type] && unit[type].name === upgrade.name) {
-                            unit[type] = null;
+                        if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
+                            unit.enhancements[type].slot = null;
                             if (costsPoints) {
                                 const unitPoints = unitTotalPoints(unit);
                                 const usPoints = newUsItem.querySelector('.unit-slot-points');
@@ -421,12 +421,12 @@ const builderPage = {
             const hiddenIdx = newUsItem.querySelector('.unit-idx');
             hiddenIdx.textContent = idx;
 
-            let numOptions = 5;
+            let numOptions = 0;
             const canBeGeneral = !(unit.type !== 0 || !parent.className.includes('regiment'));
             if (unit.type !== 0 || !parent.className.includes('regiment')) {
                 removeSection(newUsItem, 'is-general');
-                -- numOptions;
             } else {
+                ++ numOptions;
                 const checkbox = newUsItem.querySelector('.general-checkbox');
                 checkbox.onchange = () => {
                     const unitContainer = checkbox.closest('.unit-slot');
@@ -462,8 +462,8 @@ const builderPage = {
                 {
                     removeSection(newUsItem, 'is-reinforced');
                 }
-                -- numOptions;
             } else {
+                ++ numOptions;
                 const checkbox = newUsItem.querySelector('.reinforced-checkbox');
                 checkbox.onchange = () => {
                     const unitContainer = checkbox.closest('.unit-slot');
@@ -494,6 +494,16 @@ const builderPage = {
                 };
             }
 
+            if (unit.enhancements) {
+                const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
+                if (enhancementNames.length > 1)
+                    enhancementNames.sort((a,b) => a.localeCompare(b));
+                for (let e = 0; e < enhancementNames.length; ++e) {
+                    ++ numOptions;
+                    await displayEnhancements(unit, newUsItem, enhancementNames[e]);
+                }
+            }
+
             if (unit.optionSets && unit.optionSets.length > 0) {
                 ++numOptions;
                 unit.optionSets.forEach(optionSet => {
@@ -501,34 +511,8 @@ const builderPage = {
                 });
             }
 
-            if (!unit.canHaveArtefact) {
-                removeSection(newUsItem, 'available-artefacts');
-                -- numOptions;
-            } else {
-                await displayEnhancements(unit, newUsItem, 'artefact');
-            }
-
-            if (!unit.canHaveHeroicTrait) {
-                removeSection(newUsItem, 'available-heroicTraits');
-                -- numOptions;
-            } else {
-                await displayEnhancements(unit, newUsItem, 'heroicTrait');
-            }
-
-            const upgrades = await thisPage.fetchUpgrades();
-            const hasMonstrousTraits = Object.getOwnPropertyNames(upgrades.monstrousTraits).length > 0;
-            const isMonster = unit.keywords && unit.keywords.includes('MONSTER');
-            const isUnique = unit.keywords && unit.keywords.includes('UNIQUE');
-            if (!hasMonstrousTraits || !isMonster || isUnique) {
-                removeSection(newUsItem, 'available-monstrousTraits');
-                -- numOptions;
-            } else {
-                await displayEnhancements(unit, newUsItem, 'monstrousTrait');
-            }
-
             if (numOptions < 1) {
-                // remove toggle
-                // removeSection(newUsItem, "arrow");
+                // remove drawer
                 removeSection(newUsItem, "unit-details");
                 const arrow = newUsItem.querySelector('.arrow');
                 disableArrow(arrow);

@@ -163,7 +163,7 @@ const battlePage = {
 
             const warscrollSection = document.getElementById('warscrolls-section');
             const enhancementSection = document.getElementById('enhancements-section');
-            const battleSection = document.getElementById('army-section');
+            //const battleSection = document.getElementById('army-section');
             const loresSection = document.getElementById('lores-section');
             warscrollSection.style.display = '';
             const warscrollContainer = document.getElementById('warscrolls-list');
@@ -178,10 +178,10 @@ const battlePage = {
                 displayBattleFormation(battleContainer);
 
             const addEnhancements = (unit) => {
-                const enhancements = ['heroicTrait', 'artefact', 'monstrousTrait'];
-                enhancements.forEach(e => {
-                    if (unit[e])
-                        enhancementSet[unit[e].id] = unit[e];
+                const enhancements = Object.values(unit.enhancements);
+                enhancements.forEach(enhance => {
+                    if (enhance.slot !== null)
+                        enhancementSet[enhance.id] = enhance.slot;
                 });
             }
 
@@ -219,7 +219,8 @@ const battlePage = {
                 displayTactics(battleContainer);
 
             let values = Object.values(unitSet);
-            values.sort((a, b) => a.type - b.type);
+            if (values.length > 1)
+                values.sort((a, b) => a.type - b.type);
             values.forEach(unit => {
                 makeSelectableItem(unit, true, warscrollContainer, () => {
                     const wss = new WarscrollSettings;

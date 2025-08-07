@@ -11,13 +11,21 @@ class ImportNewRecruitRoster extends ImportOfficialRoster {
         }
 
         nameRoster.name = lines[0].split('(')[0].trim();
-        nameRoster.armyName = lines[2];
-        if (!lines[3].startsWith('Auxiliaries')) {
-            nameRoster.battleFormation = lines[3];
+        
+        // move to the the next full line
+        let i = 1;
+        while (this.isEmptyOrHyphens(lines[i]))
+            ++i
+
+        nameRoster.armyName = lines[i];
+        ++i;
+        if (!lines[i].startsWith('Auxiliaries:')) {
+            nameRoster.battleFormation = lines[i];
         }
+        ++i;
 
         // to-do most of these are the same as the official roster
-        for (let i = 6; i < lines.length; ++i) {
+        for (; i < lines.length; ++i) {
             const line = lines[i].trim();
             if (line.includes('Battle Tactic Cards')) {
                 let cards = line.split(' - ')[1];

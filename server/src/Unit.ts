@@ -36,26 +36,29 @@ export class OptionSet {
     }
 }
 
+export interface EnhancementSlot {
+    name: string;
+    id: string;
+    slot: Upgrade | null;
+}
+
 export default class Unit {
     name: string;
     id: string;
 
-    isGeneral: boolean;
     isWarmaster: boolean;
+    
+    canBeGeneral: boolean;
+    isGeneral: boolean;
+
+    canBeReinforced: boolean;
     isReinforced: boolean;
 
-    canHaveHeroicTrait: boolean;
-    canHaveArtefact: boolean;
-    canBeGeneral: boolean;
-    canBeReinforced: boolean;
-    
     points: number;
     type: number;
 
-    monstrousTraits: Upgrade | null;
-    heroicTrait: Upgrade | null;
-    artefact: Upgrade | null;
     weapons: Weapon[];
+    enhancements: {[name: string]: EnhancementSlot};
     optionSets: OptionSet[];
     abilities: Ability[];
     keywords: string[];
@@ -70,14 +73,8 @@ export default class Unit {
         this.isGeneral = false;
         this.isWarmaster = false; // must be general if able
 
-        this.monstrousTraits = null;
+        this.enhancements = {};
 
-        this.canHaveHeroicTrait = false;
-        this.heroicTrait = null;
-
-        this.canHaveArtefact = false;
-        this.artefact = null;
-        
         this.canBeReinforced = false;
         this.isReinforced = false;
 

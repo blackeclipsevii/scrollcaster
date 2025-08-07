@@ -340,7 +340,7 @@ export default class AgeOfSigmar {
         // the ror abilities
         rorData.catalog.sharedSelectionEntries.forEach(entry => {
             if (entry['@type'] === 'upgrade') {
-                const upgrade = new Upgrade(entry, UpgradeType.RegimentOfRenown);
+                const upgrade = new Upgrade(entry, UpgradeType.RegimentOfRenown, null);
                 if (entry.modifiers) {
                     entry.modifiers.forEach(mod => {
                         if (mod.conditions) {

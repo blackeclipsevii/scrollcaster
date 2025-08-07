@@ -2,6 +2,7 @@
 class CatalogSettings {
     armyName = null;
     core = false;
+    _doSub = true; // this is not intended for external use, just tracking history
 };
 
 const catalogPage = {
@@ -109,7 +110,7 @@ const catalogPage = {
             });
         }
         
-        async function loadTome(doSub = true) {
+        async function loadTome() {
             coreVisible(false);
             resetLists();
             const h2 = document.getElementById('army-section').querySelector('.section-title');
@@ -150,36 +151,19 @@ const catalogPage = {
                         });          
                     }
         
-                    if (Object.getOwnPropertyNames(army.upgrades.artefacts).length > 0) {
-                        makeItem('Artefacts of Power', () => {
-                            const settings = new UpgradeSettings;
-                            settings.titleName = 'Enhancements';
-                            settings.type = 'artefacts';
-                            settings.armyName = subFactionName;
-                            dynamicGoTo(settings);
-                        });          
+                    if (army.upgrades.enhancements) {
+                        const enhancementNames = Object.getOwnPropertyNames(army.upgrades.enhancements);
+                        enhancementNames.forEach(eName => {
+                            makeItem(army.upgrades.enhancements[eName].name, () => {
+                                const settings = new UpgradeSettings;
+                                settings.titleName = army.upgrades.enhancements[eName].name;
+                                settings.type = eName;
+                                settings.armyName = subFactionName;
+                                dynamicGoTo(settings);
+                            });   
+                        });
                     }
-        
-                    if (Object.getOwnPropertyNames(army.upgrades.heroicTraits).length > 0) {
-                        makeItem('Heroic Traits', () => {
-                            const settings = new UpgradeSettings;
-                            settings.titleName = 'Enhancements';
-                            settings.type = 'heroicTraits';
-                            settings.armyName = subFactionName;
-                            dynamicGoTo(settings);
-                        });          
-                    }
-
-                    if (Object.getOwnPropertyNames(army.upgrades.monstrousTraits).length > 0) {
-                        makeItem('Monstrous Traits', () => {
-                            const settings = new UpgradeSettings;
-                            settings.titleName = 'Enhancements';
-                            settings.type = 'monstrousTraits';
-                            settings.armyName = subFactionName;
-                            dynamicGoTo(settings);
-                        });          
-                    }
-        
+                    
                     if (Object.getOwnPropertyNames(army.upgrades.lores.manifestation).length > 6 ||
                         Object.getOwnPropertyNames(army.upgrades.lores.spell).length > 0 ||
                         Object.getOwnPropertyNames(army.upgrades.lores.prayer).length > 0) {
@@ -194,7 +178,7 @@ const catalogPage = {
                 });
             }
         
-            if (doSub) {
+            if (thisPage.settings._doSub) {
                 const subfactions = [];
                 await fetchArmies(async (armyAlliances) => {
                     armyAlliances.forEach(alliance => {
@@ -210,6 +194,7 @@ const catalogPage = {
                                 makeItem(army, () => {
                                     const settings = new CatalogSettings;
                                     settings.armyName = army;
+                                    settings._doSub = false;
                                     dynamicGoTo(settings, true, false); // update history but dont go
                                     thisPage.settings = settings;
                                     _loadFaction(army);
@@ -224,6 +209,7 @@ const catalogPage = {
                                 makeItem(army.split(' - ')[1], () => {
                                     const settings = new CatalogSettings;
                                     settings.armyName = army;
+                                    settings._doSub = false;
                                     dynamicGoTo(settings, true, false); // update history but dont go
                                     thisPage.settings = settings;
                                     _loadFaction(army);
@@ -234,8 +220,8 @@ const catalogPage = {
                         _loadFaction(thisPage.settings.armyName);
                     }
                 });
-        
-                return;
+            } else {
+                _loadFaction(thisPage.settings.armyName);
             }
         }
         
