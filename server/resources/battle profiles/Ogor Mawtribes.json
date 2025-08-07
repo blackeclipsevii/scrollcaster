@@ -11,7 +11,7 @@
     "name": "Butcher",
     "unitSize": 1,
     "points": 140,
-    "regimentOptions": "Any <OGOR MAWTRIBES>",
+    "regimentOptions": "Any <GUTBUSTERS>, Any <Gnoblars>, Any <Gorger Mawpack>",
     "notes": null,
     "baseSize": "40mm"
   },
@@ -78,5 +78,13 @@
     "regimentOptions": "0-1 <Bloodpelt Hunter>, Any <OGOR MAWTRIBES>",
     "notes": null,
     "baseSize": "40mm"
+  },
+  {
+    "name": "Kragnos, the End of Empires",
+    "unitSize": 1,
+    "points": 580,
+    "regimentOptions": "Any <OGOR MAWTRIBES>",
+    "notes": null,
+    "baseSize": "160mm"
   }
 ]

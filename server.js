@@ -23,7 +23,7 @@ var ageOfSigmar = null;
 var version = {
   major: 3,
   minor: 3,
-  patch: 1
+  patch: 2
 };
 
 /*
