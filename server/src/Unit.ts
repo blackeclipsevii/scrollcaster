@@ -1,40 +1,14 @@
 import Ability from "./Ability.js";
-import Weapon from "./Weapon.js";
 
 import { UnitType, strToUnitType } from "./types/UnitType.js";
-import { BsCategoryLink, BsCharacteristic, BsProfile, BsSelectionEntry, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
+import { BsCategoryLink, BsCharacteristic, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
 import Upgrade from "./Upgrade.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
 import BattleProfile from "./lib/validation/BattleProfile.js";
 
-export class Option {
-    name: string;
-    weapons: Weapon[];
-    abilities: Ability[];
-    keywords: string[];
-    constructor(name: string) {
-        this.name = name;
-        this.weapons = [];
-        this.abilities = [];
-        this.keywords = [];
-    }
-}
-
-export class Options {
-    [name: string]: Option;
-}
-
-export class OptionSet {
-    name: string;
-    options: Options;
-    selection: (Option|null);
-    constructor(name: string, options: Options) {
-        this.name = name;
-        this.options = options;
-        this.selection = null;
-    }
-}
+import Model from "./Model.js";
+import OptionSet, { parseOptions } from "./OptionSet.js";
 
 export interface EnhancementSlot {
     name: string;
@@ -57,11 +31,12 @@ export default class Unit {
     points: number;
     type: number;
 
-    weapons: Weapon[];
+    models: Model[];
+
     enhancements: {[name: string]: EnhancementSlot};
-    optionSets: OptionSet[];
     abilities: Ability[];
     keywords: string[];
+    optionSets: OptionSet[];
     battleProfile: BattleProfile | null;
     _tags: string[];
 
@@ -78,10 +53,10 @@ export default class Unit {
         this.canBeReinforced = false;
         this.isReinforced = false;
 
-        this.optionSets = [];
-        this.weapons = [];
+        this.models = [];
         this.abilities = [];
         this.keywords = [];
+        this.optionSets = [];
         // tags used for logic, like Leader or Lumineth Paragon
         this._tags = [];
         this.battleProfile = null;
@@ -118,101 +93,10 @@ export default class Unit {
         }
     }
 
-    _parseModels(ageOfSigmar: AgeOfSigmar, modelEntries: BsSelectionEntry[]) {
-        const parseProfiles = (profiles: BsProfile[]) => {
-            profiles.forEach(profile => {
-                if (profile["@typeName"].includes('Weapon')) {
-                    const myWeapon = new Weapon(profile);
-                    this.weapons.push(myWeapon);
-                }
-            });
-        }
-
+    _parseModels(ageOfSigmar: AgeOfSigmar, modelEntries: BsSelectionEntry[], unitEntry: BsSelectionEntry) {
         modelEntries.forEach(modelEntry => {
-            // weapons ?
-            if (modelEntry.selectionEntries) {
-                for (let j = 0; j < modelEntry.selectionEntries.length; ++j) {
-                    const entry = modelEntry.selectionEntries[j];
-                    if (entry.profiles)
-                        parseProfiles(entry.profiles)
-                }
-            }
-            // weapons ?
-            if (modelEntry.profiles) {
-                parseProfiles(modelEntry.profiles);
-            }
-
-            if (modelEntry.selectionEntryGroups) {
-                this._parseOptions(ageOfSigmar, modelEntry.selectionEntryGroups);
-            }
-        });
-    }
-
-    _parseOptions(ageOfSigmar: AgeOfSigmar, optionsGroups: BsSelectionEntryGroup[]) {
-    
-        const addOptionSet = (og: BsSelectionEntryGroup) => {
-            if (!og.selectionEntries)
-                return;
-
-            const setName = og["@name"];
-            const options = new Options;
-
-            const addOptions = (entry: BsSelectionEntry) => {
-                const optionName = entry["@name"];
-                if (entry.profiles) {
-                    entry.profiles.forEach(profile => {
-                        if (profile["@typeName"].includes('Ability')) {
-                            const ability = new Ability(profile);
-                            if (options[optionName]) {
-                                options[optionName].abilities.push(ability);
-                            } else {
-                                const option = new Option(optionName);
-                                option.abilities.push(ability);
-                                options[optionName] = option;
-                            }
-                        } 
-                        if (profile["@typeName"].includes('Weapon')) {
-                            const myWeapon = new Weapon(profile);
-                            if (options[optionName]) {
-                                options[optionName].weapons.push(myWeapon);
-                            } else {
-                                const option = new Option(optionName);
-                                option.weapons.push(myWeapon);
-                                options[optionName] = option;
-                            }
-                        }
-                    });
-                }
-            
-                if (entry.modifiers) {
-                    const option = new Option(optionName);
-                    entry.modifiers.forEach(modifer => {
-                        if (modifer["@type"] === 'add' &&
-                            modifer["@field"] === 'category') {
-                            const keywordLUT = ageOfSigmar.keywordLUT as {[key:string]: string};
-                            const value = keywordLUT[modifer["@value"]];
-                            option.keywords.push(value ? value : modifer["@value"]);
-                        }
-                    });
-                    options[optionName] = option;
-                }
-
-                if (entry.selectionEntries) {
-                    entry.selectionEntries.forEach(nestedEntry => {
-                        addOptions(nestedEntry);
-                    });
-                }
-            }
-
-            og.selectionEntries.forEach(optionEntry => {
-                addOptions(optionEntry);
-            });
-
-            this.optionSets.push(new OptionSet(setName, options));
-        }
-        optionsGroups.forEach(optionGroup => {
-
-            addOptionSet(optionGroup);
+            const model = new Model(ageOfSigmar, modelEntry, unitEntry);
+            this.models.push(model);
         });
     }
 
@@ -234,12 +118,12 @@ export default class Unit {
             }
 
         if (selectionEntry.selectionEntries) {
-            this._parseModels(ageOfSigmar, selectionEntry.selectionEntries);
+            this._parseModels(ageOfSigmar, selectionEntry.selectionEntries, selectionEntry);
         }
 
         // the options can be on the unit level not the model level
         if (selectionEntry.selectionEntryGroups) {
-            this._parseOptions(ageOfSigmar, selectionEntry.selectionEntryGroups);
+            parseOptions(this.optionSets, ageOfSigmar, selectionEntry.selectionEntryGroups);
         }
     }
 }
