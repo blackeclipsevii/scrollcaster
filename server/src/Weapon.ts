@@ -7,6 +7,7 @@ export enum WeaponType {
 }
 
 export default class Weapon {
+    id: string;
     name: string;
     type: number;
     Rng: string | null;
@@ -22,6 +23,7 @@ export default class Weapon {
             throw `Invalid type for constructing Weapon: ${profileXml["@typeName"]}`;
         }
 
+        this.id = profileXml["@id"];
         this.name = profileXml['@name'];
         const chars = profileXml.characteristics;
         this.type = WeaponType.Melee;
