@@ -93,9 +93,9 @@ export default class Unit {
         }
     }
 
-    _parseModels(ageOfSigmar: AgeOfSigmar, modelEntries: BsSelectionEntry[], parent: BsSelectionEntry) {
+    _parseModels(ageOfSigmar: AgeOfSigmar, modelEntries: BsSelectionEntry[], unitEntry: BsSelectionEntry) {
         modelEntries.forEach(modelEntry => {
-            const model = new Model(ageOfSigmar, modelEntry, parent);
+            const model = new Model(ageOfSigmar, modelEntry, unitEntry);
             this.models.push(model);
         });
     }

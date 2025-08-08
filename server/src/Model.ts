@@ -3,6 +3,7 @@ import AgeOfSigmar from "./AgeOfSigmar.js";
 import Weapon from "./Weapon.js";
 
 import OptionSet, {Option, Options, parseOptions} from "./OptionSet.js";
+import { ConditionType } from "./lib/bs/BsConstraint.js";
 
 class WeaponSelection {
     name: string;
@@ -10,6 +11,7 @@ class WeaponSelection {
     min: number;
     max: number;
     per: string;
+    replacedBy: string[];
     weapons: Weapon[];
     constructor(name: string, id: string) {
         this.name = name;
@@ -17,6 +19,7 @@ class WeaponSelection {
         this.per = 'model';
         this.min = 0;
         this.max = -1;
+        this.replacedBy = [];
         this.weapons = [];
     }
 }
@@ -39,30 +42,36 @@ class Weapons {
         this.selectionSets = [];
     }
     
-    addSelection(selection: WeaponSelection, exclusiveWithIds: string[] | null) {
-        if (exclusiveWithIds && exclusiveWithIds.length > 0) {
-            const ok = this.selectionSets.every(selectionSet => {
-                return selectionSet.options.every(selectableWpn => {
-                    if (exclusiveWithIds.includes(selectableWpn.id)) {
-                        selectionSet.options.push(selection);
-                        return false;
-                    }
-                    return true;
+    addSelection(selection: WeaponSelection) {
+        this.selections.push(selection);
+    }
+
+    generateSetsFromSelections() {
+        this.selections.forEach(optSelect => {
+            if (optSelect.per === 'unit') {
+                const newSet: WeaponSelectionSet = {
+                    options: [optSelect]
+                };
+
+                // remove the optional element
+                this.selections = this.selections.filter(fSelect => fSelect.id != optSelect.id);
+                this.selectionSets.push(newSet);
+            }
+        });
+
+        this.selections.forEach(defaultSelection => {
+            defaultSelection.replacedBy.forEach(replacementId => {
+                this.selectionSets.forEach(selectionSet => {
+                    selectionSet.options.every(optionalSelection => {
+                        if (optionalSelection.id === replacementId) {
+                            selectionSet.options.push(defaultSelection);
+                            return false;
+                        }
+                        return true;
+                    });
                 });
             });
-            
-            // added to existing set
-            if (!ok)
-                return;
-
-            // new set
-            this.selectionSets.push({options: [selection]})
-
-            return;
-        }
-        
-        // doesn't affect others
-        this.selections.push(selection);
+        });
     }
 }
 
@@ -82,7 +91,7 @@ export default class Model {
         this.max = 0;
         this._parse(ageOfSigmar, modelSe, parent);
     }
-    _parse(ageOfSigmar: AgeOfSigmar, modelSe: BsSelectionEntry, parent: BsSelectionEntry) {
+    _parse(ageOfSigmar: AgeOfSigmar, modelSe: BsSelectionEntry, unitEntry: BsSelectionEntry) {
         const parseProfiles = (list: Weapon[], profiles: BsProfile[]) => {
             profiles.forEach(profile => {
                 if (profile["@typeName"].includes('Weapon')) {
@@ -109,39 +118,58 @@ export default class Model {
         if (modelSe.selectionEntries) {
             modelSe.selectionEntries.forEach(entry => {
                 const weaponSelection = new WeaponSelection(entry["@name"], entry['@id']);
-                const exclusiveWith: string[] = [];
-                let maxConstraintId: string | null = null;
+                let maxConstraintIds: string[] = [];
 
                 if (entry.constraints) {
                     //<constraint type="max" value="1" field="selections" scope="9544-33d8-1d69-2be9" shared="true" id="a709-2d5c-ae85-6aeb" includeChildSelections="true"/>
                     entry.constraints.forEach(constraint => {
                         if (constraint["@field"] === 'selections') {
                             if (constraint["@type"] === 'max') {
-                                weaponSelection.max = Number(constraint["@value"]);
-                                if (constraint["@scope"] === parent["@id"]) {
+                                if (constraint['@scope'] === unitEntry["@id"]) {
                                     weaponSelection.per = 'unit';
+                                    weaponSelection.max = Number(constraint["@value"]);
                                 }
-                                maxConstraintId = constraint["@id"];
+
+                                if (weaponSelection.per !== 'unit') {
+                                    weaponSelection.max = Number(constraint["@value"]);
+                                }
+
+                                maxConstraintIds.push(constraint["@id"])
                             } else if (constraint["@type"] === 'min') {
                                 weaponSelection.min = Number(constraint["@value"]);
                             }
                         }
                     });
 
-                    if (entry.modifiers) {
+                    if (entry.modifiers && weaponSelection.per !== 'unit') {
                         entry.modifiers.forEach(mod => {
                             if (mod["@type"] === 'set' &&
                                 mod["@value"] === '0' &&
-                                mod["@field"] === maxConstraintId) {
+                                maxConstraintIds.includes(mod["@field"])) {
                                 if (mod.conditions) {
                                     mod.conditions.forEach(condition => {
                                         // might need more or alternate conditions
                                         if (condition["@type"] === 'atLeast' &&
                                             condition["@value"] === '1'
                                         ) {
-                                            exclusiveWith.push(condition["@childId"])
+                                            weaponSelection.replacedBy.push(condition["@childId"])
                                         }
                                     });
+                                }
+
+                                if (mod.conditionGroups) {
+                                    mod.conditionGroups.forEach(conditionGroup => {
+                                        if (conditionGroup["@type"] === 'or') {
+                                            conditionGroup.conditions.forEach(condition => {
+                                                // might need more or alternate conditions
+                                                if (condition["@type"] === 'atLeast' &&
+                                                    condition["@value"] === '1'
+                                                ) {
+                                                    weaponSelection.replacedBy.push(condition["@childId"])
+                                                }
+                                            });
+                                        }
+                                    })
                                 }
                             }
                         });
@@ -152,8 +180,9 @@ export default class Model {
                     parseProfiles(weaponSelection.weapons, entry.profiles)
                 }
 
-                this.weapons.addSelection(weaponSelection, exclusiveWith);
+                this.weapons.addSelection(weaponSelection);
             });
+            this.weapons.generateSetsFromSelections();
         }
         // weapons ?
         if (modelSe.profiles) {
