@@ -230,7 +230,9 @@ const unitPage = {
                     const countMessage = 'Regiment in Army';
 
                     const displayInfoOnClick = () => {
-                        displayRorOverlay(regimentOfRenown);
+                        const settings = new RegimentOfRenownSettings;
+                        settings.ror = regimentOfRenown;
+                        dynamicGoTo(settings);
                     }
 
                     const addButtonOnClick = async (event) => {

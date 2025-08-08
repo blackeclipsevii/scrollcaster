@@ -251,7 +251,9 @@ export default class AgeOfSigmar {
                                         if (condition['@type'] === 'instanceOf' &&
                                             condition['@field'] === 'selections' &&
                                             condition['@scope'] === 'parent') {
-                                            force.selectableIn.push(condition['@childId']);
+                                            const armyName = this._database.armyLUT[condition['@childId']];
+                                            if (armyName && !armyName.includes('[LEGENDS]'))
+                                                force.selectableIn.push(armyName);
                                         }
                                         
                                     });

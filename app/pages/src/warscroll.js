@@ -175,6 +175,10 @@ const warscrollPage = {
 
             const div = document.getElementById('unit-details-section');
             div.style.display = '';
+
+            const container = document.createElement('div');
+            container.className = 'details-container';
+            div.appendChild(container);
             
             let title = div.querySelector('.section-title');
             title.textContent = 'Unit Details';
@@ -187,20 +191,19 @@ const warscrollPage = {
                 });
                 if (nModels > 0) {
                     const modelCount = document.createElement('p');
-                    modelCount.style.paddingLeft = '1em';
+                    modelCount.className = 'bullet-point';
                     modelCount.innerHTML = `\u2022 ${nModels} model`;    
                     if (nModels > 1)
                         modelCount.innerHTML += 's';
-                    div.appendChild(modelCount);
+                    container.appendChild(modelCount);
                 }
 
                 if (unit.models.length > 1) {
                     unit.models.forEach(model => {
                         const weapons = filterWeapons(model).map(weapon => weapon.name).join(', ');
                         const loadoutInfo = document.createElement('p');
-                        loadoutInfo.style.paddingLeft = '1em';
                         loadoutInfo.innerHTML = `<b>${model.name}</b> is armed with <i>${weapons}</i>`;
-                        div.appendChild(loadoutInfo);
+                        container.appendChild(loadoutInfo);
                     });
                 }
 
@@ -212,10 +215,9 @@ const warscrollPage = {
                             if (selection.max !== -1 && 
                                 selection.per === 'unit') {
                                 const weaponDisclaimer = document.createElement('p');
-                                weaponDisclaimer.style.paddingLeft = '1em';
                                 const otherOptions = availableWeaponNames.filter(name => name !== selection.name).join(', ');
                                 weaponDisclaimer.innerHTML = `${selection.max}/${model.min} models can replace their <i>${otherOptions}</i> with a <i>${selection.name}</i>`;
-                                div.appendChild(weaponDisclaimer);
+                                container.appendChild(weaponDisclaimer);
                             }
                         });
                     });
@@ -224,9 +226,8 @@ const warscrollPage = {
 
             // points
             const points = document.createElement('p');
-            points.style.paddingLeft = '1em';
             points.innerHTML = `${unit.points} points`;    
-            div.appendChild(points);
+            container.appendChild(points);
 
 
             // regiment options
@@ -237,18 +238,17 @@ const warscrollPage = {
                 }
             
                 const bpTitle = document.createElement('h5');
-                bpTitle.style.paddingLeft = '1em';
                 bpTitle.textContent = 'Regiment Options';
-                div.appendChild
+                container.appendChild
 
                 unit.battleProfile.regimentOptions;
                 const options = formatText(unit.battleProfile.regimentOptions).split(',');
                 let content = document.createElement('p');
-                content.style.paddingLeft = '1em';
+                content.className = 'bullet-point';
                 options.forEach(option => {
                     content.innerHTML = `${content.innerHTML}\u2022 ${option.trim()}<br/>`;
                 });
-                div.append(bpTitle, content);
+                container.append(bpTitle, content);
             })();
         }
 
