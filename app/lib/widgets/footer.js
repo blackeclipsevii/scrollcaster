@@ -3,7 +3,7 @@ function initializeFooter(root) {
     const footer = document.createElement('footer');
     footer.innerHTML = `
       <div id='footer-left' class='footer-button footer-left'>
-        <img class='navigation-img invert-img' src='${root}/resources/${getVar('ab-special')}'></img>
+        <img class='navigation-img invert-img' src='${root}/resources/${getVar('book-icon')}'></img>
         <div id='catalog-button'>Catalog</div>
       </div>
       <div id='footer-right' class='footer-button footer-right'>

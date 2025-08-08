@@ -11,7 +11,7 @@ const _initWeaponsSection = (qualifier, parent) => {
     return false;
 }
 
-const displayWeaponOverlay = overlayToggleFactory('flex', (weaponsObj) =>{
+const displayWeaponOverlay = Overlay.toggleFactory('flex', (weaponsObj) =>{
     
     const weapons = weaponsObj.weapons;
     const name = weaponsObj.name;
@@ -45,5 +45,5 @@ const displayWeaponOverlay = overlayToggleFactory('flex', (weaponsObj) =>{
         modal.append(parentSection);
     }
 
-    widgetWeaponsDisplayWeapons(weapons);
+    WeaponWidget.display(weapons);
 });

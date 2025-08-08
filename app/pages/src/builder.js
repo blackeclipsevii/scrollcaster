@@ -382,7 +382,7 @@ const builderPage = {
             });
         }
 
-        const exportListAndDisplay = overlayToggleFactory('block', async () =>{
+        const exportListAndDisplay = Overlay.toggleFactory('block', async () =>{
             const text = await exportRoster(roster);
             const modal = document.querySelector(".modal");
 
@@ -397,7 +397,7 @@ const builderPage = {
             copyButton.textContent = 'Copy to Clipboard';
             copyButton.onclick = () => {
                 copyToClipboard(text);
-                disableOverlay();
+                Overlay.disable();
             };
 
             modal.appendChild(section);
@@ -621,7 +621,7 @@ const builderPage = {
                 }
             }
             if (callbackMap) {
-                const menu = createContextMenu(callbackMap);
+                const menu = ContextMenu.create(callbackMap);
                 unitHdr.appendChild(menu);
             }
             updateSelectableItemPrototype(newUsItem, unit, isUnit, onclick);
@@ -665,7 +665,7 @@ const builderPage = {
 
                 let unitHdr = newUsItem.querySelector(".selectable-item-right");
                 // does nothing but helps positioning be consistant
-                const menu = createContextMenu({});
+                const menu = ContextMenu.create({});
                 unitHdr.appendChild(menu);
 
                 content.appendChild(newUsItem);
@@ -698,7 +698,7 @@ const builderPage = {
 
                 let unitHdr = newUsItem.querySelector(".selectable-item-right");
                 // does nothing but helps positioning be consistant
-                const menu = createContextMenu({});
+                const menu = ContextMenu.create({});
                 unitHdr.appendChild(menu);
 
             // detailsSection.appendChild(newUsItem);
@@ -725,7 +725,7 @@ const builderPage = {
                 }
             };
 
-            const menu = createContextMenu(callbackMap);
+            const menu = ContextMenu.create(callbackMap);
             const regHdr = newRegItem.querySelector(".regiment-header");
             regHdr.appendChild(menu);
 
@@ -828,7 +828,7 @@ const builderPage = {
                 }
             };
 
-            const menu = createContextMenu(callbackMap);
+            const menu = ContextMenu.create(callbackMap);
             const regHdr = newRegItem.querySelector(".regiment-header");
             regHdr.appendChild(menu);
 
@@ -977,7 +977,7 @@ const builderPage = {
             
             let unitHdr = newUsItem.querySelector(".selectable-item-right");
             // does nothing but helps positioning be consistant
-            const menu = createContextMenu({});
+            const menu = ContextMenu.create({});
             unitHdr.appendChild(menu);
 
             const parent = document.getElementById(typename);
@@ -1126,7 +1126,7 @@ const builderPage = {
                     let unitHdr = subUsItem.querySelector(".selectable-item-right");
                     
                     // does nothing but helps positioning be consistant
-                    const menu = createContextMenu({});
+                    const menu = ContextMenu.create({});
                     unitHdr.appendChild(menu);
 
                     unitHdr = subUsItem.querySelector(".unit-slot-selectable-item-wrapper");
@@ -1168,11 +1168,11 @@ const builderPage = {
                 }
             };
             
-            //const regItemMenu = createContextMenu(callbackMap);
+            //const regItemMenu = ContextMenu.create(callbackMap);
           //  const regHdr = newRegItem.querySelector(".regiment-header");
             //regHdr.appendChild(regItemMenu);
 
-            const menu = createContextMenu(callbackMap);
+            const menu = ContextMenu.create(callbackMap);
             let unitHdr = newUsItem.querySelector(".selectable-item-right");
             unitHdr.appendChild(menu);
 

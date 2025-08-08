@@ -168,7 +168,7 @@ const rosterPage = {
       ruleset.selectedIndex = 1;
     }
 
-    const toggleOverlay = overlayToggleFactory('flex', async () =>{
+    const toggleOverlay = Overlay.toggleFactory('flex', async () =>{
       setOverlayContents();
       if (thisPage._alliances.length === 0) {
         await fetchArmies(_populateArmies, false);
@@ -260,7 +260,7 @@ const rosterPage = {
 */
       const callbackMap = {
         'Update Details': async (e) => {
-            const toggle = overlayToggleFactory('flex', () => {
+            const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               const armyParts = roster.army.split(' - ');
               modal.innerHTML = `
@@ -299,7 +299,7 @@ const rosterPage = {
                 roster.points = Number(rPoints);
                 roster.description = rDesc;
                 await putRoster(roster);
-                disableOverlay();
+                Overlay.disable();
                 await viewRosters();
               };
 
@@ -326,7 +326,7 @@ const rosterPage = {
           displayRoster(clone);
         },
         Delete: async (e) => {
-            const toggle = overlayToggleFactory('flex', () => {
+            const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
 
               const section = document.createElement('p');
@@ -343,7 +343,7 @@ const rosterPage = {
               button.style.fontWeight = 'bold';
               button.onclick = async () => {
                 await deleteRoster(roster.id);
-                disableOverlay();
+                Overlay.disable();
                 await viewRosters();
               };
 
@@ -353,7 +353,7 @@ const rosterPage = {
           toggle();
         }
       };
-      const menu = createContextMenu(callbackMap);
+      const menu = ContextMenu.create(callbackMap);
       menu.className = 'menu-blob';
       right.append(points, menu);
       item.append(left, right);
@@ -363,91 +363,27 @@ const rosterPage = {
     async function createHeaderMenu() {
       const callbackMap = {
         'About': async () => {
-            const clientVersion = await version.getClientVersion();
-            const serverVersion = await version.getServerVersion();
-            const bsdataRevision = await version.getBsDataVersion();
-            const bpVersion = await version.getBattleProfileVersion();
-
-            const toggle = overlayToggleFactory('flex', async () => {
+            const toggle = Overlay.toggleFactory('flex', async () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
-              const section = document.createElement('p');
-              section.innerHTML = `
-                  <h3 style='width: fit-content' class='section-title'>About</h3>
-                  <div class='section' style='padding: 1em; background-color: ${getVar('hover-color')}; border: 2px solid ${getVar('background-color')}'>
-                  
-                  <h3 style='padding: 0; margin-top: 0;'>Version</h3>
-                    <b>• Client Version:</b> ${clientVersion} <br/>
-                    <b>• Server Version:</b> ${serverVersion} <br/>
-                    <b>• Battle Profile Version:</b> ${bpVersion} <br/>
-                    <b>• BSData Commit:</b> ${bsdataRevision} <br/>
-                  <br/>
+              const content = await About.get();
 
-                  <h3 style='padding: 0; margin-top: 0;'>Contribute: </h3>
-                  <a style='color: ${getVar('blue-color')};' 
-                  target='_blank' href='https://github.com/blackeclipsevii/scrollcaster'>
-                  Contribute to Scrollcaster
-                  </a>
-                  <br/>
-                  <a style='color: ${getVar('blue-color')};' 
-                  target='_blank' href='https://github.com/blackeclipsevii/scrollcaster-android'>
-                  Contribute to Scrollcaster (Android)
-                  </a>
-                  <br/>
-                  <a style='color: ${getVar('blue-color')};' 
-                  target='_blank' href='https://github.com/BSData/age-of-sigmar-4th'>
-                  Contribute to BSData
-                  </a>
-                  <br/>
-                  <br/>
-                  <div style='display: flex; justify-content: left; align-content: center;'>
-                  <div class='kofi-div-nested'>
-                      <a target="_blank" href="https://ko-fi.com/scrollcaster">
-                      <img src="resources/support_me_on_kofi_beige.webp"></img>
-                      </a>
-                  </div>
-                  </div>
-                  <h3 style='padding-top: 0; margin: 0;'> License (GPL v3): </h3> <br/>
-                  <div class='license'>
-This file is part of Scrollcaster.
-<br/><br/>
-Copyright (C) 2025 Joseph Decker
-<br/>
-<br/>
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.
-<br/>
-<br/>
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-<br/>
-<br/>
-You should have received a copy of the GNU General Public License along with this program.
-If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/</a>.
-                  </div>
-                  <br/>
-                  <h3 style='padding: 0; margin-top: 0;'> Attribution: </h3>
-                  <div class='attribution'>
-<div>Icons made by <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/mayor-icons" title="Mayor Icons">Mayor Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/slidicon" title="Slidicon">Slidicon</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/syahrul-hidayatullah" title="Syahrul Hidayatullah">Syahrul Hidayatullah</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/meaicon" title="meaicon">meaicon</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
-                  </div>
-                </div>
-              `;
-
-              section.style.fontSize = '14px';
               const button = document.createElement('button');
               button.className = 'full-rectangle-button';
               button.textContent = 'Close';
               button.onclick = () => {
-                  disableOverlay();
+                  Overlay.disable();
               };
 
               modal.style.border = `2px solid ${getVar('hover-color')}`;
-              modal.appendChild(section);
+              modal.appendChild(content);
               modal.appendChild(button);
           });
           toggle();
         },
         'Import Roster': async (e) => {
-            const toggle  = overlayToggleFactory('block', async () =>{
+            const toggle  = Overlay.toggleFactory('block', async () =>{
               const modal = document.querySelector(".modal");
 
               const section = document.createElement('textarea');
@@ -477,7 +413,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
                  // } catch(e) {
                  //   console.log(`Unable to import roster: ${e}`);
                  // }
-                  disableOverlay();
+                  Overlay.disable();
               };
 
               modal.appendChild(section);
@@ -486,7 +422,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
           toggle();
         },
         'Clear Favorites': () => {
-          const toggle = overlayToggleFactory('flex', () => {
+          const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
@@ -501,7 +437,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
               button.style.fontWeight = 'bold';
               button.onclick = () => {
                 clearFavorites();
-                disableOverlay();
+                Overlay.disable();
               };
 
               modal.appendChild(section);
@@ -510,7 +446,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
           toggle();
         },
         'Reset Page Layout': () => {
-          const toggle = overlayToggleFactory('flex', () => {
+          const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
@@ -525,7 +461,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
               button.style.fontWeight = 'bold';
               button.onclick = () => {
                 clearDraggableOrder();
-                disableOverlay();
+                Overlay.disable();
               };
 
               modal.appendChild(section);
@@ -534,7 +470,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
           toggle();
         },
         'Delete All Rosters': () => {
-            const toggle = overlayToggleFactory('flex', () => {
+            const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal");
               modal.innerHTML = '';
 
@@ -552,7 +488,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
                   const armies = document.getElementById("rosters-list");
                   armies.innerHTML = '';
                   await viewRosters();
-                  disableOverlay();
+                  Overlay.disable();
               };
 
               modal.appendChild(section);
@@ -629,7 +565,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
       roster.description = description
       await putRoster(roster);
 
-      disableOverlay();
+      Overlay.disable();
 
       await viewRosters();
 

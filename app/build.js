@@ -2,6 +2,7 @@ import fs from 'fs'
 
 import babel from '@babel/core'
 
+const htmlFilePath = './index.html';
 const outDir = 'output';
 const minifyPreset = {
   presets: ["minify"],
@@ -38,67 +39,42 @@ const build = (outname, sourceList) => {
     fs.rm(tmpname, ()=>{});
 }
 
+// determine what to minify from the development html
+// removes any dev scripts
+const getAllScriptsIn = (htmlFile, tag) => {
+    // Read the HTML file
+    const html = fs.readFileSync(htmlFile, 'utf-8');
+
+    // Match all <script> tags in the <head>
+    let content;
+    if (tag.toLowerCase() === 'head')
+        content = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] || '';
+    else
+        content = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1] || '';
+
+    const scriptSrcs = Array.from(content.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*><\/script>/gi))
+                       .map(match => match[1])
+                       .filter(src => !src.includes('dev/'));
+
+    return scriptSrcs;
+}
+
 // minify lib into one file
 (() => {
-    const lib = [
-        "lib/endpoint.js",
-        "lib/host.js",
-        "lib/widgets/insetEdges.js",
-        "lib/functions/uniqueIdentifier.js",
-        "lib/RestAPI/roster.js",
-        "lib/RestAPI/version.js",
-        "lib/RestAPI/units.js",
-        "lib/RestAPI/regimentsOfRenown.js",
-        "lib/RestAPI/tactics.js",
-        "lib/RestAPI/upgrades.js",
-        "lib/RestAPI/search.js",
-        "lib/functions/rosterState.js",
-        "lib/functions/import/nameRosterToRoster.js",
-        "lib/functions/import/importRoster.js",
-        "lib/functions/import/importOfficialRoster.js",
-        "lib/functions/import/importNewRecruitRoster.js",
-        "lib/functions/import/importSCRoster.js",
-        "lib/functions/validateRoster.js",
-        "lib/functions/exportRoster.js",
-        "lib/widgets/warscrollHelpers.js",
-        "lib/widgets/selectableItem.js",
-        "lib/widgets/favorites.js",
-        "lib/widgets/ability.js",
-        "lib/widgets/weapon.js",
-        "lib/widgets/overlay.js",
-        "lib/widgets/contextMenu.js",
-        "lib/widgets/displayTacticsOverlay.js",
-        "lib/widgets/displayPointsOverlay.js",
-        "lib/widgets/displayUpgradeOverlay.js",
-        "lib/widgets/displayWeaponOverlay.js",
-        "lib/widgets/draggable.js",
-        "lib/widgets/header.js",
-        "lib/widgets/footer.js",
-        "lib/widgets/layout.js",
-        "lib/functions/copyToClipboard.js"
-    ];
+    const lib = ['lib/endpoint.js'].concat(getAllScriptsIn(htmlFilePath, 'head'));
+    console.log(JSON.stringify(lib));
     build(`./${outDir}/sc-lib.js`, lib);
 })();
 
 // minify pages into one file
 (() => {
-    const pages = [
-        "pages/src/rosters.js",
-        "pages/src/battle.js",
-        "pages/src/tome.js",
-        "pages/src/upgrades.js",
-        "pages/src/tactics.js",
-        "pages/src/warscroll.js",
-        "pages/src/builder.js",
-        "pages/src/units.js",
-        "pages/src/search.js"
-    ];
+    const pages = getAllScriptsIn(htmlFilePath, 'body');
+    console.log(JSON.stringify(pages));
     build(`./${outDir}/sc-pages.js`, pages);
 })();
 
 // make new index.html for the new js files
 (() => {
-    const htmlFilePath = './index.html';
     let html = fs.readFileSync(htmlFilePath, 'utf-8');
 
     // 🧠 Helper to clean and inject new script into a specific tag

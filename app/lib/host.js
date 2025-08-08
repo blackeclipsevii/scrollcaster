@@ -105,7 +105,7 @@ const fetchWithLoadingDisplay = async (url, callback=null, showLoadingDisplay=tr
   }
   const modal = document.querySelector('.modal');
 
-  const loadingOverlay = overlayToggleFactory('flex', () => {
+  const loadingOverlay = Overlay.toggleFactory('flex', () => {
     modal.innerHTML = `
     <div style='border-radius: 4vh; background-color: rgb(0,0,0,.5); display: flex; align-items: center; justify-content: center;'>
     <div id="loader-box" style="display: inline-block; width: 1em; height: 1em; margin-right: 3em; margin-top: -2em;">
@@ -138,7 +138,7 @@ const fetchWithLoadingDisplay = async (url, callback=null, showLoadingDisplay=tr
     await _internalFetch();
   }
   if (showLoadingDisplay)
-    disableOverlay();
+    Overlay.disable();
 
   return result;
 }

@@ -1,4 +1,4 @@
-const displayTacticsOverlay = overlayToggleFactory('block', (tacticCard) =>{
+const displayTacticsOverlay = Overlay.toggleFactory('block', (tacticCard) =>{
     const modal = document.querySelector(".modal");
     modal.style.padding = '0';
 

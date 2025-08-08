@@ -23,11 +23,15 @@ const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 
 var search = null;
 var ageOfSigmar = null;
-var version = {
-  major: 4,
-  minor: 1,
-  patch: 0
-};
+var version = (() => {
+  const txt = fs.readFileSync('VERSION.txt');
+  const verSplit = txt.toString().split('.');
+  return {
+    major: verSplit[0],
+    minor: verSplit[1],
+    patch: verSplit[2]
+  }
+})();
 
 /*
 var rosters = {};
@@ -456,7 +460,7 @@ async function start() {
   const aos = getAgeOfSigmar();
   console.log(`Initializing search...`);
   getSearch(aos);
-  console.log(`Server running at http://${hostname}:${port}/`);
+  console.log(`Scrollcaster server ${version.major}.${version.minor}.${version.patch} running at http://${hostname}:${port}/`);
 }
 
 server.listen(port, hostname, () => {

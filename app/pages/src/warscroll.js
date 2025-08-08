@@ -169,9 +169,9 @@ const warscrollPage = {
                 displayChars(unit);
                 const rangedWeapons = filterWeapons(unit, 'ranged');
                 const meleeWeapons = filterWeapons(unit, 'melee');
-                widgetWeaponsDisplayWeapons(rangedWeapons);
-                widgetWeaponsDisplayWeapons(meleeWeapons);
-                widgetAbilityDisplayAbilities(unit, unit);
+                WeaponWidget.display(rangedWeapons);
+                WeaponWidget.display(meleeWeapons);
+                AbilityWidget.display(unit, unit);
                 const abSec = document.getElementById('abilities-section');
                 abSec.style.display = '';
                 displayUnitDetails(unit);

@@ -1,0 +1,1 @@
+const _clientVersion = '0.8.0beta';

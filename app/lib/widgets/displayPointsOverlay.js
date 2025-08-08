@@ -39,7 +39,7 @@ async function updateValidationDisplay() {
     const postfix = hasErrors ? 'invalid' : 'valid';
     pointsOverlay.className = `points-overlay-${postfix}`;
 
-    pointsOverlay.onclick = overlayToggleFactory('flex', () =>{
+    pointsOverlay.onclick = Overlay.toggleFactory('flex', () =>{
         const modal = document.querySelector(".modal");
         modal.style.border = `2px solid ${getVar('hover-color')}`;
 

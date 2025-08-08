@@ -6,6 +6,7 @@
   <link rel="icon" href="resources/scrollcaster-icon.ico">
   <title>Scrollcaster</title>
   <script src="dev/endpoint.js"></script>
+  <script src="version.js"></script>
   <script src="lib/host.js"></script>
   <script src="lib/widgets/insetEdges.js"></script>
   <script src="lib/functions/uniqueIdentifier.js"></script>
@@ -24,11 +25,10 @@
   <script src="lib/functions/rosterState.js"></script>
   <script src="lib/functions/validateRoster.js"></script>
   <script src="lib/functions/exportRoster.js"></script>
-  <script src="lib/widgets/warscrollHelpers.js"></script>
-  <script src="lib/widgets/selectableItem.js"></script>
+  <script src="lib/widgets/helpers.js"></script>
   <script src="lib/widgets/favorites.js"></script>
-  <script src="lib/widgets/ability.js"></script>
-  <script src="lib/widgets/weapon.js"></script>
+  <script src="lib/widgets/AbilityWidget.js"></script>
+  <script src="lib/widgets/WeaponWidget.js"></script>
   <script src="lib/widgets/overlay.js"></script>
   <script src="lib/widgets/contextMenu.js"></script>
   <script src="lib/widgets/displayTacticsOverlay.js"></script>
@@ -39,6 +39,7 @@
   <script src="lib/widgets/header.js"></script>
   <script src="lib/widgets/footer.js"></script>
   <script src="lib/widgets/layout.js"></script>
+  <script src="lib/widgets/About.js"></script>
   <script src="lib/functions/copyToClipboard.js"></script>
   <link rel="stylesheet" href="./lib/lib.css">
   <link rel="stylesheet" href="./pages/css/pages.css">
@@ -54,7 +55,7 @@
   <script>
     initializeHeader({name:'Units', leftButton: true});
     initializeFooter('../..');
-    addOverlayListener();
+    Overlay.initialize();
   </script>
 
   <script src="pages/src/rosters.js"></script>

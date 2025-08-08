@@ -15,17 +15,17 @@ const _initAbSection = () => {
     }
 }
 
-const displayUpgradeOverlay = overlayToggleFactory('block', (upgrade) =>{
+const displayUpgradeOverlay = Overlay.toggleFactory('block', (upgrade) =>{
     _initAbSection();
 
     if (upgrade.type === 3 || upgrade.type === 4 || upgrade.type === 6) {
-        widgetAbilityDisplayAbilities(upgrade.abilities, upgrade.name);
+        AbilityWidget.display(upgrade.abilities, upgrade.name);
     } else {
-        widgetAbilityDisplayAbilities(upgrade, upgrade.name);
+        AbilityWidget.display(upgrade, upgrade.name);
     }
 });
 
-const displayRorOverlay = overlayToggleFactory('block', (regimentOfRenown) =>{
+const displayRorOverlay = Overlay.toggleFactory('block', (regimentOfRenown) =>{
     _initAbSection();
-    widgetAbilityDisplayAbilities(regimentOfRenown.upgrades, regimentOfRenown.name);
+    AbilityWidget.display(regimentOfRenown.upgrades, regimentOfRenown.name);
 });

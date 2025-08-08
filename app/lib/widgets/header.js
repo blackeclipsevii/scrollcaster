@@ -31,7 +31,7 @@ async function dynamicGoTo(settings, updateHistory=true, doLoadPage=true) {
             linkStack.currentSettings = settings;
             if (doLoadPage) {
                 enableBackButton();
-                deleteContextMenus();
+                ContextMenu.clear();
                 await dynamicPages[type].loadPage(settings);
                 window.scrollTo(0, 0);
             }
@@ -167,13 +167,13 @@ function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
 
     if (_headerMenuId.length > 0) {
         // reuse the existing menu and swap the content
-        updateMenuCallbacks(_headerMenuId, callbackMap);
+        ContextMenu.updateCallbacks(_headerMenuId, callbackMap);
         if (autoDisplay)
             enableHeaderContextMenu();
         return;
     }
     
-    const menu = createContextMenu(callbackMap, false);
+    const menu = ContextMenu.create(callbackMap, false);
     _headerMenuId = menu.id;
 
     const btn = menu.querySelector('.menu-btn');
