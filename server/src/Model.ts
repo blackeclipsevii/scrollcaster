@@ -176,8 +176,15 @@ export default class Model {
                     }
                 }
 
-                if (entry.profiles) {
+                if (entry.profiles)
                     parseProfiles(weaponSelection.weapons, entry.profiles)
+
+                // ko has nested entries
+                if (entry.selectionEntries) {
+                    entry.selectionEntries.forEach(nestedEntry => {
+                        if (nestedEntry.profiles)
+                            parseProfiles(weaponSelection.weapons, nestedEntry.profiles);
+                    });
                 }
 
                 this.weapons.addSelection(weaponSelection);

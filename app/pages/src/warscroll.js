@@ -131,14 +131,24 @@ const warscrollPage = {
                 else {
                     // models is now an object with selectable weapons
                     const weaponList = unitOrModel.weapons.warscroll.filter(isTypeFilter);
+                    weaponList.forEach(weapon => addToSet(weapon));
+
                     unitOrModel.weapons.selections.forEach(selection => {
                         selection.weapons.forEach(weapon => {
                             if (isTypeFilter(weapon)) {
-                                weaponList.push(weapon);
+                                addToSet(weapon);
                             }
                         });
                     });
-                    weaponList.forEach(weapon => addToSet(weapon));
+                    unitOrModel.weapons.selectionSets.forEach(selectionSet => {
+                        selectionSet.options.forEach(selection => {
+                            selection.weapons.forEach(weapon => {
+                                if (isTypeFilter(weapon)) {
+                                    addToSet(weapon);
+                                }
+                            });
+                        });
+                    });
                     doOptionSets(unitOrModel.optionSets);
                 }
             }
@@ -204,7 +214,7 @@ const warscrollPage = {
                                 const weaponDisclaimer = document.createElement('p');
                                 weaponDisclaimer.style.paddingLeft = '1em';
                                 const otherOptions = availableWeaponNames.filter(name => name !== selection.name).join(', ');
-                                weaponDisclaimer.innerHTML = `${selection.max}/${model.min} models can replace their ${otherOptions} with a ${selection.name}</i>`;
+                                weaponDisclaimer.innerHTML = `${selection.max}/${model.min} models can replace their <i>${otherOptions}</i> with a <i>${selection.name}</i>`;
                                 div.appendChild(weaponDisclaimer);
                             }
                         });
