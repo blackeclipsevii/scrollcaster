@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js'
 import AgeOfSigmar from '../AgeOfSigmar.js';
-import { UnitType } from '../types/UnitType.js';
+import Unit from '../Unit.js';
 
 interface SearchableObject {
     name: string;
@@ -16,6 +16,20 @@ export default class Search {
     constructor(ageOfSigmar: AgeOfSigmar) {
         const alliances = ageOfSigmar.getArmyAlliances();
         this.dataset = [];
+
+        const addUnits = (unitLUT: {[name:string]: Unit}, armyName: string) => {
+            const units = Object.values(unitLUT);
+            units.forEach(unit => {
+                this.dataset.push({
+                    name: unit.name,
+                    id: unit.id,
+                    type: unit.type,
+                    armyName: armyName,
+                    keywords: unit.keywords.concat(unit._tags)
+                });
+            });
+        }
+
         alliances.forEach(alliance => {
             if (alliance.name.includes(' - '))
                 return; // the aor should have the same scrolls?
@@ -24,17 +38,13 @@ export default class Search {
             const army = ageOfSigmar.getArmy(alliance.name);
             if (!army)
                 return;
-            const units = Object.values(army.units);
-            units.forEach(unit => {
-                this.dataset.push({
-                    name: unit.name,
-                    id: unit.id,
-                    type: unit.type,
-                    armyName: army.name,
-                    keywords: unit.keywords.concat(unit._tags)
-                });
-            });
+
+            addUnits(army.units, army.name);
         });
+
+        // universal manifestations
+        addUnits(ageOfSigmar.units, 'Core');
+
         const fuseOptions = {
             // isCaseSensitive: false,
             // includeScore: false,

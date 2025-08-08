@@ -68,7 +68,11 @@ const searchPage = {
         
             results.forEach(result => {
                 makeSelectableItem(result.item, true, itemList, async () =>{
-                    const unit = await getSpecificUnit(result.item.id, result.item.armyName);
+                    let armyName = result.item.armyName;
+                    if (armyName.toLowerCase() === 'core')
+                        armyName = null;
+
+                    const unit = await getSpecificUnit(result.item.id, armyName);
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
                     dynamicGoTo(settings);

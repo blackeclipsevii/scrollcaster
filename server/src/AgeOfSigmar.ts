@@ -124,7 +124,7 @@ export default class AgeOfSigmar {
         }
 
         this.gameSystem = gs;
-        this._parseKeywords();
+        this._parseGameSystem();
         this._populateLibraries(path);
         this.battleProfiles = new BattleProfileCollection;
 
@@ -482,7 +482,7 @@ export default class AgeOfSigmar {
         }
     }
 
-    _parseKeywords() {
+    _parseGameSystem() {
         if (!this.gameSystem)
             return;
 
