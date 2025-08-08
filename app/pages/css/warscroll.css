@@ -40,3 +40,18 @@ td.ranged-weapon,
 th.ranged-weapon {
   width: 14.2%;
 }
+
+.details-container {
+  padding: 0px;
+  padding-left: 1em;
+  padding-bottom: .5em;
+}
+
+.details-container p {
+  font-size: 14px;
+}
+
+.details-container .bullet-point {
+  margin-top: 0;
+  margin-bottom: .5em;
+}

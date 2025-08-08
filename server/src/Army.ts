@@ -401,8 +401,7 @@ export default class Army {
             if (!ageOfSigmar.regimentsOfRenown)
                 return false;
             const ror = (ageOfSigmar.regimentsOfRenown as {[name:string]: Force})[rorId];
-            ror.selectableIn.forEach(id => {
-                const name = (ageOfSigmar._database.armyLUT as {[name: string]: string})[id];
+            ror.selectableIn.forEach(name => {
                 if (armyName === name) {
                     this.regimentsOfRenown.push(ror);
                 }

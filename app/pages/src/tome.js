@@ -105,7 +105,9 @@ const catalogPage = {
             const units = Object.values(unitsLUT);
             units.forEach(regimentOfRenown => {
                 makeItem(regimentOfRenown.name, () => {
-                    displayRorOverlay(regimentOfRenown);
+                    const settings = new RegimentOfRenownSettings;
+                    settings.ror = regimentOfRenown;
+                    dynamicGoTo(settings);
                 }, 'army-list', regimentOfRenown.points);
             });
         }
