@@ -18,8 +18,8 @@ test('Optional wargear', () => {
     let unit = army.units['e161-b68c-7d8c-9513'];
     expect(unit.name).toEqual('Chaos Chariot');
     expect(unit).toBeTruthy();
-    expect(unit.weapons.length).toEqual(2);
-    expect(unit.optionSets.length).toEqual(1);
+    expect(unit.models[0].weapons.length).toEqual(2);
+    expect(unit.models[0].optionSets.length).toEqual(1);
 
     unit = army.units['22ef-99c8-eb17-973f'];
     expect(unit.name).toEqual('Daemon Prince');
@@ -31,8 +31,8 @@ test('Optional wargear', () => {
     unit = army.units['cd8a-43c6-6598-bd0a'];
     expect(unit.name).toEqual('Stegadon Chief');
     expect(unit).toBeTruthy();
-    expect(unit.optionSets.length).toEqual(1);
-    expect(Object.getOwnPropertyNames(unit.optionSets[0].options)).toEqual([
+    expect(unit.models[0].optionSets.length).toEqual(1);
+    expect(Object.getOwnPropertyNames(unit.models[0].optionSets[0].options)).toEqual([
        "Skystreak Bow",
        "Sunfire Throwers",
     ]);

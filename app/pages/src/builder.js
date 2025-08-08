@@ -504,10 +504,20 @@ const builderPage = {
                 }
             }
 
-            if (unit.optionSets && unit.optionSets.length > 0) {
-                ++numOptions;
+            if (unit.optionSets) {
                 unit.optionSets.forEach(optionSet => {
+                    ++numOptions;
                     displayWarscrollOption(unit, optionSet, newUsItem);
+                });
+            }
+            
+            // to-do display as part of the model
+            if (unit.models) {
+                unit.models.forEach(model => {
+                    model.optionSets.forEach(optionSet => {
+                        ++numOptions;
+                        displayWarscrollOption(unit, optionSet, newUsItem);
+                    });
                 });
             }
 

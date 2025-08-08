@@ -82,11 +82,6 @@ const warscrollPage = {
         }
 
         const displayUnitDetails = (unit) => {
-            // hero
-            if (unit.type !== 0 || !unit.battleProfile)  {
-                return;
-            }
-            
             const formatText = (message) => {
                 return message.replace(/</g, "#")
                             .replace(/>/g, '%')
@@ -98,16 +93,51 @@ const warscrollPage = {
             div.style.display = '';
             
             let title = div.querySelector('.section-title');
-            title.textContent = 'Regiment Options';
+            title.textContent = 'Unit Details';
 
-            unit.battleProfile.regimentOptions;
-            const options = formatText(unit.battleProfile.regimentOptions).split(',');
-            let content = document.createElement('p');
-            content.style.paddingLeft = '1em';
-            options.forEach(option => {
-                content.innerHTML = `${content.innerHTML}\u2022 ${option.trim()}<br/>`;
-            });
-            div.appendChild(content);
+            // details
+            if (unit.models) {
+                let nModels = 0;
+                unit.models.forEach(model => {
+                    nModels += model.min;
+                });
+                if (nModels > 0) {
+                    const modelCount = document.createElement('p');
+                    modelCount.style.paddingLeft = '1em';
+                    modelCount.innerHTML = `\u2022 ${nModels} model`;    
+                    if (nModels > 1)
+                        modelCount.innerHTML += 's';
+                    div.appendChild(modelCount);
+                }
+            }
+
+            // points
+            const points = document.createElement('p');
+            points.style.paddingLeft = '1em';
+            points.innerHTML = `${unit.points} points`;    
+            div.appendChild(points);
+
+            // regiment options
+            (() => {
+                // hero
+                if (unit.type !== 0 || !unit.battleProfile)  {
+                    return;
+                }
+            
+                const bpTitle = document.createElement('h5');
+                bpTitle.style.paddingLeft = '1em';
+                bpTitle.textContent = 'Regiment Options';
+                div.appendChild
+
+                unit.battleProfile.regimentOptions;
+                const options = formatText(unit.battleProfile.regimentOptions).split(',');
+                let content = document.createElement('p');
+                content.style.paddingLeft = '1em';
+                options.forEach(option => {
+                    content.innerHTML = `${content.innerHTML}\u2022 ${option.trim()}<br/>`;
+                });
+                div.append(bpTitle, content);
+            })();
         }
 
         const _initializeCharDiv = () => {
@@ -132,29 +162,62 @@ const warscrollPage = {
                 return weapon.type === 1;
             }
 
-            const weaponList = unit.weapons.filter(isTypeFilter);
-            unit.optionSets.forEach(optionSet => {
-                if (DYNAMIC_WARSCROLL && optionSet.selection) {
-                    optionSet.selection.weapons.forEach(weapon => {
-                        if (isTypeFilter(weapon)) {
-                            weaponList.push(weapon);
-                        };
-                    });
-                }
-                else {
-                    // display all options
-                    const options = Object.values(optionSet.options);
-                    options.forEach(option => {
-                        option.weapons.forEach(weapon => {
+            let weaponList = [];
+            if (unit.weapons) { // backwards compatibility 8/8/25
+                weaponList = unit.weapons.filter(isTypeFilter);
+                unit.optionSets.forEach(optionSet => {
+                    if (DYNAMIC_WARSCROLL && optionSet.selection) {
+                        optionSet.selection.weapons.forEach(weapon => {
                             if (isTypeFilter(weapon)) {
-                                const clone = JSON.parse(JSON.stringify(weapon));
-                                clone.name = `${weapon.name} <${optionSet.name}>`
-                                weaponList.push(clone);
-                            }
+                                weaponList.push(weapon);
+                            };
                         });
+                    }
+                    else {
+                        // display all options
+                        const options = Object.values(optionSet.options);
+                        options.forEach(option => {
+                            option.weapons.forEach(weapon => {
+                                if (isTypeFilter(weapon)) {
+                                    const clone = JSON.parse(JSON.stringify(weapon));
+                                    clone.name = `${weapon.name} <${optionSet.name}>`
+                                    weaponList.push(clone);
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+
+            // to-do display model weapons in different sections
+            if (unit.models) {
+                unit.models.forEach(model => {
+                    const modelWeaponList = model.weapons.filter(isTypeFilter);
+                    weaponList = weaponList.concat(modelWeaponList);
+                    model.optionSets.forEach(optionSet => {
+                        if (DYNAMIC_WARSCROLL && optionSet.selection) {
+                            optionSet.selection.weapons.forEach(weapon => {
+                                if (isTypeFilter(weapon)) {
+                                    weaponList.push(weapon);
+                                };
+                            });
+                        }
+                        else {
+                            // display all options
+                            const options = Object.values(optionSet.options);
+                            options.forEach(option => {
+                                option.weapons.forEach(weapon => {
+                                    if (isTypeFilter(weapon)) {
+                                        const clone = JSON.parse(JSON.stringify(weapon));
+                                        clone.name = `${weapon.name} <${optionSet.name}>`
+                                        weaponList.push(clone);
+                                    }
+                                });
+                            });
+                        }
                     });
-                }
-            });
+                });
+            }
             return weaponList;
         }
 
