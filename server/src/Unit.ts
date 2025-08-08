@@ -93,9 +93,9 @@ export default class Unit {
         }
     }
 
-    _parseModels(ageOfSigmar: AgeOfSigmar, modelEntries: BsSelectionEntry[]) {
+    _parseModels(ageOfSigmar: AgeOfSigmar, modelEntries: BsSelectionEntry[], parent: BsSelectionEntry) {
         modelEntries.forEach(modelEntry => {
-            const model = new Model(ageOfSigmar, modelEntry);
+            const model = new Model(ageOfSigmar, modelEntry, parent);
             this.models.push(model);
         });
     }
@@ -118,7 +118,7 @@ export default class Unit {
             }
 
         if (selectionEntry.selectionEntries) {
-            this._parseModels(ageOfSigmar, selectionEntry.selectionEntries);
+            this._parseModels(ageOfSigmar, selectionEntry.selectionEntries, selectionEntry);
         }
 
         // the options can be on the unit level not the model level

@@ -122,18 +122,34 @@ const warscrollPage = {
                 });
             }
 
-            if (unitOrModel.weapons) { // backwards compatibility 8/8/25
-                const weaponList = unitOrModel.weapons.filter(isTypeFilter);
-                weaponList.forEach(weapon => addToSet(weapon));
-                doOptionSets(unitOrModel.optionSets);
+            const handleWeapons = (unitOrModel) => {
+                if (unitOrModel.weapons.length > 0) { // backwards compatibility 8/8/25
+                    const weaponList = unitOrModel.weapons.filter(isTypeFilter);
+                    weaponList.forEach(weapon => addToSet(weapon));
+                    doOptionSets(unitOrModel.optionSets);
+                }
+                else {
+                    // models is now an object with selectable weapons
+                    const weaponList = unitOrModel.weapons.warscroll.filter(isTypeFilter);
+                    unitOrModel.weapons.selections.forEach(selection => {
+                        selection.weapons.forEach(weapon => {
+                            if (isTypeFilter(weapon)) {
+                                weaponList.push(weapon);
+                            }
+                        });
+                    });
+                    weaponList.forEach(weapon => addToSet(weapon));
+                    doOptionSets(unitOrModel.optionSets);
+                }
+            }
+           
+            if (unitOrModel.weapons) {
+                handleWeapons(unitOrModel);
             }
 
-            // to-do display model weapons in different sections
             if (unitOrModel.models) {
                 unitOrModel.models.forEach(model => {
-                    const modelWeaponList = model.weapons.filter(isTypeFilter);
-                    modelWeaponList.forEach(weapon => addToSet(weapon));
-                    doOptionSets(model.optionSets);
+                    handleWeapons(model);
                 });
             }
             return Object.values(weaponSet);
@@ -177,6 +193,23 @@ const warscrollPage = {
                         div.appendChild(loadoutInfo);
                     });
                 }
+
+                // mention selectable weapons
+                unit.models.forEach(model => {
+                    model.weapons.selectionSets.forEach(selectionSet => {
+                        const availableWeaponNames = selectionSet.options.map(selection => selection.name);
+                        selectionSet.options.forEach(selection => {
+                            if (selection.max !== -1 && 
+                                selection.per === 'unit') {
+                                const weaponDisclaimer = document.createElement('p');
+                                weaponDisclaimer.style.paddingLeft = '1em';
+                                const otherOptions = availableWeaponNames.filter(name => name !== selection.name).join(', ');
+                                weaponDisclaimer.innerHTML = `${selection.max}/${model.min} models can replace their ${otherOptions} with a ${selection.name}</i>`;
+                                div.appendChild(weaponDisclaimer);
+                            }
+                        });
+                    });
+                });
             }
 
             // points
