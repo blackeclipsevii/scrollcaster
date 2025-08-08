@@ -13,16 +13,19 @@ import { nameRosterToRoster } from './server/dist/lib/NameRoster.js'
 
 import installCatalog, { getCommitIdUsed } from './server/dist/lib/installCatalog.js'
 
+import Search from './server/dist/search/Search.js'
+
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
 const port = process.env.SCROLLCASTER_PORT || 3000;
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 // const saveData = "./saveData.json";
 
+var search = null;
 var ageOfSigmar = null;
 var version = {
   major: 4,
-  minor: 0,
+  minor: 1,
   patch: 0
 };
 
@@ -52,6 +55,13 @@ function getAgeOfSigmar() {
     ageOfSigmar = new AgeOfSigmar(directoryPath);
   }
   return ageOfSigmar;
+}
+
+function getSearch(aos) {
+  if (!search) {
+    search = new Search(aos);
+  }
+  return search;
 }
 
 // Matches http(s)://scrollcaster.dev, http(s)://www.scrollcaster.io, etc.
@@ -86,6 +96,18 @@ server.get('/lores', (_, res) => {
   }
   res.end(JSON.stringify(foo));
   res.status(200);
+});
+
+server.get('/search', async (req, res) => {
+  const parsedUrl = url.parse(req.url, true);
+  let query = '';
+  if (parsedUrl.query.query) {
+    query = parsedUrl.query.query;
+  }
+  const aos = getAgeOfSigmar();
+  const search = getSearch(aos);
+  const result = search.search(query);
+  res.end(JSON.stringify(result));
 });
 
 server.get('/armies', (req, res) => {
@@ -431,7 +453,9 @@ async function start() {
   console.log(`Downloading catalog...`);
   await installCatalog();
   console.log(`Loading libraries...`);
-  await getAgeOfSigmar();
+  const aos = getAgeOfSigmar();
+  console.log(`Initializing search...`);
+  getSearch(aos);
   console.log(`Server running at http://${hostname}:${port}/`);
 }
 

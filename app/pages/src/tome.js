@@ -304,7 +304,7 @@ const catalogPage = {
             }
             makeLayout(sections);
 
-            disableHeaderContextMenu();
+            enableSearchButton();
             hidePointsOverlay();
             document.getElementById('army-section').style.display = '';
 

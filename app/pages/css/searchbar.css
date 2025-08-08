@@ -1,0 +1,33 @@
+
+.search-bar {
+    display: flex;
+    background-color: var(--hover-color);
+    height: 3em;
+    margin: .5em;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    border-radius: var(--border-radius);
+}
+
+.search-bar-input {
+    border: none;
+    background: none;
+    height: 2em;
+    color: var(--white-1);
+    width: 100%;
+    margin-right: .5em;
+    font-size: 16px;
+}
+
+.search-bar-input:focus {
+    outline : none;
+}
+
+
+.search-bar img {
+    width: 20px;
+    height: 20px;
+    margin-left: 1em;
+    margin-right: 1em;
+}

@@ -46,6 +46,7 @@
     --ab-defensive: flaticon/007-shield.png;
     --ab-damage: flaticon/008-skull.png;
     --right-arrow: flaticon/009-right-arrow.png;
+    --search-icon: flaticon/010-loupe.png;
     
     --background-color: #000;
     --header-color: var(--black-3);
@@ -257,6 +258,21 @@ footer {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.search-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.search-button img {
+    width: 20px;
+    height: 20px;
+    
 }
 
 #army-header {

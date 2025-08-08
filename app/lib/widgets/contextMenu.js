@@ -40,6 +40,7 @@ function createContextMenu(callbackMap, trackMenu=true) {
     const uniqueId = generateId();
     const ele = document.createElement('div');
     ele.innerHTML = `<button class="menu-btn">⋯</button>`;
+    ele.className ='menu-btn-wrapper';
     ele.id = uniqueId;
 
     const closeOtherMenus = (e) => {

@@ -70,7 +70,7 @@ function initializeHeader(options) {
         <div class="header-left">
         </div>
         <div class="header-center">
-            <div id="army-header">${options.name}</p>
+            <div id="army-header">${options.name}</div>
         </div>
         <div class="header-right">
         </div>
@@ -105,20 +105,60 @@ function setHeaderTitle(name) {
     const element = document.getElementById('army-header');
     element.textContent = name;
 }
+
 function enableBackButton() {
     const hdr = document.querySelector('header');
     const left = hdr.querySelector('.header-left');
     left.style.display = '';
 }
+
 function disableBackButton() {
     const hdr = document.querySelector('header');
     const left = hdr.querySelector('.header-left');
     left.style.display = 'none';
 }
+
 function enableHeaderContextMenu() {
+    disableSearchButton();
+    const hdr = document.querySelector('header');
+    const wrapper = hdr.querySelector('.menu-btn-wrapper');
+    wrapper.style.display = '';
+}
+
+function disableHeaderContextMenu() {
+    const hdr = document.querySelector('header');
+    const wrapper = hdr.querySelector('.menu-btn-wrapper');
+    if (wrapper)
+        wrapper.style.display = 'none';
+}
+
+function enableSearchButton() {
+    disableHeaderContextMenu();
     const hdr = document.querySelector('header');
     const right = hdr.querySelector('.header-right');
-    right.style.display = '';
+    let searchButton = right.querySelector('.search-button');
+    if (!searchButton) {
+        searchButton = document.createElement('div');
+        searchButton.className = 'search-button';
+        searchButton.innerHTML = `
+            <img class='invert-img' src='../../resources/${getVar('search-icon')}'></img>
+        `;
+        searchButton.onclick = () => {
+            const settings = new SearchSettings;
+            dynamicGoTo(settings);
+        };
+        right.appendChild(searchButton);
+    }
+    searchButton.style.display = '';
+}
+
+function disableSearchButton() {
+    const hdr = document.querySelector('header');
+    const right = hdr.querySelector('.header-right');
+    let searchButton = right.querySelector('.search-button');
+    if (searchButton) {
+        searchButton.style.display = 'none';
+    }
 }
 
 function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
@@ -129,7 +169,7 @@ function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
         // reuse the existing menu and swap the content
         updateMenuCallbacks(_headerMenuId, callbackMap);
         if (autoDisplay)
-            right.style.display = '';
+            enableHeaderContextMenu();
         return;
     }
     
@@ -141,12 +181,6 @@ function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
     menu.style.zIndex = '1000';
     right.appendChild(menu);
     if (autoDisplay) {
-        right.style.display = '';
+        enableHeaderContextMenu();
     }
-}
-
-function disableHeaderContextMenu() {
-    const hdr = document.querySelector('header');
-    const right = hdr.querySelector('.header-right');
-    right.style.display = 'none';
 }

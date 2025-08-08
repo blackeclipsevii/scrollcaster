@@ -51,6 +51,7 @@ const build = (outname, sourceList) => {
         "lib/RestAPI/regimentsOfRenown.js",
         "lib/RestAPI/tactics.js",
         "lib/RestAPI/upgrades.js",
+        "lib/RestAPI/search.js",
         "lib/functions/rosterState.js",
         "lib/functions/import/nameRosterToRoster.js",
         "lib/functions/import/importRoster.js",
@@ -89,7 +90,8 @@ const build = (outname, sourceList) => {
         "pages/src/tactics.js",
         "pages/src/warscroll.js",
         "pages/src/builder.js",
-        "pages/src/units.js"
+        "pages/src/units.js",
+        "pages/src/search.js"
     ];
     build(`./${outDir}/sc-pages.js`, pages);
 })();
