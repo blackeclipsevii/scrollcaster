@@ -436,22 +436,32 @@ const builderPage = {
 
                     crown.style.display = checkbox.checked ? 'inline' : 'none';
 
+                    let regiment = null;
                     let div = checkbox.closest(".regiment-item");
-                    div = div.querySelector(".regiment-idx");
-                    const regIdx = Number(div.textContent);
-                    const regiment = thisPage.roster.regiments[regIdx];
+                    if (div) {
+                        div = div.querySelector(".regiment-idx");
+                        const regIdx = Number(div.textContent);
+                        regiment = thisPage.roster.regiments[regIdx];
+                    }
 
+                    let unit = null;
                     div = checkbox.closest(".unit-slot");
                     div = div.querySelector(".unit-idx");
                     const unitIdx = Number(div.textContent);
-                    const unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
+                    if (regiment) {
+                        unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
+                    } else {
+                        unit = thisPage.roster.auxiliaryUnits[unitIdx];
+                    }
 
                     unit.isGeneral = checkbox.checked;
                     putRoster(roster);
                     updateValidationDisplay();
 
-                    const regItem = parent.closest('.regiment-item');
-                    toggleUnitAddButton(regItem, regiment);
+                    if (regiment) {
+                        const regItem = parent.closest('.regiment-item');
+                        toggleUnitAddButton(regItem, regiment);
+                    }
                 };
             }
 
@@ -473,15 +483,23 @@ const builderPage = {
 
                     crown.style.display = checkbox.checked ? 'inline' : 'none';
 
+                    let regiment = null;
                     let div = checkbox.closest(".regiment-item");
-                    div = div.querySelector(".regiment-idx");
-                    const regIdx = Number(div.textContent);
-                    const regiment = thisPage.roster.regiments[regIdx];
+                    if (div) {
+                        div = div.querySelector(".regiment-idx");
+                        const regIdx = Number(div.textContent);
+                        regiment = thisPage.roster.regiments[regIdx];
+                    }
 
+                    let unit = null;
                     div = checkbox.closest(".unit-slot");
                     div = div.querySelector(".unit-idx");
                     const unitIdx = Number(div.textContent);
-                    const unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
+                    if (regiment) {
+                        unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
+                    } else {
+                        unit = thisPage.roster.auxiliaryUnits[unitIdx];
+                    }
 
                     const ptsBefore = unitTotalPoints(unit);
                     unit.isReinforced = checkbox.checked;

@@ -465,6 +465,7 @@ export default class AgeOfSigmar {
                 const targetId = data.catalog.catalogueLinks[0]['@targetId'];
                 const library = libraries[targetId];
                 if (library) {
+                    console.log (`reassignment of library ${data.catalog['@name']}`)
                     data.catalog = library as BsCatalog;
                 }
             }
