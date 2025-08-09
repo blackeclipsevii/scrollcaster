@@ -1,1 +1,1 @@
-const _clientVersion = '0.9.1beta';
+const _clientVersion = '0.9.2beta';
