@@ -4,7 +4,6 @@ import axios from 'axios'
 import extract from 'extract-zip'
 
 var commitId = null;
-const zipUrl = 'https://github.com/BSData/age-of-sigmar-4th/archive/refs/heads/main.zip';
 const zipPath = path.resolve('./main.zip');
 const extractPath = path.resolve('./data');
 
@@ -12,7 +11,7 @@ export const getCommitIdUsed = () => {
   return commitId === null ? 'unknown' : commitId;
 }
 
-export default async function installCatalog() {
+export default async function installCatalog(alternateZipUrl=null) {
   try {
     fs.rmSync(extractPath, { recursive: true, force: true });
     console.log('Folder deleted successfully.');
@@ -36,6 +35,11 @@ export default async function installCatalog() {
   });
 
   try {
+    let zipUrl = 'https://github.com/BSData/age-of-sigmar-4th/archive/refs/heads/main.zip';
+    if (alternateZipUrl) {
+      zipUrl = alternateZipUrl;
+    }
+  
     // Download the ZIP file
     const response = await axios({
       method: 'GET',

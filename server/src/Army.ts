@@ -143,6 +143,12 @@ export default class Army {
             return;
         }
 
+        if (catalogue['@library'] === 'true') {
+            console.log('recieved library expected catalog');
+            throw 'foo';
+        }
+
+        console.log(catalogue['@id']);
         this.id = catalogue['@id'];
 
         const _libraryUnits: {[name: string]: Unit} = {};

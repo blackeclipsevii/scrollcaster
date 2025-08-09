@@ -303,16 +303,23 @@ const unitPage = {
                 };
                 const addButtonOnClick = async (event) => {
                     event.stopPropagation(); // Prevents click from triggering page change
+
+                    const makeCopy = (originalUnit) => {
+                        return JSON.parse(JSON.stringify(originalUnit));
+                    }
+
+                    const clone = makeCopy(unit);
+
                     if (thisPage.settings.auxiliary) {
-                        roster.auxiliaryUnits.push(unit);
+                        roster.auxiliaryUnits.push(clone);
                     } else if (unit.type == 7) {
-                        roster.terrainFeature = unit;
+                        roster.terrainFeature = clone;
                     } else {
                         const regiment = roster.regiments[thisPage.settings.regimentIndex];
                         if (isSelectingLeader) {
-                            regiment.leader = unit;
+                            regiment.leader = clone;
                         } else {
-                            regiment.units.push(unit);
+                            regiment.units.push(clone);
                         }
                     }
 
