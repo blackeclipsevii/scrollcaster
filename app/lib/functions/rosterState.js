@@ -17,7 +17,8 @@ const rosterState = {
                 isGeneral: unit.isGeneral,
                 isReinforced: unit.isReinforced,
                 enhancements: {},
-                options: {}
+                options: {},
+                models: {}
             };
 
             if (Object.getOwnPropertyNames(unit).includes('heroicTrait')) {
@@ -39,6 +40,20 @@ const rosterState = {
                         unitState.options[optionSet.name] = optionSet.selection.name;
                     }
                 })
+            }
+
+            if (unit.models) {
+                unit.models.forEach(model => {
+                    const modelState = {
+                        options: {}
+                    };
+                    model.optionSets.forEach(optionSet => {
+                        if (optionSet.selection) {
+                            modelState.options[optionSet.name] = optionSet.selection.name;
+                        }
+                    });
+                    unitState.models[model.id] = modelState;
+                });
             }
             return unitState;
         };
@@ -164,6 +179,20 @@ const rosterState = {
                     }
                 })
             }
+
+            if (unit.models) {
+                unit.models.forEach(model => {
+                    const stateModel = state.models[model.id];
+                    if (stateModel) {
+                        model.optionSets.forEach(optionSet => {
+                            const selection = stateModel.options[optionSet.name];
+                            if (selection) {
+                                optionSet.selection = optionSet.options[selection];
+                            }
+                        });
+                    }
+                });
+            } 
             return unit;
         };
 

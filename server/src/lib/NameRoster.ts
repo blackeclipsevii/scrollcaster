@@ -139,9 +139,9 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
         clone.isReinforced = nameUnit.isReinforced;
         nameUnit.other.forEach(otherName => {
             // check the option sets
-            const checkEnhancements = clone.optionSets.every(set => {
+            let checkNext = clone.optionSets.every(set => {
                 const options = Object.values(set.options);
-                options.every(option => {
+                return options.every(option => {
                     if (option.name === otherName) {
                         set.selection = option;
                         return false;
@@ -150,8 +150,23 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
                 });
             });
 
+            if (checkNext) {
+                checkNext = clone.models.every(model => {
+                    return model.optionSets.every(set => {
+                        const options = Object.values(set.options);
+                        return options.every(option => {
+                            if (option.name === otherName) {
+                                set.selection = option;
+                                return false;
+                            }
+                            return true;
+                        });
+                    })
+                });
+            }
+
             // check the enhancements
-            if (checkEnhancements) {
+            if (checkNext) {
                 const enhancementNames = Object.getOwnPropertyNames(clone.enhancements);
                 enhancementNames.every(eName => {
                     const armyEnhanceGroup = army.upgrades.enhancements[eName];

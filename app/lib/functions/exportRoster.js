@@ -68,6 +68,19 @@ async function exportRoster(roster) {
                 }
             });
         }
+
+        if (unit.models) {
+            // we have models now
+            unit.models.forEach(model => {
+                if (model.optionSets){
+                    model.optionSets.forEach(optionSet => {
+                        if (optionSet.selection) {
+                            text += `  ${indent}${astrix} ${optionSet.selection.name}\n`;
+                        }
+                    });
+                }
+            });
+        }
     };
 
     for(let i = 0; i < roster.regiments.length; ++i) {

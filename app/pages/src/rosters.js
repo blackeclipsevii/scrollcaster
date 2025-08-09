@@ -407,6 +407,7 @@ const rosterPage = {
                  // try {
                     const roster = await ImportRoster.import(section.value);
                     if (roster) {
+                      roster.description = 'Imported';
                       await putRoster(roster);
                       await viewRosters();
                     }

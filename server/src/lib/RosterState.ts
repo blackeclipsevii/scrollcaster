@@ -1,7 +1,12 @@
+
 import AgeOfSigmar from "../AgeOfSigmar.js";
 import Army from "../Army.js";
 import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
+
+export interface ModelState {
+    options: {[name:string]: string | null};
+}
 
 export interface UnitState {
     unit: string;
@@ -9,6 +14,7 @@ export interface UnitState {
     isReinforced: boolean;
     enhancements: {[name: string]: string | null};
     options: {[name:string]: string | null};
+    models: {[name:string]: ModelState};
 }
 
 export const serializeUnit = (unit: Unit) => {
@@ -17,7 +23,8 @@ export const serializeUnit = (unit: Unit) => {
         isGeneral: unit.isGeneral,
         isReinforced: unit.isReinforced,
         enhancements: {},
-        options: {}
+        options: {},
+        models: {}
     };
     
     const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
@@ -31,7 +38,20 @@ export const serializeUnit = (unit: Unit) => {
         if (optionSet.selection) {
             unitState.options[optionSet.name] = optionSet.selection.name;
         }
-    })
+    });
+
+    unit.models.forEach(model => {
+        const modelState: ModelState = {
+            options: {}
+        }
+        model.optionSets.forEach(optionSet => {
+            if (optionSet.selection) {
+                modelState.options[optionSet.name] = optionSet.selection.name;
+            }
+        });
+        unitState.models[model.id] = modelState;
+    });
+
     return unitState;
 };
 
@@ -82,6 +102,20 @@ export const deserializeUnit = (army: Army, state: UnitState) => {
             }
         })
     }
+
+    if (unit.models) {
+        unit.models.forEach(model => {
+            const stateModel = state.models[model.id];
+            if (stateModel) {
+                model.optionSets.forEach(optionSet => {
+                    const selection = stateModel.options[optionSet.name];
+                    if (selection) {
+                        optionSet.selection = optionSet.options[selection];
+                    }
+                });
+            }
+        });
+    } 
     return unit;
 };
 
