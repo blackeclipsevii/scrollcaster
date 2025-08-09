@@ -1,4 +1,12 @@
-async function getVersion (of=null){
+
+interface VersionParts {
+    major: string, minor: string, patch:string
+}
+interface VersionWhole {
+    version:string
+}
+
+async function getVersion (of: string | null = null): Promise<VersionParts | VersionWhole | null> {
     let url = `${endpoint}/version`;
     if (of !== null) 
         url =`${url}?of=${of}`;
@@ -8,41 +16,44 @@ async function getVersion (of=null){
 
 const version = (()=>{
   return {
-    _server: null,
-    _bsdata: null,
-    _profiles: null,
-    _client: _clientVersion,
+    _server: null as string | null,
+    _bsdata: null as string | null,
+    _profiles: null as string | null,
+    // @ts-ignore
+    _client: _clientVersion as string,
     async getClientVersion() {
         return this._client;
     },
     async getServerVersion() {
         if (!this._server){
-            const result = await getVersion();
+            const result = await getVersion() as VersionParts | null;
             if (!result)
                 return 'unknown';
+
             this._server = `${result.major}.${result.minor}.${result.patch}`
         }
         return this._server;
     },
     async getBsDataVersion() {
         if (!this._bsdata) {
-            const result = await getVersion('bsdata');
+            const result = await getVersion('bsdata') as VersionWhole | null;
             if (!result)
                 return 'unknown';
+            
             this._bsdata = result.version.substring(0, 7);
         }
         return this._bsdata;
     },
     async getBattleProfileVersion() {
         if (!this._profiles){
-            const result = await getVersion('battle profiles');
+            const result = await getVersion('battle profiles') as VersionWhole | null;
             if (!result)
                 return 'unknown';
             this._profiles = result.version;
         }
         return this._profiles;
     },
-    async stampVersion(roster) {
+    async stampVersion(roster: {meta: {[name: string]: string} | null}) {
         if (!roster.meta)
             roster.meta = {};
         roster.meta.clientVersion = await this.getClientVersion();
@@ -50,7 +61,7 @@ const version = (()=>{
         roster.meta.serverVersion = await this.getServerVersion();
         roster.meta.profileVersion = await this.getBattleProfileVersion();
     },
-    async isOutdated(roster) {
+    async isOutdated(roster: {meta: {[name: string]: string}}) {
         if (!roster.meta)
             return true;
         if (roster.meta.serverVersion !== await this.getServerVersion())

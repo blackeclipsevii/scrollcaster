@@ -1,6 +1,6 @@
 var _storageName = 'rosters';
 
-function rosterEndpoint() {
+function rosterEndpoint(): string {
     const user = getUniqueIdentifier();
     return `${endpoint}/roster?uuid=${user}`;
 }
@@ -12,8 +12,8 @@ function _getRosters() {
     return JSON.parse(json);
 }
 
-function _storeRosters(rosters) {
-    json = JSON.stringify(rosters);
+function _storeRosters(rosters: unknown) {
+    const json = JSON.stringify(rosters);
     localStorage.setItem('rosters', json);
 }
 
@@ -30,7 +30,7 @@ async function getRosters() {
     return Object.getOwnPropertyNames(rosters);
 }
 
-async function getNewRoster(army) {
+async function getNewRoster(army: string) {
     const endpoint = rosterEndpoint();
     const roster = await fetch(encodeURI(`${endpoint}&army=${army}`), {
         method: "GET" // default, so we can ignore
@@ -43,7 +43,7 @@ async function getNewRoster(army) {
     return roster;
 }
 
-async function getRoster(id) {
+async function getRoster(id: string) {
     const rosters = _getRosters();
     return rosters[id];
 /*
@@ -59,7 +59,7 @@ async function getRoster(id) {
     */
 }
 
-async function putRoster(roster) {
+async function putRoster(roster: {id: string}) {
     const rosters = _getRosters();
     rosters[roster.id] = roster;
     _storeRosters(rosters);
@@ -77,7 +77,7 @@ async function deleteRosters() {
   _storeRosters({});
 }
 
-async function deleteRoster(id) {
+async function deleteRoster(id: string) {
     const rosters = _getRosters();
     if (rosters[id])
         delete rosters[id];

@@ -1,10 +1,10 @@
 const unitsApi = {
     _cache: {
-        units: null,
-        armyName: null,
-        leaderId: null
+        units: null as unknown | null,
+        armyName: null as string | null,
+        leaderId: null as string | null
     },
-    async get(armyName = null, leaderId = null) {
+    async get(armyName: string | null = null, leaderId: string | null = null) {
         if(this._cache.units && 
            this._cache.armyName === armyName &&
            this._cache.leaderId === leaderId)
