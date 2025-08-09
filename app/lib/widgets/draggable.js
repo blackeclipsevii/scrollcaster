@@ -1,8 +1,8 @@
-const clearDraggableOrder = () => {
+export const clearDraggableOrder = () => {
     localStorage.removeItem('draggableOrder');
 }
 
-const initializeDraggable = (pageId) => {
+export const initializeDraggable = (pageId) => {
     const container = document.getElementById('visible-content');
     let savedOrder = JSON.parse(localStorage.getItem(`draggableOrder`));
     if (savedOrder && savedOrder[pageId]) {

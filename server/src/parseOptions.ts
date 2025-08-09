@@ -2,34 +2,7 @@ import Ability from "./Ability.js";
 import { BsSelectionEntry, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
 import Weapon from "./Weapon.js";
-
-export class Option {
-    name: string;
-    weapons: Weapon[];
-    abilities: Ability[];
-    keywords: string[];
-    constructor(name: string) {
-        this.name = name;
-        this.weapons = [];
-        this.abilities = [];
-        this.keywords = [];
-    }
-}
-
-export class Options {
-    [name: string]: Option;
-}
-
-export default class OptionSet {
-    name: string;
-    options: Options;
-    selection: (Option|null);
-    constructor(name: string, options: Options) {
-        this.name = name;
-        this.options = options;
-        this.selection = null;
-    }
-}
+import OptionSet, {Options, Option} from "../../shared-lib/Options.js";
 
 export const parseOptions = (optionSets: OptionSet[], ageOfSigmar: AgeOfSigmar, optionsGroups: BsSelectionEntryGroup[]) => {
     const addOptionSet = (og: BsSelectionEntryGroup) => {

@@ -1,5 +1,6 @@
+import { dynamicPages } from "../../lib/host.js";
 
-class UnitSettings {
+export class UnitSettings {
     type = null;
     roster = null;
     regimentIndex = null;

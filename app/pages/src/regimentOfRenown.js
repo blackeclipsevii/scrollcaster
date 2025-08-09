@@ -1,5 +1,6 @@
+import { dynamicPages } from "../../lib/host.js";
 
-class RegimentOfRenownSettings {
+export class RegimentOfRenownSettings {
     ror = null;
 };
 

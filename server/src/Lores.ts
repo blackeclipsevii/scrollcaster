@@ -1,10 +1,12 @@
 import parseCatalog from "./lib/parseCatalog.js";
 
 import Upgrade from "./Upgrade.js";
-import { UpgradeType } from './lib/Upgrade.js';
 import { BsLibrary, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
+import { UpgradeType } from "../../shared-lib/UpgradeInterface.js";
 
-export class Lore {
+import LoreInterf, {LoreLUTInterf} from "../../shared-lib/LoreInterface.js";
+
+export class Lore implements LoreInterf {
     name: string;
     id: string;
     type: number;
@@ -45,10 +47,6 @@ export class Lore {
             });
         }
     }
-}
-
-export interface LoreLUTInterf {
-    [key: string]: Lore;
 }
 
 export class LoreLUT {

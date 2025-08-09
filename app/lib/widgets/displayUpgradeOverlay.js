@@ -1,3 +1,5 @@
+import { Overlay } from "./overlay.js";
+
 const _initAbSection = () => {
     let section = document.getElementById('abilities-section');
     if (!section) {
@@ -15,7 +17,7 @@ const _initAbSection = () => {
     }
 }
 
-const displayUpgradeOverlay = Overlay.toggleFactory('block', (upgrade) =>{
+export const displayUpgradeOverlay = Overlay.toggleFactory('block', (upgrade) =>{
     _initAbSection();
 
     if (upgrade.type === 3 || upgrade.type === 4 || upgrade.type === 6) {
@@ -25,7 +27,7 @@ const displayUpgradeOverlay = Overlay.toggleFactory('block', (upgrade) =>{
     }
 });
 
-const displayRorOverlay = Overlay.toggleFactory('block', (regimentOfRenown) =>{
+export const displayRorOverlay = Overlay.toggleFactory('block', (regimentOfRenown) =>{
     _initAbSection();
     AbilityWidget.display(regimentOfRenown.upgrades, regimentOfRenown.name);
 });

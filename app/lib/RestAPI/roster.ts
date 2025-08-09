@@ -1,3 +1,7 @@
+import { getUniqueIdentifier } from "../functions/uniqueIdentifier.js";
+import { endpoint } from "../endpoint.js";
+import { version } from "./version.js";
+
 var _storageName = 'rosters';
 
 function rosterEndpoint(): string {
@@ -17,7 +21,7 @@ function _storeRosters(rosters: unknown) {
     localStorage.setItem('rosters', json);
 }
 
-async function getRosters() {
+export async function getRosters() {
     /*
     let rosters = null;
     const endpoint = rosterEndpoint();
@@ -30,7 +34,7 @@ async function getRosters() {
     return Object.getOwnPropertyNames(rosters);
 }
 
-async function getNewRoster(army: string) {
+export async function getNewRoster(army: string) {
     const endpoint = rosterEndpoint();
     const roster = await fetch(encodeURI(`${endpoint}&army=${army}`), {
         method: "GET" // default, so we can ignore
@@ -43,7 +47,7 @@ async function getNewRoster(army: string) {
     return roster;
 }
 
-async function getRoster(id: string) {
+export async function getRoster(id: string) {
     const rosters = _getRosters();
     return rosters[id];
 /*
@@ -59,7 +63,7 @@ async function getRoster(id: string) {
     */
 }
 
-async function putRoster(roster: {id: string}) {
+export async function putRoster(roster: {id: string}) {
     const rosters = _getRosters();
     rosters[roster.id] = roster;
     _storeRosters(rosters);
@@ -73,11 +77,11 @@ async function putRoster(roster: {id: string}) {
     */
 }
 
-async function deleteRosters() {
+export async function deleteRosters() {
   _storeRosters({});
 }
 
-async function deleteRoster(id: string) {
+export async function deleteRoster(id: string) {
     const rosters = _getRosters();
     if (rosters[id])
         delete rosters[id];

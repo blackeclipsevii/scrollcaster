@@ -1,5 +1,6 @@
+import { NameRoster, NameUnit } from "../../../../shared-lib/NameRoster.js";
 
-class NameRosterImporter {
+export class NameRosterImporter {
     canImport(text: string) {
         return false;
     }
@@ -31,7 +32,7 @@ class NameRosterImporter {
     }
 }
 
-const ImportRoster = {
+export const ImportRoster = {
     _importers: [] as NameRosterImporter[],
     registerImporter(newImporter: NameRosterImporter) {
         this._importers.push(newImporter);

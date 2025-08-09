@@ -1,5 +1,6 @@
+import { dynamicPages } from "../../lib/host.js";
 
-class UpgradeSettings {
+export class UpgradeSettings {
     titleName = null;
     type = null;
     roster = null;

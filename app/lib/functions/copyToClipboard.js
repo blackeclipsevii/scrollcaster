@@ -4,7 +4,7 @@
  * @return {Boolean}               returns a boolean correspondent to the success of the copy operation.
  * @see https://stackoverflow.com/a/53951634/938822
  */
-function copyToClipboard(string) {
+export function copyToClipboard(string) {
   let textarea;
   let result;
 

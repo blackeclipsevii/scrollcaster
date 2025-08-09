@@ -1,4 +1,6 @@
-class TacticsSettings {
+import { dynamicPages } from "../../lib/host.js";
+
+export class TacticsSettings {
     roster = null
 };
 

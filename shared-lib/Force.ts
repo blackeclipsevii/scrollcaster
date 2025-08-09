@@ -1,10 +1,9 @@
-import Upgrade from "./Upgrade.js";
-
+import UpgradeInterf from "./UpgradeInterface.js";
 export interface Force {
     selectableIn: string[];
     id: string;
     name: string;
     unitContainers: unknown[];
-    upgrades: Upgrade[];
+    upgrades: UpgradeInterf[];
     points: number;
 }

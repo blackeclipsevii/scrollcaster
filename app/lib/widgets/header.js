@@ -2,10 +2,10 @@ class HistoryStack {
     currentSettings = null;
     history = [];
 }
-var _linkStack = null;
+export var _linkStack = null;
 var _headerMenuId = '';
 
-const absoluteUrl = (relativePath) => {
+export const absoluteUrl = (relativePath) => {
     const rootUrl = window.location.origin;
     return new URL(relativePath, rootUrl).href;
 }
@@ -14,7 +14,7 @@ const _getHistoryKey = () => {
     return _inCatalog ? 'catalog' : 'roster';
 }
 
-async function dynamicGoTo(settings, updateHistory=true, doLoadPage=true) {
+export async function dynamicGoTo(settings, updateHistory=true, doLoadPage=true) {
     const key = _getHistoryKey();
     const name = settings.constructor.name.toLowerCase();
     const types = Object.getOwnPropertyNames(dynamicPages);
@@ -40,7 +40,7 @@ async function dynamicGoTo(settings, updateHistory=true, doLoadPage=true) {
     }
 }
 
-const goBack = async () => {
+export const goBack = async () => {
     const key = _getHistoryKey();
     const linkStack = _linkStack[key];
     if (linkStack.history.length > 0) {
@@ -52,7 +52,7 @@ const goBack = async () => {
         console.log('ERROR previous is bad');
 }
 
-function initializeHeader(options) {
+export function initializeHeader(options) {
     _linkStack = {
         catalog: new HistoryStack,
         roster: new HistoryStack
@@ -101,38 +101,38 @@ function initializeHeader(options) {
     }
 }
 
-function setHeaderTitle(name) {
+export const setHeaderTitle = (name) => {
     const element = document.getElementById('army-header');
     element.textContent = name;
 }
 
-function enableBackButton() {
+export function enableBackButton() {
     const hdr = document.querySelector('header');
     const left = hdr.querySelector('.header-left');
     left.style.display = '';
 }
 
-function disableBackButton() {
+export function disableBackButton() {
     const hdr = document.querySelector('header');
     const left = hdr.querySelector('.header-left');
     left.style.display = 'none';
 }
 
-function enableHeaderContextMenu() {
+export function enableHeaderContextMenu() {
     disableSearchButton();
     const hdr = document.querySelector('header');
     const wrapper = hdr.querySelector('.menu-btn-wrapper');
     wrapper.style.display = '';
 }
 
-function disableHeaderContextMenu() {
+export function disableHeaderContextMenu() {
     const hdr = document.querySelector('header');
     const wrapper = hdr.querySelector('.menu-btn-wrapper');
     if (wrapper)
         wrapper.style.display = 'none';
 }
 
-function enableSearchButton() {
+export function enableSearchButton() {
     disableHeaderContextMenu();
     const hdr = document.querySelector('header');
     const right = hdr.querySelector('.header-right');
@@ -152,7 +152,7 @@ function enableSearchButton() {
     searchButton.style.display = '';
 }
 
-function disableSearchButton() {
+export function disableSearchButton() {
     const hdr = document.querySelector('header');
     const right = hdr.querySelector('.header-right');
     let searchButton = right.querySelector('.search-button');
@@ -161,7 +161,7 @@ function disableSearchButton() {
     }
 }
 
-function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
+export function updateHeaderContextMenu(callbackMap, autoDisplay=true) {
     const hdr = document.querySelector('header');
     const right = hdr.querySelector('.header-right');
 

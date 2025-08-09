@@ -1,5 +1,8 @@
+import { dynamicPages } from "../../lib/host.js";
+import { _linkStack } from "../../lib/widgets/header.js";
+import { dynamicGoTo } from "../../lib/widgets/header.js";
 
-class RosterSettings {
+export class RosterSettings {
 };
 
 const rosterPage = {

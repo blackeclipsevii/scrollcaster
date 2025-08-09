@@ -1,4 +1,4 @@
-const WeaponWidget = {
+export const WeaponWidget = {
     _displayWeapons: (qualifier, weaponList) => {
         const _limitString = (str, max = 5) => {
             if (typeof str !== 'string')

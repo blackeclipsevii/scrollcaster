@@ -1,4 +1,4 @@
-function initializeFooter(root) {
+export function initializeFooter(root) {
     const main = document.querySelector('.persist');
     const footer = document.createElement('footer');
     footer.innerHTML = `

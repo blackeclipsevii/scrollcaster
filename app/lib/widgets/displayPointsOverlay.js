@@ -8,7 +8,7 @@ function _loadTotalPoints(id) {
     totalPoints = Number(localStorage.getItem(`${id}-total-points`));
 }
 
-const displayPointsOverlay = (id) => {
+export const displayPointsOverlay = (id) => {
     let overlay = document.getElementById('pointsOverlay');
     if (!overlay) {
         const main = document.querySelector('.persist');
@@ -25,14 +25,14 @@ const displayPointsOverlay = (id) => {
     _loadTotalPoints(id);
 }
 
-const hidePointsOverlay = () => {
+export const hidePointsOverlay = () => {
     let overlay = document.getElementById('pointsOverlay');
     if (!overlay)
         return;
     overlay.style.display = 'none';
 }
 
-async function updateValidationDisplay() {
+export async function updateValidationDisplay() {
     const errors = await validateRoster(roster);
     const pointsOverlay = document.getElementById('pointsOverlay');
     const hasErrors = errors.length > 0;
@@ -105,7 +105,7 @@ async function updateValidationDisplay() {
     });
 };
 
-function refreshPointsOverlay(id) {
+export function refreshPointsOverlay(id) {
     let pointsOverlay = document.getElementById('pointsOverlay');
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
     _saveTotalPoints(id);

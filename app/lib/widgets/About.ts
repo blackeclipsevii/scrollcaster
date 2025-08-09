@@ -1,4 +1,7 @@
-const About = {
+import { version } from "../RestAPI/version.js";
+import { getVar } from "../functions/getVar.js";
+
+export const About = {
     license: () => {
         return `
             <div class='license'>

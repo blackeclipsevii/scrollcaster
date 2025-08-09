@@ -1,3 +1,5 @@
+import { Overlay } from "./overlay.js";
+
 const _initWeaponsSection = (qualifier, parent) => {
     let section = document.getElementById(`${qualifier}-weapons-section`);
     if (!section) {
@@ -11,7 +13,7 @@ const _initWeaponsSection = (qualifier, parent) => {
     return false;
 }
 
-const displayWeaponOverlay = Overlay.toggleFactory('flex', (weaponsObj) =>{
+export const displayWeaponOverlay = Overlay.toggleFactory('flex', (weaponsObj) =>{
     
     const weapons = weaponsObj.weapons;
     const name = weaponsObj.name;

@@ -15,40 +15,6 @@ const whClearDiv = (qualifier, parent) => {
     return div;
 }
 
-const unitTypeToString = (unit) => {
-    if (unit.type === 0)
-        return 'Hero';
-    if (unit.type == 1)
-        return 'Infantry';
-    if (unit.type == 2)
-        return 'Cavalry';
-    if (unit.type == 3)
-        return 'Beast';
-    if (unit.type == 4)
-        return 'Monster';
-    if (unit.type == 5)
-        return 'War Machine';
-    if (unit.type == 6)
-        return 'Manifestation';
-    if (unit.type == 7)
-        return 'Faction Terrain';
-    return 'Regiment of Renown';
-}
-
-const upgradeTypeToStr = (unit) => {
-    if (unit.type == 2)
-        return 'Battle Formation';
-    if (unit.type == 3)
-        return 'Spell Lore';
-    if (unit.type == 6)
-        return 'Prayer Lore';
-    if (unit.type == 4)
-        return 'Manifestation Lore';
-    if (unit.type == 9) 
-        return 'Enhancement';
-    return 'Unknown';
-}
-
 const makeSelectableItemType = (typedObj, isUnit=true) => {
     const roleEle = document.createElement('span');
     roleEle.className = 'selectable-item-type ability-label';

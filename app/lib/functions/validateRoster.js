@@ -1,11 +1,3 @@
-
-const formatMessageText = (message) => {
-    return message.replace(/</g, "#")
-                  .replace(/>/g, '%')
-                  .replace(/#/g, '<b>')
-                  .replace(/%/g, '</b>');
-}
-
 const validateRosterPOST = async (roster) => {
     const regArg = encodeURI(`${endpoint}/validate`);
     let errors = []
@@ -29,7 +21,7 @@ const validateRosterPOST = async (roster) => {
     return errors;
 }
 
-const validateRoster = async (roster) => {
+export const validateRoster = async (roster) => {
     let errors = [];
 
     if (Number(totalPoints) > roster.points) {

@@ -1,4 +1,8 @@
-class ImportOfficialRoster extends NameRosterImporter {
+import { NameRoster } from "../../../../shared-lib/NameRoster.js";
+import { ImportRoster, NameRosterImporter } from "./importRoster.js";
+import { nameRosterToRoster } from "./nameRosterToRoster.js";
+
+export class ImportOfficialRoster extends NameRosterImporter {
     specialCookie() {
         return 'Created with Warhammer Age of Sigmar: The App';
     }

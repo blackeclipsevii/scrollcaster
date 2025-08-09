@@ -1,6 +1,6 @@
 // make html page layout
 
-const layoutDefaultFactory = (main, name, show=true) => {
+export const layoutDefaultFactory = (main, name, show=true) => {
     const adjustedName = name.toLowerCase().replace(/ /g, '-');
     const section = document.createElement('div');
     if (!show)
@@ -27,7 +27,7 @@ const layoutDefaultFactory = (main, name, show=true) => {
     return section;
 }  
 
-const makeLayout = (sections, factory=null, parent=null, show=false) => {
+export const makeLayout = (sections, factory=null, parent=null, show=false) => {
     if (factory === null)
         factory = layoutDefaultFactory;
 
@@ -37,8 +37,7 @@ const makeLayout = (sections, factory=null, parent=null, show=false) => {
     });
 }
 
-
-const swapLayout = () => {
+export const swapLayout = () => {
     const oldView = document.getElementById('visible-content');
     const newView = document.getElementById('loading-content');
     newView.className = 'main';
@@ -59,7 +58,7 @@ const swapLayout = () => {
 }
 
 // remove all existing sections
-const clearLayout = () => {
+export const clearLayout = () => {
     const main = document.querySelector('.main');
     const sections = main.querySelectorAll('.section');
     sections.forEach(section => {

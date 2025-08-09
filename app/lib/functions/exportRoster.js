@@ -1,5 +1,5 @@
 
-async function exportRoster(roster) {
+export async function exportRoster(roster) {
     const astrix = '•';
     let text = `${roster.name} (${totalPoints} points) - GHB 2025-26\n\n`
     text += `${roster.army}\n`;

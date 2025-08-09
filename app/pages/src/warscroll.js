@@ -1,5 +1,6 @@
+import { dynamicPages } from "../../lib/host.js";
 
-class WarscrollSettings {
+export class WarscrollSettings {
     unit = null;
     local = null;
 };

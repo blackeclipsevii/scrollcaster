@@ -1,3 +1,6 @@
+import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js"
+import { endpoint } from "../endpoint.js";
+import { _clientVersion } from "../../version.js";
 
 interface VersionParts {
     major: string, minor: string, patch:string
@@ -14,12 +17,11 @@ async function getVersion (of: string | null = null): Promise<VersionParts | Ver
     return await fetchWithLoadingDisplay(encodeURI(url), null);
 }
 
-const version = (()=>{
+export const version = (()=>{
   return {
     _server: null as string | null,
     _bsdata: null as string | null,
     _profiles: null as string | null,
-    // @ts-ignore
     _client: _clientVersion as string,
     async getClientVersion() {
         return this._client;

@@ -1,22 +1,18 @@
 import Ability from "./Ability.js";
 
-import { UnitType, strToUnitType } from "./types/UnitType.js";
+import { UnitType, strToUnitType } from "../../shared-lib/types/UnitType.js";
 import { BsCategoryLink, BsCharacteristic, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
-import Upgrade from "./Upgrade.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
-import BattleProfile from "./lib/validation/BattleProfile.js";
+import BattleProfile from "../../shared-lib/BattleProfile.js";
 
 import Model from "./Model.js";
-import OptionSet, { parseOptions } from "./OptionSet.js";
+import OptionSet from "../../shared-lib/Options.js";
+import { parseOptions } from "./parseOptions.js";
 
-export interface EnhancementSlot {
-    name: string;
-    id: string;
-    slot: Upgrade | null;
-}
+import UnitInterf, { EnhancementSlotInterf } from "../../shared-lib/UnitInterface.js";
 
-export default class Unit {
+export default class Unit implements UnitInterf {
     name: string;
     id: string;
 
@@ -33,7 +29,7 @@ export default class Unit {
 
     models: Model[];
 
-    enhancements: {[name: string]: EnhancementSlot};
+    enhancements: {[name: string]: EnhancementSlotInterf};
     abilities: Ability[];
     keywords: string[];
     optionSets: OptionSet[];

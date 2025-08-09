@@ -17,7 +17,7 @@ const saveFavorites = (type, favorites) => {
     localStorage.setItem(favoritesKey, JSON.stringify(fav));
 }
 
-const clearFavorites = () => {
+export const clearFavorites = () => {
     localStorage.removeItem(favoritesKey);
 }
 
@@ -46,7 +46,7 @@ const isFavorite = (id, type) => {
     return true;
 }
 
-const initializeFavoritesList = () => {
+export const initializeFavoritesList = () => {
   deleteFavoritesList();
   const main = document.getElementById('loading-content');
   const div = document.createElement('div');
@@ -141,13 +141,13 @@ const _seperateFavorites = (selectableList, item, itemName) => {
     return onchange;
 }
 
-const newFavoritesOnChange = (selectableList, item, itemName, useFavoritesSection=true) => {
+export const newFavoritesOnChange = (selectableList, item, itemName, useFavoritesSection=true) => {
     if (useFavoritesSection)
         return _seperateFavorites(selectableList, item, itemName);
     return _inplaceFavorites(selectableList, item, itemName);
 }
 
-const newFavoritesCheckbox = (favoriteId, favoriteType, onchange=null, checkboxId=null) => {
+export const newFavoritesCheckbox = (favoriteId, favoriteType, onchange=null, checkboxId=null) => {
     const heart = document.createElement('input');
     heart.id = checkboxId ? checkboxId : generateId();
     heart.type = 'checkbox';

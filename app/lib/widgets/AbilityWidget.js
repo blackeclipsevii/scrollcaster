@@ -1,5 +1,5 @@
 
-const AbilityWidget = {
+export const AbilityWidget = {
     _newAbilityDiv(ability) {
         const abilitiesDiv = document.getElementById('abilities-section');
         let div = document.createElement('div');

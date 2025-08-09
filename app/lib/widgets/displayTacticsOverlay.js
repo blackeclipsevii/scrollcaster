@@ -1,4 +1,6 @@
-const displayTacticsOverlay = Overlay.toggleFactory('block', (tacticCard) =>{
+import { Overlay } from "./overlay.js";
+
+export const displayTacticsOverlay = Overlay.toggleFactory('block', (tacticCard) =>{
     const modal = document.querySelector(".modal");
     modal.style.padding = '0';
 

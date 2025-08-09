@@ -9,14 +9,15 @@ import parseCatalog, { parseGameSystem } from './lib/parseCatalog.js';
 
 import path from 'path';
 import Upgrade from './Upgrade.js';
-import { UpgradeType } from './lib/Upgrade.js';
 import BsConstraint, { ConstraintType, getConstraints, BsModifierAttrObj } from './lib/bs/BsConstraint.js';
 import { BsCatalog, BsGameSystem, BsLibrary } from './lib/bs/BsCatalog.js';
-import BattleProfile from './lib/validation/BattleProfile.js';
-import { Force } from './Force.js';
+import BattleProfile from '../../shared-lib/BattleProfile.js';
+import { Force } from '../../shared-lib/Force.js';
 
 import { RegimentValidator } from './lib/validation/RegimentValidation.js';
 import { registerAllValidators } from './lib/validation/validators/registerValidators.js';
+
+import { UpgradeType } from '../../shared-lib/UpgradeInterface.js';
 
 // intermediate step
 interface MyConstraints {

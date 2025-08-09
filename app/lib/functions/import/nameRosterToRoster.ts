@@ -1,29 +1,8 @@
-// Name based representation of a unit
-// Used for import from various list formats
-interface NameUnit {
-    name: string;
-    isGeneral: boolean;
-    isReinforced: boolean;
-    other: string[];
-};
+import { NameRoster } from "../../../../shared-lib/NameRoster.js";
+import { rosterState } from "./rosterState.js";
 
-// Name based representation of a roster
-// Used for import from various list formats
-interface NameRoster {
-    name: string;
-    armyName: string;
-    battleFormation: string | null;
-    battleTacticCards: string[];
-    lores: {
-        [name: string]: string | null;
-    };
-    factionTerrain: string | null;
-    regimentOfRenown: string | null;
-    regiments: (NameUnit[])[];
-    auxUnits: NameUnit[];
-};
-
-const nameRosterToRoster = async (nameRoster: NameRoster) => {
+export const nameRosterToRoster = async (nameRoster: NameRoster) => {
+    // @ts-ignore
     const regArg = encodeURI(`${endpoint}/import`);
     let result = await fetch(regArg, {
         method: "POST",

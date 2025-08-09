@@ -1,7 +1,9 @@
 
+import { dynamicPages } from "../../lib/host.js";
+
 var totalPoints = 0;
 
-class BuilderSettings {
+export class BuilderSettings {
     rosterId = null;
     roster = null;
 };

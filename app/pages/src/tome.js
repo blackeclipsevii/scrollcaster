@@ -1,5 +1,6 @@
+import { dynamicPages } from "../../lib/host.js";
 
-class CatalogSettings {
+export class CatalogSettings {
     armyName = null;
     core = false;
     _doSub = true; // this is not intended for external use, just tracking history

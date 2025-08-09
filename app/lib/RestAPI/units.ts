@@ -1,4 +1,7 @@
-const unitsApi = {
+import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js"
+import { endpoint } from "../endpoint.js";
+
+export const unitsApi = {
     _cache: {
         units: null as unknown | null,
         armyName: null as string | null,

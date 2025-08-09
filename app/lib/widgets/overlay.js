@@ -1,5 +1,5 @@
 
-const Overlay = {
+export const Overlay = {
     //private
     _getScrollbarWidth: () => {
         // Create a temporary container with forced scrollbars

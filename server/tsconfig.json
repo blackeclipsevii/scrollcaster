@@ -4,6 +4,6 @@
     "allowJs": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../shared-lib/**/*"],
   "exclude": ["node_modules"]
 }

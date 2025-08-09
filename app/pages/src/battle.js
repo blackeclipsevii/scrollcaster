@@ -1,7 +1,5 @@
-
-var totalPoints = 0;
-
-class BattleSettings {
+import { dynamicPages } from "../../lib/host.js";
+export class BattleSettings {
     roster = null;
 };
 

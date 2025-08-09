@@ -1,4 +1,4 @@
-const ContextMenu = {
+export const ContextMenu = {
     _menuIds: [],
     delete: (id) => {
         const wrapper = document.getElementById(`menu-wrapper-${id}`)

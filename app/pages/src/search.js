@@ -1,4 +1,6 @@
-class SearchSettings {
+import { dynamicPages } from "../../lib/host.js";
+
+export class SearchSettings {
 };
 
 const searchPage = {

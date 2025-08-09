@@ -1,6 +1,6 @@
 // Allow an end user to control where the edges of the display start
 // useful for alternative platforms like android
-class InsetEdges {
+export class InsetEdges {
     [name: string]: number | null;
     top: number | null;
     bottom: number | null;

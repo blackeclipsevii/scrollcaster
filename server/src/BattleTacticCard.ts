@@ -2,12 +2,6 @@
 import { BsSelectionEntry } from './lib/bs/BsCatalog.js';
 import bsTextSmoother from './lib/bs/BsSmoother.js';
 
-export const BattleTacticType = {
-    Affray: 0,
-    Strike: 1,
-    Domination: 2
-}
-
 export class BattleTactic {
     type: {
         name: string;

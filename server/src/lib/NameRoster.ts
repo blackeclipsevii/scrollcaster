@@ -1,34 +1,11 @@
 import AgeOfSigmar from "../AgeOfSigmar.js";
-import { UpgradeLUT } from "../Army.js";
-import { LoreLUTInterf } from "../Lores.js";
 import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
 import Upgrade from "../Upgrade.js";
 
-// Name based representation of a unit
-// Used for import from various list formats
-export interface NameUnit {
-    name: string;
-    isGeneral: boolean;
-    isReinforced: boolean;
-    other: string[];
-};
-
-// Name based representation of a roster
-// Used for import from various list formats
-export interface NameRoster {
-    name: string;
-    armyName: string;
-    battleFormation: string | null;
-    battleTacticCards: string[];
-    lores: {
-        [name: string]: string | null;
-    };
-    factionTerrain: string | null;
-    regimentOfRenown: string | null;
-    regiments: (NameUnit[])[];
-    auxUnits: NameUnit[];
-};
+import { UpgradeLUT } from "../../../shared-lib/UpgradeInterface.js";
+import { NameRoster, NameUnit } from "../../../shared-lib/NameRoster.js";
+import { LoreLUTInterf } from "../../../shared-lib/LoreInterface.js";
 
 export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRoster) => {
     const army = ageOfSigmar.getArmy(nameRoster.armyName);

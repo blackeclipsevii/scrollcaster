@@ -1,5 +1,7 @@
+import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js";
+import { endpoint } from "../endpoint.js";
 
-const fetchRegimentsOfRenown = async (armyName: string) => {
+export const fetchRegimentsOfRenown = async (armyName: string) => {
     const url = `${endpoint}/regimentsOfRenown?army=${armyName}`;
     return await fetchWithLoadingDisplay(encodeURI(url));
 };
