@@ -1,6 +1,7 @@
 // make html page layout
+import { InsetEdges } from "./InsetEdges.js";
 
-export const layoutDefaultFactory = (main, name, show=true) => {
+export const layoutDefaultFactory = (main: HTMLElement, name: string, show=true) => {
     const adjustedName = name.toLowerCase().replace(/ /g, '-');
     const section = document.createElement('div');
     if (!show)
@@ -16,7 +17,7 @@ export const layoutDefaultFactory = (main, name, show=true) => {
     `;
 
     const oldElement = document.getElementById(section.id);
-    if (oldElement) {
+    if (oldElement && oldElement.parentElement) {
         // we have to destroy it
         oldElement.parentElement.removeChild(oldElement);
     }
@@ -27,11 +28,19 @@ export const layoutDefaultFactory = (main, name, show=true) => {
     return section;
 }  
 
-export const makeLayout = (sections, factory=null, parent=null, show=false) => {
+export const makeLayout = (sections: string[], 
+                           factory: ((main: HTMLElement, name: string, show: boolean) => HTMLElement) | null = null, 
+                           parent: HTMLElement | null = null,
+                           show=false) => {
+
     if (factory === null)
         factory = layoutDefaultFactory;
 
     const main = parent ? parent : document.getElementById('loading-content');
+    if (!main) {
+        return;
+    }
+
     sections.forEach(name => {
         factory(main, name, show);
     });
@@ -39,15 +48,25 @@ export const makeLayout = (sections, factory=null, parent=null, show=false) => {
 
 export const swapLayout = () => {
     const oldView = document.getElementById('visible-content');
+    if (!oldView)
+        return;
     const newView = document.getElementById('loading-content');
+    if (!newView)
+        return;
     newView.className = 'main';
     const inset = new InsetEdges;
     if (inset.top) {
-        const top = document.querySelector('header').offsetHeight + 7;
-        newView.style.marginTop = `${top}px`;
+        const header = document.querySelector('header');
+        if (header) {
+            const top = header.offsetHeight + 7;
+            newView.style.marginTop = `${top}px`;
+        }
     } if (inset.bottom) {
-        const bottom = document.querySelector('footer').offsetHeight + 7;
-        newView.style.marginBottom = `${bottom}px`;
+        const footer = document.querySelector('footer');
+        if (footer) {
+            const bottom = footer.offsetHeight + 7;
+            newView.style.marginBottom = `${bottom}px`;
+        }
     }
     newView.style.display = '';
     oldView.style.display = 'none';
@@ -60,6 +79,9 @@ export const swapLayout = () => {
 // remove all existing sections
 export const clearLayout = () => {
     const main = document.querySelector('.main');
+    if (!main) {
+        return;
+    }
     const sections = main.querySelectorAll('.section');
     sections.forEach(section => {
         if (section.parentElement === main)

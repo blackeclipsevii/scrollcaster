@@ -1,5 +1,8 @@
+import UnitInterf, { unitTypeToString } from "../../../shared-lib/UnitInterface.js";
+import UpgradeInterf, { UpgradeType } from "../../../shared-lib/UpgradeInterface.js";
+import { upgradeTypeToString } from "../../../shared-lib/UpgradeInterface.js";
 
-const whClearDiv = (qualifier, parent) => {
+export const whClearDiv = (qualifier: string, parent: HTMLElement | Document) => {
     let div = null;
     if (qualifier.startsWith('.')) {
         if (!parent)
@@ -15,7 +18,7 @@ const whClearDiv = (qualifier, parent) => {
     return div;
 }
 
-const makeSelectableItemType = (typedObj, isUnit=true) => {
+export const makeSelectableItemType = (typedObj: string | {type:number, typeName:string|undefined}, isUnit=true) => {
     const roleEle = document.createElement('span');
     roleEle.className = 'selectable-item-type ability-label';
     roleEle.style.display = 'inline-block';
@@ -24,15 +27,17 @@ const makeSelectableItemType = (typedObj, isUnit=true) => {
     else if (typedObj.typeName)
         roleEle.textContent = typedObj.typeName
     else if (isUnit)
-        roleEle.textContent = unitTypeToString(typedObj);
+        roleEle.textContent = unitTypeToString(typedObj as unknown as UnitInterf);
     else
-        roleEle.textContent = upgradeTypeToStr(typedObj);
+        roleEle.textContent = upgradeTypeToString(typedObj.type);
     return roleEle;
 }
 
-const makeSelectableItemName = (namedObj) => {
-    let name = namedObj;
-    if (typeof namedObj !== 'string')
+export const makeSelectableItemName = (namedObj: {name: string}) => {
+    let name: string = '';
+    if (typeof namedObj === 'string')
+        name = namedObj;
+    else
         name = namedObj.name;
     const nameEle = document.createElement('p');
     nameEle.className = 'selectable-item-name';

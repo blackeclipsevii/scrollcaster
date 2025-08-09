@@ -1,6 +1,12 @@
-const validateRosterPOST = async (roster) => {
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import { endpoint } from "../endpoint.js";
+import { rosterTotalPoints } from "../host.js";
+import { rosterState } from "./import/rosterState.js";
+
+const validateRosterPOST = async (roster: RosterInterf) => {
     const regArg = encodeURI(`${endpoint}/validate`);
-    let errors = []
+    let errors: string[] = []
     let result = await fetch(regArg, {
         method: "POST",
         headers: {
@@ -21,8 +27,10 @@ const validateRosterPOST = async (roster) => {
     return errors;
 }
 
-export const validateRoster = async (roster) => {
+export const validateRoster = async (roster: RosterInterf) => {
     let errors = [];
+
+    const totalPoints = rosterTotalPoints(roster);
 
     if (Number(totalPoints) > roster.points) {
         let errorMsg = `Total allowed points exceeded: ${totalPoints} / ${roster.points}`;
@@ -37,11 +45,11 @@ export const validateRoster = async (roster) => {
 
     let numGenerals = 0;
     let warmasterIsGeneral = false;
-    let warmasters = [];
-    let uniqueUnits = {};
-    let enhanceCounts = {}
+    let warmasters: string[] = [];
+    let uniqueUnits: {[name:string]: boolean} = {};
+    let enhanceCounts: {[name:string]: number } = {}
 
-    const validateUnique = (unit) => {
+    const validateUnique = (unit: UnitInterf) => {
         const uniqueName = unit.name.replace(" (Scourge of Ghyran)", "");
         if (uniqueUnits[uniqueName]) {
             let errorMsg = `Multiple instances of UNIQUE unit: ${uniqueName}`;
@@ -88,7 +96,7 @@ export const validateRoster = async (roster) => {
             errors.push(errorMsg);
         }
 
-        const checkUnit = (_unit) => {
+        const checkUnit = (_unit: UnitInterf) => {
             if (_unit.keywords.includes('UNIQUE')) {
                 validateUnique(_unit);
             } else {

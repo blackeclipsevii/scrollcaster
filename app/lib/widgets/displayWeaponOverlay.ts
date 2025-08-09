@@ -1,6 +1,9 @@
 import { Overlay } from "./overlay.js";
+import { WeaponWidget } from "./WeaponWidget.js";
+import { getVar } from "../functions/getVar.js";
+import WeaponInterf from "../../../shared-lib/WeaponInterf.js";
 
-const _initWeaponsSection = (qualifier, parent) => {
+const _initWeaponsSection = (qualifier: string, parent: HTMLElement) => {
     let section = document.getElementById(`${qualifier}-weapons-section`);
     if (!section) {
         section = document.createElement('div');
@@ -13,7 +16,7 @@ const _initWeaponsSection = (qualifier, parent) => {
     return false;
 }
 
-export const displayWeaponOverlay = Overlay.toggleFactory('flex', (weaponsObj) =>{
+export const displayWeaponOverlay = Overlay.toggleFactory('flex', (weaponsObj: {name: string, weapons: WeaponInterf[]}) =>{
     
     const weapons = weaponsObj.weapons;
     const name = weaponsObj.name;
@@ -42,9 +45,11 @@ export const displayWeaponOverlay = Overlay.toggleFactory('flex', (weaponsObj) =
         useModal =_initWeaponsSection('melee', parentSection);
     
     if (useModal) {
-        const modal = document.querySelector('.modal');
-        modal.style.padding = '0';
-        modal.append(parentSection);
+        const modal = document.querySelector('.modal') as HTMLElement | null;
+        if (modal) {
+            modal.style.padding = '0';
+            modal.append(parentSection);
+        }
     }
 
     WeaponWidget.display(weapons);

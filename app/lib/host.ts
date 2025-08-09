@@ -1,9 +1,12 @@
+import RosterInterf from "../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
+
 export const DYNAMIC_WARSCROLL = false;
 
 export var dynamicPages = {};
 export let _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
 
-export function unitTotalPoints(unit) {
+export function unitTotalPoints(unit: UnitInterf) {
   if (!unit || !unit.points)
       return 0;
 
@@ -24,7 +27,7 @@ export function unitTotalPoints(unit) {
   return pts;
 }
 
-export const rosterTotalPoints = (roster) => {
+export const rosterTotalPoints = (roster: RosterInterf) => {
   let total = 0;
   roster.regiments.forEach(reg => {
     if (reg.leader) {
@@ -53,7 +56,7 @@ export const rosterTotalPoints = (roster) => {
   return total;
 }
 
-export const displayPoints = (pointsElement, points, pts='pts') => {
+export const displayPoints = (pointsElement: HTMLElement, points: number, pts='pts') => {
     if (points > 0) {
         pointsElement.textContent = `${points} ${pts}`;
     } else {
