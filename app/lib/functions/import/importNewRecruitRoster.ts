@@ -3,8 +3,8 @@ class ImportNewRecruitRoster extends ImportOfficialRoster {
     specialCookie() {
         return 'Created with New Recruit';
     }
-    async createNameRoster(lines){
-        const nameRoster = new NameRoster();
+    async createNameRoster(lines: string[]): Promise<NameRoster|null> {
+        const nameRoster = this.newNameRoster();
         if (!lines[0].includes('(')) {
             console.log('Import roster failed: Error parsing list');
             return null;

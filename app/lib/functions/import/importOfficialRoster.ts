@@ -1,4 +1,4 @@
-class ImportOfficialRoster {
+class ImportOfficialRoster extends NameRosterImporter {
     specialCookie() {
         return 'Created with Warhammer Age of Sigmar: The App';
     }
@@ -20,12 +20,7 @@ class ImportOfficialRoster {
         let regiment = [];
 
         while (!this.isEmptyOrHyphens(line) && line.includes(' (')) {
-            let unit: NameUnit = {
-                name: '',
-                isGeneral: false,
-                isReinforced: false,
-                other: []
-            }
+            let unit = this.newNameUnit();
 
             // convert sog to bsdata formatting
             let addSoG = false;
@@ -66,18 +61,9 @@ class ImportOfficialRoster {
         }
         return i;
     }
-    async createNameRoster(lines: string[]){
-        const nameRoster: NameRoster = {
-            name: '',
-            armyName: '',
-            battleFormation: null,
-            battleTacticCards: [],
-            lores: {},
-            factionTerrain: null,
-            regimentOfRenown: null,
-            regiments: [],
-            auxUnits: []
-        };
+    async createNameRoster(lines: string[]): Promise<NameRoster|null> {
+        const nameRoster = this.newNameRoster();
+
         nameRoster.name = lines[0].split(' ').slice(0, -2).join(' ');
 
         // move to the the next full line
@@ -144,6 +130,9 @@ class ImportOfficialRoster {
         }
 
         const nameRoster = await this.createNameRoster(lines);
+        if (!nameRoster) {
+            return null;
+        }
 
         const roster = await nameRosterToRoster(nameRoster);
         return roster;

@@ -4,8 +4,8 @@ class ImportScrollcasterRoster extends ImportOfficialRoster {
     specialCookie() {
         return 'Created with Scrollcaster';
     }
-    async createNameRoster(lines){
-        const nameRoster = new NameRoster();
+    async createNameRoster(lines: string[]): Promise<NameRoster|null>{
+        const nameRoster = this.newNameRoster();
         if (!lines[0].includes('(')) {
             console.log('Import roster failed: Error parsing list');
             return null;
@@ -24,7 +24,7 @@ class ImportScrollcasterRoster extends ImportOfficialRoster {
         }
 
         const starElementReg = /\•\s+([^\(]+)/;
-        const getStarElement = (line) => {
+        const getStarElement = (line: string) => {
             let ele = line.match(starElementReg);
             if (ele)
                 return ele[1].trim();

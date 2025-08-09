@@ -1,16 +1,39 @@
 
-class Importer {
+class NameRosterImporter {
     canImport(text: string) {
         return false;
     }
     async import(text: string) {
         return {};
     }
+    newNameRoster() {
+        const nameRoster: NameRoster = {
+            name: '',
+            armyName: '',
+            battleFormation: null,
+            battleTacticCards: [],
+            lores: {},
+            factionTerrain: null,
+            regimentOfRenown: null,
+            regiments: [],
+            auxUnits: []
+        };
+        return nameRoster;
+    }
+    newNameUnit() {
+        const unit: NameUnit = {
+            name: '',
+            isGeneral: false,
+            isReinforced: false,
+            other: []
+        };
+        return unit;
+    }
 }
 
 const ImportRoster = {
-    _importers: [] as Importer[],
-    registerImporter(newImporter: Importer) {
+    _importers: [] as NameRosterImporter[],
+    registerImporter(newImporter: NameRosterImporter) {
         this._importers.push(newImporter);
     },
     stripMatchingDelimiters: (str: string) => {
