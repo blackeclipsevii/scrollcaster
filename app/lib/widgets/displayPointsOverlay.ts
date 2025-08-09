@@ -1,20 +1,27 @@
-var totalPoints;
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import { getVar } from "../functions/getVar.js";
+import { InsetEdges } from "./InsetEdges.js";
+import { validateRoster } from "../functions/validateRoster.js";
+import { Overlay } from "./overlay.js";
 
-function _saveTotalPoints(id) {
-    localStorage.setItem(`${id}-total-points`, totalPoints);
+export var totalPoints: number = 0;
+
+function _saveTotalPoints(id: string) {
+    localStorage.setItem(`${id}-total-points`, `${totalPoints}`);
 }
 
-function _loadTotalPoints(id) {
+function _loadTotalPoints(id: string) {
     totalPoints = Number(localStorage.getItem(`${id}-total-points`));
 }
 
-export const displayPointsOverlay = (id) => {
+export const displayPointsOverlay = (id: string) => {
     let overlay = document.getElementById('pointsOverlay');
     if (!overlay) {
         const main = document.querySelector('.persist');
         overlay = document.createElement('div');
         overlay.id = 'pointsOverlay';
-        main.appendChild(overlay);
+        if (main)
+            main.appendChild(overlay);
     } else {
         overlay.style.display = '';
     }
@@ -32,15 +39,22 @@ export const hidePointsOverlay = () => {
     overlay.style.display = 'none';
 }
 
-export async function updateValidationDisplay() {
+export async function updateValidationDisplay(roster: RosterInterf) {
     const errors = await validateRoster(roster);
-    const pointsOverlay = document.getElementById('pointsOverlay');
     const hasErrors = errors.length > 0;
     const postfix = hasErrors ? 'invalid' : 'valid';
+
+    const pointsOverlay = document.getElementById('pointsOverlay') as HTMLElement | null;
+    if (!pointsOverlay)
+        return;
+    
     pointsOverlay.className = `points-overlay-${postfix}`;
 
     pointsOverlay.onclick = Overlay.toggleFactory('flex', () =>{
-        const modal = document.querySelector(".modal");
+        const modal = document.querySelector(".modal") as HTMLElement | null;
+        if (!modal)
+            return;
+
         modal.style.border = `2px solid ${getVar('hover-color')}`;
 
         const title = document.createElement('h3');
@@ -68,9 +82,9 @@ export async function updateValidationDisplay() {
                 label.style.marginBottom = '1em';
                 subSection.appendChild(label);
 
-                const p = document.createElement('p');
-                p.style.padding = 0;
-                p.style.margin = 0;
+                const p = document.createElement('p') as HTMLElement;
+                p.style.padding = '0px';
+                p.style.margin = '0px';
                 p.innerHTML = error;
                 subSection.appendChild(p);
                 container.appendChild(subSection);
@@ -94,8 +108,8 @@ export async function updateValidationDisplay() {
             subSection.appendChild(label);
 
             const p = document.createElement('p');
-            p.style.padding = 0;
-            p.style.margin = 0;
+            p.style.padding = '0px';
+            p.style.margin = '0px';
             p.innerHTML = `Your list is valid.`;
             subSection.appendChild(p);
             container.appendChild(subSection);
@@ -105,8 +119,11 @@ export async function updateValidationDisplay() {
     });
 };
 
-export function refreshPointsOverlay(id) {
+export function refreshPointsOverlay(id: string, roster: RosterInterf) {
     let pointsOverlay = document.getElementById('pointsOverlay');
+    if (!pointsOverlay)
+        return;
+
     pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
     _saveTotalPoints(id);
 }

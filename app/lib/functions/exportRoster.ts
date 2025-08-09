@@ -1,5 +1,12 @@
+import LoreInterf from "../../../shared-lib/LoreInterface.js";
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import { rosterTotalPoints, unitTotalPoints } from "../host.js";
+import { version } from "../RestAPI/version.js";
 
-export async function exportRoster(roster) {
+export async function exportRoster(roster: RosterInterf) {
+    const totalPoints = rosterTotalPoints(roster);
+
     const astrix = '•';
     let text = `${roster.name} (${totalPoints} points) - GHB 2025-26\n\n`
     text += `${roster.army}\n`;
@@ -22,7 +29,7 @@ export async function exportRoster(roster) {
         });
     }
 
-    const displayLore = (name, lore) => {
+    const displayLore = (name: string, lore: LoreInterf) => {
         let text = `\n${name} Lore: \n`
         text += `  ${astrix} ${lore.name}`;
         if (lore.points > 0) {
@@ -35,8 +42,8 @@ export async function exportRoster(roster) {
     const lores = ['Manifestation', 'Spell', 'Prayer'];
     lores.forEach(loreName => {
         const llc = loreName.toLowerCase();
-        if (roster.lores[llc]) {
-            text += displayLore(loreName, roster.lores[llc]);
+        if ((roster.lores as unknown as {[name: string]: LoreInterf})[llc]) {
+            text += displayLore(loreName, (roster.lores as unknown as {[name: string]: LoreInterf})[llc]);
         }
     });
 
@@ -45,7 +52,7 @@ export async function exportRoster(roster) {
         text += `  ${roster.regimentOfRenown.name} (${roster.regimentOfRenown.points})\n`
     }
 
-    const unitToText = (unit, indent) => {
+    const unitToText = (unit: UnitInterf, indent: string) => {
         text += `${indent}${unit.name} (${unitTotalPoints(unit)})\n`
         if (unit.isGeneral) {
             text += `  ${indent}${astrix} General\n`;
@@ -87,9 +94,9 @@ export async function exportRoster(roster) {
         if (roster.regiments[i].leader === null)
             continue;
 
-        if (roster.regiments[i].leader.isGeneral) {
+        if (roster.regiments[i].leader!!.isGeneral) {
             text += `\nGeneral's Regiment: \n`;
-            unitToText(roster.regiments[i].leader, '  ');
+            unitToText(roster.regiments[i].leader!!, '  ');
             roster.regiments[i].units.forEach(unit => {
                 unitToText(unit, '  ');
             });

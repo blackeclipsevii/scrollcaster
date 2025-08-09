@@ -1,3 +1,5 @@
+import { generateId } from "../functions/uniqueIdentifier.js";
+
 export const ContextMenu = {
     _menuIds: [],
     delete: (id) => {

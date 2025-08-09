@@ -1,3 +1,6 @@
+import { getVar } from "../functions/getVar.js";
+import { whClearDiv } from "./helpers.js";
+import { DYNAMIC_WARSCROLL } from "../host.js";
 
 export const AbilityWidget = {
     _newAbilityDiv(ability) {
