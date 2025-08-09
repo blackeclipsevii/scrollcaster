@@ -2,7 +2,7 @@ import UnitInterf, { unitTypeToString } from "../../../shared-lib/UnitInterface.
 import UpgradeInterf, { UpgradeType } from "../../../shared-lib/UpgradeInterface.js";
 import { upgradeTypeToString } from "../../../shared-lib/UpgradeInterface.js";
 
-export const whClearDiv = (qualifier: string, parent: HTMLElement | Document) => {
+export const whClearDiv = (qualifier: string, parent?: HTMLElement | Document) => {
     let div = null;
     if (qualifier.startsWith('.')) {
         if (!parent)

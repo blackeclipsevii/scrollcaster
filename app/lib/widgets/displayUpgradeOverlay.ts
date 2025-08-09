@@ -3,6 +3,7 @@ import { getVar } from "../functions/getVar.js";
 import { AbilityWidget } from "./AbilityWidget.js";
 import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
 import { Force } from "../../../shared-lib/Force.js";
+import LoreInterf from "../../../shared-lib/LoreInterface.js";
 
 const _initAbSection = () => {
     let section = document.getElementById('abilities-section');
@@ -23,17 +24,19 @@ const _initAbSection = () => {
     }
 }
 
-export const displayUpgradeOverlay = Overlay.toggleFactory('block', (upgrade: UpgradeInterf) =>{
+export const displayUpgradeOverlay = Overlay.toggleFactory('block', (u: unknown) =>{
     _initAbSection();
+    const upgrade = u as UpgradeInterf;
 
     if (upgrade.type === 3 || upgrade.type === 4 || upgrade.type === 6) {
-        AbilityWidget.display(upgrade.abilities, upgrade.name);
+        AbilityWidget.display((upgrade as unknown as LoreInterf).abilities, upgrade.name);
     } else {
         AbilityWidget.display(upgrade, upgrade.name);
     }
 });
 
-export const displayRorOverlay = Overlay.toggleFactory('block', (regimentOfRenown: Force) =>{
+export const displayRorOverlay = Overlay.toggleFactory('block', (f: unknown) =>{
+    const regimentOfRenown = f as Force;
     _initAbSection();
     AbilityWidget.display(regimentOfRenown.upgrades, regimentOfRenown.name);
 });

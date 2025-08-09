@@ -1,13 +1,17 @@
 import { generateId } from "../functions/uniqueIdentifier.js";
 
+export interface CallbackMap {
+    [name: string]: unknown;
+}
+
 export const ContextMenu = {
-    _menuIds: [],
-    delete: (id) => {
+    _menuIds: [] as string[],
+    delete: (id: string) => {
         const wrapper = document.getElementById(`menu-wrapper-${id}`)
-        if (wrapper)
+        if (wrapper && wrapper.parentElement)
             wrapper.parentElement.removeChild(wrapper);
     },
-    updateCallbacks: (id, callbackMap) => { 
+    updateCallbacks: (id: string, callbackMap: CallbackMap) => { 
         const wrapper = document.getElementById(`menu-wrapper-${id}`);
         if (!wrapper) {
             console.log(`Error finding context menu wrapper ${id}`)
@@ -15,13 +19,18 @@ export const ContextMenu = {
         }
         wrapper.innerHTML = `<ul class="menu"></ul>`;
         const menu = wrapper.querySelector('.menu');
+        if (!menu) {
+            return;
+        }
+
         const entryNames = Object.getOwnPropertyNames(callbackMap);
         if (entryNames.length === 0) {
-            button.className = 'menu-btn-disabled';
+            // to-do
+            //button.className = 'menu-btn-disabled';
         } else {
             entryNames.forEach(entryName => {
                 const li = document.createElement('li');
-                li.onclick = callbackMap[entryName];
+                li.onclick = callbackMap[entryName] as (this: GlobalEventHandlers, ev: MouseEvent) => any;
                 li.textContent = entryName;
                 menu.appendChild(li);
             });
@@ -31,16 +40,16 @@ export const ContextMenu = {
         this._menuIds.forEach(id => this.delete(id));
         this._menuIds = [];
     },
-    create(callbackMap, trackMenu=true) {
+    create(callbackMap: CallbackMap, trackMenu=true) {
         const uniqueId = generateId();
         const ele = document.createElement('div');
         ele.innerHTML = `<button class="menu-btn">⋯</button>`;
         ele.className ='menu-btn-wrapper';
         ele.id = uniqueId;
 
-        const closeOtherMenus = (e) => {
+        const closeOtherMenus = (e: {pageX: number, pageY: number}) => {
             const { pageX: x, pageY: y } = e;
-            const menus = document.getElementsByClassName('menu-wrapper');
+            const menus = Array.from(document.getElementsByClassName('menu-wrapper') as HTMLCollectionOf<HTMLElement>);
             
             // Close the menu only if the click is outside the menu
             for (const menu of menus) {
@@ -51,7 +60,7 @@ export const ContextMenu = {
             };
         }
 
-        const button = ele.querySelector('.menu-btn');
+        const button = ele.querySelector('.menu-btn') as HTMLElement;
         button.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -60,7 +69,7 @@ export const ContextMenu = {
 
             const { pageX: x, pageY: y } = e;
             const className = 'menu-wrapper';
-            const menu = document.getElementById(`${className}-${uniqueId}`);
+            const menu = document.getElementById(`${className}-${uniqueId}`) as HTMLElement;
 
             // Move the menu to the body so it’s not clipped
             document.body.appendChild(menu);
@@ -79,14 +88,14 @@ export const ContextMenu = {
         </div>
         `;
 
-        const menu = div.querySelector('.menu');
+        const menu = div.querySelector('.menu') as HTMLElement;
         const entryNames = Object.getOwnPropertyNames(callbackMap);
         if (entryNames.length === 0) {
             button.className = 'menu-btn-disabled';
         } else {
             entryNames.forEach(entryName => {
                 const li = document.createElement('li');
-                li.onclick = callbackMap[entryName];
+                li.onclick = callbackMap[entryName] as (this: GlobalEventHandlers, ev: MouseEvent) => any;
                 li.textContent = entryName;
                 menu.appendChild(li);
             });

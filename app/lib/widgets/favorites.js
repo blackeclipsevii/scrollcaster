@@ -5,7 +5,7 @@ const getFavorites = (type) => {
     if (!fav)
         return {};
     const favObj = JSON.parse(fav);
-    if (favObj[type]);
+    if (favObj[type])
         return favObj[type];
     return {};
 }

@@ -1,4 +1,5 @@
 import { dynamicPages } from "../../lib/host.js";
+
 export class BattleSettings {
     roster = null;
 };

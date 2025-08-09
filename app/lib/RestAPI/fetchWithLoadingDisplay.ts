@@ -69,7 +69,7 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
 
   const timeoutDisplayOverlay = () => {
     if (!done && showLoadingDisplay) {
-      loadingOverlay();
+      loadingOverlay(null);
     }
   }
   setTimeout(timeoutDisplayOverlay, 250);

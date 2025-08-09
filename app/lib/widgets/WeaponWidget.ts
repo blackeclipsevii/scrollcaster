@@ -1,6 +1,10 @@
+import WeaponInterf from "../../../shared-lib/WeaponInterf.js";
+import { whClearDiv } from "./helpers.js";
+import { getVar } from "../functions/getVar.js";
+
 export const WeaponWidget = {
-    _displayWeapons: (qualifier, weaponList) => {
-        const _limitString = (str, max = 5) => {
+    _displayWeapons: (qualifier: string, weaponList: WeaponInterf[]) => {
+        const _limitString = (str: string, max = 5) => {
             if (typeof str !== 'string')
                 return '';
             if (str.toLowerCase().includes('see'))
@@ -8,7 +12,7 @@ export const WeaponWidget = {
             return str.length <= max ? str : str.slice(0, max);
         }
 
-        const _getOptionName = (name) => {
+        const _getOptionName = (name: string) => {
             const match = name.match(/<([^>]*)>/);
             const extracted = match ? match[1] : null;
             const modified = name.replace(/<[^>]*>/, '');
@@ -21,10 +25,12 @@ export const WeaponWidget = {
 
         const _initializeWeaponsDiv = () => {
             const div = document.getElementById(`${qualifier}-weapons-section`);
+            if (!div)
+                return;
             
             if (!div.querySelector('.draggable-grip')) {
                 let title = document.createElement('div');
-                title.class = 'draggable-grip';
+                title.className = 'draggable-grip';
                 title.innerHTML = `
                     <h3 class='section-title'></h3>
                 `
@@ -44,20 +50,20 @@ export const WeaponWidget = {
 
         whClearDiv(qualifier);
 
-        const section = document.getElementById(`${qualifier}-weapons-section`);
+        const section = document.getElementById(`${qualifier}-weapons-section`) as HTMLElement;
         if (!weaponList || weaponList.length === 0) {
             section.style.display = 'none';
             return;
         }
 
         section.style.display = '';
-        _initializeWeaponsDiv(qualifier);
+        _initializeWeaponsDiv();
 
-        const header = document.getElementById(qualifier + "WeaponsHeader");
+        const header = document.getElementById(qualifier + "WeaponsHeader") as HTMLElement;
         header.style.marginTop = '0';
-        const container = document.getElementById(qualifier + "Weapons");
+        const container = document.getElementById(qualifier + "Weapons") as HTMLElement;
         
-        let grip = section.querySelector('.draggable-grip');
+        let grip = section.querySelector('.draggable-grip') as HTMLElement;
         if (!grip) {
             grip = document.createElement('div');
             grip.className = 'draggable-grip';
@@ -72,7 +78,7 @@ export const WeaponWidget = {
         grip.style.borderTopLeftRadius = getVar('border-radius');
         grip.style.borderTopRightRadius = getVar('border-radius');
 
-        const title = section.querySelector('.section-title');
+        const title = section.querySelector('.section-title') as HTMLElement;
         title.textContent = qualifier === 'ranged' ? `Ranged Weapons` : `Melee Weapons`;
 
         const icon = document.createElement('img');
@@ -93,7 +99,7 @@ export const WeaponWidget = {
             'W':'Wnd',
             'R':'Rnd',
             'D':'Dmg'
-        };
+        } as {[name: string]: string};
 
         let className = null;
         if (qualifier === 'ranged') {
@@ -148,18 +154,19 @@ export const WeaponWidget = {
             headers.forEach(cellData => {
                 cell = document.createElement("td");
                 cell.className = className;
-                if (cellData === 'R' && weaponList[i][lut[cellData]] !== 0 &&
-                    !weaponList[i][lut[cellData]].startsWith('-')) 
-                    cell.textContent = _limitString(`-${weaponList[i][lut[cellData]]}`);
+                const data = weaponList[i][lut[cellData]] as string | number;
+                if (cellData === 'R' && data !== 0 &&
+                    !(weaponList[i][lut[cellData]] as string).startsWith('-')) 
+                    cell.textContent = _limitString(`-${data}`);
                 else
-                    cell.textContent = _limitString(weaponList[i][lut[cellData]]);
+                    cell.textContent = _limitString(data as string);
                 dataRow.appendChild(cell);
             });
             profileTable.appendChild(dataRow);
             container.appendChild(profileTable);
 
             if (weaponList[i].Ability && weaponList[i].Ability !== '-') {
-                let abilities = weaponList[i].Ability;
+                let abilities: string | string[] = weaponList[i].Ability;
                 abilities = abilities.split(",");
                 for (let i = 0; i < abilities.length; ++i) {
                     const abilityLabel = document.createElement('div');
@@ -170,12 +177,12 @@ export const WeaponWidget = {
             }
         }
     },
-    display(weapons){
+    display(weapons: WeaponInterf[]){
         if (weapons.length === 0)
             return;
 
-        const ranged = [];
-        const melee = [];
+        const ranged: WeaponInterf[] = [];
+        const melee: WeaponInterf[] = [];
         weapons.forEach(weapon => {
             if (weapon.type === 0)
                 melee.push(weapon);

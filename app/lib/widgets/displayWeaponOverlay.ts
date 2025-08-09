@@ -16,8 +16,8 @@ const _initWeaponsSection = (qualifier: string, parent: HTMLElement) => {
     return false;
 }
 
-export const displayWeaponOverlay = Overlay.toggleFactory('flex', (weaponsObj: {name: string, weapons: WeaponInterf[]}) =>{
-    
+export const displayWeaponOverlay = Overlay.toggleFactory('flex', (input: unknown) =>{
+    const weaponsObj = input as {name: string, weapons: WeaponInterf[]};
     const weapons = weaponsObj.weapons;
     const name = weaponsObj.name;
     

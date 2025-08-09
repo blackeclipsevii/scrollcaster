@@ -26,21 +26,21 @@
     <script type="module" src="dist/app/lib/functions/validateRoster.js"></script>
     <script type="module" src="dist/app/lib/functions/exportRoster.js"></script>
     <script type="module" src="dist/app/lib/widgets/helpers.js"></script>
-  <script type="module" src="lib/widgets/favorites.js"></script>
-  <script type="module" src="lib/widgets/AbilityWidget.js"></script>
-  <script type="module" src="lib/widgets/WeaponWidget.js"></script>
-  <script type="module" src="lib/widgets/overlay.js"></script>
-  <script type="module" src="lib/widgets/contextMenu.js"></script>
-  <script type="module" src="lib/widgets/displayTacticsOverlay.js"></script>
-  <script type="module" src="lib/widgets/displayPointsOverlay.js"></script>
+    <script type="module" src="dist/app/lib/widgets/favorites.js"></script>
+    <script type="module" src="dist/app/lib/widgets/AbilityWidget.js"></script>
+    <script type="module" src="dist/app/lib/widgets/WeaponWidget.js"></script>
+    <script type="module" src="dist/app/lib/widgets/overlay.js"></script>
+    <script type="module" src="dist/app/lib/widgets/contextMenu.js"></script>
+    <script type="module" src="dist/app/lib/widgets/displayTacticsOverlay.js"></script>
+    <script type="module" src="dist/app/lib/widgets/displayPointsOverlay.js"></script>
     <script type="module" src="dist/app/lib/widgets/displayUpgradeOverlay.js"></script>
     <script type="module" src="dist/app/lib/widgets/displayWeaponOverlay.js"></script>
-  <script type="module" src="lib/widgets/draggable.js"></script>
+    <script type="module" src="dist/app/lib/widgets/draggable.js"></script>
     <script type="module" src="dist/app/lib/widgets/header.js"></script>
-  <script type="module" src="lib/widgets/footer.js"></script>
+    <script type="module" src="dist/app/lib/widgets/footer.js"></script>
     <script type="module" src="dist/app/lib/widgets/layout.js"></script>
     <script type="module" src="dist/app/lib/widgets/About.js"></script>
-  <script type="module" src="lib/functions/copyToClipboard.js"></script>
+    <script type="module" src="dist/app/lib/functions/copyToClipboard.js"></script>
   <link rel="stylesheet" href="./lib/lib.css">
   <link rel="stylesheet" href="./pages/css/pages.css">
 </head>
@@ -53,24 +53,24 @@
   <div style='display: none' id="loading-content"></div>
   
   <script type="module">
-    import { initializeHeader } from "./lib/widgets/header.js";
-    import { initializeFooter } from "./lib/widgets/footer.js";
-    import { Overlay } from "./lib/widgets/overlay.js";
+    import { initializeHeader } from "./dist/app/lib/widgets/header.js";
+    import { initializeFooter } from "./dist/app/lib/widgets/footer.js";
+    import { Overlay } from "./dist/app/lib/widgets/overlay.js";
 
     initializeHeader({name:'Units', leftButton: true});
     initializeFooter('../..');
     Overlay.initialize();
   </script>
 
-  <script type="module" src="pages/src/rosters.js"></script>
-  <script type="module" src="pages/src/battle.js"></script>
-  <script type="module" src="pages/src/tome.js"></script>
-  <script type="module" src="pages/src/upgrades.js"></script>
-  <script type="module" src="pages/src/tactics.js"></script>
-  <script type="module" src="pages/src/warscroll.js"></script>
-  <script type="module" src="pages/src/builder.js"></script>
-  <script type="module" src="pages/src/units.js"></script>
-  <script type="module" src="pages/src/search.js"></script>
-  <script type="module" src="pages/src/regimentOfRenown.js"></script>
+  <script type="module" src="dist/app/pages/src/rosters.js"></script>
+  <script type="module" src="dist/app/pages/src/battle.js"></script>
+  <script type="module" src="dist/app/pages/src/tome.js"></script>
+  <script type="module" src="dist/app/pages/src/upgrades.js"></script>
+  <script type="module" src="dist/app/pages/src/tactics.js"></script>
+  <script type="module" src="dist/app/pages/src/warscroll.js"></script>
+  <script type="module" src="dist/app/pages/src/builder.js"></script>
+  <script type="module" src="dist/app/pages/src/units.js"></script>
+  <script type="module" src="dist/app/pages/src/search.js"></script>
+  <script type="module" src="dist/app/pages/src/regimentOfRenown.js"></script>
 </body>
 </html>

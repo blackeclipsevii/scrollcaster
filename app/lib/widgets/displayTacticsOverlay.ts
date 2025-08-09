@@ -1,7 +1,11 @@
 import { Overlay } from "./overlay.js";
+import { getVar } from "../functions/getVar.js";
+import BattleTacticCardInterf from "../../../shared-lib/BattleTacticCardInterf.js";
 
-export const displayTacticsOverlay = Overlay.toggleFactory('block', (tacticCard) =>{
-    const modal = document.querySelector(".modal");
+export const displayTacticsOverlay = Overlay.toggleFactory('block', (tc: unknown) =>{
+    const tacticCard = tc as BattleTacticCardInterf;
+
+    const modal = document.querySelector(".modal") as HTMLElement;
     modal.style.padding = '0';
 
     const section = document.createElement('div');

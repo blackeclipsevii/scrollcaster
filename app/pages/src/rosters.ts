@@ -1,21 +1,52 @@
 import { dynamicPages } from "../../lib/host.js";
-import { _linkStack } from "../../lib/widgets/header.js";
+import { _linkStack, Settings } from "../../lib/widgets/header.js";
 import { dynamicGoTo } from "../../lib/widgets/header.js";
+import { Overlay } from "../../lib/widgets/overlay.js";
+import { getLoadingMessage } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 
-export class RosterSettings {
+import { initializeDraggable } from "../../lib/widgets/draggable.js";
+import { swapLayout } from "../../lib/widgets/layout.js";
+import { updateHeaderContextMenu } from "../../lib/widgets/header.js";
+import { clearFavorites } from "../../lib/widgets/favorites.js";
+import { rosterTotalPoints } from "../../lib/host.js";
+
+import { makeLayout } from "../../lib/widgets/layout.js";
+import { setHeaderTitle } from "../../lib/widgets/header.js";
+import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
+import { disableBackButton } from "../../lib/widgets/header.js";
+import { InsetEdges } from "../../lib/widgets/InsetEdges.js";
+import { getVar } from "../../lib/functions/getVar.js";
+import { getRoster, getRosters, putRoster, getNewRoster, deleteRoster, deleteRosters } from "../../lib/RestAPI/roster.js";
+import { ContextMenu } from "../../lib/widgets/contextMenu.js";
+import { generateId } from "../../lib/functions/uniqueIdentifier.js";
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import { About } from "../../lib/widgets/About.js";
+import { fetchArmies } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { rosterState } from "../../lib/functions/import/rosterState.js";
+import { BuilderSettings } from "./builder.js";
+import { ImportRoster } from "../../lib/functions/import/importRoster.js";
+import { clearDraggableOrder } from "../../lib/widgets/draggable.js";
+
+export class RosterSettings implements Settings {
+  [name: string]: unknown;
 };
 
+interface Alliances {
+  name: string;
+  alliance: string;
+}
+
 const rosterPage = {
-  settings: null,
+  settings: null as RosterSettings | null,
   _ror: {},
-  _alliances: [],
-  async loadPage(settings) {
+  _alliances: [] as Alliances[],
+  async loadPage(settings: RosterSettings) {
     if (!settings)
       settings = new RosterSettings;
     this.settings = settings;
     const thisPage = this;
 
-    const _populateArmies = (alliances) => {
+    const _populateArmies = (alliances: Alliances[]) => {
       if (alliances) {
         thisPage._alliances = alliances;
       }
@@ -25,10 +56,10 @@ const rosterPage = {
       }
 
       thisPage._ror = {};
-      let loader = document.getElementById("loader-box");
+      let loader = document.getElementById("loader-box") as HTMLElement;
       loader.style.display = 'none';
 
-      let armySelect = document.getElementById("army");
+      let armySelect = document.getElementById("army") as HTMLInputElement;
       armySelect.innerHTML = '';
       armySelect.disabled = false;
       let currentAlliance = '';
@@ -63,7 +94,7 @@ const rosterPage = {
       });
 
       armySelect.onchange = () => {
-        const nameField = document.getElementById('name');
+        const nameField = document.getElementById('name') as HTMLInputElement;
         nameField.placeholder = `Name (Default: ${armySelect.value})`;
 
         const values = thisPage._ror[armySelect.value.trim()]
@@ -95,7 +126,7 @@ const rosterPage = {
       armySelect.onchange();
     }
 
-    const hideCreateHint = (isLoading) => {
+    const hideCreateHint = (isLoading: boolean) => {
       const hintClass = 'create-hint';
       const contentId = isLoading ? 'loading-content' : 'visible-content';
       const content = document.getElementById(contentId);
@@ -105,16 +136,16 @@ const rosterPage = {
       }
     }
 
-    const displayCreateHint = (isLoading) => {
+    const displayCreateHint = (isLoading: boolean) => {
       const hintClass = 'create-hint';
       const contentId = isLoading ? 'loading-content' : 'visible-content';
-      const content = document.getElementById(contentId);
-      let section = content.querySelector(`.${hintClass}`);
+      const content = document.getElementById(contentId) as HTMLElement;
+      let section = content.querySelector(`.${hintClass}`) as HTMLElement;
       if (section) {
         section.style.display = 'flex';
         return;
       }
-      section = document.createElement('div');
+      section = document.createElement('div') as HTMLElement;
       section.className = 'section';
       section.classList.add(hintClass);
       section.style.display = 'flex';
@@ -130,7 +161,7 @@ const rosterPage = {
     }
 
     const setOverlayContents = () => {
-      const modal = document.querySelector(".modal");
+      const modal = document.querySelector(".modal") as HTMLElement;
       modal.innerHTML = `
         <h3 style='margin-top: 0px;'>Create Roster</h3>
         <div style='display: flex'>
@@ -159,7 +190,7 @@ const rosterPage = {
       button.textContent = 'Create Roster';
       modal.appendChild(button);
 
-      let armySelect = document.getElementById("army");
+      let armySelect = document.getElementById("army") as HTMLInputElement;
       armySelect.disabled = true;
       const option = document.createElement("option");
       option.value = '';
@@ -167,7 +198,7 @@ const rosterPage = {
       option.textContent = getLoadingMessage();
       armySelect.appendChild(option);
 
-      const ruleset = document.getElementById("ruleset");
+      const ruleset = document.getElementById("ruleset") as HTMLSelectElement;
       ruleset.selectedIndex = 1;
     }
 
@@ -180,13 +211,13 @@ const rosterPage = {
       }
     });
 
-    function goToRoster(roster) {
+    function goToRoster(roster: RosterInterf) {
       const settings = new BuilderSettings;
       settings.roster = roster;
       dynamicGoTo(settings);
     }
 
-    function displayRoster(roster) {
+    function displayRoster(roster: RosterInterf) {
       if (!roster)
         return;
       
@@ -264,7 +295,7 @@ const rosterPage = {
       const callbackMap = {
         'Update Details': async (e) => {
             const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal");
+              const modal = document.querySelector(".modal") as HTMLElement;
               const armyParts = roster.army.split(' - ');
               modal.innerHTML = `
                 <h3 style='margin-top: 0px;'>Update Roster Details</h3>
@@ -330,7 +361,7 @@ const rosterPage = {
         },
         Delete: async (e) => {
             const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal");
+              const modal = document.querySelector(".modal") as HTMLElement;
 
               const section = document.createElement('p');
               section.innerHTML = `
@@ -367,7 +398,7 @@ const rosterPage = {
       const callbackMap = {
         'About': async () => {
             const toggle = Overlay.toggleFactory('flex', async () => {
-              const modal = document.querySelector(".modal");
+              const modal = document.querySelector(".modal") as HTMLElement;
               modal.innerHTML = '';
 
               const content = await About.get();
@@ -387,7 +418,7 @@ const rosterPage = {
         },
         'Import Roster': async (e) => {
             const toggle  = Overlay.toggleFactory('block', async () =>{
-              const modal = document.querySelector(".modal");
+              const modal = document.querySelector(".modal") as HTMLElement;
 
               const section = document.createElement('textarea');
               section.innerHTML = '';
@@ -427,7 +458,7 @@ const rosterPage = {
         },
         'Clear Favorites': () => {
           const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal");
+              const modal = document.querySelector(".modal") as HTMLElement;
               modal.innerHTML = '';
 
               const section = document.createElement('p');
@@ -451,7 +482,7 @@ const rosterPage = {
         },
         'Reset Page Layout': () => {
           const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal");
+              const modal = document.querySelector(".modal") as HTMLElement;
               modal.innerHTML = '';
 
               const section = document.createElement('p');
@@ -475,7 +506,7 @@ const rosterPage = {
         },
         'Delete All Rosters': () => {
             const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal");
+              const modal = document.querySelector(".modal") as HTMLElement;
               modal.innerHTML = '';
 
               const section = document.createElement('p');
@@ -576,7 +607,7 @@ const rosterPage = {
       goToRoster(roster);
     }
 
-    _makePage = () => {
+    const _makePage = () => {
       let rl = document.getElementById('rosters-list');
       if (rl) {
         rl.parentElement.removeChild(rl);

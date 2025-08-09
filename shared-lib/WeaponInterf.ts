@@ -5,6 +5,7 @@ export enum WeaponType {
 }
 
 export default interface WeaponInterf {
+    [name: string]: unknown;
     id: string;
     name: string;
     type: number;

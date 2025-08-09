@@ -6,7 +6,6 @@ export const Overlay = {
         const outer = document.createElement('div');
         outer.style.visibility = 'hidden';
         outer.style.overflow = 'scroll';
-        outer.style.msOverflowStyle = 'scrollbar'; // For older IE
         outer.style.width = '100px';
         outer.style.position = 'absolute';
         document.body.appendChild(outer);
@@ -37,7 +36,7 @@ export const Overlay = {
 
             let main = document.querySelector('.persist');
             if (!main)
-                main = document.querySelector('body');
+                main = document.querySelector('body') as HTMLElement;
             main.appendChild(overlay);
         }
 
@@ -50,12 +49,19 @@ export const Overlay = {
     },
     disable() {
         const overlay = document.getElementById('overlay');
-        overlay.style.display = 'none';
+        if (overlay)
+            overlay.style.display = 'none';
     },
-    toggleFactory(visibleStyle, ondisplay) {
-        const _enableOverlay = (style) => {
-            //  document.body.classList.add('no-scroll');
+    toggleFactory(visibleStyle: string, ondisplay: ((data:unknown) => unknown)) {
+        const _enableOverlay = (style: string) => {
+            const overlay = document.getElementById("overlay");
+            if (!overlay)
+                return;
+
             const modal = overlay.querySelector('.modal');
+            if (!modal) 
+                return;
+
             modal.innerHTML = '';
             modal.removeAttribute('style');
             overlay.removeAttribute('style');
@@ -64,9 +70,12 @@ export const Overlay = {
             overlay.style.display = style;
         }
 
-        const toggleFunc = (data) => {
+        const toggleFunc = (data: unknown) => {
             visibleStyle = 'flex';
             const overlay = document.getElementById("overlay");
+            if (!overlay)
+                return;
+
             if (overlay.style.display === visibleStyle) {
                 Overlay.disable();
             } else {
@@ -74,9 +83,11 @@ export const Overlay = {
                 ondisplay(data);
                 
                 if (visibleStyle !== 'flex') {
-                    const modal = overlay.querySelector('.modal');
-                    const offset = (window.innerWidth - modal.clientWidth - this._getScrollbarWidth()) / 2.0;
-                    modal.style.marginLeft = `${offset}px`;
+                    const modal = overlay.querySelector('.modal') as HTMLElement | null;
+                    if (modal) {
+                        const offset = (window.innerWidth - modal.clientWidth - this._getScrollbarWidth()) / 2.0;
+                        modal.style.marginLeft = `${offset}px`;
+                    }
                 }
             }
         };
