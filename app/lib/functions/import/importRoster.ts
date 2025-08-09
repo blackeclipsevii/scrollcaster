@@ -1,17 +1,26 @@
 
+class Importer {
+    canImport(text: string) {
+        return false;
+    }
+    async import(text: string) {
+        return {};
+    }
+}
+
 const ImportRoster = {
-    _importers: [],
-    registerImporter(newImporter) {
+    _importers: [] as Importer[],
+    registerImporter(newImporter: Importer) {
         this._importers.push(newImporter);
     },
-    stripMatchingDelimiters: (str) => {
+    stripMatchingDelimiters: (str: string) => {
         const match = str.match(/^(['"`])\1*([\s\S]*?)\1*$/);
         if (match && match[1] && str.startsWith(match[1]) && str.endsWith(match[1])) {
             return match[2];
         }
         return str;
     },
-    canImport(text) {
+    canImport(text: string) {
         const t = this.stripMatchingDelimiters(text);
         for (let i = 0; i < this._importers.length; ++i) {
             const importer = this._importers[i];
@@ -20,7 +29,7 @@ const ImportRoster = {
         }
         return false;
     },
-    async import(text) {
+    async import(text: string) {
         const t = this.stripMatchingDelimiters(text);
         let result = null;
         for (let i = 0; i < this._importers.length; ++i ) {

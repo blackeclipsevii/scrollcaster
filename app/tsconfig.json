@@ -1,0 +1,15 @@
+{
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "dist",
+    "target": "ES6",
+    "strict": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["dom", "es6"]
+  },
+
+  "include": ["lib/**/*"],
+  "exclude": ["node_modules"]
+}

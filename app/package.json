@@ -6,14 +6,18 @@
     "pages": "pages"
   },
   "dependencies": {
+    "@tsconfig/node20": "^20.1.6",
+    "typescript": "^5.8.3",
     "babel": "^6.23.0",
     "@babel/core": "7.28.0",
     "babel-preset-minify": "^0.5.2",
     "fs-extra": "^11.3.0",
     "glob": "^11.0.3"
   },
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "build": "node ./build.js"
+    "buildts": "npx tsc -p .",
+    "package": "cd build && node ./build.js",
+    "build": "npm run buildts && npm run package"
   }
 }

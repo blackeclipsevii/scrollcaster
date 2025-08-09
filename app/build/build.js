@@ -1,6 +1,8 @@
 import fs from 'fs'
-
+import process from 'process'
 import babel from '@babel/core'
+
+process.chdir('..');
 
 const htmlFilePath = './index.html';
 const outDir = 'output';

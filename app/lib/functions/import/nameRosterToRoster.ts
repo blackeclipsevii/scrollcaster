@@ -1,37 +1,29 @@
-
 // Name based representation of a unit
 // Used for import from various list formats
-class NameUnit {
-    constructor() {
-        this.name = '';
-        this.isGeneral = false;
-        this.isReinforced = false;
-        // this.enhancements = {};
-        this.other = [];
-    }
+interface NameUnit {
+    name: string;
+    isGeneral: boolean;
+    isReinforced: boolean;
+    other: string[];
 };
 
 // Name based representation of a roster
 // Used for import from various list formats
-class NameRoster {
-    constructor(){
-        this.name = '';
-        this.armyName = '';
-        this.battleFormation = null;
-        this.battleTacticCards = [];
-        this.lores = {
-            spell: null,
-            prayer: null,
-            manifestation: null
-        };
-        this.factionTerrain = null;
-        this.regimentOfRenown = null;
-        this.regiments = [];
-        this.auxUnits = [];
-    }
+interface NameRoster {
+    name: string;
+    armyName: string;
+    battleFormation: string | null;
+    battleTacticCards: string[];
+    lores: {
+        [name: string]: string | null;
+    };
+    factionTerrain: string | null;
+    regimentOfRenown: string | null;
+    regiments: (NameUnit[])[];
+    auxUnits: NameUnit[];
 };
 
-const nameRosterToRoster = async (nameRoster) => {
+const nameRosterToRoster = async (nameRoster: NameRoster) => {
     const regArg = encodeURI(`${endpoint}/import`);
     let result = await fetch(regArg, {
         method: "POST",

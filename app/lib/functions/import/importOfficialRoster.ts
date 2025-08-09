@@ -1,12 +1,11 @@
-
 class ImportOfficialRoster {
     specialCookie() {
         return 'Created with Warhammer Age of Sigmar: The App';
     }
-    isEmptyOrHyphens = (str) => {
+    isEmptyOrHyphens = (str: string) => {
         return /^-*$/.test(str.trim());
     }
-    canImport(listStr) {
+    canImport(listStr: string) {
         const lines = listStr.split('\n');
         for (let i = lines.length-1; i >= 0; --i) {
             if (lines[i].includes(this.specialCookie())) {
@@ -15,13 +14,18 @@ class ImportOfficialRoster {
         }
         return false;
     }
-    parseRegiment(i, lines, nameRoster, asAux=false) {
+    parseRegiment(i: number, lines: string[], nameRoster: NameRoster, asAux=false) {
         ++ i;
         let line = lines[i].trim();
         let regiment = [];
 
         while (!this.isEmptyOrHyphens(line) && line.includes(' (')) {
-            let unit = new NameUnit;
+            let unit: NameUnit = {
+                name: '',
+                isGeneral: false,
+                isReinforced: false,
+                other: []
+            }
 
             // convert sog to bsdata formatting
             let addSoG = false;
@@ -62,8 +66,18 @@ class ImportOfficialRoster {
         }
         return i;
     }
-    async createNameRoster(lines){
-        const nameRoster = new NameRoster();
+    async createNameRoster(lines: string[]){
+        const nameRoster: NameRoster = {
+            name: '',
+            armyName: '',
+            battleFormation: null,
+            battleTacticCards: [],
+            lores: {},
+            factionTerrain: null,
+            regimentOfRenown: null,
+            regiments: [],
+            auxUnits: []
+        };
         nameRoster.name = lines[0].split(' ').slice(0, -2).join(' ');
 
         // move to the the next full line
@@ -86,7 +100,7 @@ class ImportOfficialRoster {
         for (;i < lines.length; ++i) {
             let line = lines[i].trim();
             if (line.includes('Battle Tactic Cards')) {
-                let cards = line.split(':')[1];
+                let cards: string | string[] = line.split(':')[1];
                 cards = cards.replace('cept and ', 'cept & ');
                 cards = cards.split(' and ');
                 for (let c = 0; c < cards.length; ++c) {
@@ -122,7 +136,7 @@ class ImportOfficialRoster {
 
         return nameRoster;
     }
-    async import(listStr) {
+    async import(listStr: string) {
         const lines = listStr.split('\n');
         if (!this.canImport(listStr)) {
             console.log('Import roster failed canImport')
