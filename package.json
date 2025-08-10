@@ -24,7 +24,8 @@
     "typescript-eslint": "^8.38.0"
   },
   "scripts": {
-    "build": "npx tsc -p ./server",
+    "install-shared-lib": "./server/install-shared-lib.sh",
+    "build": "npm run install-shared-lib && npx tsc -p ./server",
     "server": "npm run build && node ./server.js",
     "lint": "npx eslint ./server",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"

@@ -16,7 +16,8 @@
   },
   "type": "module",
   "scripts": {
-    "buildts": "npx tsc -p .",
+    "install-shared-lib": "./install-shared-lib.sh",
+    "buildts": "npm run install-shared-lib && npx tsc -p .",
     "package": "cd build && node ./build.js",
     "build": "npm run buildts && npm run package"
   }
