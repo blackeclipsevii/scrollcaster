@@ -16,7 +16,7 @@
   },
   "type": "module",
   "scripts": {
-    "install-shared-lib": "./install-shared-lib.sh",
+    "install-shared-lib": "rm -rf shared-lib && cp -R ../shared-lib shared-lib",
     "buildts": "npm run install-shared-lib && npx tsc -p .",
     "package": "cd build && node ./build.js",
     "build": "npm run buildts && npm run package"
