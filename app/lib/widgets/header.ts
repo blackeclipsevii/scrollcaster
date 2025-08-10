@@ -76,6 +76,12 @@ export const goBack = async () => {
         console.log('ERROR previous is bad');
 }
 
+export const canGoBack = () => {
+    const key = _getHistoryKey();
+    const linkStack = _linkStack[key];
+    return linkStack.history.length > 0;
+}
+
 export interface HeaderOptions {
     name: string;
     leftButton: boolean | undefined;
@@ -89,6 +95,7 @@ export function initializeHeader(options: HeaderOptions) {
     };
 
     (globalThis as unknown as {goBack: unknown}).goBack = goBack as unknown;
+    (globalThis as unknown as {canGoBack: unknown}).canGoBack = canGoBack as unknown;
 
     const main = document.querySelector('.persist');
     if (!main) {
