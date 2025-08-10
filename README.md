@@ -26,8 +26,7 @@ Node.js for the build system.
 
 #### Building
 
-The app can be run out of the box against a local server for development.
-There is a nodejs build system is used for release.
+Both the client must be built.
 
 ```
 // navigate to ./app
@@ -36,7 +35,10 @@ cd app
 // install the dependencies
 npm install
 
-// build the release app
+// build just the typescript files for development
+npm run buildts
+
+// OR build the release app (runs buildts and package)
 npm run build
 ```
 

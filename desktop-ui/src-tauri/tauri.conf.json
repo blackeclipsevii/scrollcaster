@@ -10,7 +10,7 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "scribecaster",
+        "title": "scrollcaster",
         "width": 450,
         "height": 800
       }

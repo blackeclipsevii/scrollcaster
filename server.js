@@ -18,7 +18,7 @@ import Search from './server/dist/search/Search.js'
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
 const port = process.env.SCROLLCASTER_PORT || 3000;
-const directoryPath = path.resolve("./data/age-of-sigmar-4th-bugfix");
+const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
 // const saveData = "./saveData.json";
 
 var search = null;
@@ -455,7 +455,7 @@ server.delete('/roster', (req, res) => {
 
 async function start() {
   console.log(`Downloading catalog...`);
-  await installCatalog("https://github.com/blackeclipsevii/age-of-sigmar-4th/archive/refs/heads/bugfix.zip");
+  await installCatalog();
   console.log(`Loading libraries...`);
   const aos = getAgeOfSigmar();
   console.log(`Initializing search...`);

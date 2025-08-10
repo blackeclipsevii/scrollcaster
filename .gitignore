@@ -6,3 +6,5 @@ main.zip
 dist/
 output/
 *.py
+server/shared-lib
+app/shared-lib

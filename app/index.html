@@ -5,68 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="icon" href="resources/scrollcaster-icon.ico">
   <title>Scrollcaster</title>
-  <script src="dev/endpoint.js"></script>
-  <script src="version.js"></script>
-  <script src="lib/host.js"></script>
-  <script src="lib/widgets/insetEdges.js"></script>
-  <script src="lib/functions/uniqueIdentifier.js"></script>
-  <script src="lib/RestAPI/roster.js"></script>
-  <script src="lib/RestAPI/version.js"></script>
-  <script src="lib/RestAPI/units.js"></script>
-  <script src="lib/RestAPI/regimentsOfRenown.js"></script>
-  <script src="lib/RestAPI/tactics.js"></script>
-  <script src="lib/RestAPI/upgrades.js"></script>
-  <script src="lib/RestAPI/search.js"></script>
-  <script src="lib/functions/import/nameRosterToRoster.js"></script>
-  <script src="lib/functions/import/importRoster.js"></script>
-  <script src="lib/functions/import/importOfficialRoster.js"></script>
-  <script src="lib/functions/import/importNewRecruitRoster.js"></script>
-  <script src="lib/functions/import/importSCRoster.js"></script>
-  <script src="lib/functions/rosterState.js"></script>
-  <script src="lib/functions/validateRoster.js"></script>
-  <script src="lib/functions/exportRoster.js"></script>
-  <script src="lib/widgets/helpers.js"></script>
-  <script src="lib/widgets/favorites.js"></script>
-  <script src="lib/widgets/AbilityWidget.js"></script>
-  <script src="lib/widgets/WeaponWidget.js"></script>
-  <script src="lib/widgets/overlay.js"></script>
-  <script src="lib/widgets/contextMenu.js"></script>
-  <script src="lib/widgets/displayTacticsOverlay.js"></script>
-  <script src="lib/widgets/displayPointsOverlay.js"></script>
-  <script src="lib/widgets/displayUpgradeOverlay.js"></script>
-  <script src="lib/widgets/displayWeaponOverlay.js"></script>
-  <script src="lib/widgets/draggable.js"></script>
-  <script src="lib/widgets/header.js"></script>
-  <script src="lib/widgets/footer.js"></script>
-  <script src="lib/widgets/layout.js"></script>
-  <script src="lib/widgets/About.js"></script>
-  <script src="lib/functions/copyToClipboard.js"></script>
   <link rel="stylesheet" href="./lib/lib.css">
   <link rel="stylesheet" href="./pages/css/pages.css">
 </head>
 <body>
-  <div class="persist">
-  </div>
-
+  <div class="persist"></div>
   <div class="main" id="visible-content"></div>
-  
   <div style='display: none' id="loading-content"></div>
-  
-  <script>
-    initializeHeader({name:'Units', leftButton: true});
-    initializeFooter('../..');
-    Overlay.initialize();
-  </script>
-
-  <script src="pages/src/rosters.js"></script>
-  <script src="pages/src/battle.js"></script>
-  <script src="pages/src/tome.js"></script>
-  <script src="pages/src/upgrades.js"></script>
-  <script src="pages/src/tactics.js"></script>
-  <script src="pages/src/warscroll.js"></script>
-  <script src="pages/src/builder.js"></script>
-  <script src="pages/src/units.js"></script>
-  <script src="pages/src/search.js"></script>
-  <script src="pages/src/regimentOfRenown.js"></script>
+  <script type="module" src="./dist/lib/main.js"></script>
 </body>
 </html>

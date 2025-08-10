@@ -1,79 +1,18 @@
 
+import RosterInterf, { RegimentInterf } from "../../shared-lib/RosterInterface.js";
+import { RegimentState, RosterStateInterf, serializeRoster, UnitState } from "../../shared-lib/State.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
 import AgeOfSigmar from "../AgeOfSigmar.js";
 import Army from "../Army.js";
-import Roster, { Regiment } from "../Roster.js";
-import Unit from "../Unit.js";
-
-export interface ModelState {
-    options: {[name:string]: string | null};
-}
-
-export interface UnitState {
-    unit: string;
-    isGeneral: boolean;
-    isReinforced: boolean;
-    enhancements: {[name: string]: string | null};
-    options: {[name:string]: string | null};
-    models: {[name:string]: ModelState};
-}
-
-export const serializeUnit = (unit: Unit) => {
-    const unitState: UnitState = {
-        unit: unit.id,
-        isGeneral: unit.isGeneral,
-        isReinforced: unit.isReinforced,
-        enhancements: {},
-        options: {},
-        models: {}
-    };
-    
-    const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
-    enhancementNames.forEach(eName => {
-        if (unit.enhancements[eName].slot) {
-            unitState.enhancements[eName] = unit.enhancements[eName].slot.id;
-        }
-    });
-
-    unit.optionSets.forEach(optionSet => {
-        if (optionSet.selection) {
-            unitState.options[optionSet.name] = optionSet.selection.name;
-        }
-    });
-
-    unit.models.forEach(model => {
-        const modelState: ModelState = {
-            options: {}
-        }
-        model.optionSets.forEach(optionSet => {
-            if (optionSet.selection) {
-                modelState.options[optionSet.name] = optionSet.selection.name;
-            }
-        });
-        unitState.models[model.id] = modelState;
-    });
-
-    return unitState;
-};
-
-export const serializeRegiment = (regiment: Regiment) => {
-    // update this 8/7 to have dedicated leader
-    const regState: RegimentState = { leader: null, units: [] };
-    if (regiment.leader) {
-        regState.leader = serializeUnit(regiment.leader);
-    }
-    regiment.units.forEach(unit => {
-        regState.units.push(serializeUnit(unit));
-    });
-    return regState;
-}
+import Roster from "../Roster.js";
 
 export const deserializeUnit = (army: Army, state: UnitState) => {
-    const armyUnit: Unit | null = army.units[state.unit];
+    const armyUnit: UnitInterf | null = army.units[state.unit];
     if (!armyUnit)
         return;
     
     // we're modifying the unit, clone it
-    const unit = JSON.parse(JSON.stringify(armyUnit)) as Unit;
+    const unit = JSON.parse(JSON.stringify(armyUnit)) as UnitInterf;
     unit.isGeneral = state.isGeneral ? true : false;
     unit.isReinforced = state.isReinforced ? true : false;
 
@@ -120,7 +59,7 @@ export const deserializeUnit = (army: Army, state: UnitState) => {
 };
 
 export const deserializeRegiment = (army: Army, regState: RegimentState) => {
-    const regiment: Regiment = {
+    const regiment: RegimentInterf = {
         leader: null,
         units: []
     };
@@ -138,85 +77,8 @@ export const deserializeRegiment = (army: Army, regState: RegimentState) => {
     return regiment;
 }
 
-interface RegimentState {
-    leader: UnitState | null,
-    units: UnitState[];
-}
-
-interface LoresState {
-    [name: string]: string|null;
-    spell: string | null;
-    prayer: string | null;
-    manifestation: string | null;
-}
-
-export interface RosterStateInterf {
-    name: string;
-    army: string;
-    regimentOfRenown: string | null;
-    battleFormation: string | null;
-    regiments: RegimentState[];
-    battleTacticCards: string[]
-    auxUnits: UnitState[];
-    lores: LoresState;
-    terrainFeature: string | null;
-}
-
 export const RosterState = {
-    serialize: (roster: Roster) => {
-        const state: RosterStateInterf = { 
-            name: roster.name,
-            army: roster.army,
-            auxUnits: [],
-            regimentOfRenown: null,
-            battleFormation: null,
-            regiments: [],
-            battleTacticCards: [],
-            lores: {
-                spell: null,
-                prayer: null,
-                manifestation: null
-            },
-            terrainFeature: null
-        }
-
-        if (roster.battleFormation)
-            state.battleFormation = roster.battleFormation.id;
-        
-        roster.battleTacticCards.forEach(card => {
-            state.battleTacticCards.push(card.id);
-        });
-
-        roster.auxiliaryUnits.forEach(unit => {
-            state.auxUnits.push(serializeUnit(unit));
-        });
-
-        if (roster.lores.spell)
-            state.lores.spell = roster.lores.spell.id;
-
-        if (roster.lores.prayer)
-            state.lores.prayer = roster.lores.prayer.id;
-
-        if (roster.lores.manifestation)
-            state.lores.manifestation = roster.lores.manifestation.id;
-
-        if (roster.regimentOfRenown) {
-            state.regimentOfRenown = roster.regimentOfRenown.id;
-        }
-
-        if (roster.terrainFeature) {
-            state.terrainFeature = roster.terrainFeature.id;
-        }
-
-        roster.regiments.forEach((regiment: Regiment)=> {
-            const regState = serializeRegiment(regiment);
-            if (regState.units.length > 0 || regState.leader)
-                state.regiments.push(regState);
-        });
-
-        return JSON.stringify(state);
-    },
-
+    serialize: serializeRoster,
     deserialize: (ageOfSigmar: AgeOfSigmar, json: string | RosterStateInterf, id=null) => {
         let state = null;
         if (typeof json === 'string')
@@ -230,7 +92,7 @@ export const RosterState = {
             return null;
         };
 
-        const roster = new Roster(army);
+        const roster = new Roster(army) as RosterInterf;
         roster.id = id ? id : '';
         roster.name = state.name;
         roster.army = state.army;

@@ -1,11 +1,13 @@
 
-import { UnitType } from "./types/UnitType.js";
+import { UpgradeLUT } from "../shared-lib/UpgradeInterface.js";
+import RosterInterf from "../shared-lib/RosterInterface.js";
+import { UnitType } from "../shared-lib/UnitInterface.js";
 
-import Army, { UpgradeLUT } from "./Army.js";
+import Army from "./Army.js";
 import Unit from "./Unit.js";
 import BattleTacticCard from "./BattleTacticCard.js";
 import { Lore, LoreLUT } from "./Lores.js";
-import { Force } from "./Force.js";
+import { Force } from "../shared-lib/Force.js";
 import Upgrade from "./Upgrade.js";
 
 export class LoreSlots {
@@ -30,12 +32,15 @@ export interface Regiment {
     units: Unit[]
 }
 
-export default class Roster {
+export default class Roster implements RosterInterf {
     // roster identifier
     id: string;
 
     // name of the roster
     name: string;
+
+    // description
+    description: string | undefined;
 
     // name of the Army this roster is for
     army: string;

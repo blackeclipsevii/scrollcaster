@@ -1,0 +1,40 @@
+import { Overlay } from "./overlay.js";
+import { getVar } from "../functions/getVar.js";
+import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
+
+export const displayTacticsOverlay = Overlay.toggleFactory('block', (tc: unknown) =>{
+    const tacticCard = tc as BattleTacticCardInterf;
+
+    const modal = document.querySelector(".modal") as HTMLElement;
+    modal.style.padding = '0';
+
+    const section = document.createElement('div');
+    section.className = 'section';
+    // fill the modal window
+    section.style.border = `2px solid ${getVar('hover-color')}`;
+    section.style.margin = '0px';
+
+    let ele = document.createElement('h3');
+    ele.innerHTML = tacticCard.name;
+    section.appendChild(ele);
+
+    if (tacticCard.text.length > 0) {
+        ele = document.createElement('p');
+        ele.innerHTML = tacticCard.text;
+        section.appendChild(ele);
+    }
+
+    tacticCard.tactics.forEach(tactic => {
+        const section2 = document.createElement('div');
+        section2.className = 'section';
+        ele = document.createElement('h3');
+        ele.innerHTML = tactic.type.name;
+        section2.appendChild(ele);
+
+        ele = document.createElement('p');
+        ele.innerHTML = tactic.text;
+        section2.appendChild(ele);
+        section.appendChild(section2);
+    });
+    modal.appendChild(section);
+});

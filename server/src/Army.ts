@@ -1,15 +1,18 @@
 
 import Unit from './Unit.js';
 import Upgrade from './Upgrade.js'
-import { UpgradeType } from './lib/Upgrade.js';
-import Lores, { LoreLUTInterf } from './Lores.js';
+import Lores from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
 import { BsCatalog, BsLibrary, BsSelectionEntry, BsSelectionEntryGroup } from './lib/bs/BsCatalog.js';
-import { Force } from './Force.js';
-import { UnitType } from './types/UnitType.js';
+import { Force } from '../shared-lib/Force.js';
+import { UnitType } from '../shared-lib/UnitInterface.js';
 import { ArmyValidator, armyValidatorCollection } from './lib/validation/ArmyValidator.js';
-import BattleProfile from './lib/validation/BattleProfile.js';
+import BattleProfile from '../shared-lib/BattleProfile.js';
 import { toCamelCase } from './lib/helperFunctions.js';
+
+import { UpgradeType, UpgradeLUT } from '../shared-lib/UpgradeInterface.js';
+import { ArmyUpgrades } from '../shared-lib/ArmyUpgrades.js';
+import ArmyInterf from '../shared-lib/ArmyInterface.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -46,35 +49,7 @@ const upgradeLUT: {[name:string]: UpgradeLUTEntry} = {
     }
 };
 
-export interface UpgradeLUT {
-    [name: string]: Upgrade;
-}
-
-export interface EnhancementGroup {
-    name: string;
-    id: string;
-    upgrades: UpgradeLUT;
-}
-
-export interface Enhancements {
-    [name: string]: EnhancementGroup | null;
-}
-
-export interface ArmyUpgrades {
-    [name:string]: UpgradeLUT | null | unknown;
-    battleFormations: UpgradeLUT;
-    battleTraits: UpgradeLUT;
-    lores: {
-        [name:string]: LoreLUTInterf;
-        manifestation: LoreLUTInterf;
-        spell: LoreLUTInterf;
-        prayer: LoreLUTInterf;
-    };
-
-    enhancements: Enhancements;
-}
-
-export default class Army {
+export default class Army implements ArmyInterf{
     id: string;
     name: string;
     points: {[name:string]: number};

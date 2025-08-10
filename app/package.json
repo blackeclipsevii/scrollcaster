@@ -6,6 +6,8 @@
     "pages": "pages"
   },
   "dependencies": {
+    "@tsconfig/node20": "^20.1.6",
+    "typescript": "^5.8.3",
     "babel": "^6.23.0",
     "@babel/core": "7.28.0",
     "babel-preset-minify": "^0.5.2",
@@ -14,6 +16,9 @@
   },
   "type": "module",
   "scripts": {
-    "build": "node ./build.js"
+    "install-shared-lib": "rm -rf shared-lib && cp -R ../shared-lib shared-lib",
+    "buildts": "npm run install-shared-lib && npx tsc -p .",
+    "package": "cd build && node ./build.js",
+    "build": "npm run buildts && npm run package"
   }
 }

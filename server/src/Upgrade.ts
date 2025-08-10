@@ -1,33 +1,12 @@
+import UpgradeInterf, {UpgradeSuperType, UpgradeType, upgradeTypeToString} from "../shared-lib/UpgradeInterface.js";
 import Ability from "./Ability.js";
-
 import { BsCost, BsProfile, BsSelectionEntry } from "./lib/bs/BsCatalog.js"
-import { UpgradeType } from "./lib/Upgrade.js";
 
-export const upgradeTypeToString = (type: UpgradeType): string => {
-    switch(type) {
-        case UpgradeType.BattleFormation:
-            return 'Battle Formation';
-        case UpgradeType.SpellLore:
-            return 'Spell Lore';
-        case UpgradeType.ManifestationLore:
-            return 'Manifestation Lore';
-        case UpgradeType.BattleTrait:
-            return 'Battle Trait';
-        case UpgradeType.PrayerLore:
-            return 'Prayer Lore';
-        case UpgradeType.RegimentOfRenown:
-            return 'Regiment of Renown';
-        case UpgradeType.Enhancement:
-            return 'Enhancement';
-        default:
-            return 'Unknown';
-    };
-}
-
-export default class Upgrade {
+export default class Upgrade implements UpgradeInterf {
     name: string;
     id: string;
     type: number;
+    superType: string;
     typeName: string;
     abilities: Ability[];
     points: number;
@@ -35,6 +14,7 @@ export default class Upgrade {
         this.name = selectionEntry['@name'];
         this.id = selectionEntry["@id"];
         this.type = type;
+        this.superType = UpgradeSuperType;
         if (typeName)
             this.typeName = typeName;
         else

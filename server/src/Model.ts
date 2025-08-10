@@ -1,81 +1,12 @@
-import { BsSelectionEntry, BsProfile, BsConstraintInter } from "./lib/bs/BsCatalog.js";
+import { BsSelectionEntry, BsProfile } from "./lib/bs/BsCatalog.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
-import Weapon from "./Weapon.js";
+import Weapon, {Weapons, WeaponSelection} from "./Weapon.js";
 
-import OptionSet, {Option, Options, parseOptions} from "./OptionSet.js";
-import { ConditionType } from "./lib/bs/BsConstraint.js";
+import OptionSet from "../shared-lib/Options.js";
+import { parseOptions } from "./parseOptions.js";
+import ModelInterf from "../shared-lib/ModelInterface.js";
 
-class WeaponSelection {
-    name: string;
-    id: string;
-    min: number;
-    max: number;
-    per: string;
-    replacedBy: string[];
-    weapons: Weapon[];
-    constructor(name: string, id: string) {
-        this.name = name;
-        this.id = id;
-        this.per = 'model';
-        this.min = 0;
-        this.max = -1;
-        this.replacedBy = [];
-        this.weapons = [];
-    }
-}
-
-interface WeaponSelectionSet {
-    options: WeaponSelection[];
-}
-
-// maybe overkill
-class Weapons {
-    // always there
-    warscroll: Weapon[];
-    // selectable, doesn't affect others
-    selections: WeaponSelection[];
-    // exclusive
-    selectionSets: WeaponSelectionSet[];
-    constructor() {
-        this.warscroll = [];
-        this.selections = [];
-        this.selectionSets = [];
-    }
-    
-    addSelection(selection: WeaponSelection) {
-        this.selections.push(selection);
-    }
-
-    generateSetsFromSelections() {
-        this.selections.forEach(optSelect => {
-            if (optSelect.per === 'unit') {
-                const newSet: WeaponSelectionSet = {
-                    options: [optSelect]
-                };
-
-                // remove the optional element
-                this.selections = this.selections.filter(fSelect => fSelect.id != optSelect.id);
-                this.selectionSets.push(newSet);
-            }
-        });
-
-        this.selections.forEach(defaultSelection => {
-            defaultSelection.replacedBy.forEach(replacementId => {
-                this.selectionSets.forEach(selectionSet => {
-                    selectionSet.options.every(optionalSelection => {
-                        if (optionalSelection.id === replacementId) {
-                            selectionSet.options.push(defaultSelection);
-                            return false;
-                        }
-                        return true;
-                    });
-                });
-            });
-        });
-    }
-}
-
-export default class Model {
+export default class Model implements ModelInterf {
     id: string;
     name: string;
     min: number;

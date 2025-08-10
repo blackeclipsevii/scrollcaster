@@ -1,24 +1,25 @@
 import Ability from "./Ability.js";
 
-import { UnitType, strToUnitType } from "./types/UnitType.js";
+import { UnitType, strToUnitType } from "../shared-lib/UnitInterface.js";
 import { BsCategoryLink, BsCharacteristic, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
-import Upgrade from "./Upgrade.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
-import BattleProfile from "./lib/validation/BattleProfile.js";
+import BattleProfile from "../shared-lib/BattleProfile.js";
 
 import Model from "./Model.js";
-import OptionSet, { parseOptions } from "./OptionSet.js";
+import OptionSet from "../shared-lib/Options.js";
+import { parseOptions } from "./parseOptions.js";
 
-export interface EnhancementSlot {
+import UnitInterf, { EnhancementSlotInterf, UnitSuperType } from "../shared-lib/UnitInterface.js";
+
+export default class Unit implements UnitInterf {
     name: string;
     id: string;
-    slot: Upgrade | null;
-}
 
-export default class Unit {
-    name: string;
-    id: string;
+    Move: string;
+    Health: string;
+    Control: string;
+    Save: string;
 
     isWarmaster: boolean;
     
@@ -30,10 +31,11 @@ export default class Unit {
 
     points: number;
     type: number;
+    superType: string;
 
     models: Model[];
 
-    enhancements: {[name: string]: EnhancementSlot};
+    enhancements: {[name: string]: EnhancementSlotInterf};
     abilities: Ability[];
     keywords: string[];
     optionSets: OptionSet[];
@@ -43,6 +45,12 @@ export default class Unit {
     constructor(ageOfSigmar: AgeOfSigmar, selectionEntry: BsSelectionEntry) {
         this.name = selectionEntry['@name'];
         this.id = selectionEntry['@id'];
+        this.superType = UnitSuperType;
+
+        this.Move = '';
+        this.Health = '';
+        this.Control = '';
+        this.Save = '';
         
         this.canBeGeneral = true;
         this.isGeneral = false;
