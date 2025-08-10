@@ -3,10 +3,10 @@
   "compilerOptions": {
     "allowJs": true,
     "outDir": "dist",
-    "target": "ES6",
+    "target": "es2020",
     "strict": true,
     "module": "nodenext",
-    "lib": ["dom", "es6"]
+    "lib": ["dom", "es2020"]
   },
 
   "include": ["version.ts", "pages/**/*", "lib/**/*", "../shared-lib/**/*"],

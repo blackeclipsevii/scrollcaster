@@ -1,4 +1,3 @@
-import { all } from "axios";
 import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
 import RosterInterf from "../../../shared-lib/RosterInterface.js";
 import UpgradeInterf, { UpgradeLUT, upgradeTypeToString } from "../../../shared-lib/UpgradeInterface.js";
