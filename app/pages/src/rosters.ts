@@ -551,21 +551,25 @@ const rosterPage = {
 
       const rosters = await getRosters();
       for (let i = 0; i < rosters.length; ++i) {
+          let isValid = true;
           let roster = await getRoster(rosters[i]);
           if (await version.isOutdated(roster)) {
+            isValid = false;
             // update the roster with the latest server data
             try {
               const state = rosterState.serialize(roster);
               const newRoster = await rosterState.deserialize(state, roster.id);
               if (newRoster) {
+                isValid = true;
                 roster = newRoster;
                 putRoster(roster);
               }
-              displayRoster(roster);
             } catch(e) {
               console.log(`Exception occured while trying to migrate roster to lastest version: ${e}`);
             }
           }
+          if (isValid)
+            displayRoster(roster);
       }
 
       if (rosters.length === 0) {
