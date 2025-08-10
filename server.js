@@ -5,15 +5,15 @@ import fs from 'fs'
 import express from 'express'
 import  cors from 'cors'
 
-import AgeOfSigmar from './server/dist/AgeOfSigmar.js';
-import Roster from './server/dist/Roster.js';
-import { RosterState } from './server/dist/lib/RosterState.js'
-import { validateRoster } from './server/dist/lib/validation/RosterValidation.js'
-import { nameRosterToRoster } from './server/dist/lib/NameRoster.js'
+import AgeOfSigmar from './server/dist/src/AgeOfSigmar.js';
+import Roster from './server/dist/src/Roster.js';
+import { RosterState } from './server/dist/src/lib/RosterState.js'
+import { validateRoster } from './server/dist/src/lib/validation/RosterValidation.js'
+import { nameRosterToRoster } from './server/dist/src/lib/NameRoster.js'
 
-import installCatalog, { getCommitIdUsed } from './server/dist/lib/installCatalog.js'
+import installCatalog, { getCommitIdUsed } from './server/dist/src/lib/installCatalog.js'
 
-import Search from './server/dist/search/Search.js'
+import Search from './server/dist/src/search/Search.js'
 
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
