@@ -1,8 +1,7 @@
 import { NameRoster } from "../../../shared-lib/NameRoster.js";
-import { ImportRoster } from "./importRoster.js";
-import { ImportOfficialRoster } from "./importOfficialRoster.js";
+import ImportOfficialRoster from "./importOfficialRoster.js";
 
-class ImportNewRecruitRoster extends ImportOfficialRoster {
+export default class ImportNewRecruitRoster extends ImportOfficialRoster {
     specialCookie() {
         return 'Created with New Recruit';
     }
@@ -57,5 +56,3 @@ class ImportNewRecruitRoster extends ImportOfficialRoster {
         return nameRoster;
     }
 }
-
-ImportRoster.registerImporter(new ImportNewRecruitRoster);

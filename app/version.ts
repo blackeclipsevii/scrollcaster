@@ -1,1 +1,1 @@
-export const _clientVersion = '0.10.0beta';
+export const _clientVersion = '0.10.1beta';

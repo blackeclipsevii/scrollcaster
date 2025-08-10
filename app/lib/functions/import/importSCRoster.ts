@@ -1,8 +1,8 @@
 import { NameRoster } from "../../../shared-lib/NameRoster.js";
 import { ImportRoster } from "./importRoster.js";
-import { ImportOfficialRoster } from "./importOfficialRoster.js";
+import ImportOfficialRoster from "./importOfficialRoster.js";
 
-class ImportScrollcasterRoster extends ImportOfficialRoster {
+export default class ImportScrollcasterRoster extends ImportOfficialRoster {
     specialCookie() {
         return 'Created with Scrollcaster';
     }
