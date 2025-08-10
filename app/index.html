@@ -13,5 +13,12 @@
   <div class="main" id="visible-content"></div>
   <div style='display: none' id="loading-content"></div>
   <script type="module" src="./dist/lib/main.js"></script>
+  <script>
+    history.pushState(null, null, location.href);
+    window.addEventListener('popstate', () => {
+        history.pushState(null, null, location.href);
+        globalThis.goBack();
+    });
+  </script>
 </body>
 </html>

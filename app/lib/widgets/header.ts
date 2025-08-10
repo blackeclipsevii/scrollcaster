@@ -76,14 +76,6 @@ export const goBack = async () => {
         console.log('ERROR previous is bad');
 }
 
-export const headerCaptureBack = () => {
-    history.pushState(null, null!!, location.href);
-    window.addEventListener('popstate', () => {
-        history.pushState(null, null!!, location.href);
-        goBack();
-    });
-}
-
 export interface HeaderOptions {
     name: string;
     leftButton: boolean | undefined;
@@ -94,7 +86,9 @@ export function initializeHeader(options: HeaderOptions) {
     _linkStack = {
         catalog: new HistoryStack,
         roster: new HistoryStack
-    }
+    };
+
+    (globalThis as unknown as {goBack: unknown}).goBack = goBack as unknown;
 
     const main = document.querySelector('.persist');
     if (!main) {
