@@ -1,4 +1,4 @@
-import { NameRoster } from "../../../../shared-lib/NameRoster.js";
+import { NameRoster } from "../../../shared-lib/NameRoster.js";
 import { ImportRoster } from "./importRoster.js";
 import { ImportOfficialRoster } from "./importOfficialRoster.js";
 

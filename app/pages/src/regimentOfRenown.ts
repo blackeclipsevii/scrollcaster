@@ -1,4 +1,4 @@
-import { Force } from "../../../shared-lib/Force.js";
+import { Force } from "../../shared-lib/Force.js";
 import { displayPoints, dynamicPages } from "../../lib/host.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import { makeLayout } from "../../lib/widgets/layout.js";
@@ -7,7 +7,7 @@ import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { swapLayout } from "../../lib/widgets/layout.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
 import { WarscrollSettings } from "./warscroll.js";
 
 export class RegimentOfRenownSettings implements Settings{

@@ -17,12 +17,12 @@ if (!fs.existsSync(outDir))
 
 const build = (sourceList) => {
     sourceList.forEach(filename => {
-        const outputPath = path.join(outDir, filename.replace('dist/', ''));
+        const outputPath = path.join(outDir, filename.replace(`dist${path.sep}`, ''));
         if (!fs.existsSync(path.dirname(outputPath))) {
             fs.mkdirSync(path.dirname(outputPath), { recursive: true });
         }
 
-        let data = fs.readFileSync(filename);
+        let data = fs.readFileSync(filename).toString();
         const result = babel.transformSync(data, minifyPreset);
         if (!result)
             throw `Failed to transcode ${filename}`;
@@ -30,49 +30,38 @@ const build = (sourceList) => {
     });
 }
 
-// determine what to minify from the development html
-// removes any dev scripts
-const getAllScriptsIn = (htmlFile, tag) => {
-    // Read the HTML file
-    const html = fs.readFileSync(htmlFile, 'utf-8');
-
-    // Match all <script> tags in the <head>
-    let content;
-    if (tag.toLowerCase() === 'head')
-        content = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] || '';
-    else
-        content = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1] || '';
-
-    const scriptSrcs = Array.from(content.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*><\/script>/gi))
-                       .map(match => match[1])
-                       .filter(src => !src.includes('dev/'));
-
-    return scriptSrcs;
-}
-
-// minify lib into one file
+// minify dist
 (() => {
-    const endpointfile = 'lib/endpoint.js';
-    const lib = [endpointfile].concat(getAllScriptsIn(htmlFilePath, 'head'));
-    console.log(JSON.stringify(lib));
-    build(lib);
-    fs.rename(`${outDir}/lib`, `${outDir}/app/dev`, ()=>{});
-})();
+    function walk(dir, fileList = []) {
+        const files = fs.readdirSync(dir);
 
-// minify pages into one file
-(() => {
-    const pages = getAllScriptsIn(htmlFilePath, 'body');
-    console.log(JSON.stringify(pages));
-    build(pages);
+        files.forEach(file => {
+            const fullPath = path.join(dir, file);
+            const stat = fs.statSync(fullPath);
+
+            if (stat.isDirectory()) {
+                walk(fullPath, fileList); // Recurse into subdirectory
+            } else {
+                fileList.push(fullPath); // Add file path
+            }
+        });
+
+        return fileList;
+    }
+
+    const files = walk('dist');
+    console.log(JSON.stringify(files));
+    build(files);
 })();
 
 // make new index.html for the new js files
 (() => {
     let html = fs.readFileSync(htmlFilePath, 'utf-8');
-    html = html.replaceAll('dist/app', '');
+    html = html.replace('dev/endpoint', 'lib/endpoint');
+    html = html.replaceAll('dist/', '');
 
     // 💾 Save the output
-    const outname = `./${outDir}/app/index.html`;
+    const outname = `./${outDir}/index.html`;
     if (fs.existsSync(outname))
         fs.rmSync(outname);
     fs.writeFileSync(outname, html, 'utf-8');
@@ -82,7 +71,7 @@ const getAllScriptsIn = (htmlFile, tag) => {
     // copy the resources to the output dir
     const srcToOutput = (folderName) => {
         const sourceDir = `./${folderName}`;
-        const destinationDir = `./${outDir}/app/${folderName}`;
+        const destinationDir = `./${outDir}/${folderName}`;
         if (!fs.existsSync(destinationDir))
             fs.cpSync(sourceDir, destinationDir, {recursive: true});
     }
@@ -90,6 +79,6 @@ const getAllScriptsIn = (htmlFile, tag) => {
     srcToOutput('resources');
     srcToOutput('lib/css');
     srcToOutput('pages/css');
-    if (!fs.existsSync(`./${outDir}/app/lib/lib.css`))
-        fs.cpSync('./lib/lib.css', `./${outDir}/app/lib/lib.css`);
+    if (!fs.existsSync(`./${outDir}/lib/lib.css`))
+        fs.cpSync('./lib/lib.css', `./${outDir}/lib/lib.css`);
 })();

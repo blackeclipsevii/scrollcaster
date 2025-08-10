@@ -1,4 +1,4 @@
-import WeaponInterf from "../../../shared-lib/WeaponInterf.js";
+import WeaponInterf from "../../shared-lib/WeaponInterf.js";
 import { whClearDiv } from "./helpers.js";
 import { getVar } from "../functions/getVar.js";
 

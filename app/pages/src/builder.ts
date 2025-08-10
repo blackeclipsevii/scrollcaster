@@ -1,17 +1,17 @@
 
-import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
-import BattleTacticCardInterf from "../../../shared-lib/BattleTacticCardInterf.js";
-import OptionSet from "../../../shared-lib/Options.js";
-import RosterInterf, { RegimentInterf } from "../../../shared-lib/RosterInterface.js";
-import UnitInterf, { EnhancementSlotInterf } from "../../../shared-lib/UnitInterface.js";
-import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
+import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
+import OptionSet from "../../shared-lib/Options.js";
+import RosterInterf, { RegimentInterf } from "../../shared-lib/RosterInterface.js";
+import UnitInterf, { EnhancementSlotInterf } from "../../shared-lib/UnitInterface.js";
+import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 import { endpoint } from "../../lib/endpoint.js";
 import { copyToClipboard } from "../../lib/functions/copyToClipboard.js";
 import { exportRoster } from "../../lib/functions/exportRoster.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { displayPoints, dynamicPages, unitTotalPoints } from "../../lib/host.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { getRoster, putRoster } from "../../lib/RestAPI/roster.js";
+import { putRoster } from "../../lib/RestAPI/roster.js";
 import { unitsApi } from "../../lib/RestAPI/units.js";
 import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
 import { CallbackMap, ContextMenu } from "../../lib/widgets/contextMenu.js";
@@ -29,9 +29,9 @@ import { TacticsSettings } from "./tactics.js";
 import { UnitSettings } from "./units.js";
 import { UpgradeSettings } from "./upgrades.js";
 import { WarscrollSettings } from "./warscroll.js";
-import LoreInterf, { LoreSlotsInterf } from "../../../shared-lib/LoreInterface.js";
-import { UnitType } from "../../../shared-lib/UnitInterface.js";
-import { BasicObject, Costed, Identifiable, Typed } from "../../../shared-lib/BasicObject.js";
+import LoreInterf from "../../shared-lib/LoreInterface.js";
+import { UnitType } from "../../shared-lib/UnitInterface.js";
+import { Costed, Identifiable, Typed } from "../../shared-lib/BasicObject.js";
 
 var totalPoints = 0;
 

@@ -3,13 +3,13 @@ import { dynamicGoTo, setHeaderTitle, Settings } from "../../lib/widgets/header.
 import { endpoint } from "../../lib/endpoint.js";
 
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { SearchableObject } from "../../../shared-lib/SearchableObject.js";
+import { SearchableObject } from "../../shared-lib/SearchableObject.js";
 import { WarscrollSettings } from "./warscroll.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { fetchSearch } from "../../lib/RestAPI/search.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
 
 export class SearchSettings implements Settings{
     [name: string]: unknown;

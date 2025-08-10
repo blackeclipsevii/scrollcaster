@@ -20,7 +20,7 @@ import { getVar } from "../../lib/functions/getVar.js";
 import { getRoster, getRosters, putRoster, getNewRoster, deleteRoster, deleteRosters } from "../../lib/RestAPI/roster.js";
 import { ContextMenu } from "../../lib/widgets/contextMenu.js";
 import { generateId } from "../../lib/functions/uniqueIdentifier.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
 import { About } from "../../lib/widgets/About.js";
 import { fetchArmies } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import { rosterState } from "../../lib/functions/import/rosterState.js";

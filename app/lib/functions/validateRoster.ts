@@ -1,5 +1,5 @@
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
 import { endpoint } from "../endpoint.js";
 import { rosterTotalPoints } from "../host.js";
 import { rosterState } from "./import/rosterState.js";

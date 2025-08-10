@@ -1,13 +1,13 @@
 
-import { UpgradeLUT } from "../../shared-lib/UpgradeInterface.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import { UnitType } from "../../shared-lib/UnitInterface.js";
+import { UpgradeLUT } from "../shared-lib/UpgradeInterface.js";
+import RosterInterf from "../shared-lib/RosterInterface.js";
+import { UnitType } from "../shared-lib/UnitInterface.js";
 
 import Army from "./Army.js";
 import Unit from "./Unit.js";
 import BattleTacticCard from "./BattleTacticCard.js";
 import { Lore, LoreLUT } from "./Lores.js";
-import { Force } from "../../shared-lib/Force.js";
+import { Force } from "../shared-lib/Force.js";
 import Upgrade from "./Upgrade.js";
 
 export class LoreSlots {

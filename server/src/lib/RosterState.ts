@@ -1,7 +1,7 @@
 
-import RosterInterf, { RegimentInterf } from "../../../shared-lib/RosterInterface.js";
-import { RegimentState, RosterStateInterf, serializeRoster, UnitState } from "../../../shared-lib/State.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import RosterInterf, { RegimentInterf } from "../../shared-lib/RosterInterface.js";
+import { RegimentState, RosterStateInterf, serializeRoster, UnitState } from "../../shared-lib/State.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
 import AgeOfSigmar from "../AgeOfSigmar.js";
 import Army from "../Army.js";
 import Roster from "../Roster.js";

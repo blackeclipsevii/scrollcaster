@@ -1,6 +1,6 @@
-import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import UpgradeInterf, { UpgradeLUT, upgradeTypeToString } from "../../../shared-lib/UpgradeInterface.js";
+import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
+import UpgradeInterf, { UpgradeLUT, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
 import { _inCatalog, displayPoints, dynamicPages } from "../../lib/host.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
@@ -12,7 +12,7 @@ import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/wi
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import { layoutDefaultFactory, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { endpoint } from "../../lib/endpoint.js";
-import LoreInterf, { LoreLUTInterf } from "../../../shared-lib/LoreInterface.js";
+import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
 
 export class UpgradeSettings implements Settings {

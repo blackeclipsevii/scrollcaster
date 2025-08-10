@@ -1,9 +1,6 @@
-import { Costed, Typed } from "../../shared-lib/BasicObject.js";
-import { Force } from "../../shared-lib/Force.js";
-import LoreInterf from "../../shared-lib/LoreInterface.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
+
+import RosterInterf from "../shared-lib/RosterInterface.js";
+import UnitInterf from "../shared-lib/UnitInterface.js";
 import { Settings } from "./widgets/header.js";
 
 export const DYNAMIC_WARSCROLL = false;

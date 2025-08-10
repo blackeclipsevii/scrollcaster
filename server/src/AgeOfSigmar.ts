@@ -11,14 +11,14 @@ import path from 'path';
 import Upgrade from './Upgrade.js';
 import BsConstraint, { ConstraintType, getConstraints, BsModifierAttrObj } from './lib/bs/BsConstraint.js';
 import { BsCatalog, BsGameSystem, BsLibrary } from './lib/bs/BsCatalog.js';
-import BattleProfile from '../../shared-lib/BattleProfile.js';
-import { Force, UnitContainerInterf } from '../../shared-lib/Force.js';
+import BattleProfile from '../shared-lib/BattleProfile.js';
+import { Force, UnitContainerInterf } from '../shared-lib/Force.js';
 
 import { RegimentValidator } from './lib/validation/RegimentValidation.js';
 import { registerAllValidators } from './lib/validation/validators/registerValidators.js';
 
-import { UpgradeType } from '../../shared-lib/UpgradeInterface.js';
-import { OtherSuperType, OtherTypes } from '../../shared-lib/OtherTypes.js';
+import { UpgradeType } from '../shared-lib/UpgradeInterface.js';
+import { OtherSuperType, OtherTypes } from '../shared-lib/OtherTypes.js';
 
 // intermediate step
 interface MyConstraints {

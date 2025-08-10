@@ -4,15 +4,15 @@ import Upgrade from './Upgrade.js'
 import Lores from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
 import { BsCatalog, BsLibrary, BsSelectionEntry, BsSelectionEntryGroup } from './lib/bs/BsCatalog.js';
-import { Force } from '../../shared-lib/Force.js';
-import { UnitType } from '../../shared-lib/UnitInterface.js';
+import { Force } from '../shared-lib/Force.js';
+import { UnitType } from '../shared-lib/UnitInterface.js';
 import { ArmyValidator, armyValidatorCollection } from './lib/validation/ArmyValidator.js';
-import BattleProfile from '../../shared-lib/BattleProfile.js';
+import BattleProfile from '../shared-lib/BattleProfile.js';
 import { toCamelCase } from './lib/helperFunctions.js';
 
-import { UpgradeType, UpgradeLUT } from '../../shared-lib/UpgradeInterface.js';
-import { ArmyUpgrades } from '../../shared-lib/ArmyUpgrades.js';
-import ArmyInterf from '../../shared-lib/ArmyInterface.js';
+import { UpgradeType, UpgradeLUT } from '../shared-lib/UpgradeInterface.js';
+import { ArmyUpgrades } from '../shared-lib/ArmyUpgrades.js';
+import ArmyInterf from '../shared-lib/ArmyInterface.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";

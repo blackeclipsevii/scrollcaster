@@ -2,7 +2,7 @@ import Ability from "./Ability.js";
 import { BsSelectionEntry, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
 import Weapon from "./Weapon.js";
-import OptionSet, {Options, Option} from "../../shared-lib/Options.js";
+import OptionSet, {Options, Option} from "../shared-lib/Options.js";
 
 export const parseOptions = (optionSets: OptionSet[], ageOfSigmar: AgeOfSigmar, optionsGroups: BsSelectionEntryGroup[]) => {
     const addOptionSet = (og: BsSelectionEntryGroup) => {

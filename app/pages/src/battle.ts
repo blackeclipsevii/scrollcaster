@@ -1,8 +1,8 @@
-import { Force } from "../../../shared-lib/Force.js";
-import LoreInterf from "../../../shared-lib/LoreInterface.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
-import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import { Force } from "../../shared-lib/Force.js";
+import LoreInterf from "../../shared-lib/LoreInterface.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
+import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 import { endpoint } from "../../lib/endpoint.js";
 import { dynamicPages } from "../../lib/host.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";

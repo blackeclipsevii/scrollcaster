@@ -1,9 +1,9 @@
-import { RegimentState, RosterStateInterf, serializeRoster, UnitState } from "../../../../shared-lib/State.js";
-import { ArmyUpgrades } from "../../../../shared-lib/ArmyUpgrades.js";
-import BattleTacticCardInterf from "../../../../shared-lib/BattleTacticCardInterf.js";
-import UnitInterf from "../../../../shared-lib/UnitInterface.js";
-import { RegimentInterf } from "../../../../shared-lib/RosterInterface.js";
-import { Force } from "../../../../shared-lib/Force.js";
+import { RegimentState, RosterStateInterf, serializeRoster, UnitState } from "../../../shared-lib/State.js";
+import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
+import BattleTacticCardInterf from "../../../shared-lib/BattleTacticCardInterf.js";
+import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import { RegimentInterf } from "../../../shared-lib/RosterInterface.js";
+import { Force } from "../../../shared-lib/Force.js";
 import { getNewRoster } from "../../RestAPI/roster.js";
 import { generateId } from "../uniqueIdentifier.js";
 import { fetchUpgrades } from "../../RestAPI/upgrades.js";

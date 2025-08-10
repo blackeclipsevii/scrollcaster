@@ -3,9 +3,9 @@ import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
 import Upgrade from "../Upgrade.js";
 
-import { UpgradeLUT } from "../../../shared-lib/UpgradeInterface.js";
-import { NameRoster, NameUnit } from "../../../shared-lib/NameRoster.js";
-import { LoreLUTInterf } from "../../../shared-lib/LoreInterface.js";
+import { UpgradeLUT } from "../../shared-lib/UpgradeInterface.js";
+import { NameRoster, NameUnit } from "../../shared-lib/NameRoster.js";
+import { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
 
 export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRoster) => {
     const army = ageOfSigmar.getArmy(nameRoster.armyName);

@@ -1,7 +1,7 @@
 import { Overlay } from "./overlay.js";
 import { WeaponWidget } from "./WeaponWidget.js";
 import { getVar } from "../functions/getVar.js";
-import WeaponInterf from "../../../shared-lib/WeaponInterf.js";
+import WeaponInterf from "../../shared-lib/WeaponInterf.js";
 
 const _initWeaponsSection = (qualifier: string, parent: HTMLElement) => {
     let section = document.getElementById(`${qualifier}-weapons-section`);

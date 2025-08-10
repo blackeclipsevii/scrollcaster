@@ -4,13 +4,13 @@
   "version": "0.1.0",
   "identifier": "com.desktop-ui.app",
   "build": {
-    "frontendDist": "../../app"
+    "frontendDist": "../../app/output"
   },
   "app": {
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "scribecaster",
+        "title": "scrollcaster",
         "width": 450,
         "height": 800
       }

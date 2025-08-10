@@ -2,7 +2,7 @@ import Fuse from 'fuse.js'
 import AgeOfSigmar from '../AgeOfSigmar.js';
 import Unit from '../Unit.js';
 
-import { SearchableObject } from '../../../shared-lib/SearchableObject.js';
+import { SearchableObject } from '../../shared-lib/SearchableObject.js';
 
 export default class Search {
     fuse: Fuse<SearchableObject>;

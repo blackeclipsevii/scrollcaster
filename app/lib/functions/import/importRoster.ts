@@ -1,5 +1,5 @@
-import { NameRoster, NameUnit } from "../../../../shared-lib/NameRoster.js";
-import RosterInterf from "../../../../shared-lib/RosterInterface.js";
+import { NameRoster, NameUnit } from "../../../shared-lib/NameRoster.js";
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
 
 export class NameRosterImporter {
     canImport(text: string): boolean {

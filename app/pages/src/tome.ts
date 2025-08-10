@@ -9,10 +9,10 @@ import { UnitSettings } from "./units.js";
 import { clearLayout, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { ForceLUT } from "../../../shared-lib/Force.js";
+import { ForceLUT } from "../../shared-lib/Force.js";
 import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
-import ArmyInterf from "../../../shared-lib/ArmyInterface.js";
-import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import ArmyInterf from "../../shared-lib/ArmyInterface.js";
+import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
 
 export class CatalogSettings implements Settings{

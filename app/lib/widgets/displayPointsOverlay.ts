@@ -1,4 +1,4 @@
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
 import { getVar } from "../functions/getVar.js";
 import { InsetEdges } from "./InsetEdges.js";
 import { validateRoster } from "../functions/validateRoster.js";

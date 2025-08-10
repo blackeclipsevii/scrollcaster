@@ -1,9 +1,9 @@
 import { getVar } from "../functions/getVar.js";
 import { whClearDiv } from "./helpers.js";
 import { DYNAMIC_WARSCROLL } from "../host.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
-import AbilityInterf from "../../../shared-lib/AbilityInterface.js";
-import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
+import AbilityInterf from "../../shared-lib/AbilityInterface.js";
+import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 
 export const AbilityWidget = {
     _newAbilityDiv(ability: AbilityInterf) {

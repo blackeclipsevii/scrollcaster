@@ -1,6 +1,6 @@
-import LoreInterf from "../../../shared-lib/LoreInterface.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import LoreInterf from "../../shared-lib/LoreInterface.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
 import { rosterTotalPoints, unitTotalPoints } from "../host.js";
 import { version } from "../RestAPI/version.js";
 

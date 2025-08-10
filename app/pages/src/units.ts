@@ -1,7 +1,7 @@
-import { Force } from "../../../shared-lib/Force.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
-import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import { Force } from "../../shared-lib/Force.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
+import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 import { endpoint } from "../../lib/endpoint.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { displayPoints, dynamicPages } from "../../lib/host.js";

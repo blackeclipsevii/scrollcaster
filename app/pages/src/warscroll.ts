@@ -1,7 +1,7 @@
-import ModelInterf from "../../../shared-lib/ModelInterface.js";
-import OptionSet from "../../../shared-lib/Options.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
-import WeaponInterf from "../../../shared-lib/WeaponInterf.js";
+import ModelInterf from "../../shared-lib/ModelInterface.js";
+import OptionSet from "../../shared-lib/Options.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
+import WeaponInterf from "../../shared-lib/WeaponInterf.js";
 import { DYNAMIC_WARSCROLL, dynamicPages } from "../../lib/host.js";
 import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";

@@ -1,7 +1,7 @@
 import Army from "../../Army.js";
 import { Regiment } from "../../Roster.js";
 import Unit from "../../Unit.js";
-import { UnitType } from "../../../../shared-lib/UnitInterface.js";
+import { UnitType } from "../../../shared-lib/UnitInterface.js";
 
 interface KeyOpt {
     keyword: string;

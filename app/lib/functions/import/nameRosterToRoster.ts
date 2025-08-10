@@ -1,4 +1,4 @@
-import { NameRoster } from "../../../../shared-lib/NameRoster.js";
+import { NameRoster } from "../../../shared-lib/NameRoster.js";
 import { rosterState } from "./rosterState.js";
 
 export const nameRosterToRoster = async (nameRoster: NameRoster) => {
