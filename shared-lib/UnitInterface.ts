@@ -34,6 +34,11 @@ export default interface UnitInterf {
     name: string;
     id: string;
 
+    Move: string;
+    Health: string;
+    Control: string;
+    Save: string;
+
     isWarmaster: boolean;
     
     canBeGeneral: boolean;

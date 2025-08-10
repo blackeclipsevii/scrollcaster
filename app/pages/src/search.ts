@@ -8,7 +8,7 @@ import { WarscrollSettings } from "./warscroll.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { fetchSearch } from "../../lib/RestAPI/search.js";
-import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
+import { makeSelectableItem } from "../../lib/widgets/helpers.js";
 
 export class SearchSettings implements Settings{
     [name: string]: unknown;
@@ -48,45 +48,6 @@ const searchPage = {
             section.style.display = '';
             itemList.innerHTML = '';
 
-            // interface SearchableObject {
-            //     name: string;
-            //     id: string;
-            //     type: number;
-            //     armyName: string;
-            //     keywords: string[];
-            // };
-
-            const makeSelectableItem = (displayableObj: SearchableObject, isUnit: boolean, parentList: HTMLElement, onclick: (this: HTMLDivElement, ev: MouseEvent) => any) => {
-                const section = parentList.closest('.section') as HTMLElement | null;
-                if (!section)
-                    return;
-                section.style.display = 'block';
-
-                const item = document.createElement('div');
-                item.classList.add('selectable-item');
-                item.addEventListener('click', onclick);
-
-                const left = document.createElement('div');
-                left.classList.add('selectable-item-left');
-
-                const nameEle = makeSelectableItemName(displayableObj);
-                left.appendChild(nameEle);
-
-                const roleEle = makeSelectableItemType(displayableObj, isUnit);
-                left.appendChild(roleEle);
-
-                const armyName = makeSelectableItemType(displayableObj.armyName);
-                left.appendChild(armyName);
-
-                const right = document.createElement('div');
-                right.classList.add('selectable-item-right');
-
-                item.append(left, right);
-                parentList.appendChild(item);
-                
-                return item;
-            };
-        
             results.forEach(result => {
                 makeSelectableItem(result, true, itemList, async () =>{
                     let armyName: string | null = result.armyName;

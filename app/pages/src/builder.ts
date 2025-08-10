@@ -1,16 +1,22 @@
 
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import { getVar } from "../../lib/functions/getVar.js";
 import { dynamicPages } from "../../lib/host.js";
+import { getRoster } from "../../lib/RestAPI/roster.js";
+import { refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
+import { Settings } from "../../lib/widgets/header.js";
 
 var totalPoints = 0;
 
-export class BuilderSettings {
-    rosterId = null;
-    roster = null;
+export class BuilderSettings implements Settings{
+    [name: string]: unknown;
+    rosterId = null as string | null;
+    roster = null as RosterInterf | null;
 };
 
 const builderPage = {
-    roster: null,
-    settings: null,
+    roster: null as RosterInterf | null,
+    settings: new BuilderSettings,
     _cache: {
         upgrades: {
             upgrades: null,
@@ -32,12 +38,12 @@ const builderPage = {
         }
         return result;
     },
-    async loadPage(settings) {
+    async loadPage(settings: Settings) {
         if (!settings) {
             throw 'builder requires settings';
         }
-        thisPage = this;
-        thisPage.settings = settings;
+        const thisPage = this;
+        thisPage.settings = settings as BuilderSettings;
 
         // just use the provided roster
         if (settings.roster)
@@ -53,18 +59,15 @@ const builderPage = {
             thisPage.roster = await getRoster(rosterId);
         }
 
-        // to-do remove
-        roster = thisPage.roster;
-
         // Update the points display before removing a pointed object (obj.points)
-        const removeObjectPoints = (pointedObj) => {
+        const removeObjectPoints = (pointedObj: {points: number}) => {
             totalPoints -= pointedObj.points;
             refreshPointsOverlay(thisPage.roster.id);
             updateValidationDisplay();
         }
 
-        const disableArrow = (arrow) => {
-            const img = arrow.querySelector('img');
+        const disableArrow = (arrow: HTMLElement) => {
+            const img = arrow.querySelector('img') as HTMLImageElement;
             img.src = `../resources/${getVar('ab-control')}`
             img.style.height = '.5em';
             img.style.width = '.5em';
@@ -72,7 +75,7 @@ const builderPage = {
             arrow.closest('.arrow-wrapper').style.cursor = 'default';
         }
 
-        const clearDetailsSection = (item) => {
+        const clearDetailsSection = (item: HTMLElement) => {
             removeSection(item, 'is-general');
             removeSection(item, 'is-reinforced');
         }

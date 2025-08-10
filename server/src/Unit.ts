@@ -16,6 +16,11 @@ export default class Unit implements UnitInterf {
     name: string;
     id: string;
 
+    Move: string;
+    Health: string;
+    Control: string;
+    Save: string;
+
     isWarmaster: boolean;
     
     canBeGeneral: boolean;
@@ -39,6 +44,11 @@ export default class Unit implements UnitInterf {
     constructor(ageOfSigmar: AgeOfSigmar, selectionEntry: BsSelectionEntry) {
         this.name = selectionEntry['@name'];
         this.id = selectionEntry['@id'];
+
+        this.Move = '';
+        this.Health = '';
+        this.Control = '';
+        this.Save = '';
         
         this.canBeGeneral = true;
         this.isGeneral = false;

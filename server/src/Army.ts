@@ -12,6 +12,7 @@ import { toCamelCase } from './lib/helperFunctions.js';
 
 import { UpgradeType, UpgradeLUT } from '../../shared-lib/UpgradeInterface.js';
 import { ArmyUpgrades } from '../../shared-lib/ArmyUpgrades.js';
+import ArmyInterf from '../../shared-lib/ArmyInterface.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -48,7 +49,7 @@ const upgradeLUT: {[name:string]: UpgradeLUTEntry} = {
     }
 };
 
-export default class Army {
+export default class Army implements ArmyInterf{
     id: string;
     name: string;
     points: {[name:string]: number};

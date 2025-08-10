@@ -1,37 +1,51 @@
-import { dynamicPages } from "../../lib/host.js";
+import ModelInterf from "../../../shared-lib/ModelInterface.js";
+import OptionSet from "../../../shared-lib/Options.js";
+import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import WeaponInterf from "../../../shared-lib/WeaponInterf.js";
+import { DYNAMIC_WARSCROLL, dynamicPages } from "../../lib/host.js";
+import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
+import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
+import { initializeDraggable } from "../../lib/widgets/draggable.js";
+import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { whClearDiv } from "../../lib/widgets/helpers.js";
+import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
+import { WeaponWidget } from "../../lib/widgets/WeaponWidget.js";
 
-export class WarscrollSettings {
-    unit = null;
-    local = null;
+export class WarscrollSettings implements Settings {
+    [name: string]: unknown;
+    unit = null as UnitInterf | null;
 };
 
 const warscrollPage = {
-    settings: null,
-    loadPage(settings) {
+    settings: new WarscrollSettings,
+    loadPage(settings: Settings) {
         if (!settings) {
             throw 'warscroll requires settings';
         }
-        this.settings = settings;
+        this.settings = settings as WarscrollSettings;
         const thisPage = this;
 
-        const displayChars = (unit) => {
+        const displayChars = (unit: UnitInterf) => {
             whClearDiv('char');
             _initializeCharDiv();
 
-            const tbody = document.getElementById("characteristics");
+            if (unit.Move === '' && unit.Health === '' && unit.Control === '' && unit.Save === '')
+                return;
+
+            const tbody = document.getElementById("characteristics") as HTMLElement;
             
             // Clear existing rows
             tbody.innerHTML = "";
 
-            if (!unit.Health)
-                return;
-            
             let headers = ['Move', 'Health', 'Control', 'Save'];
-            let ward = null;
+            let ward: string | null = null;
             unit.keywords.every(keyword => {
                 if (keyword.startsWith('WARD')) {
-                    ward = keyword.match(/\(([^)]+)\)/)[1].trim();
-                    return false;
+                    const result = keyword.match(/\(([^)]+)\)/);
+                    if (result) {
+                        ward = result[1].trim();
+                        return false;
+                    }
                 }
                 return true;
             });
@@ -57,22 +71,23 @@ const warscrollPage = {
                 cell.className = 'characteristics';
                 if (ward)
                     cell.style.width = '20%';
-                cell.textContent = cellData === 'Ward' ? ward : unit[cellData];
+                // move health control save
+                cell.textContent = cellData === 'Ward' ? ward : (unit as unknown as {[name: string]: string})[cellData];
                 dataRow.appendChild(cell);
             });
             tbody.appendChild(dataRow);
         }
 
-        const displayKeywords = (unit) => {
+        const displayKeywords = (unit: UnitInterf) => {
             whClearDiv('keywords');
             _initializeKeywordsDiv();
-            const keywords = document.getElementById("keywords");
+            const keywords = document.getElementById("keywords") as HTMLElement;
             keywords.innerHTML = unit['keywords'].join(', ');
             keywords.style.margin = '1em';
         }
 
         const _initializeKeywordsDiv = () => {
-            const div = document.getElementById('keywords-section');
+            const div = document.getElementById('keywords-section') as HTMLElement;
             div.style.display = '';
 
             let keywords = document.createElement('h5');
@@ -82,9 +97,9 @@ const warscrollPage = {
             return div;
         }
 
-        const filterWeapons = (unitOrModel, qualifier=null) => {
-            let weaponSet = {};
-            const isTypeFilter = (weapon) => {
+        const filterWeapons = (unitOrModel: UnitInterf | ModelInterf, qualifier: string | null = null) => {
+            let weaponSet: {[name: string]: WeaponInterf} = {};
+            const isTypeFilter = (weapon: WeaponInterf) => {
                 if (qualifier === null) 
                     return true;
 
@@ -94,11 +109,11 @@ const warscrollPage = {
                 return weapon.type === 1;
             }
 
-            const addToSet = (weapon) => {
+            const addToSet = (weapon: WeaponInterf) => {
                 weaponSet[weapon.name] = weapon;
             }
 
-            const doOptionSets = (optionSets) => {
+            const doOptionSets = (optionSets: OptionSet[]) => {
                 optionSets.forEach(optionSet => {
                     if (DYNAMIC_WARSCROLL && optionSet.selection) {
                         optionSet.selection.weapons.forEach(weapon => {
@@ -123,65 +138,58 @@ const warscrollPage = {
                 });
             }
 
-            const handleWeapons = (unitOrModel) => {
-                if (unitOrModel.weapons.length > 0) { // backwards compatibility 8/8/25
-                    const weaponList = unitOrModel.weapons.filter(isTypeFilter);
-                    weaponList.forEach(weapon => addToSet(weapon));
-                    doOptionSets(unitOrModel.optionSets);
-                }
-                else {
-                    // models is now an object with selectable weapons
-                    const weaponList = unitOrModel.weapons.warscroll.filter(isTypeFilter);
-                    weaponList.forEach(weapon => addToSet(weapon));
+            const handleWeapons = (model: ModelInterf) => {
+                // models is now an object with selectable weapons
+                const weaponList = model.weapons.warscroll.filter(isTypeFilter);
+                weaponList.forEach(weapon => addToSet(weapon));
 
-                    unitOrModel.weapons.selections.forEach(selection => {
+                model.weapons.selections.forEach(selection => {
+                    selection.weapons.forEach(weapon => {
+                        if (isTypeFilter(weapon)) {
+                            addToSet(weapon);
+                        }
+                    });
+                });
+                model.weapons.selectionSets.forEach(selectionSet => {
+                    selectionSet.options.forEach(selection => {
                         selection.weapons.forEach(weapon => {
                             if (isTypeFilter(weapon)) {
                                 addToSet(weapon);
                             }
                         });
                     });
-                    unitOrModel.weapons.selectionSets.forEach(selectionSet => {
-                        selectionSet.options.forEach(selection => {
-                            selection.weapons.forEach(weapon => {
-                                if (isTypeFilter(weapon)) {
-                                    addToSet(weapon);
-                                }
-                            });
-                        });
-                    });
-                    doOptionSets(unitOrModel.optionSets);
-                }
+                });
+                doOptionSets(model.optionSets);
             }
            
-            if (unitOrModel.weapons) {
-                handleWeapons(unitOrModel);
+            if ((unitOrModel as ModelInterf).weapons) {
+                handleWeapons(unitOrModel as ModelInterf);
             }
 
-            if (unitOrModel.models) {
-                unitOrModel.models.forEach(model => {
+            if ((unitOrModel as UnitInterf).models) {
+                (unitOrModel as UnitInterf).models.forEach(model => {
                     handleWeapons(model);
                 });
             }
             return Object.values(weaponSet);
         }
 
-        const displayUnitDetails = (unit) => {
-            const formatText = (message) => {
+        const displayUnitDetails = (unit: UnitInterf) => {
+            const formatText = (message: string) => {
                 return message.replace(/</g, "#")
                             .replace(/>/g, '%')
                             .replace(/#/g, '<b>')
                             .replace(/%/g, '</b>');
             }
 
-            const div = document.getElementById('unit-details-section');
+            const div = document.getElementById('unit-details-section') as HTMLElement;
             div.style.display = '';
 
             const container = document.createElement('div');
             container.className = 'details-container';
             div.appendChild(container);
             
-            let title = div.querySelector('.section-title');
+            let title = div.querySelector('.section-title') as HTMLHeadingElement;
             title.textContent = 'Unit Details';
 
             // details
@@ -254,10 +262,10 @@ const warscrollPage = {
         }
 
         const _initializeCharDiv = () => {
-            let div = document.getElementById('characteristics-section');
+            let div = document.getElementById('characteristics-section') as HTMLElement;
             div.style.display = '';
 
-            const title = div.querySelector('.draggable-grip');
+            const title = div.querySelector('.draggable-grip') as HTMLElement;
             title.style.display = 'none';
 
             let characteristics = document.createElement('table');
@@ -269,20 +277,17 @@ const warscrollPage = {
         }
 
         async function readUnit() {
-            if (thisPage.settings.local) {
-                const json = localStorage.getItem(thisPage.settings.local);
-                thisPage.settings.unit = JSON.parse(json);
-            }
-
-            const _display = (unit) => {
+            const _display = (unit: UnitInterf | null) => {
+                if (!unit)
+                    return;
                 setHeaderTitle(unit.name);
                 displayChars(unit);
                 const rangedWeapons = filterWeapons(unit, 'ranged');
                 const meleeWeapons = filterWeapons(unit, 'melee');
                 WeaponWidget.display(rangedWeapons);
                 WeaponWidget.display(meleeWeapons);
-                AbilityWidget.display(unit, unit);
-                const abSec = document.getElementById('abilities-section');
+                AbilityWidget.display(unit, unit.name);
+                const abSec = document.getElementById('abilities-section') as HTMLElement;
                 abSec.style.display = '';
                 displayUnitDetails(unit);
                 displayKeywords(unit);
@@ -302,11 +307,12 @@ const warscrollPage = {
             ];
             makeLayout(sections);
             // clear unused elements
-            const main = document.getElementById('loading-content');
+            const main = document.getElementById('loading-content') as HTMLElement;
             const _sections = main.querySelectorAll('.section');
             _sections.forEach(section => {
                 const itemList = section.querySelector('.item-list');
-                itemList.parentElement.removeChild(itemList);
+                if (itemList && itemList.parentElement)
+                    itemList.parentElement.removeChild(itemList);
             })
         }
         _makeUnitLayout();

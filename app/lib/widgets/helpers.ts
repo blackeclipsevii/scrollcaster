@@ -1,3 +1,4 @@
+import { SearchableObject } from "../../../shared-lib/SearchableObject.js";
 import UnitInterf, { unitTypeToString } from "../../../shared-lib/UnitInterface.js";
 import UpgradeInterf, { UpgradeType } from "../../../shared-lib/UpgradeInterface.js";
 import { upgradeTypeToString } from "../../../shared-lib/UpgradeInterface.js";
@@ -46,3 +47,40 @@ export const makeSelectableItemName = (namedObj: {name: string} | string) => {
     nameEle.style.margin = '0px';
     return nameEle;
 }
+
+export const makeSelectableItem = (displayableObj: {name: string, type?: number, armyName?: string}, isUnit: boolean, parentList: HTMLElement, onclick: (this: HTMLDivElement, ev: MouseEvent) => any) => {
+    const section = parentList.closest('.section') as HTMLElement | null;
+    if (!section)
+        return null;
+    section.style.display = 'block';
+
+    const item = document.createElement('div');
+    item.classList.add('selectable-item');
+    item.addEventListener('click', onclick);
+
+    const left = document.createElement('div');
+    left.classList.add('selectable-item-left');
+
+    const nameEle = makeSelectableItemName(displayableObj);
+    left.appendChild(nameEle);
+
+    let roleEle: HTMLElement;
+    if (displayableObj.type)
+        roleEle = makeSelectableItemType(displayableObj as {type:number, typeName?:string}, isUnit);
+    else
+        roleEle = makeSelectableItemType('Unknown', isUnit);
+    left.appendChild(roleEle);
+
+    if (displayableObj.armyName) {
+        const armyName = makeSelectableItemType(displayableObj.armyName);
+        left.appendChild(armyName);
+    }
+
+    const right = document.createElement('div');
+    right.classList.add('selectable-item-right');
+
+    item.append(left, right);
+    parentList.appendChild(item);
+    
+    return item;
+};

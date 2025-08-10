@@ -1,13 +1,16 @@
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
 import { dynamicPages } from "../../lib/host.js";
+import { Settings } from "../../lib/widgets/header.js";
 
-export class UnitSettings {
-    type = null;
-    roster = null;
-    regimentIndex = null;
+export class UnitSettings implements Settings {
+    [name: string]: unknown;
+    type = null as string | null;
+    roster = null as  RosterInterf | null;
+    regimentIndex = null as number | null;
     auxiliary = false;
 
     displayLegends = false;
-    armyName = null;
+    armyName = null as string | null;
 
     hasRegimentIndex() {
         return this.regimentIndex !== null;
@@ -15,7 +18,7 @@ export class UnitSettings {
 }
 
 const unitPage = {
-    settings: null,
+    settings: new UnitSettings,
     _cache: {
         regimentsOfRenown: {
             units: null,

@@ -1,40 +1,64 @@
-import { dynamicPages } from "../../lib/host.js";
+import { displayPoints, dynamicPages } from "../../lib/host.js";
+import { endpoint } from "../../lib/endpoint.js";
+import { fetchArmies, fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { disableBackButton, dynamicGoTo, enableBackButton, enableSearchButton, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { makeSelectableItemName } from "../../lib/widgets/helpers.js";
+import { UpgradeSettings } from "./upgrades.js";
+import { TacticsSettings } from "./tactics.js";
+import { UnitSettings } from "./units.js";
+import { clearLayout, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
+import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
+import { initializeDraggable } from "../../lib/widgets/draggable.js";
+import { Force } from "../../../shared-lib/Force.js";
+import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
+import ArmyInterf from "../../../shared-lib/ArmyInterface.js";
+import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
 
-export class CatalogSettings {
-    armyName = null;
+interface RorLUT {
+    [name: string]: Force;
+}
+
+export class CatalogSettings implements Settings{
+    [name: string]: unknown;
+    armyName = null as string | null;
     core = false;
     _doSub = true; // this is not intended for external use, just tracking history
 };
 
+const getArmySection = () => {
+    return document.getElementById('army-section') as HTMLElement;
+}
+
 const catalogPage = {
-    settings: null,
+    settings: new CatalogSettings,
     _cache: {
         armies: null,
-        regimentsOfRenown: null
+        regimentsOfRenown: null as RorLUT | null
     },
     async fetchRegimentsOfRenown() {
         if (this._cache.regimentsOfRenown) {
             //return this._cache.regimentsOfRenown;
         }
-        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/regimentsOfRenown`));
+        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/regimentsOfRenown`)) as RorLUT | null;
         this._cache.regimentsOfRenown = result;
         return result;
     },
-    async loadPage(settings) {
+    async loadPage(settings: Settings) {
         if (!settings)
             settings = new CatalogSettings;
-        this.settings = settings;
+        this.settings = settings as CatalogSettings;
         const thisPage = this;
 
-        const alliancesVisible = (visible) => {
-            document.getElementById('army-section').style.display = visible ? 'none' : '';
+        const alliancesVisible = (visible: boolean) => {
+            getArmySection().style.display = visible ? 'none' : '';
             ['order', 'chaos', 'death', 'destruction'].forEach(type =>
-            document.getElementById(`${type}-section`).style.display = visible ? '' : 'none');
+            (document.getElementById(`${type}-section`) as HTMLElement).style.display = visible ? '' : 'none');
         }
 
-        const coreVisible = (visible) => {
+        const coreVisible = (visible: boolean) => {
             visible ? disableBackButton() : enableBackButton();
-            const sec = document.getElementById('core-section');
+            const sec = document.getElementById('core-section') as HTMLElement;
             sec.style.display = visible ? '' : 'none';
             alliancesVisible(visible);
         }
@@ -44,8 +68,11 @@ const catalogPage = {
             lists.forEach(l => l.innerHTML = '');
         }
         
-        const makeItem = (name, onclick, listName = 'army-list', points=null) => {
-            const itemList = document.getElementById(listName);
+        const makeItem = (name: string, onclick: (this: HTMLDivElement, ev: MouseEvent) => any, listName = 'army-list', points: number | null = null) => {
+            const itemList = document.getElementById(listName) as HTMLElement | null;
+            if (!itemList) {
+                return;
+            }
             const item = document.createElement('div');
             item.classList.add('selectable-item');
         
@@ -76,12 +103,12 @@ const catalogPage = {
         async function loadCore() {
             coreVisible(false);
             resetLists();
-            const h2 = document.getElementById('army-section').querySelector('.section-title');
-
+            const sections = document.getElementById('army-section') as HTMLElement;
+            const h2 = sections.querySelector('.section-title') as HTMLHeadingElement;
             h2.textContent = 'Age of Sigmar';
         
             makeItem('Warscrolls', () => {
-                dynamicGoTo(new UnitSettings);
+                dynamicGoTo((new UnitSettings) as unknown as Settings);
             });
             
             makeItem('Battle Tactic Cards', () => {
@@ -90,19 +117,22 @@ const catalogPage = {
         
             makeItem('Lores', () => {
                 const settings = new UpgradeSettings;
-                settings.type = 'lores';
-                settings.titleName = 'Lores';
-                dynamicGoTo(settings);
+                (settings as unknown as Settings).type = 'lores';
+                (settings as unknown as Settings).titleName = 'Lores';
+                dynamicGoTo(settings as unknown as Settings);
             });
         }
         
         async function loadRor() {
             coreVisible(false);
             resetLists();
-            const h2 = document.getElementById('army-section').querySelector('.section-title');
+            const h2 = getArmySection().querySelector('.section-title') as HTMLHeadingElement;
             h2.textContent = 'Regiments of Renown';
         
             const unitsLUT = await thisPage.fetchRegimentsOfRenown();
+            if (!unitsLUT)
+                return;
+
             const units = Object.values(unitsLUT);
             units.forEach(regimentOfRenown => {
                 makeItem(regimentOfRenown.name, () => {
@@ -116,13 +146,14 @@ const catalogPage = {
         async function loadTome() {
             coreVisible(false);
             resetLists();
-            const h2 = document.getElementById('army-section').querySelector('.section-title');
+            const h2 = getArmySection().querySelector('.section-title') as HTMLHeadingElement;
             h2.textContent = thisPage.settings.armyName;
         
-            const _loadFaction = async (subFactionName) => {
+            const _loadFaction = async (subFactionName: string) => {
                 resetLists();
                 const url = `${endpoint}/armies?army=${subFactionName}`;
-                await fetchWithLoadingDisplay(encodeURI(url), (army) => {
+                await fetchWithLoadingDisplay(encodeURI(url), (uk: unknown) => {
+                    const army = uk as ArmyInterf;
                     h2.textContent = army.name;
         
                     if (Object.getOwnPropertyNames(army.units).length > 0) {
@@ -136,7 +167,7 @@ const catalogPage = {
                     if (Object.getOwnPropertyNames(army.upgrades.battleTraits).length > 0) {
                         makeItem('Battle Traits', () => {
                             const names = Object.getOwnPropertyNames(army.upgrades.battleTraits);
-                            const traits = [];
+                            const traits: UpgradeInterf[] = [];
                             names.forEach(name => {
                                 traits.push(army.upgrades.battleTraits[name]);
                             })
@@ -157,9 +188,9 @@ const catalogPage = {
                     if (army.upgrades.enhancements) {
                         const enhancementNames = Object.getOwnPropertyNames(army.upgrades.enhancements);
                         enhancementNames.forEach(eName => {
-                            makeItem(army.upgrades.enhancements[eName].name, () => {
+                            makeItem(army.upgrades.enhancements[eName]!!.name, () => {
                                 const settings = new UpgradeSettings;
-                                settings.titleName = army.upgrades.enhancements[eName].name;
+                                settings.titleName = army.upgrades.enhancements[eName]!!.name;
                                 settings.type = eName;
                                 settings.armyName = subFactionName;
                                 dynamicGoTo(settings);
@@ -182,11 +213,12 @@ const catalogPage = {
             }
         
             if (thisPage.settings._doSub) {
-                const subfactions = [];
-                await fetchArmies(async (armyAlliances) => {
+                const subfactions: string[] = [];
+                await fetchArmies(async (uk: unknown) => {
+                    const armyAlliances = uk as {name: string, alliance: string}[];
                     armyAlliances.forEach(alliance => {
                         const army = alliance.name;
-                        if (army.includes(thisPage.settings.armyName)) {
+                        if (army.includes(thisPage.settings.armyName!!)) {
                             subfactions.push(army);
                         }
                     });
@@ -220,11 +252,17 @@ const catalogPage = {
                             }
                         });
                     } else {
-                        _loadFaction(thisPage.settings.armyName);
+                        if (thisPage.settings.armyName)
+                            _loadFaction(thisPage.settings.armyName);
+                        else
+                            console.log('expected army name');
                     }
                 });
             } else {
-                _loadFaction(thisPage.settings.armyName);
+                if (thisPage.settings.armyName)
+                    _loadFaction(thisPage.settings.armyName);
+                else
+                    console.log('expected army name');
             }
         }
         
@@ -260,7 +298,8 @@ const catalogPage = {
             const loader = document.getElementById('armies-loader-box');
             //loader.style.display = 'block';
 
-            await fetchArmies(async (alliances) => {
+            await fetchArmies(async (uk: unknown) => {
+                const alliances = uk as {name: string, alliance: string}[];
                 alliances.forEach(alliance => {
                     const army = alliance.name;
                     if (army.includes(' - '))
@@ -275,25 +314,6 @@ const catalogPage = {
                         thisPage.settings = settings;
                         loadTome();
                     }, `${alliance.alliance.toLowerCase()}-list`);
-                    if (false) {
-                    right = item.querySelector('.selectable-item-right');
-                    type = makeSelectableItemType(alliance.alliance);
-                    let color = 'gray';
-                    if (alliance.alliance === 'ORDER') {
-                        color = 'blue';
-                    } else if (alliance.alliance === 'CHAOS') {
-                        color = 'green';
-                    } else if (alliance.alliance === 'DEATH') {
-                        color = 'purple';
-                    } else {
-                        color = 'red';
-                    }
-                    color = getVar(`${color}-ability`);
-                    type.style.backgroundColor = getVar('section-color');
-                    //type.style.border = `1px solid ${color}`
-                    type.style.color = color;
-                    right.appendChild(type);
-                    }
                 });
             });
         }
@@ -309,7 +329,7 @@ const catalogPage = {
 
             enableSearchButton();
             hidePointsOverlay();
-            document.getElementById('army-section').style.display = '';
+            getArmySection().style.display = '';
 
             if (thisPage.settings.armyName)
                 thisPage.settings.armyName === 'ror' ? await loadRor() : await loadTome();

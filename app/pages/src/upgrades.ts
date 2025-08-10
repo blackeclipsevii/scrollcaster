@@ -1,10 +1,21 @@
-import { dynamicPages } from "../../lib/host.js";
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import { displayPoints, dynamicPages } from "../../lib/host.js";
+import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { displayPointsOverlay, hidePointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
+import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
+import { initializeDraggable } from "../../lib/widgets/draggable.js";
+import { initializeFavoritesList } from "../../lib/widgets/favorites.js";
+import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
+import { layoutDefaultFactory, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 
-export class UpgradeSettings {
-    titleName = null;
-    type = null;
-    roster = null;
-    armyName = null;
+export class UpgradeSettings implements Settings {
+    [name: string]: unknown;
+    titleName = null as string | null;
+    type = null as string | null;
+    roster = null as RosterInterf | null;
+    armyName = null as string | null;
 
     isLore() {
         return this.type && this.type.toLowerCase().includes('lore')
@@ -12,33 +23,33 @@ export class UpgradeSettings {
 }
 
 const upgradePage = {
-    settings: null,
+    settings: new UpgradeSettings,
     _cache: {
         upgrades: null,
         armyName: null
     },
-    async fetchUpgrades(armyName) {
+    async fetchUpgrades(armyName: string) {
         if (this._cache.upgrades && this._cache.armyName === armyName) {
             return this._cache.upgrades;
         }
-        const result = await fetchUpgrades(armyName);
+        const result = await this.fetchUpgrades(armyName);
         this._cache.upgrades = result;
         this._cache.armyName = armyName;
         return result;
     },
-    loadPage(settings) {
+    loadPage(settings: Settings) {
         const thisPage = this;
         
         if (!settings)
             settings = new UpgradeSettings;
 
-        thisPage.settings = settings;
+        thisPage.settings = settings as UpgradeSettings;
 
-        const isUniversal = (str) => {
+        const isUniversal = (str: string) => {
             return str.startsWith("UNIVERSAL-");
         }
         
-        function displayUpgrade(upgrade) {
+        function displayUpgrade(upgrade: UpgradeInterf) {
             let typeName = 'Upgrade';
             if (upgrade.typeName) 
                 typeName = upgrade.typeName;
@@ -164,7 +175,7 @@ const upgradePage = {
                 heart.onchange(true, upgrade.id, 'upgrade');
         }
         
-        function displayUpgrades(upgradeList) {
+        function displayUpgrades(upgradeList: UpgradeInterf[]) {
             upgradeList.forEach(upgrades => {
                 if (!upgrades)
                     return;
