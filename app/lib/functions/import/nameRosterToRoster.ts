@@ -3,7 +3,6 @@ import { endpoint } from "../../endpoint.js";
 import { rosterState } from "./rosterState.js";
 
 export const nameRosterToRoster = async (nameRoster: NameRoster) => {
-    // @ts-ignore
     const regArg = encodeURI(`${endpoint}/import`);
     let result = await fetch(regArg, {
         method: "POST",
