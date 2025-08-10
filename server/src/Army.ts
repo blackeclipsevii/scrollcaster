@@ -118,10 +118,10 @@ export default class Army implements ArmyInterf{
             return;
         }
 
-        if (catalogue['@library'] === 'true') {
-            console.log('recieved library expected catalog');
-            throw 'foo';
-        }
+        //if (catalogue['@library'] === 'true') {
+          //  console.log('recieved library expected catalog');
+         //   throw 'foo';
+        //}
 
         console.log(catalogue['@id']);
         this.id = catalogue['@id'];
