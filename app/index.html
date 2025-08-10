@@ -15,9 +15,9 @@
   <script type="module" src="./dist/lib/main.js"></script>
   <script>
     history.pushState(null, '', location.href);
-    window.addEventListener('popstate', (event) => {
+    window.addEventListener('popstate', async (event) => {
         history.pushState(null, '', location.href);
-        globalThis.goBack();
+        await globalThis.goBack();
     });
   </script>
 </body>
