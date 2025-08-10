@@ -665,15 +665,3 @@ const rosterPage = {
 };
 
 dynamicPages['rosters'] = rosterPage;
-
-// (async () => {
-//   const settings = new SearchSettings;
-//   _linkStack['roster'].currentSettings = settings;
-//   dynamicGoTo(settings);
-// })();
-// this is the first page
-(async () => {
-  const settings = new RosterSettings;
-  _linkStack['roster'].currentSettings = settings;
-  dynamicGoTo(settings);
-})();

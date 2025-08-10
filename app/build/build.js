@@ -1,6 +1,7 @@
 import fs from 'fs'
 import process from 'process'
 import babel from '@babel/core'
+import path from 'path';
 
 process.chdir('..');
 
@@ -14,31 +15,19 @@ const minifyPreset = {
 if (!fs.existsSync(outDir))
     fs.mkdirSync(outDir);
 
-const normalizeResources = (text) => {
-    return text.replace(/(["'`])[^"'`]*\/resources\/(.*?)\1/g, (match, quote, file) => {
-        return `${quote}resources/${file}${quote}`;
-    });
-}
-
-const build = (outname, sourceList) => {
-    if (fs.existsSync(outname)) {
-        fs.rmSync(outname);
-    }
-    const tmpname = outname + '.tmp';
-    if (fs.existsSync(tmpname)) {
-        fs.rmSync(tmpname);
-    }
+const build = (sourceList) => {
     sourceList.forEach(filename => {
+        const outputPath = path.join(outDir, filename.replace('dist/', ''));
+        if (!fs.existsSync(path.dirname(outputPath))) {
+            fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+        }
+
         let data = fs.readFileSync(filename);
-        data = normalizeResources(data.toString());
-        fs.writeFileSync(tmpname, data + '\n', { encoding: 'utf-8', flag: 'a' });
+        const result = babel.transformSync(data, minifyPreset);
+        if (!result)
+            throw `Failed to transcode ${filename}`;
+        fs.writeFileSync(outputPath, result.code, { encoding: 'utf-8', flag: 'a' });
     });
-    const data = babel.transformFileSync(tmpname, minifyPreset);
-    if (!data.code) {
-        throw `Failed to transcode ${outname}`;
-    }
-    fs.writeFileSync(outname, data.code);
-    fs.rm(tmpname, ()=>{});
 }
 
 // determine what to minify from the development html
@@ -63,66 +52,44 @@ const getAllScriptsIn = (htmlFile, tag) => {
 
 // minify lib into one file
 (() => {
-    const lib = ['lib/endpoint.js'].concat(getAllScriptsIn(htmlFilePath, 'head'));
+    const endpointfile = 'lib/endpoint.js';
+    const lib = [endpointfile].concat(getAllScriptsIn(htmlFilePath, 'head'));
     console.log(JSON.stringify(lib));
-    build(`./${outDir}/sc-lib.js`, lib);
+    build(lib);
+    fs.rename(`${outDir}/lib`, `${outDir}/app/dev`, ()=>{});
 })();
 
 // minify pages into one file
 (() => {
     const pages = getAllScriptsIn(htmlFilePath, 'body');
     console.log(JSON.stringify(pages));
-    build(`./${outDir}/sc-pages.js`, pages);
+    build(pages);
 })();
 
 // make new index.html for the new js files
 (() => {
     let html = fs.readFileSync(htmlFilePath, 'utf-8');
-
-    // 🧠 Helper to clean and inject new script into a specific tag
-    const replaceScriptsInTag = (html, tagName, newScriptSrc) => {
-        const regex = new RegExp(`<${tagName}\\b[^>]*>([\\s\\S]*?)<\\/${tagName}>`, 'i');
-        const match = html.match(regex);
-
-        if (!match) return html;
-
-        let tagContent = match[1];
-
-        // Remove <script> tags with src
-        tagContent = tagContent.replace(/<script\b[^>]*\bsrc=['"][^'"]+['"][^>]*>([\s\S]*?)<\/script>/gi, '');
-        tagContent.repl
-        // Append new script tag
-        tagContent += `\n<script src="${newScriptSrc}"></script>\n`;
-
-        // Rebuild updated tag
-        return html.replace(regex, `<${tagName}>${tagContent}</${tagName}>`)
-                   .replace(/^\s*$(?:\r\n?|\n)/gm, '');
-    };
-
-    // 🧼 Clean <head> and <body> sections
-    html = replaceScriptsInTag(html, 'head', 'sc-lib.js');
-    html = replaceScriptsInTag(html, 'body', 'sc-pages.js');
+    html = html.replaceAll('dist/app', '');
 
     // 💾 Save the output
-    const outname = `./${outDir}/index.html`;
+    const outname = `./${outDir}/app/index.html`;
     if (fs.existsSync(outname))
         fs.rmSync(outname);
     fs.writeFileSync(outname, html, 'utf-8');
 })();
 
-// copy the resources to the output dir
-
-
-const srcToOutput = (folderName) => {
-    const sourceDir = `./${folderName}`;
-    const destinationDir = `./${outDir}/${folderName}`;
-    if (!fs.existsSync(destinationDir))
-        fs.cpSync(sourceDir, destinationDir, {recursive: true});
-}
 (() => {
+    // copy the resources to the output dir
+    const srcToOutput = (folderName) => {
+        const sourceDir = `./${folderName}`;
+        const destinationDir = `./${outDir}/app/${folderName}`;
+        if (!fs.existsSync(destinationDir))
+            fs.cpSync(sourceDir, destinationDir, {recursive: true});
+    }
+
     srcToOutput('resources');
     srcToOutput('lib/css');
     srcToOutput('pages/css');
-    if (!fs.existsSync(`./${outDir}/lib/lib.css`))
-        fs.cpSync('./lib/lib.css', `./${outDir}/lib/lib.css`);
+    if (!fs.existsSync(`./${outDir}/app/lib/lib.css`))
+        fs.cpSync('./lib/lib.css', `./${outDir}/app/lib/lib.css`);
 })();
