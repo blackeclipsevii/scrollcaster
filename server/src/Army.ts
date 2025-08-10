@@ -5,7 +5,7 @@ import Lores from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
 import { BsCatalog, BsLibrary, BsSelectionEntry, BsSelectionEntryGroup } from './lib/bs/BsCatalog.js';
 import { Force } from '../../shared-lib/Force.js';
-import { UnitType } from '../../shared-lib/types/UnitType.js';
+import { UnitType } from '../../shared-lib/UnitInterface.js';
 import { ArmyValidator, armyValidatorCollection } from './lib/validation/ArmyValidator.js';
 import BattleProfile from '../../shared-lib/BattleProfile.js';
 import { toCamelCase } from './lib/helperFunctions.js';

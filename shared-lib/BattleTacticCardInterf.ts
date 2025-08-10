@@ -1,9 +1,4 @@
-
-export const BattleTacticType = {
-    Affray: 0,
-    Strike: 1,
-    Domination: 2
-}
+import { Identifiable, Typed } from "./BasicObject.js";
 
 export interface BattleTacticInterf {
     type: {
@@ -13,9 +8,7 @@ export interface BattleTacticInterf {
     text: string;
 }
 
-export default interface BattleTacticCardInterf {
-    name: string;
-    id: string;
+export default interface BattleTacticCardInterf extends Identifiable, Typed {
     text: string;
     tactics: BattleTacticInterf[];
 }

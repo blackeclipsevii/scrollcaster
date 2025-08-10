@@ -9,15 +9,11 @@ import { UnitSettings } from "./units.js";
 import { clearLayout, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { Force } from "../../../shared-lib/Force.js";
+import { ForceLUT } from "../../../shared-lib/Force.js";
 import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
 import ArmyInterf from "../../../shared-lib/ArmyInterface.js";
 import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
 import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
-
-interface RorLUT {
-    [name: string]: Force;
-}
 
 export class CatalogSettings implements Settings{
     [name: string]: unknown;
@@ -34,13 +30,13 @@ const catalogPage = {
     settings: new CatalogSettings,
     _cache: {
         armies: null,
-        regimentsOfRenown: null as RorLUT | null
+        regimentsOfRenown: null as ForceLUT | null
     },
     async fetchRegimentsOfRenown() {
         if (this._cache.regimentsOfRenown) {
             //return this._cache.regimentsOfRenown;
         }
-        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/regimentsOfRenown`)) as RorLUT | null;
+        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/regimentsOfRenown`)) as ForceLUT | null;
         this._cache.regimentsOfRenown = result;
         return result;
     },

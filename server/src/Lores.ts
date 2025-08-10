@@ -4,12 +4,13 @@ import Upgrade from "./Upgrade.js";
 import { BsLibrary, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
 import { UpgradeType } from "../../shared-lib/UpgradeInterface.js";
 
-import LoreInterf, {LoreLUTInterf} from "../../shared-lib/LoreInterface.js";
+import LoreInterf, {LoreLUTInterf, LoreSuperType} from "../../shared-lib/LoreInterface.js";
 
 export class Lore implements LoreInterf {
     name: string;
     id: string;
     type: number;
+    superType: string;
     points: number;
     unitIds: string[];
     abilities: Upgrade[];
@@ -17,6 +18,7 @@ export class Lore implements LoreInterf {
     constructor(selectionEntryGroup: BsSelectionEntryGroup) {
         this.id = selectionEntryGroup['@id'];
         this.name = selectionEntryGroup['@name'];
+        this.superType = LoreSuperType;
         this.abilities = [];
         this.unitIds = [];
         this.type = UpgradeType.SpellLore;

@@ -113,8 +113,10 @@ export function initializeHeader(options: HeaderOptions) {
     if (options.leftButton) {
         const left = header.querySelector('.header-left') as HTMLElement;
         left.innerHTML = `
-        <button class="back-btn" onclick="goBack()">‹</button>
+        <button class="back-btn"">‹</button>
         `;
+        const button = left.querySelector('button') as HTMLButtonElement;
+        button.onclick = goBack;
     }
 
     if (options.rightButton) {

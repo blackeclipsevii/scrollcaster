@@ -1,40 +1,70 @@
 
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
+import BattleTacticCardInterf from "../../../shared-lib/BattleTacticCardInterf.js";
+import OptionSet from "../../../shared-lib/Options.js";
+import RosterInterf, { RegimentInterf } from "../../../shared-lib/RosterInterface.js";
+import UnitInterf, { EnhancementSlotInterf } from "../../../shared-lib/UnitInterface.js";
+import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
+import { endpoint } from "../../lib/endpoint.js";
+import { copyToClipboard } from "../../lib/functions/copyToClipboard.js";
+import { exportRoster } from "../../lib/functions/exportRoster.js";
 import { getVar } from "../../lib/functions/getVar.js";
-import { dynamicPages } from "../../lib/host.js";
-import { getRoster } from "../../lib/RestAPI/roster.js";
-import { refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
-import { Settings } from "../../lib/widgets/header.js";
+import { displayPoints, dynamicPages, unitTotalPoints } from "../../lib/host.js";
+import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { getRoster, putRoster } from "../../lib/RestAPI/roster.js";
+import { unitsApi } from "../../lib/RestAPI/units.js";
+import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
+import { CallbackMap, ContextMenu } from "../../lib/widgets/contextMenu.js";
+import { displayPointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
+import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
+import { displayRorOverlay, displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
+import { displayWeaponOverlay } from "../../lib/widgets/displayWeaponOverlay.js";
+import { initializeDraggable } from "../../lib/widgets/draggable.js";
+import { dynamicGoTo, setHeaderTitle, Settings, updateHeaderContextMenu } from "../../lib/widgets/header.js";
+import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
+import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
+import { Overlay } from "../../lib/widgets/overlay.js";
+import { BattleSettings } from "./battle.js";
+import { TacticsSettings } from "./tactics.js";
+import { UnitSettings } from "./units.js";
+import { UpgradeSettings } from "./upgrades.js";
+import { WarscrollSettings } from "./warscroll.js";
+import LoreInterf, { LoreSlotsInterf } from "../../../shared-lib/LoreInterface.js";
+import { UnitType } from "../../../shared-lib/UnitInterface.js";
+import { BasicObject, Costed, Identifiable, Typed } from "../../../shared-lib/BasicObject.js";
 
 var totalPoints = 0;
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
-    rosterId = null as string | null;
-    roster = null as RosterInterf | null;
+    roster: RosterInterf;
+    constructor(roster: RosterInterf) {
+        this.roster = roster;
+    }
 };
 
 const builderPage = {
-    roster: null as RosterInterf | null,
-    settings: new BuilderSettings,
+    settings: null as BuilderSettings | null,
     _cache: {
         upgrades: {
-            upgrades: null,
-            armyName: null
+            upgrades: null as ArmyUpgrades | null,
+            armyName: null as string | null
         },
         units: {
-            units: null,
-            armyName: null,
-            leaderId: null
+            units: null as UnitInterf | null,
+            armyName: null as string | null,
+            leaderId: null as string | null
         }
     },
     async fetchUpgrades() {
-        if(this._cache.upgrades.upgrades && this._cache.upgrades.armyName === this.roster.army)
+        const roster = this.settings!!.roster;
+
+        if(this._cache.upgrades.upgrades && this._cache.upgrades.armyName === roster.army)
             return this._cache.upgrades.upgrades;
-        const result = await fetchUpgrades(this.roster.army);
+        const result = await fetchUpgrades(roster.army) as ArmyUpgrades | null;
         if (result){
             this._cache.upgrades.upgrades = result;
-            this._cache.upgrades.armyName = this.roster.army;
+            this._cache.upgrades.armyName = roster.army;
         }
         return result;
     },
@@ -45,25 +75,13 @@ const builderPage = {
         const thisPage = this;
         thisPage.settings = settings as BuilderSettings;
 
-        // just use the provided roster
-        if (settings.roster)
-            thisPage.roster = settings.roster;
-
-        // get a roster by the id
-        const rosterId = thisPage.settings.rosterId;
-        if (!thisPage.roster) {
-             thisPage.roster = await getRoster(rosterId);
-        }
-
-        if (thisPage.settings.rosterId && thisPage.roster.id !== thisPage.settings.rosterId) {
-            thisPage.roster = await getRoster(rosterId);
-        }
+        const roster = thisPage.settings.roster;
 
         // Update the points display before removing a pointed object (obj.points)
         const removeObjectPoints = (pointedObj: {points: number}) => {
             totalPoints -= pointedObj.points;
-            refreshPointsOverlay(thisPage.roster.id);
-            updateValidationDisplay();
+            refreshPointsOverlay(roster);
+            updateValidationDisplay(roster);
         }
 
         const disableArrow = (arrow: HTMLElement) => {
@@ -72,7 +90,8 @@ const builderPage = {
             img.style.height = '.5em';
             img.style.width = '.5em';
             img.style.margin = '.75em';
-            arrow.closest('.arrow-wrapper').style.cursor = 'default';
+            const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement;
+            wrapper.style.cursor = 'default';
         }
 
         const clearDetailsSection = (item: HTMLElement) => {
@@ -80,12 +99,12 @@ const builderPage = {
             removeSection(item, 'is-reinforced');
         }
 
-        const toggleUnitAddButton = (regItem, _regiment) => {
-            const btn = regItem.querySelector('.add-unit-button');
+        const toggleUnitAddButton = (regItem: HTMLElement, _regiment: RegimentInterf) => {
+            const btn = regItem.querySelector('.add-unit-button') as HTMLButtonElement;
             let maxUnits = 3;
             if ( _regiment.leader && _regiment.leader.isGeneral)
                 maxUnits = 4;
-            btn.disabled = (_regiment.units.length >= maxUnits) && _regiment.leader;
+            btn.disabled = (_regiment.units.length >= maxUnits) && _regiment.leader !== null;
 
             if (!_regiment.leader) {
                 btn.textContent = 'Add Leader +';
@@ -95,7 +114,7 @@ const builderPage = {
             }
         }
 
-        function _addEnhancementUpgradeSection(newUsItem, enhancement) {
+        function _addEnhancementUpgradeSection(newUsItem: HTMLElement, enhancement: EnhancementSlotInterf) {
             const div = document.createElement('div');
             div.classList.add('section');
             div.classList.add('upgrade-section');
@@ -105,7 +124,7 @@ const builderPage = {
             h3.textContent = `${enhancement.name}:`;
             div.appendChild(h3);
 
-            const details = newUsItem.querySelector('.unit-details');
+            const details = newUsItem.querySelector('.unit-details') as HTMLElement;
             details.appendChild(div);
             return div;
         }
@@ -171,15 +190,15 @@ const builderPage = {
             </div>
             `;
             div.className = `regiment-item`;
-            const btn = div.querySelector(`button`);
+            const btn = div.querySelector(`button`) as HTMLButtonElement;
             btn.onclick = () => {
                 const parent = div;
                 const idx = Number(parent.id.substring(parent.id.length-1)) - 1;
-                const content = parent.querySelector('.regiment-content');
+                const content = parent.querySelector('.regiment-content') as HTMLElement;
                 const count = content.children.length;
 
                 const settings = new UnitSettings;
-                settings.roster = thisPage.roster;
+                settings.roster = roster;
                 settings.regimentIndex = idx;
                 if (count === 0)
                     settings.type = 'hero';
@@ -189,14 +208,17 @@ const builderPage = {
             return div;
         }
 
-        function updateSelectableItemPrototype(prototype, displayableObj, isUnit, leftOnClick) {
-            const selectableItem = prototype.querySelector('.unit-slot-selectable-item-wrapper');
+        function updateSelectableItemPrototype(prototype: HTMLElement,
+                                               displayableObj: Identifiable & Typed,
+                                               isUnit: boolean,
+                                               leftOnClick: (this: HTMLElement, ev: MouseEvent) => any) {
+            const selectableItem = prototype.querySelector('.unit-slot-selectable-item-wrapper') as HTMLElement;
             selectableItem.addEventListener('click', leftOnClick);
 
             const nameEle = makeSelectableItemName(displayableObj);
             nameEle.classList.add('unit-text');
 
-            const left = prototype.querySelector('.selectable-item-left');
+            const left = prototype.querySelector('.selectable-item-left') as HTMLElement;
             left.appendChild(nameEle);
 
             const roleEle = makeSelectableItemType(displayableObj, isUnit);
@@ -205,7 +227,7 @@ const builderPage = {
             left.insertBefore(nameEle, left.firstChild);
         }
 
-        function clonePrototype(id, newId = '') {
+        function clonePrototype(id: string, newId = '') {
             const newUsItem = id.includes('unit') ? _newUnitSlot() : _newRegimentItem();
             newUsItem.id = newId;
             if (id.includes('unit')) {
@@ -217,12 +239,12 @@ const builderPage = {
             return newUsItem;
         }
 
-        const arrowOnClick = (arrow, details) => {
+        const arrowOnClick = (arrow: HTMLElement, details: HTMLElement | null) => {
             if(!details)
                 return;
             
             if (details.style.maxHeight) {
-                details.style.maxHeight = null;
+                details.style.maxHeight = '';
                 arrow.style.transform = 'rotate(0deg)';
             } else {
                 details.style.maxHeight = details.scrollHeight + "px";
@@ -230,8 +252,8 @@ const builderPage = {
             }
         }
 
-        async function displayWarscrollOption(unit, optionSet, newUsItem) {
-            const details = newUsItem.querySelector('.unit-details');
+        async function displayWarscrollOption(unit: UnitInterf, optionSet: OptionSet, newUsItem: HTMLElement) {
+            const details = newUsItem.querySelector('.unit-details') as HTMLElement;
             const warOptDiv = document.createElement('div');
             warOptDiv.className = 'section upgrade-section';
             warOptDiv.innerHTML = `
@@ -254,11 +276,11 @@ const builderPage = {
 
                 const costsPoints = option.points && option.points > 0;
                 if (!costsPoints) {
-                    const pl = upgradeDiv.querySelector('.points-label');
+                    const pl = upgradeDiv.querySelector('.points-label')as HTMLElement;
                     pl.style.display = 'none';
                 }
 
-                const label = upgradeDiv.querySelector(`.upgrade-button`);
+                const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
                 label.onclick = () => {
                     if (option.weapons.length > 0) {
                         displayWeaponOverlay({
@@ -276,23 +298,23 @@ const builderPage = {
                     label.style.display = 'none';
                 }
 
-                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
+                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
                 if (optionSet.selection && optionSet.selection.name === option.name) {
                     checkbox.checked = true;
                 }
 
-                const handlechange = (points, subtract=false) => {
+                const handlechange = (points: number, subtract=false) => {
                     if (costsPoints) {
                         const unitPoints = unitTotalPoints(unit);
-                        const usPoints = newUsItem.querySelector('.unit-slot-points');
+                        const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
                         displayPoints(usPoints, unitPoints, 'PTS');
                         if (subtract)
                             totalPoints -= points;
                         else
                             totalPoints += points;
-                        refreshPointsOverlay(thisPage.roster.id);
+                        refreshPointsOverlay(roster);
                     }
-                    updateValidationDisplay();
+                    updateValidationDisplay(roster);
                     putRoster(roster);
                 }
 
@@ -317,10 +339,15 @@ const builderPage = {
             details.appendChild(warOptDiv);
         }
 
-        async function displayEnhancements(unit, newUsItem, type) {
+        async function displayEnhancements(unit: UnitInterf, newUsItem: HTMLElement, type: string) {
             const details =  _addEnhancementUpgradeSection(newUsItem, unit.enhancements[type]);
             const allUpgrades = await thisPage.fetchUpgrades();
+            if (!allUpgrades)
+                return;
             const enhancementGroup = allUpgrades.enhancements[type];
+            if (!enhancementGroup)
+                return;
+
             const values = Object.values(enhancementGroup.upgrades);
             values.forEach(upgrade => {
                 const upgradeDiv = document.createElement('div');
@@ -339,16 +366,16 @@ const builderPage = {
 
                 const costsPoints = upgrade.points && upgrade.points > 0;
                 if (!costsPoints) {
-                    const pl = upgradeDiv.querySelector('.points-label');
+                    const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
                     pl.style.display = 'none';
                 }
 
-                const label = upgradeDiv.querySelector(`.upgrade-button`);
+                const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
                 label.onclick = () => {
                     displayUpgradeOverlay(upgrade);
                 };
 
-                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`);
+                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
                 if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
                     checkbox.checked = true;
                 }
@@ -359,12 +386,12 @@ const builderPage = {
                             unit.enhancements[type].slot = upgrade;
                             if (costsPoints) {
                                 const unitPoints = unitTotalPoints(unit);
-                                const usPoints = newUsItem.querySelector('.unit-slot-points');
+                                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
                                 displayPoints(usPoints, unitPoints, 'PTS');
                                 totalPoints += upgrade.points;
-                                refreshPointsOverlay(thisPage.roster.id);
+                                refreshPointsOverlay(roster);
                             }
-                            updateValidationDisplay();
+                            updateValidationDisplay(roster);
                             putRoster(roster);
                         } else if (unit.enhancements[type].slot.id !== upgrade.id) {
                             checkbox.checked = false;
@@ -374,11 +401,11 @@ const builderPage = {
                             unit.enhancements[type].slot = null;
                             if (costsPoints) {
                                 const unitPoints = unitTotalPoints(unit);
-                                const usPoints = newUsItem.querySelector('.unit-slot-points');
+                                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
                                 displayPoints(usPoints, unitPoints, 'PTS');
                                 removeObjectPoints(upgrade);
                             }
-                            updateValidationDisplay();
+                            updateValidationDisplay(roster);
                             putRoster(roster);
                         }
                     }
@@ -389,7 +416,7 @@ const builderPage = {
 
         const exportListAndDisplay = Overlay.toggleFactory('block', async () =>{
             const text = await exportRoster(roster);
-            const modal = document.querySelector(".modal");
+            const modal = document.querySelector(".modal") as HTMLElement;
 
             const section = document.createElement('textarea');
             section.innerHTML = text;
@@ -409,69 +436,73 @@ const builderPage = {
             modal.appendChild(copyButton);
         });
 
-        function removeSection(section, className) {
-            const child = section.querySelector(`.${className}`);
-            if (child) {
+        function removeSection(section: HTMLElement, className: string) {
+            const child = section.querySelector(`.${className}`) as HTMLElement | null;
+            if (child && child.parentElement) {
                 child.parentElement.removeChild(child);
             } else {
                 console.log (`failed to remove ${className}`)
             }
         }
 
-        async function createUnitSlot(parent, unit, idx, callbackMap, onclick, isUnit){
+        async function createUnitSlot(parent: HTMLElement, 
+                                      unit: UnitInterf | BattleTacticCardInterf | UpgradeInterf | LoreInterf, 
+                                      idx: number, 
+                                      callbackMap: CallbackMap | string, 
+                                      onclick: (this: HTMLElement, ev: MouseEvent) => any, isUnit: boolean){
             if (!unit)
                 return;
             const newUsItem = clonePrototype('unit-slot-prototype');
             
-            const hiddenIdx = newUsItem.querySelector('.unit-idx');
-            hiddenIdx.textContent = idx;
+            const hiddenIdx = newUsItem.querySelector('.unit-idx') as HTMLElement;
+            hiddenIdx.textContent = `${idx}`;
 
             let numOptions = 0;
-            const canBeGeneral = !(unit.type !== 0 || !parent.className.includes('regiment'));
-            if (unit.type !== 0 || !parent.className.includes('regiment')) {
+            const canBeGeneral = !(unit.type !== UnitType.Hero || !parent.className.includes('regiment'));
+            if (unit.type !== UnitType.Hero || !parent.className.includes('regiment')) {
                 removeSection(newUsItem, 'is-general');
             } else {
                 ++ numOptions;
-                const checkbox = newUsItem.querySelector('.general-checkbox');
+                const checkbox = newUsItem.querySelector('.general-checkbox') as HTMLInputElement;
                 checkbox.onchange = () => {
-                    const unitContainer = checkbox.closest('.unit-slot');
-                    const crown = unitContainer.querySelector('.general-label');
+                    const unitContainer = checkbox.closest('.unit-slot') as HTMLElement;
+                    const generalLabel = unitContainer.querySelector('.general-label') as HTMLElement;
 
-                    crown.style.display = checkbox.checked ? 'inline' : 'none';
+                    generalLabel.style.display = checkbox.checked ? 'inline' : 'none';
 
                     let regiment = null;
                     let div = checkbox.closest(".regiment-item");
                     if (div) {
-                        div = div.querySelector(".regiment-idx");
+                        div = div.querySelector(".regiment-idx") as HTMLElement;
                         const regIdx = Number(div.textContent);
-                        regiment = thisPage.roster.regiments[regIdx];
+                        regiment = roster.regiments[regIdx];
                     }
 
                     let unit = null;
-                    div = checkbox.closest(".unit-slot");
-                    div = div.querySelector(".unit-idx");
+                    div = checkbox.closest(".unit-slot") as HTMLElement;
+                    div = div.querySelector(".unit-idx") as HTMLElement;
                     const unitIdx = Number(div.textContent);
                     if (regiment) {
                         unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
                     } else {
-                        unit = thisPage.roster.auxiliaryUnits[unitIdx];
+                        unit = roster.auxiliaryUnits[unitIdx];
                     }
 
-                    unit.isGeneral = checkbox.checked;
+                    unit!!.isGeneral = checkbox.checked;
                     putRoster(roster);
-                    updateValidationDisplay();
+                    updateValidationDisplay(roster);
 
                     if (regiment) {
-                        const regItem = parent.closest('.regiment-item');
+                        const regItem = parent.closest('.regiment-item') as HTMLElement;
                         toggleUnitAddButton(regItem, regiment);
                     }
                 };
             }
 
-            if (!unit.canBeReinforced) {
+            if (!(unit as UnitInterf).canBeReinforced) {
                 if (!canBeGeneral) {
-                    const child = newUsItem.querySelector(`.is-reinforced`);
-                    const parentSection = child.closest('.section');
+                    const child = newUsItem.querySelector(`.is-reinforced`) as HTMLElement;
+                    const parentSection = child.closest('.section') as HTMLElement;
                     parentSection.style.display = 'none';
                 }
                 {
@@ -479,67 +510,66 @@ const builderPage = {
                 }
             } else {
                 ++ numOptions;
-                const checkbox = newUsItem.querySelector('.reinforced-checkbox');
+                const checkbox = newUsItem.querySelector('.reinforced-checkbox') as HTMLInputElement;
                 checkbox.onchange = () => {
-                    const unitContainer = checkbox.closest('.unit-slot');
-                    const crown = unitContainer.querySelector('.reinforced-label');
-
-                    crown.style.display = checkbox.checked ? 'inline' : 'none';
+                    const unitContainer = checkbox.closest('.unit-slot') as HTMLElement;
+                    const reinLabel = unitContainer.querySelector('.reinforced-label') as HTMLElement;
+                    reinLabel.style.display = checkbox.checked ? 'inline' : 'none';
 
                     let regiment = null;
                     let div = checkbox.closest(".regiment-item");
                     if (div) {
-                        div = div.querySelector(".regiment-idx");
+                        div = div.querySelector(".regiment-idx") as HTMLElement;
                         const regIdx = Number(div.textContent);
-                        regiment = thisPage.roster.regiments[regIdx];
+                        regiment = roster.regiments[regIdx];
                     }
 
                     let unit = null;
-                    div = checkbox.closest(".unit-slot");
-                    div = div.querySelector(".unit-idx");
+                    div = checkbox.closest(".unit-slot") as HTMLElement;
+                    div = div.querySelector(".unit-idx") as HTMLElement;
                     const unitIdx = Number(div.textContent);
                     if (regiment) {
                         unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
                     } else {
-                        unit = thisPage.roster.auxiliaryUnits[unitIdx];
+                        unit = roster.auxiliaryUnits[unitIdx];
                     }
 
-                    const ptsBefore = unitTotalPoints(unit);
-                    unit.isReinforced = checkbox.checked;
-                    const ptsAfter = unitTotalPoints(unit);
+                    const ptsBefore = unitTotalPoints(unit!!);
+                    unit!!.isReinforced = checkbox.checked;
+                    const ptsAfter = unitTotalPoints(unit!!);
                     putRoster(roster);
 
-                    const usPoints = unitContainer.querySelector('.unit-slot-points');
+                    const usPoints = unitContainer.querySelector('.unit-slot-points') as HTMLElement;
                     usPoints.textContent = `${ptsAfter} PTS`;
                     totalPoints = totalPoints - (ptsBefore - ptsAfter);
-                    refreshPointsOverlay(thisPage.roster.id);
-                    updateValidationDisplay();
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
                 };
             }
 
-            if (unit.enhancements) {
-                const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
+            if ((unit as UnitInterf).enhancements) {
+                const enhancementNames = Object.getOwnPropertyNames((unit as UnitInterf).enhancements);
                 if (enhancementNames.length > 1)
                     enhancementNames.sort((a,b) => a.localeCompare(b));
                 for (let e = 0; e < enhancementNames.length; ++e) {
                     ++ numOptions;
-                    await displayEnhancements(unit, newUsItem, enhancementNames[e]);
+                    await displayEnhancements((unit as UnitInterf), newUsItem, enhancementNames[e]);
                 }
             }
 
-            if (unit.optionSets) {
-                unit.optionSets.forEach(optionSet => {
+            if ((unit as UnitInterf).optionSets) {
+                (unit as UnitInterf).optionSets.forEach(optionSet => {
                     ++numOptions;
-                    displayWarscrollOption(unit, optionSet, newUsItem);
+                    displayWarscrollOption((unit as UnitInterf), optionSet, newUsItem);
                 });
             }
             
             // to-do display as part of the model
-            if (unit.models) {
-                unit.models.forEach(model => {
+            if ((unit as UnitInterf).models) {
+                (unit as UnitInterf).models.forEach(model => {
                     model.optionSets.forEach(optionSet => {
                         ++numOptions;
-                        displayWarscrollOption(unit, optionSet, newUsItem);
+                        displayWarscrollOption((unit as UnitInterf), optionSet, newUsItem);
                     });
                 });
             }
@@ -547,20 +577,21 @@ const builderPage = {
             if (numOptions < 1) {
                 // remove drawer
                 removeSection(newUsItem, "unit-details");
-                const arrow = newUsItem.querySelector('.arrow');
+                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
                 disableArrow(arrow);
             } else {
-                const arrow = newUsItem.querySelector('.arrow');
-                arrow.closest('.arrow-wrapper').onclick = (event) => {
+                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
+                const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement;
+                wrapper.onclick = (event) => {
                     event.stopPropagation();
                     arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
                 }
             }
 
-            if (unit.isGeneral) {
+            if ((unit as UnitInterf).isGeneral) {
                 // Temporarily disable onchange event
-                const icon = newUsItem.querySelector('.general-label');
-                const checkbox = newUsItem.querySelector(`.general-checkbox`);
+                const icon = newUsItem.querySelector('.general-label') as HTMLElement;
+                const checkbox = newUsItem.querySelector(`.general-checkbox`) as HTMLInputElement;
                 const originalOnChange = checkbox.onchange;
                 checkbox.onchange = null;
 
@@ -572,10 +603,10 @@ const builderPage = {
                 checkbox.onchange = originalOnChange;
             }
 
-            if (unit.isReinforced) {
+            if ((unit as UnitInterf).isReinforced) {
                 // Temporarily disable onchange event
-                const icon = newUsItem.querySelector('.reinforced-label');
-                const checkbox = newUsItem.querySelector(`.reinforced-checkbox`);
+                const icon = newUsItem.querySelector('.reinforced-label') as HTMLElement;
+                const checkbox = newUsItem.querySelector(`.reinforced-checkbox`) as HTMLInputElement;
                 const originalOnChange = checkbox.onchange;
                 checkbox.onchange = null;
 
@@ -587,26 +618,31 @@ const builderPage = {
                 checkbox.onchange = originalOnChange;
             }
 
-            const unitPoints = unitTotalPoints(unit);
-            const usPoints = newUsItem.querySelector('.unit-slot-points');
+            let unitPoints = 0;
+            if (unit.superType === 'Unit')
+                unitPoints = unitTotalPoints(unit as UnitInterf);
+            else if (unit.superType !== 'Other')
+                unitPoints = (unit as Costed).points;
+
+            const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
             displayPoints(usPoints, unitPoints, 'PTS');
 
-            let unitHdr = newUsItem.querySelector(".selectable-item-right");
+            let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
             if (typeof callbackMap === 'string') {
-                const regItem = parent.closest('.regiment-item');
+                const regItem = parent.closest('.regiment-item') as HTMLElement;
                 if (regItem) {
-                    const _div = regItem.querySelector('.regiment-idx');
+                    const _div = regItem.querySelector('.regiment-idx') as HTMLElement;
                     const _currentRegIdx = Number(_div.textContent);
-                    toggleUnitAddButton(regItem, thisPage.roster.regiments[Number(_currentRegIdx)]);
+                    toggleUnitAddButton(regItem, roster.regiments[Number(_currentRegIdx)]);
                 }
                 
                 callbackMap = {};
-                callbackMap.Duplicate = async (e) => {
-                    const regItem = parent.closest('.regiment-item');
-                    const _div = regItem.querySelector('.regiment-idx');
+                callbackMap.Duplicate = async () => {
+                    const regItem = parent.closest('.regiment-item') as HTMLElement;
+                    const _div = regItem.querySelector('.regiment-idx') as HTMLElement;
                     const _currentRegIdx = Number(_div.textContent);
 
-                    const reg = thisPage.roster.regiments[Number(_currentRegIdx)];
+                    const reg = roster.regiments[Number(_currentRegIdx)];
                     const json = JSON.stringify(unit);
                     const clone = JSON.parse(json);
                     reg.units.push(clone);
@@ -616,41 +652,41 @@ const builderPage = {
 
                     await createUnitSlot(parent, clone, reg.units.length-1, 'foo', onclick, isUnit);
                     totalPoints += unitTotalPoints(clone);
-                    refreshPointsOverlay();
-                    updateValidationDisplay();
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
                 };
 
-                callbackMap.Delete = async (e) => {
+                callbackMap.Delete = async () => {
                     // get the regiment index, dont assume it hasnt changed
-                    const regItem = parent.closest('.regiment-item');
-                    let _div = regItem.querySelector('.regiment-idx');
+                    const regItem = parent.closest('.regiment-item') as HTMLElement;
+                    let _div = regItem.querySelector('.regiment-idx') as HTMLElement;
                     const _currentRegIdx = Number(_div.textContent);
 
                     // get the unit index, don't assume it hasn't changed
-                    _div = newUsItem.querySelector('.unit-idx');
+                    _div = newUsItem.querySelector('.unit-idx') as HTMLElement;
                     const _currentIdx = Number(_div.textContent);
 
                     // remove from the object
                     if (_currentIdx === -1) {
-                        thisPage.roster.regiments[_currentRegIdx].leader = null;
+                        roster.regiments[_currentRegIdx].leader = null;
                     } else {
-                        thisPage.roster.regiments[_currentRegIdx].units.splice(_currentIdx, 1);
+                        roster.regiments[_currentRegIdx].units.splice(_currentIdx, 1);
                     }
                     putRoster(roster);
                     
-                    toggleUnitAddButton(regItem, thisPage.roster.regiments[_currentRegIdx]);
+                    toggleUnitAddButton(regItem, roster.regiments[_currentRegIdx]);
 
                     // update the points
-                    removeObjectPoints(unit);
+                    removeObjectPoints(unit as UnitInterf);
 
                     // remove the div and move all of the other unit indices
                     parent.removeChild(newUsItem);
                     const slots = parent.querySelectorAll('.unit-slot');
                     slots.forEach((slot, newIdx) => {
-                        const hiddenIdx = slot.querySelector('.unit-idx');
-                        hiddenIdx.textContent = newIdx;
+                        const hiddenIdx = slot.querySelector('.unit-idx') as HTMLElement;
+                        hiddenIdx.textContent = `${newIdx}`;
                     });
-                    toggleUnitAddButton(parent, thisPage.roster.regiments[_currentRegIdx]);
+                    toggleUnitAddButton(parent, roster.regiments[_currentRegIdx]);
                 }
             }
             if (callbackMap) {
@@ -664,25 +700,30 @@ const builderPage = {
         }
 
         async function displayRegimentOfRenown() {
-            const regimentsDiv = document.getElementById('regiments-container');
+            const regiment = roster.regimentOfRenown;
+            if (!regiment)
+                return;
+
+            const regimentsDiv = document.getElementById('regiments-container') as HTMLElement;
             const newRegItem = clonePrototype('regiment-item-prototype');
             newRegItem.id = `regiment-item-of-renown`;
-            const regiment = thisPage.roster.regimentOfRenown;
 
             const deadButton = newRegItem.querySelector('.add-unit-button');
-            deadButton.parentElement.removeChild(deadButton);
+            if (deadButton && deadButton.parentElement)
+                deadButton.parentElement.removeChild(deadButton);
 
-            const title = newRegItem.querySelector('.regiment-item-title');
+            const title = newRegItem.querySelector('.regiment-item-title') as HTMLElement;
             title.innerHTML = `Regiment of Renown`;
 
-            const content = newRegItem.querySelector('.regiment-content');
+            const content = newRegItem.querySelector('.regiment-content') as HTMLElement;
             
             // slot for the ability
             const addRorAbility = () => {
                 const newUsItem = clonePrototype('unit-slot-prototype');
                 
-                const arrow = newUsItem.querySelector('.arrow');
-                arrow.closest('.arrow-wrapper').onclick = (event) => {
+                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
+                const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement
+                wrapper.onclick = (event: Event) => {
                     event.stopPropagation();
                     arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
                 }
@@ -693,25 +734,25 @@ const builderPage = {
                 // these are all for units
                 clearDetailsSection(newUsItem);
 
-                const usPoints = newUsItem.querySelector('.unit-slot-points');
+                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
                 displayPoints(usPoints, regiment.points, 'PTS');
 
-                let unitHdr = newUsItem.querySelector(".selectable-item-right");
+                let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
                 // does nothing but helps positioning be consistant
                 const menu = ContextMenu.create({});
                 unitHdr.appendChild(menu);
 
                 content.appendChild(newUsItem);
                 newUsItem.style.display = "";
-                const details = newUsItem.querySelector('.unit-details');
-                const detailSection = details.querySelector('.section');
+                const details = newUsItem.querySelector('.unit-details') as HTMLElement;
+                const detailSection = details.querySelector('.section') as HTMLElement;
                 detailSection.style.display = 'none';
                 return details;
             }
 
             const details = addRorAbility();
 
-            const _createUnitSlot = async (unit) => {
+            const _createUnitSlot = async (unit: UnitInterf) => {
                 const newUsItem = clonePrototype('unit-slot-prototype');
                 
                 updateSelectableItemPrototype(newUsItem, unit, true, () => {
@@ -722,14 +763,14 @@ const builderPage = {
 
                 // remove toggle
                 removeSection(newUsItem, "unit-details");
-                const arrow = newUsItem.querySelector('.arrow');
+                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
                 disableArrow(arrow);
         
-                const usPoints = newUsItem.querySelector('.unit-slot-points');
+                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
                 usPoints.style.display = 'none';
                 usPoints.textContent = '';
 
-                let unitHdr = newUsItem.querySelector(".selectable-item-right");
+                let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
                 // does nothing but helps positioning be consistant
                 const menu = ContextMenu.create({});
                 unitHdr.appendChild(menu);
@@ -745,45 +786,45 @@ const builderPage = {
                     await _createUnitSlot(unitContainer.unit);
             }
 
-            const pointsSpan = newRegItem.querySelector('.regiment-item-points');
+            const pointsSpan = newRegItem.querySelector('.regiment-item-points') as HTMLElement;
             displayPoints(pointsSpan, regiment.points, 'pts');
             totalPoints += regiment.points;
 
             const callbackMap = {
-                Delete: async (e) => {
+                Delete: async () => {
                     removeObjectPoints(regiment);
-                    thisPage.roster.regimentOfRenown = null;
+                    roster.regimentOfRenown = null;
                     putRoster(roster);
                     regimentsDiv.removeChild(newRegItem);
                 }
             };
 
             const menu = ContextMenu.create(callbackMap);
-            const regHdr = newRegItem.querySelector(".regiment-header");
+            const regHdr = newRegItem.querySelector(".regiment-header") as HTMLElement;
             regHdr.appendChild(menu);
 
             newRegItem.removeAttribute('style');
             regimentsDiv.appendChild(newRegItem);
-            refreshPointsOverlay(thisPage.roster.id);
+            refreshPointsOverlay(roster);
         }
 
-        async function displayRegiment(index) {
-            const regimentsDiv = document.getElementById('regiments-container');
-            const regiment = thisPage.roster.regiments[index];
+        async function displayRegiment(index: number) {
+            const regimentsDiv = document.getElementById('regiments-container') as HTMLElement;
+            const regiment = roster.regiments[index];
             const newRegItem = clonePrototype('regiment-item-prototype');
             newRegItem.id = '';
 
-            const setInternalIdx = (_regItem, _index) => {
-                const hiddenIdx = _regItem.querySelector('.regiment-idx');
-                hiddenIdx.textContent = _index;
+            const setInternalIdx = (_regItem: HTMLElement, _index: number) => {
+                const hiddenIdx = _regItem.querySelector('.regiment-idx') as HTMLElement;
+                hiddenIdx.textContent = `${_index}`;
                 _regItem.id = `regiment-item-${_index+1}`;
-                const title = _regItem.querySelector('.regiment-item-title');
+                const title = _regItem.querySelector('.regiment-item-title') as HTMLElement;
                 title.innerHTML = `Regiment ${_index+1}`;
             }
 
             setInternalIdx(newRegItem, index);
 
-            const content = newRegItem.querySelector('.regiment-content');
+            const content = newRegItem.querySelector('.regiment-content') as HTMLElement;
 
             let points = 0;
             if (regiment.leader) {
@@ -794,7 +835,7 @@ const builderPage = {
                 }, true);
                 points += unitTotalPoints(regiment.leader);
             } else {
-                const btn = newRegItem.querySelector('.add-unit-button');
+                const btn = newRegItem.querySelector('.add-unit-button') as HTMLButtonElement;
                 btn.textContent = 'Add Leader +';
             }
 
@@ -809,72 +850,73 @@ const builderPage = {
                 points += unitTotalPoints(unit);
             };
 
-            const pointsSpan = newRegItem.querySelector('.regiment-item-points');
+            const pointsSpan = newRegItem.querySelector('.regiment-item-points') as HTMLElement;
             if (points > 0) {
                 pointsSpan.textContent = `${points} pts`;
                 totalPoints += points;
             }
 
             const callbackMap = {
-                Duplicate: async (e) => {
-                    const _div = newRegItem.querySelector('.regiment-idx');
+                Duplicate: async () => {
+                    const _div = newRegItem.querySelector('.regiment-idx') as HTMLElement;
                     const _currentIdx = Number(_div.textContent);
-                    const reg = thisPage.roster.regiments[_currentIdx];
+                    const reg = roster.regiments[_currentIdx];
                     const json = JSON.stringify(reg);
                     const clone = JSON.parse(json);
-                    thisPage.roster.regiments.push(clone);
+                    roster.regiments.push(clone);
                     putRoster(roster);
-                    displayRegiment(thisPage.roster.regiments.length-1);
-                    updateValidationDisplay();
+                    displayRegiment(roster.regiments.length-1);
+                    updateValidationDisplay(roster);
 
-                    if (thisPage.roster.regiments.length > 4) {
-                        const btn = document.getElementById('regiments-add-button');
+                    if (roster.regiments.length > 4) {
+                        const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
                         btn.disabled = true;
                     }
                 },
 
-                Delete: async (e) => {
-                    const _div = newRegItem.querySelector('.regiment-idx');
+                Delete: async () => {
+                    const _div = newRegItem.querySelector('.regiment-idx') as HTMLElement;
                     const _currentIdx = Number(_div.textContent);
-                    const reg = thisPage.roster.regiments[_currentIdx];
-                    totalPoints -= unitTotalPoints(reg.leader);
+                    const reg = roster.regiments[_currentIdx];
+                    if (reg.leader)
+                        totalPoints -= unitTotalPoints(reg.leader);
                     reg.units.forEach(unit => {
                         totalPoints -= unitTotalPoints(unit);
                     });
-                    thisPage.roster.regiments.splice(_currentIdx, 1);
+                    roster.regiments.splice(_currentIdx, 1);
                     putRoster(roster);
-                    refreshPointsOverlay();
+                    refreshPointsOverlay(roster);
 
                     // remove this regiment
                     regimentsDiv.removeChild(newRegItem);
 
                     // update remaining regiments
-                    const divs = regimentsDiv.querySelectorAll('.regiment-item');
+                    const divs = regimentsDiv.querySelectorAll('.regiment-item') as NodeListOf<HTMLElement>;
                     divs.forEach((div, idx)=> {
                         setInternalIdx(div, idx);
                     });
                     
-                    if (thisPage.roster.regiments.length < 5) {
-                        const btn = document.getElementById('regiments-add-button');
+                    if (roster.regiments.length < 5) {
+                        const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
                         btn.disabled = false;
                     }
                 }
             };
 
             const menu = ContextMenu.create(callbackMap);
-            const regHdr = newRegItem.querySelector(".regiment-header");
+            const regHdr = newRegItem.querySelector(".regiment-header") as HTMLElement;
             regHdr.appendChild(menu);
 
             newRegItem.removeAttribute('style');
             regimentsDiv.appendChild(newRegItem);
 
-            refreshPointsOverlay(thisPage.roster.id);
+            refreshPointsOverlay(roster);
         }
 
-        async function getSpecificUnit(id, useArmy) {
+        async function getSpecificUnit(id: string, useArmy: boolean) {
             let url = `${endpoint}/units?id=${id}`;
             if (useArmy) {
-                url = `${url}&army=${thisPage.roster.army}`;
+                url = `${url}&army=${roster.army}`;
             }
 
             try {
@@ -886,8 +928,11 @@ const builderPage = {
         }
 
         async function getManifestationUnits() {
-            const ids = thisPage.roster.lores.manifestation.unitIds;
-            let manifestations = [];
+            if (!roster.lores.manifestation)
+                return null;
+
+            const ids = roster.lores.manifestation.unitIds;
+            let manifestations: UnitInterf[] = [];
             let armySpecific = false;
             for (let i = 0; i < ids.length; ++i) {
                 let unit = await getSpecificUnit(ids[i], armySpecific);
@@ -902,20 +947,29 @@ const builderPage = {
             return { units: manifestations, armyUnits: armySpecific };
         }
 
-        function displaySingleton(typename, callbackMap, unit, idx, onclick, isUnit) {
+        function displaySingleton(typename: string,
+                                  callbackMap: CallbackMap,
+                                  unit: UnitInterf | UpgradeInterf,
+                                  idx: number,
+                                  onclick: (this: HTMLElement, ev: MouseEvent) => any,
+                                  isUnit: boolean) {
             const parent = document.getElementById(typename);
+            if (!parent)
+                return;
             
             createUnitSlot(parent, unit, idx, callbackMap, onclick, isUnit);
 
-            const unitsPoints = unitTotalPoints(unit);
+            let unitsPoints = unit.points;
+            if (unit.superType === 'Unit') 
+                unitsPoints = unitTotalPoints(unit as UnitInterf);
             totalPoints += unitsPoints;
 
-            refreshPointsOverlay(thisPage.roster.id);
+            refreshPointsOverlay(roster);
         }
 
-        function displayAux(idx) {
+        function displayAux(idx: number) {
             const typename = 'auxiliary-units-container';
-            const unit = thisPage.roster.auxiliaryUnits[idx];
+            const unit = roster.auxiliaryUnits[idx];
             const onclick = () => {
                 const settings = new WarscrollSettings;
                 settings.unit = unit;
@@ -923,22 +977,22 @@ const builderPage = {
             };
             
             const callbackMap = {
-                Duplicate: async (e) => {
+                Duplicate: async () => {
                     const json = JSON.stringify(unit);
                     const clone = JSON.parse(json);
-                    thisPage.roster.auxiliaryUnits.push(clone);
+                    roster.auxiliaryUnits.push(clone);
                     putRoster(roster);
-                    displayAux(thisPage.roster.auxiliaryUnits.length-1);
+                    displayAux(roster.auxiliaryUnits.length-1);
                 },
 
-                Delete: async (e) => {
-                    thisPage.roster.auxiliaryUnits.splice(idx, 1);
+                Delete: async () => {
+                    roster.auxiliaryUnits.splice(idx, 1);
                     putRoster(roster);
                     
-                    const parent = document.getElementById(typename);
+                    const parent = document.getElementById(typename) as HTMLElement;
                     const slots = parent.querySelectorAll('.unit-slot');
                     slots.forEach(slot => {
-                        const hiddenIdx = slot.querySelector('.unit-idx');
+                        const hiddenIdx = slot.querySelector('.unit-idx') as HTMLElement;
                         if (idx === Number(hiddenIdx.textContent)) {
                             parent.removeChild(slot);
                         }
@@ -953,40 +1007,44 @@ const builderPage = {
             const typename = 'faction-terrain-container';
             const onclick = () => {
                 const settings = new WarscrollSettings;
-                settings.unit = thisPage.roster.terrainFeature;
+                settings.unit = roster.terrainFeature;
                 dynamicGoTo(settings);
             };
 
             const callbackMap = {
-                Replace: async (e) => {
-                    thisPage.roster.terrainFeature = null;
+                Replace: async () => {
+                    roster.terrainFeature = null;
                     putRoster(roster);
                     const settings = new UnitSettings;
-                    settings.roster = thisPage.roster;
+                    settings.roster = roster;
                     settings.type = 'faction terrain';
                     dynamicGoTo(settings);
                 },
 
-                Delete: async (e) => {
-                    removeObjectPoints(thisPage.roster.terrainFeature);
-                    thisPage.roster.terrainFeature = null;
-                    await putRoster(roster);
-                    const terrain = document.getElementById('faction-terrain-container');
-                    terrain.innerHTML = '';
-                    const btn = document.getElementById('faction-terrain-add-button');
-                    btn.disabled = false;
+                Delete: async () => {
+                    if (roster.terrainFeature) {
+                        removeObjectPoints(roster.terrainFeature);
+                        roster.terrainFeature = null;
+                        await putRoster(roster);
+                        const terrain = document.getElementById('faction-terrain-container') as HTMLElement;
+                        terrain.innerHTML = '';
+                        const btn = document.getElementById('faction-terrain-add-button') as HTMLButtonElement;
+                        btn.disabled = false;
+                    }
                 }
             };
 
-            displaySingleton(typename, callbackMap, thisPage.roster.terrainFeature, 0, onclick, true);
-            const btn = document.getElementById('faction-terrain-add-button');
-            btn.disabled = true;
+            if (roster.terrainFeature) {
+                displaySingleton(typename, callbackMap, roster.terrainFeature, 0, onclick, true);
+                const btn = document.getElementById('faction-terrain-add-button') as HTMLButtonElement;
+                btn.disabled = true;
+            }
         }
 
         function displayBattleTraits() {
             const typename = 'battle-traits-&-formation-container';
-            const traitNames = Object.getOwnPropertyNames(thisPage.roster.battleTraits);
-            const trait = thisPage.roster.battleTraits[traitNames[0]];
+            const traitNames = Object.getOwnPropertyNames(roster.battleTraits);
+            const trait = roster.battleTraits[traitNames[0]];
             const onclick = () => {
                 displayUpgradeOverlay(trait);
             };
@@ -994,26 +1052,26 @@ const builderPage = {
             
             updateSelectableItemPrototype(newUsItem, trait, false, onclick);
 
-            const usName = newUsItem.querySelector('.unit-text');
+            const usName = newUsItem.querySelector('.unit-text') as HTMLElement;
             usName.textContent = trait.name.replace("Battle Traits: ", "");
 
-            const label = newUsItem.querySelector('.ability-label');
+            const label = newUsItem.querySelector('.ability-label') as HTMLElement;
             label.textContent = 'Battle Traits';
 
-            const usPoints = newUsItem.querySelector('.unit-slot-points');
+            const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
             usPoints.style.display = 'none';
             usPoints.innerHTML = '';
 
             removeSection(newUsItem, "unit-details");
-            const arrow = newUsItem.querySelector('.arrow');
+            const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
             disableArrow(arrow);
             
-            let unitHdr = newUsItem.querySelector(".selectable-item-right");
+            let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
             // does nothing but helps positioning be consistant
             const menu = ContextMenu.create({});
             unitHdr.appendChild(menu);
 
-            const parent = document.getElementById(typename);
+            const parent = document.getElementById(typename) as HTMLElement;
             parent.appendChild(newUsItem);
             newUsItem.style.display = "";
         }
@@ -1021,66 +1079,75 @@ const builderPage = {
         function displayBattleFormation() {
             const typename = 'battle-traits-&-formation-container';
             const onclick = () => {
-                displayUpgradeOverlay(thisPage.roster.battleFormation);
+                displayUpgradeOverlay(roster.battleFormation);
             }
             
             const callbackMap = {
-                Replace: async (e) => {
-                    thisPage.roster.battleFormation = null;
+                Replace: async () => {
+                    roster.battleFormation = null;
                     putRoster(roster);
                     const settings = new UpgradeSettings;
                     settings.titleName = 'Battle Formation';
-                    settings.roster = thisPage.roster;
+                    settings.roster = roster;
                     settings.type = 'battleFormations';
                     dynamicGoTo(settings);
                 }
             };
 
-            displaySingleton(typename, callbackMap, thisPage.roster.battleFormation, 900, onclick, false);
+            if (roster.battleFormation)
+                displaySingleton(typename, callbackMap, roster.battleFormation, 900, onclick, false);
         }
 
-        async function displayLore(name, callbackMap, onclick) {
+        async function displayLore(name: string, callbackMap: CallbackMap, onclick: (this: HTMLElement, ev: MouseEvent) => any) {
             const typename = 'lores-container';
             const lcName = name.toLowerCase();
             const parent = document.getElementById(typename);
+            if (!parent)
+                return;
 
-            const slot = await createUnitSlot(parent, thisPage.roster.lores[lcName], 0, callbackMap, onclick, false);
-            slot.id = `${lcName}-slot`;
+            const indexedLores =  (roster.lores as unknown as {[name: string]: LoreInterf});
 
-            const unitsPoints = unitTotalPoints(thisPage.roster.lores[lcName]);
+            const slot = await createUnitSlot(parent, indexedLores[lcName], 0, callbackMap, onclick, false);
+            if (slot)
+                slot.id = `${lcName}-slot`;
+
+            const unitsPoints = indexedLores[lcName].points;
             if (unitsPoints) {
                 totalPoints += unitsPoints;
-                refreshPointsOverlay(thisPage.roster.id);
+                refreshPointsOverlay(roster);
             }
         }
 
         function displaySpellLore() {
             const onclick = () => {
-                displayUpgradeOverlay(thisPage.roster.lores.spell);
+                displayUpgradeOverlay(roster.lores.spell);
             }
 
             const callbackMap = {
-                Replace: async (e) => {
-                    removeObjectPoints(thisPage.roster.lores.spell);
+                Replace: async () => {
+                    if (roster.lores.spell)
+                        removeObjectPoints(roster.lores.spell);
 
-                    thisPage.roster.lores.spell = null;
+                    roster.lores.spell = null;
                     putRoster(roster);
                     
                     const settings = new UpgradeSettings;
                     settings.titleName = 'Lores';
-                    settings.roster = thisPage.roster;
+                    settings.roster = roster;
                     settings.type = 'spellLore';
                     dynamicGoTo(settings);
                 },
 
-                Delete: async (e) => {
-                    removeObjectPoints(thisPage.roster.lores.spell);
+                Delete: async () => {
+                    if (roster.lores.spell)
+                        removeObjectPoints(roster.lores.spell);
 
-                    thisPage.roster.lores.spell = null;
+                    roster.lores.spell = null;
                     await putRoster(roster);
                     
                     const ele = document.getElementById('spell-slot');
-                    ele.parentElement.removeChild(ele);
+                    if (ele && ele.parentElement)
+                        ele.parentElement.removeChild(ele);
 
                 }
             };
@@ -1090,31 +1157,34 @@ const builderPage = {
 
         function displayPrayerLore() {
             const onclick = () => {
-                displayUpgradeOverlay(thisPage.roster.lores.prayer);
+                displayUpgradeOverlay(roster.lores.prayer);
             }
 
             const callbackMap = {
-                Replace: async (e) => {
-                    removeObjectPoints(thisPage.roster.lores.prayer);
+                Replace: async () => {
+                    if (roster.lores.prayer)
+                        removeObjectPoints(roster.lores.prayer);
 
-                    thisPage.roster.lores.prayer = null;
+                    roster.lores.prayer = null;
                     putRoster(roster);
 
                     const settings = new UpgradeSettings;
                     settings.titleName = 'Lores';
-                    settings.roster = thisPage.roster;
+                    settings.roster = roster;
                     settings.type = 'prayerLore';
                     dynamicGoTo(settings);
                 },
 
-                Delete: async (e) => {
-                    removeObjectPoints(thisPage.roster.lores.prayer);
+                Delete: async () => {
+                    if (roster.lores.prayer)
+                        removeObjectPoints(roster.lores.prayer);
 
-                    thisPage.roster.lores.prayer = null;
+                    roster.lores.prayer = null;
                     await putRoster(roster);
                     
                     const ele = document.getElementById('prayer-slot');
-                    ele.parentElement.removeChild(ele);
+                    if (ele && ele.parentElement)
+                        ele.parentElement.removeChild(ele);
                 }
             };
 
@@ -1122,47 +1192,55 @@ const builderPage = {
         }
 
         async function displayManifestLore() {
-            const lore = thisPage.roster.lores.manifestation;
-            const parent = document.getElementById('lores-container');
-            const newUsItem = clonePrototype('unit-slot-prototype');
+            const lore = roster.lores.manifestation;
+            if (!lore)
+                return;
+
+            const parent = document.getElementById('lores-container') as HTMLElement;
+            const newUsItem = clonePrototype('unit-slot-prototype') as HTMLElement;
             
             updateSelectableItemPrototype(newUsItem, lore, false, () => {
-                displayUpgradeOverlay(thisPage.roster.lores.manifestation);
+                displayUpgradeOverlay(roster.lores.manifestation);
             });
 
             const arrow = newUsItem.querySelector('.arrow');
-            arrow.closest('.arrow-wrapper').onclick = (event) => {
-                event.stopPropagation();
-                arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
+            if (arrow) {
+                const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement;
+                wrapper.onclick = (event: Event) => {
+                    event.stopPropagation();
+                    arrowOnClick(arrow as HTMLElement, newUsItem.querySelector('.unit-details'));
+                }
             }
             
             async function displayManifestations() {
                 const result = await getManifestationUnits();
+                if (!result)
+                    return;
 
-                const details = newUsItem.querySelector('.unit-details');
-                const detailSection = details.querySelector('.section');
+                const details = newUsItem.querySelector('.unit-details') as HTMLElement;
+                const detailSection = details.querySelector('.section') as HTMLElement;
                 detailSection.style.display = 'none';
 
-                const createManifestSlot = async (unit, onclick) => {
+                const createManifestSlot = async (unit: UnitInterf, onclick: (this: GlobalEventHandlers, ev: MouseEvent) => any) => {
                     const subUsItem = clonePrototype('unit-slot-prototype');
                     
                     updateSelectableItemPrototype(subUsItem, unit, true, onclick);
 
                     clearDetailsSection(subUsItem);
-                    const arrow = subUsItem.querySelector('.arrow');
+                    const arrow = subUsItem.querySelector('.arrow') as HTMLElement;
                     disableArrow(arrow);
 
                     const unitPoints = unitTotalPoints(unit);
-                    const usPoints = subUsItem.querySelector('.unit-slot-points');
+                    const usPoints = subUsItem.querySelector('.unit-slot-points') as HTMLElement;
                     displayPoints(usPoints, unitPoints);
 
-                    let unitHdr = subUsItem.querySelector(".selectable-item-right");
+                    let unitHdr = subUsItem.querySelector(".selectable-item-right") as HTMLElement;
                     
                     // does nothing but helps positioning be consistant
                     const menu = ContextMenu.create({});
                     unitHdr.appendChild(menu);
 
-                    unitHdr = subUsItem.querySelector(".unit-slot-selectable-item-wrapper");
+                    unitHdr = subUsItem.querySelector(".unit-slot-selectable-item-wrapper") as HTMLElement;
                     unitHdr.onclick = onclick;
                     details.appendChild(subUsItem);
                     subUsItem.style.display = "";
@@ -1179,25 +1257,27 @@ const builderPage = {
             }
 
             
-            const usName = newUsItem.querySelector('.unit-text');
+            const usName = newUsItem.querySelector('.unit-text') as HTMLElement;
             // Find the crown icon
             usName.textContent = lore.name;
 
             // these are all for units
             clearDetailsSection(newUsItem);
 
-            const unitPoints = unitTotalPoints(lore);
-            const usPoints = newUsItem.querySelector('.unit-slot-points');
+            const unitPoints = lore.points;
+            const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
             displayPoints(usPoints, unitPoints, 'PTS');
             totalPoints += unitPoints;
-            refreshPointsOverlay(thisPage.roster.id);
+            refreshPointsOverlay(roster);
 
             const callbackMap = {
-                Delete: async (e) => {
-                    removeObjectPoints(thisPage.roster.lores.manifestation);
-                    thisPage.roster.lores.manifestation = null;
-                    putRoster(roster);
-                    parent.removeChild(newUsItem);
+                Delete: async () => {
+                    if (roster.lores.manifestation) {
+                        removeObjectPoints(roster.lores.manifestation);
+                        roster.lores.manifestation = null;
+                        putRoster(roster);
+                        parent.removeChild(newUsItem);
+                    }
                 }
             };
             
@@ -1206,7 +1286,7 @@ const builderPage = {
             //regHdr.appendChild(regItemMenu);
 
             const menu = ContextMenu.create(callbackMap);
-            let unitHdr = newUsItem.querySelector(".selectable-item-right");
+            let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
             unitHdr.appendChild(menu);
 
             parent.appendChild(newUsItem);
@@ -1217,33 +1297,33 @@ const builderPage = {
 
         async function displayTactics() {
             const typename = 'battle-tactics-container';
-            const parent = document.getElementById(typename);
-            for (let i = 0; i < thisPage.roster.battleTacticCards.length; ++i) {
-                const tactic = thisPage.roster.battleTacticCards[i];
+            const parent = document.getElementById(typename) as HTMLElement;
+            for (let i = 0; i < roster.battleTacticCards.length; ++i) {
+                const tactic = roster.battleTacticCards[i];
 
                 const onclick = () => {
                     displayTacticsOverlay(tactic);
                 }
                 
                 const callbackMap = {
-                    Replace: async (e) => {
-                        thisPage.roster.battleTacticCards.splice(i, 1);
+                    Replace: async () => {
+                        roster.battleTacticCards.splice(i, 1);
                         putRoster(roster);
                         const settings = new TacticsSettings;
-                        settings.roster = thisPage.roster;
+                        settings.roster = roster;
                         dynamicGoTo(settings);
                     },
 
-                    Delete: async (e) => {
-                        if(thisPage.roster.battleTacticCards.length == 2)
-                            thisPage.roster.battleTacticCards.splice(i, 1);
+                    Delete: async () => {
+                        if(roster.battleTacticCards.length == 2)
+                            roster.battleTacticCards.splice(i, 1);
                         else
-                            thisPage.roster.battleTacticCards = [];
+                            roster.battleTacticCards = [];
                         await putRoster(roster);
 
                         const slots = parent.querySelectorAll('.unit-slot');
                         slots.forEach(slot => {
-                            const hiddenIdx = slot.querySelector('.unit-idx');
+                            const hiddenIdx = slot.querySelector('.unit-idx') as HTMLElement;
                             if (i === Number(hiddenIdx.textContent)) {
                                 parent.removeChild(slot);
                             }
@@ -1252,20 +1332,21 @@ const builderPage = {
                 };
 
                 const newItem = await createUnitSlot(parent, tactic, i, callbackMap, onclick, false);
-                const label = newItem.querySelector('.ability-label');
-                label.textContent = 'Battle Tactic Card';
+                if (newItem) {
+                    const label = newItem.querySelector('.ability-label') as HTMLElement;
+                    label.textContent = 'Battle Tactic Card';
+                }
             }
         }
 
-        async function loadArmy(doGet) {
+        async function loadArmy(doGet: boolean) {
             if (doGet) {
-                
-                if (thisPage.roster.isArmyOfRenown) {
-                    const btn = document.getElementById('battle-traits-&-formation-add-button');
+                if (roster.isArmyOfRenown) {
+                    const btn = document.getElementById('battle-traits-&-formation-add-button') as HTMLButtonElement;
                     btn.disabled = true;
                 }
-                displayPointsOverlay(rosterId);
-                refreshPointsOverlay(rosterId);
+                displayPointsOverlay();
+                refreshPointsOverlay(roster);
             }
 
             const upgrades = await thisPage.fetchUpgrades();
@@ -1274,57 +1355,59 @@ const builderPage = {
 
             totalPoints = 0;
 
-            for (let i = 0; i < thisPage.roster.regiments.length; ++i)
+            for (let i = 0; i < roster.regiments.length; ++i)
                 await displayRegiment(i);
 
-            if (thisPage.roster.regimentOfRenown)
+            if (roster.regimentOfRenown)
                 displayRegimentOfRenown();
 
-            if ((thisPage.roster.regiments.length + (thisPage.roster.regimentOfRenown ? 1 : 0)) >= 5) {
-                const btn = document.getElementById('regiments-add-button');
+            if ((roster.regiments.length + (roster.regimentOfRenown ? 1 : 0)) >= 5) {
+                const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
                 btn.disabled = true;
             }
 
-            for (let i = 0; i< thisPage.roster.auxiliaryUnits.length; ++i)
+            for (let i = 0; i< roster.auxiliaryUnits.length; ++i)
                 displayAux(i);
 
-            if (thisPage.roster.terrainFeature) {
+            if (roster.terrainFeature) {
                 displayTerrain();
             } else {
-                const result = await unitsApi.get(this.roster.army);
-                const units = Object.values(result);
-                const terrain = units.some(unit => unit.type === 7);
-                if (!terrain) {
-                    const terrainSection = document.getElementById('faction-terrain-section');
-                    const tb = terrainSection.querySelector('button');
-                    tb.disabled = true;
+                const result = await unitsApi.get(roster.army);
+                if (result) {
+                    const units = Object.values(result);
+                    const terrain = units.some(unit => unit.type === 7);
+                    if (!terrain) {
+                        const terrainSection = document.getElementById('faction-terrain-section') as HTMLElement;
+                        const tb = terrainSection.querySelector('button') as HTMLButtonElement;
+                        tb.disabled = true;
+                    }
                 }
             }
 
             displayBattleTraits();
 
-            if (thisPage.roster.battleFormation) 
+            if (roster.battleFormation) 
                 displayBattleFormation();
 
-            if (thisPage.roster.lores.spell)
+            if (roster.lores.spell)
                 displaySpellLore();
 
-            if (thisPage.roster.lores.prayer)
+            if (roster.lores.prayer)
                 displayPrayerLore();
 
-            if (thisPage.roster.lores.manifestation)
+            if (roster.lores.manifestation)
                 displayManifestLore();
 
-            if (thisPage.roster.battleTacticCards.length > 0)
+            if (roster.battleTacticCards.length > 0)
                 displayTactics();
             
-            setHeaderTitle(thisPage.roster.name);
-            refreshPointsOverlay(thisPage.roster.id);
-            updateValidationDisplay();
+            setHeaderTitle(roster.name);
+            refreshPointsOverlay(roster);
+            updateValidationDisplay(roster);
         }
 
         const armyLoadPage = async () => {
-            const factory = (main, name) => {
+            const factory = (main: HTMLElement, name: string, show: boolean) => {
                 const adjustedName = name.toLowerCase().replace(/ /g, '-');
                 const section = document.createElement('div');
                 // section.style.display = 'none';
@@ -1343,19 +1426,19 @@ const builderPage = {
                 `;
                 main.appendChild(section);
 
-                const btn = document.getElementById(`${adjustedName}-add-button`);
+                const btn = document.getElementById(`${adjustedName}-add-button`) as HTMLElement;
                 btn.onclick = async () => {
                     if (adjustedName === 'regiments') {
-                        let nRegiments = (thisPage.roster.regimentOfRenown ? 1 : 0) + thisPage.roster.regiments.length;
+                        let nRegiments = (roster.regimentOfRenown ? 1 : 0) + roster.regiments.length;
                         if (nRegiments < 5) {
-                            thisPage.roster.regiments.push({ leader: null, units: [] });
-                            const idx = thisPage.roster.regiments.length - 1;
+                            roster.regiments.push({ leader: null, units: [] });
+                            const idx = roster.regiments.length - 1;
                             // displayRegiment(idx);
                             await putRoster(roster);
 
                             // automatically go to adding a leader
                             const settings = new UnitSettings;
-                            settings.roster = thisPage.roster;
+                            settings.roster = roster;
                             settings.regimentIndex = idx;
                             settings.type = 'hero';
                             dynamicGoTo(settings);
@@ -1363,14 +1446,14 @@ const builderPage = {
                     } 
                     else if (adjustedName.includes('auxiliary')) {
                         const settings = new UnitSettings;
-                        settings.roster = thisPage.roster;
+                        settings.roster = roster;
                         settings.auxiliary = true;
                         dynamicGoTo(settings);
                     }
                     else if (adjustedName.includes('lores')) {
                         const settings = new UpgradeSettings;
                         settings.titleName = 'Lores';
-                        settings.roster = thisPage.roster;
+                        settings.roster = roster;
                         settings.type = 'lore';
                         dynamicGoTo(settings);
                     }
@@ -1378,26 +1461,27 @@ const builderPage = {
                         const settings = new UpgradeSettings;
                         settings.titleName = 'Battle Formation';
                         settings.type = 'battleFormations';
-                        settings.roster = thisPage.roster;
+                        settings.roster = roster;
                         dynamicGoTo(settings);
                     }
                     else if (adjustedName.includes('terrain')) {
-                        if (!thisPage.roster.terrainFeature) {
+                        if (!roster.terrainFeature) {
                             const settings = new UnitSettings;
-                            settings.roster = thisPage.roster;
+                            settings.roster = roster;
                             settings.type = 'faction terrain';
                             dynamicGoTo(settings);
                         }
                     }
                     else if (adjustedName.includes('tactic')) {
                         const settings = new TacticsSettings;
-                        settings.roster = thisPage.roster
+                        settings.roster = roster
                         dynamicGoTo(settings);
                     }
                     else {
                         alert(`Add new item to ${section}`);
                     }
                 }
+                return section;
             } 
 
             const sections = [
@@ -1412,7 +1496,7 @@ const builderPage = {
             updateHeaderContextMenu({
                 'Battle View': () => {
                     const bvs = new BattleSettings;
-                    bvs.roster = thisPage.roster;
+                    bvs.roster = roster;
                     dynamicGoTo(bvs);
                 },
                 'Export List': exportListAndDisplay 
@@ -1424,7 +1508,7 @@ const builderPage = {
                 'lores', 'battle-tactics'
             ];
             isConfig.forEach(sectionName => {
-                let btn = document.getElementById(`${sectionName}-add-button`);
+                let btn = document.getElementById(`${sectionName}-add-button`) as HTMLElement;
                 btn.textContent = '⚙︎';
             })
 

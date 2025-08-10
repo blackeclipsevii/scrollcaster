@@ -1,14 +1,20 @@
+import { all } from "axios";
+import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
 import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import UpgradeInterf from "../../../shared-lib/UpgradeInterface.js";
-import { displayPoints, dynamicPages } from "../../lib/host.js";
+import UpgradeInterf, { UpgradeLUT, upgradeTypeToString } from "../../../shared-lib/UpgradeInterface.js";
+import { _inCatalog, displayPoints, dynamicPages } from "../../lib/host.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
 import { displayPointsOverlay, hidePointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { initializeFavoritesList } from "../../lib/widgets/favorites.js";
+import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
 import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import { layoutDefaultFactory, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
+import { endpoint } from "../../lib/endpoint.js";
+import LoreInterf, { LoreLUTInterf } from "../../../shared-lib/LoreInterface.js";
+import { putRoster } from "../../lib/RestAPI/roster.js";
 
 export class UpgradeSettings implements Settings {
     [name: string]: unknown;
@@ -25,16 +31,18 @@ export class UpgradeSettings implements Settings {
 const upgradePage = {
     settings: new UpgradeSettings,
     _cache: {
-        upgrades: null,
-        armyName: null
+        upgrades: null as ArmyUpgrades | null,
+        armyName: null as string | null
     },
     async fetchUpgrades(armyName: string) {
         if (this._cache.upgrades && this._cache.armyName === armyName) {
             return this._cache.upgrades;
         }
-        const result = await this.fetchUpgrades(armyName);
-        this._cache.upgrades = result;
-        this._cache.armyName = armyName;
+        const result = await fetchUpgrades(armyName) as ArmyUpgrades | null;
+        if (result){
+            this._cache.upgrades = result;
+            this._cache.armyName = armyName;
+        }
         return result;
     },
     loadPage(settings: Settings) {
@@ -44,25 +52,26 @@ const upgradePage = {
             settings = new UpgradeSettings;
 
         thisPage.settings = settings as UpgradeSettings;
+        const roster = thisPage.settings.roster;
 
         const isUniversal = (str: string) => {
             return str.startsWith("UNIVERSAL-");
         }
         
-        function displayUpgrade(upgrade: UpgradeInterf) {
+        function displayUpgrade(upgrade: UpgradeInterf | LoreInterf) {
             let typeName = 'Upgrade';
-            if (upgrade.typeName) 
-                typeName = upgrade.typeName;
+            if ((upgrade as UpgradeInterf).typeName) 
+                typeName = (upgrade as UpgradeInterf).typeName;
             else if (upgrade.type !== undefined) {
-                typeName = upgradeTypeToStr(upgrade);
+                typeName = upgradeTypeToString(upgrade.type);
             }
             const adjustedName = typeName.toLowerCase().replace(/ /g, '-');
             let section = document.getElementById(`${adjustedName}-section`);
             if (!section) {
-                const main = document.getElementById('loading-content');
+                const main = document.getElementById('loading-content') as HTMLElement;
                 section = layoutDefaultFactory(main, typeName);
             }
-            let upgradeList = section.querySelector('.item-list');
+            let upgradeList = section.querySelector('.item-list') as HTMLElement;
         
             section.style.display = 'block';
         
@@ -94,7 +103,8 @@ const upgradePage = {
             displayPoints(points, upgrade.points);
             
             let heart = null;
-            if (thisPage.settings.roster) {
+            let heartOnChange = null;
+            if (roster) {
                 const checkbox = document.createElement('input');
                 checkbox.classList.add('upgrade-checkbox');
                 checkbox.type = "radio";
@@ -106,11 +116,11 @@ const upgradePage = {
                 }
     
                 //checkbox.textContent = '+';
-                checkbox.addEventListener('change', async (e) => {
+                checkbox.addEventListener('change', async (e: Event) => {
                     e.stopPropagation(); // Prevents click from triggering page change
                     
                     const type = thisPage.settings.type;
-                    if (e.target.checked) {
+                    if ((e.target as HTMLInputElement).checked) {
                         const allSelectables = section.querySelectorAll('.selectable-item');
                         allSelectables.forEach(selectable => {
                             if (!selectable.classList.contains('not-added')) {
@@ -120,14 +130,16 @@ const upgradePage = {
                         });
                         item.classList.remove('not-added');
                         item.classList.add('added');
-                        if (type.includes('battleFormation')) {
-                            roster.battleFormation = upgrade;
-                        } else if (upgrade.type == 3) {
-                            roster.lores.spell = upgrade;   
-                        } else if (upgrade.type == 4) {
-                            roster.lores.manifestation = upgrade;
-                        } else if (upgrade.type == 6) {
-                            roster.lores.prayer = upgrade;
+                        if (type) {
+                            if (type.includes('battleFormation')) {
+                                roster.battleFormation = upgrade as UpgradeInterf;
+                            } else if (upgrade.type == 3) {
+                                roster.lores.spell = upgrade as LoreInterf;   
+                            } else if (upgrade.type == 4) {
+                                roster.lores.manifestation = upgrade as LoreInterf;
+                            } else if (upgrade.type == 6) {
+                                roster.lores.prayer = upgrade as LoreInterf;
+                            }
                         }
                     }
                     await putRoster(roster);
@@ -163,19 +175,19 @@ const upgradePage = {
                 right.append(points, checkbox);
             } else {
                 // to-do this being a radio makes favorites weird
-                const onchange = newFavoritesOnChange(upgradeList, item, upgrade.name);
+                heartOnChange = newFavoritesOnChange(upgradeList, item, upgrade.name);
                 // battle formation doesn't have id?
-                heart = newFavoritesCheckbox(upgrade.id, 'upgrade', onchange);
+                heart = newFavoritesCheckbox(upgrade.id, 'upgrade', heartOnChange);
                 right.append(heart, points);
             }
             item.append(left, right);
             upgradeList.appendChild(item);
             
-            if (heart && heart.checked)
-                heart.onchange(true, upgrade.id, 'upgrade');
+            if (heart && heart.checked && heartOnChange)
+                heartOnChange(true, upgrade.id, 'upgrade');
         }
         
-        function displayUpgrades(upgradeList: UpgradeInterf[]) {
+        function displayUpgrades(upgradeList: UpgradeLUT[] | LoreLUTInterf[]) {
             upgradeList.forEach(upgrades => {
                 if (!upgrades)
                     return;
@@ -210,90 +222,84 @@ const upgradePage = {
             setHeaderTitle('Universal Manifestation Lores');
             hidePointsOverlay();
             await fetchWithLoadingDisplay(encodeURI(`${endpoint}/lores`),
-            loreObject => {
+            uk => {
+                const loreObject = uk as {
+                    lores: {manifestation: LoreLUTInterf},
+                    universal: {id: string, points: number, type: number}[]
+                };
+                
                 loreObject.universal.forEach(ulut => {
                     const lore = loreObject.lores.manifestation[ulut.id];
                     displayUpgrade(lore);
                 });
             });
         }
+
+        const filterUpgrades = (allUpgrades: ArmyUpgrades) => {
+            if (thisPage.settings && thisPage.settings.isLore()) {
+                const upgradeList: LoreLUTInterf[] = [];
+                const loreNames = Object.getOwnPropertyNames(allUpgrades.lores);
+                loreNames.forEach(loreName => {
+                    upgradeList.push(allUpgrades.lores[loreName]);
+                });
+                return upgradeList;
+            }
+
+            if (thisPage.settings.type === null)
+                return [] as UpgradeLUT[];
+
+            if (!allUpgrades[thisPage.settings.type]) {
+                const tmp = allUpgrades.enhancements[thisPage.settings.type];
+                if (tmp) {
+                    return [tmp.upgrades];
+                } else {
+                    return [] as UpgradeLUT[]
+                }
+            }
+
+            const upgradeList: UpgradeLUT[] = [allUpgrades[thisPage.settings.type] as UpgradeLUT];
+            return upgradeList;
+        }
         
-        async function loadUpgradesCatalog() {
+        async function loadUpgradesCatalog(armyName: string) {
             if (thisPage.settings.titleName)
                 setHeaderTitle(thisPage.settings.titleName);
             else
                 setHeaderTitle('Upgrades');
             hidePointsOverlay();
-            const allUpgrades = await thisPage.fetchUpgrades(thisPage.settings.armyName);
-            let upgradeList = [];
-            if (thisPage.settings && thisPage.settings.isLore()) {
-                // to-do add a header to label these seperately
-                upgradeList = [];
-    
-                const loreNames = Object.getOwnPropertyNames(allUpgrades.lores);
-                loreNames.forEach(loreName => {
-                    upgradeList.push(allUpgrades.lores[loreName]);
-                });
-    
-            } else {
-                let tmp = allUpgrades[thisPage.settings.type];
-                if (!tmp) {
-                    tmp = allUpgrades.enhancements[thisPage.settings.type];
-                    if (tmp) {
-                        upgradeList = [tmp.upgrades];
-                    }
-                } else {
-                    upgradeList = [allUpgrades[thisPage.settings.type]];
-                }
-            }
-            
+            const allUpgrades = await thisPage.fetchUpgrades(armyName);
+            if (!allUpgrades)
+                return;
+
+            const upgradeList = filterUpgrades(allUpgrades);
             displayUpgrades(upgradeList);
         }
         
-        async function loadUpgrades() {
+        async function loadUpgrades(roster: RosterInterf) {
             if (thisPage.settings.titleName)
                 setHeaderTitle(thisPage.settings.titleName);
             else
                 setHeaderTitle('Upgrades');
-            displayPointsOverlay(thisPage.settings.roster.id);
-            refreshPointsOverlay(thisPage.settings.roster.id);
-            updateValidationDisplay();
+            displayPointsOverlay();
+            refreshPointsOverlay(roster);
+            updateValidationDisplay(roster);
         
             const allUpgrades = await thisPage.fetchUpgrades(roster.army);
-            let upgradeList = [];
-            if (thisPage.settings && thisPage.settings.isLore()) {
-                // to-do add a header to label these seperately
-                upgradeList = [];
-    
-                const loreNames = Object.getOwnPropertyNames(roster.lores);
-                loreNames.forEach(loreName => {
-                    upgradeList.push(allUpgrades.lores[loreName]);
-                });
-    
-            } else {
-                let tmp = allUpgrades[thisPage.settings.type];
-                if (!tmp) {
-                    tmp = allUpgrades.enhancements[thisPage.settings.type];
-                    if (tmp) {
-                        upgradeList = [tmp.upgrades];
-                    }
-                } else {
-                    upgradeList = [allUpgrades[thisPage.settings.type]];
-                }
-            }
+            if (!allUpgrades)
+                return;
+
+            const upgradeList = filterUpgrades(allUpgrades);
             displayUpgrades(upgradeList);
         }
         
         const loadUpgradesPage = async () => {
-            const sections = [];
-
-            makeLayout(sections);
+            makeLayout([]);
             initializeFavoritesList();
             disableHeaderContextMenu();
             if (thisPage.settings.roster)
-                await loadUpgrades();
+                await loadUpgrades(thisPage.settings.roster);
             else if (thisPage.settings.armyName)
-                await loadUpgradesCatalog();
+                await loadUpgradesCatalog(thisPage.settings.armyName);
             else
                 await loadUniversalLores();
             

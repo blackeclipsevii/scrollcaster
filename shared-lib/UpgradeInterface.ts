@@ -1,4 +1,7 @@
 import AbilityInterf from "./AbilityInterface.js";
+import { BasicObject } from "./BasicObject.js";
+
+export const UpgradeSuperType = 'Upgrade';
 
 export enum UpgradeType {
     // Artifact = 0,
@@ -35,13 +38,9 @@ export const upgradeTypeToString = (type: UpgradeType): string => {
     };
 }
 
-export default interface UpgradeInterf {
-    name: string;
-    id: string;
-    type: number;
+export default interface UpgradeInterf extends BasicObject {
     typeName: string;
     abilities: AbilityInterf[];
-    points: number;
 }
 
 export interface UpgradeLUT {

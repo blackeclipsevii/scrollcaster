@@ -1,10 +1,9 @@
+import { BasicObject } from "./BasicObject.js";
 import UpgradeInterf from "./UpgradeInterface.js";
 
-export default interface LoreInterf {
-    name: string;
-    id: string;
-    type: number;
-    points: number;
+export const LoreSuperType = 'Lore';
+
+export default interface LoreInterf extends BasicObject {
     unitIds: string[];
     abilities: UpgradeInterf [];   
 }

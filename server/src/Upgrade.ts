@@ -1,4 +1,4 @@
-import UpgradeInterf, {UpgradeType, upgradeTypeToString} from "../../shared-lib/UpgradeInterface.js";
+import UpgradeInterf, {UpgradeSuperType, UpgradeType, upgradeTypeToString} from "../../shared-lib/UpgradeInterface.js";
 import Ability from "./Ability.js";
 import { BsCost, BsProfile, BsSelectionEntry } from "./lib/bs/BsCatalog.js"
 
@@ -6,6 +6,7 @@ export default class Upgrade implements UpgradeInterf {
     name: string;
     id: string;
     type: number;
+    superType: string;
     typeName: string;
     abilities: Ability[];
     points: number;
@@ -13,6 +14,7 @@ export default class Upgrade implements UpgradeInterf {
         this.name = selectionEntry['@name'];
         this.id = selectionEntry["@id"];
         this.type = type;
+        this.superType = UpgradeSuperType;
         if (typeName)
             this.typeName = typeName;
         else

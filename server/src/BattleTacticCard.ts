@@ -1,8 +1,10 @@
 
+import BattleTacticCardInterf, { BattleTacticInterf } from '../../shared-lib/BattleTacticCardInterf.js';
+import { OtherSuperType, OtherTypes } from '../../shared-lib/OtherTypes.js';
 import { BsSelectionEntry } from './lib/bs/BsCatalog.js';
 import bsTextSmoother from './lib/bs/BsSmoother.js';
 
-export class BattleTactic {
+export class BattleTactic implements BattleTacticInterf {
     type: {
         name: string;
         index: number;
@@ -18,15 +20,19 @@ export class BattleTactic {
     }
 }
 
-export default class BattleTacticCard {
+export default class BattleTacticCard implements BattleTacticCardInterf {
     name: string;
     id: string;
+    type: number;
+    superType: string;
     text: string;
     tactics: BattleTactic[];
 
     constructor(entry: BsSelectionEntry) {
         this.name = entry['@name'];
         this.id = entry['@id'];
+        this.type = OtherTypes.BattleTacticCard;
+        this.superType = OtherSuperType;
         this.text = '';
         this.tactics = [
             new BattleTactic('Affray', 0, ''),

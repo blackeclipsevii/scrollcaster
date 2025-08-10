@@ -1,3 +1,4 @@
+import { BasicObject } from "./BasicObject.js";
 import UnitInterf from "./UnitInterface.js";
 import UpgradeInterf from "./UpgradeInterface.js";
 
@@ -7,11 +8,12 @@ export interface UnitContainerInterf {
     max: number
 };
 
-export interface Force {
+export interface Force extends BasicObject {
     selectableIn: string[];
-    id: string;
-    name: string;
     unitContainers: UnitContainerInterf[];
     upgrades: UpgradeInterf[];
-    points: number;
+}
+
+export interface ForceLUT {
+    [name: string]: Force;
 }

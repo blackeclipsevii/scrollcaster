@@ -214,9 +214,8 @@ const rosterPage = {
     });
 
     function goToRoster(roster: RosterInterf) {
-      const settings = new BuilderSettings;
-      (settings as unknown as Settings).roster = roster;
-      dynamicGoTo(settings as unknown as Settings);
+      const settings = new BuilderSettings(roster);
+      dynamicGoTo(settings);
     }
 
     function displayRoster(roster: RosterInterf) {

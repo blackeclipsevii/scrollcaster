@@ -1,6 +1,6 @@
 import Ability from "./Ability.js";
 
-import { UnitType, strToUnitType } from "../../shared-lib/types/UnitType.js";
+import { UnitType, strToUnitType } from "../../shared-lib/UnitInterface.js";
 import { BsCategoryLink, BsCharacteristic, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
@@ -10,7 +10,7 @@ import Model from "./Model.js";
 import OptionSet from "../../shared-lib/Options.js";
 import { parseOptions } from "./parseOptions.js";
 
-import UnitInterf, { EnhancementSlotInterf } from "../../shared-lib/UnitInterface.js";
+import UnitInterf, { EnhancementSlotInterf, UnitSuperType } from "../../shared-lib/UnitInterface.js";
 
 export default class Unit implements UnitInterf {
     name: string;
@@ -31,6 +31,7 @@ export default class Unit implements UnitInterf {
 
     points: number;
     type: number;
+    superType: string;
 
     models: Model[];
 
@@ -44,6 +45,7 @@ export default class Unit implements UnitInterf {
     constructor(ageOfSigmar: AgeOfSigmar, selectionEntry: BsSelectionEntry) {
         this.name = selectionEntry['@name'];
         this.id = selectionEntry['@id'];
+        this.superType = UnitSuperType;
 
         this.Move = '';
         this.Health = '';

@@ -3,18 +3,11 @@ import { getVar } from "../functions/getVar.js";
 import { InsetEdges } from "./InsetEdges.js";
 import { validateRoster } from "../functions/validateRoster.js";
 import { Overlay } from "./overlay.js";
+import { rosterTotalPoints } from "../host.js";
 
 export var totalPoints: number = 0;
 
-function _saveTotalPoints(id: string) {
-    localStorage.setItem(`${id}-total-points`, `${totalPoints}`);
-}
-
-function _loadTotalPoints(id: string) {
-    totalPoints = Number(localStorage.getItem(`${id}-total-points`));
-}
-
-export const displayPointsOverlay = (id: string) => {
+export const displayPointsOverlay = () => {
     let overlay = document.getElementById('pointsOverlay');
     if (!overlay) {
         const main = document.querySelector('.persist');
@@ -29,7 +22,6 @@ export const displayPointsOverlay = (id: string) => {
     if (inset.bottom) {
         overlay.style.bottom = `${inset.bottom + 75}px`;
     }
-    _loadTotalPoints(id);
 }
 
 export const hidePointsOverlay = () => {
@@ -119,11 +111,10 @@ export async function updateValidationDisplay(roster: RosterInterf) {
     });
 };
 
-export function refreshPointsOverlay(id: string, roster: RosterInterf) {
+export function refreshPointsOverlay(roster: RosterInterf) {
     let pointsOverlay = document.getElementById('pointsOverlay');
     if (!pointsOverlay)
         return;
 
-    pointsOverlay.textContent = `${totalPoints} / ${roster.points} pts`;
-    _saveTotalPoints(id);
+    pointsOverlay.textContent = `${rosterTotalPoints(roster)} / ${roster.points} pts`;
 }

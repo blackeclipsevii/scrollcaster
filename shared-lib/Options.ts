@@ -6,11 +6,13 @@ export class Option {
     weapons: WeaponInterf[];
     abilities: AbilityInterf[];
     keywords: string[];
+    points: number;
     constructor(name: string) {
         this.name = name;
         this.weapons = [];
         this.abilities = [];
         this.keywords = [];
+        this.points = 0;
     }
 }
 

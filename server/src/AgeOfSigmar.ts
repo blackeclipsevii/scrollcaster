@@ -18,6 +18,7 @@ import { RegimentValidator } from './lib/validation/RegimentValidation.js';
 import { registerAllValidators } from './lib/validation/validators/registerValidators.js';
 
 import { UpgradeType } from '../../shared-lib/UpgradeInterface.js';
+import { OtherSuperType, OtherTypes } from '../../shared-lib/OtherTypes.js';
 
 // intermediate step
 interface MyConstraints {
@@ -235,6 +236,8 @@ export default class AgeOfSigmar {
                 selectableIn: [],
                 id: forceEntry['@id'],
                 name: forceEntry['@name'],
+                type: OtherTypes.RegimentOfRenown,
+                superType: OtherSuperType,
                 unitContainers: [],
                 upgrades: [],
                 points: 0
