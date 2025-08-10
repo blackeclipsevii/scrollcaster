@@ -1,6 +1,8 @@
+import { generateId } from "../functions/uniqueIdentifier.js";
 
 const favoritesKey = 'my-favorites';
-const getFavorites = (type) => {
+
+const getFavorites = (type: string) => {
     const fav = localStorage.getItem(favoritesKey);
     if (!fav)
         return {};
@@ -10,9 +12,9 @@ const getFavorites = (type) => {
     return {};
 }
 
-const saveFavorites = (type, favorites) => {
-    let fav = localStorage.getItem(favoritesKey);
-    fav = !fav ? {} : JSON.parse(fav);
+const saveFavorites = (type: string, favorites: string[]) => {
+    const storageItem: string | null = localStorage.getItem(favoritesKey);
+    const fav = !storageItem ? {} : JSON.parse(storageItem) as {[name: string]: string[]};
     fav[type] = favorites;
     localStorage.setItem(favoritesKey, JSON.stringify(fav));
 }
@@ -21,7 +23,7 @@ export const clearFavorites = () => {
     localStorage.removeItem(favoritesKey);
 }
 
-const addFavorite = (id, type) => {
+const addFavorite = (id: string, type: string) => {
     let favs = getFavorites(type);
     if (!favs)
         favs = {};
@@ -29,14 +31,14 @@ const addFavorite = (id, type) => {
     saveFavorites(type, favs);
 }
 
-const removeFavorite = (id, type) => {
+const removeFavorite = (id: string, type: string) => {
     const favs = getFavorites(type);
     if (favs[id])
         delete favs[id];
     saveFavorites(type, favs);
 }
 
-const isFavorite = (id, type) => {
+const isFavorite = (id: string, type: string) => {
     const favs = getFavorites(type);
     if (!favs)
         return false;
@@ -48,7 +50,7 @@ const isFavorite = (id, type) => {
 
 export const initializeFavoritesList = () => {
   deleteFavoritesList();
-  const main = document.getElementById('loading-content');
+  const main = document.getElementById('loading-content') as HTMLElement;
   const div = document.createElement('div');
   div.style.display = 'none';
   div.className = 'section';
@@ -64,25 +66,25 @@ export const initializeFavoritesList = () => {
 
 const deleteFavoritesList = () => {
     const fl = document.getElementById('favorites-list');
-    if (fl) {
+    if (fl && fl.parentElement) {
         fl.parentElement.removeChild(fl);
     }
 }
 
-const _insertABetSorted = (listElement, item, itemName, skipHearts=false) => {
+const _insertABetSorted = (listElement: HTMLElement, item: HTMLElement, itemName: string, skipHearts=false) => {
     const children = listElement.querySelectorAll('.selectable-item');
     let doInsert = true;
     children.forEach(child => {
-            const _left = child.querySelector('.selectable-item-left');
-            const ne = _left.querySelector('.selectable-item-name');
+            const _left = child.querySelector('.selectable-item-left') as HTMLElement;
+            const ne = _left.querySelector('.selectable-item-name') as HTMLElement;
             
-            const _right = child.querySelector('.selectable-item-right');
-            const heart = _right.querySelector('.heart-checkbox');
+            const _right = child.querySelector('.selectable-item-right') as HTMLElement;
+            const heart = _right.querySelector('.heart-checkbox') as HTMLInputElement;
             if (skipHearts && heart.checked)
                 return;
             
             if (doInsert && 
-                (itemName.localeCompare(ne.textContent, undefined, { numeric: true }) < 0)) {
+                (itemName.localeCompare(ne.textContent as string, undefined, { numeric: true }) < 0)) {
                 doInsert = false;
                 listElement.insertBefore(item, child);
             }
@@ -93,13 +95,13 @@ const _insertABetSorted = (listElement, item, itemName, skipHearts=false) => {
     }
 }
 
-const _insertHeartSorted = (listElement, item, itemName) => {
+const _insertHeartSorted = (listElement: HTMLElement, item: HTMLElement, itemName: string) => {
     const children = listElement.querySelectorAll('.selectable-item');
     let doInsert = true;
     children.forEach(child => {
-        const _right = child.querySelector('.selectable-item-right');
-        const heart = _right.querySelector('.heart-checkbox');
-        if (doInsert &&  !heart.check) {
+        const _right = child.querySelector('.selectable-item-right') as HTMLElement;
+        const heart = _right.querySelector('.heart-checkbox') as HTMLInputElement;
+        if (doInsert && !heart.checked) {
             doInsert = false;
             listElement.insertBefore(item, child);
         }
@@ -111,8 +113,8 @@ const _insertHeartSorted = (listElement, item, itemName) => {
 }
 
 // just move favorites to top of list
-const _inplaceFavorites = (selectableList, item, itemName) => {
-    const onchange = (isChecked, id, type) => {
+const _inplaceFavorites = (selectableList: HTMLElement, item: HTMLElement, itemName: string) => {
+    const onchange = (isChecked: boolean, id: string, type: string) => {
         if (isChecked) {
             _insertHeartSorted(selectableList, item, itemName);
         } else {
@@ -123,10 +125,10 @@ const _inplaceFavorites = (selectableList, item, itemName) => {
 }
 
 // uses the favorites section
-const _seperateFavorites = (selectableList, item, itemName) => {
-    const onchange = (isChecked, id, type) => {
-        const ul = document.getElementById('favorites-list');
-        const ulSec = ul.closest('.section');
+const _seperateFavorites = (selectableList: HTMLElement, item: HTMLElement, itemName: string) => {
+    const onchange = (isChecked: boolean, id: string, type: string) => {
+        const ul = document.getElementById('favorites-list') as HTMLElement;
+        const ulSec = ul.closest('.section') as HTMLElement;
 
         if (isChecked) {
             ulSec.style.display = 'block';
@@ -141,13 +143,13 @@ const _seperateFavorites = (selectableList, item, itemName) => {
     return onchange;
 }
 
-export const newFavoritesOnChange = (selectableList, item, itemName, useFavoritesSection=true) => {
+export const newFavoritesOnChange = (selectableList: HTMLElement, item: HTMLElement, itemName: string, useFavoritesSection=true) => {
     if (useFavoritesSection)
         return _seperateFavorites(selectableList, item, itemName);
     return _inplaceFavorites(selectableList, item, itemName);
 }
 
-export const newFavoritesCheckbox = (favoriteId, favoriteType, onchange=null, checkboxId=null) => {
+export const newFavoritesCheckbox = (favoriteId: string, favoriteType: string, onchange: ((isChecked: boolean, id: string, type: string)=>void) | null=null, checkboxId: string | null=null) => {
     const heart = document.createElement('input');
     heart.id = checkboxId ? checkboxId : generateId();
     heart.type = 'checkbox';

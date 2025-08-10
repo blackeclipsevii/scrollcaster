@@ -1,6 +1,7 @@
 import { dynamicPages } from "../../lib/host.js";
 import { _linkStack, Settings } from "../../lib/widgets/header.js";
 import { dynamicGoTo } from "../../lib/widgets/header.js";
+import { version } from "../../lib/RestAPI/version.js";
 import { Overlay } from "../../lib/widgets/overlay.js";
 import { getLoadingMessage } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 
@@ -38,15 +39,16 @@ interface Alliances {
 
 const rosterPage = {
   settings: null as RosterSettings | null,
-  _ror: {},
+  _ror: {} as {[name: string]: string[]},
   _alliances: [] as Alliances[],
-  async loadPage(settings: RosterSettings) {
+  async loadPage(settings: Settings) {
     if (!settings)
       settings = new RosterSettings;
     this.settings = settings;
     const thisPage = this;
 
-    const _populateArmies = (alliances: Alliances[]) => {
+    const _populateArmies = (result: unknown) => {
+      const alliances = result as Alliances[] | null;
       if (alliances) {
         thisPage._alliances = alliances;
       }
@@ -93,12 +95,12 @@ const rosterPage = {
         }
       });
 
-      armySelect.onchange = () => {
+       const armySelectOnChange = () => {
         const nameField = document.getElementById('name') as HTMLInputElement;
         nameField.placeholder = `Name (Default: ${armySelect.value})`;
 
         const values = thisPage._ror[armySelect.value.trim()]
-        const rorSelect = document.getElementById("ror");
+        const rorSelect = document.getElementById("ror") as HTMLSelectElement;
         rorSelect.onchange = () => {
           let name = '';
           if (rorSelect.value.includes('(Optional)'))
@@ -122,16 +124,16 @@ const rosterPage = {
           rorSelect.style.display = 'none';
         }
       };
-
-      armySelect.onchange();
+      armySelectOnChange();
+      armySelect.onchange = armySelectOnChange;
     }
 
     const hideCreateHint = (isLoading: boolean) => {
       const hintClass = 'create-hint';
       const contentId = isLoading ? 'loading-content' : 'visible-content';
-      const content = document.getElementById(contentId);
+      const content = document.getElementById(contentId) as HTMLDivElement;
       const section = content.querySelector(`.${hintClass}`);
-      if (section) {
+      if (section && section.parentElement) {
         section.parentElement.removeChild(section);
       }
     }
@@ -213,15 +215,15 @@ const rosterPage = {
 
     function goToRoster(roster: RosterInterf) {
       const settings = new BuilderSettings;
-      settings.roster = roster;
-      dynamicGoTo(settings);
+      (settings as unknown as Settings).roster = roster;
+      dynamicGoTo(settings as unknown as Settings);
     }
 
     function displayRoster(roster: RosterInterf) {
       if (!roster)
         return;
       
-      const armies = document.getElementById("rosters-list");
+      const armies = document.getElementById("rosters-list") as HTMLElement;
       let armyName = roster.army;
       if (armyName.includes(' - ')) {
         armyName = armyName.split(' - ')[1];
@@ -293,7 +295,7 @@ const rosterPage = {
       `;
 */
       const callbackMap = {
-        'Update Details': async (e) => {
+        'Update Details': async () => {
             const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal") as HTMLElement;
               const armyParts = roster.army.split(' - ');
@@ -322,13 +324,18 @@ const rosterPage = {
               button.className = 'clickable-style full-rectangle-button';
               button.textContent = 'Update Roster';
               button.onclick = async () => {
-                let rName = document.getElementById('replaceName').value;
+                let element = document.getElementById('replaceName') as HTMLInputElement;
+                let rName = element.value;
                 if (rName.length === 0)
                   rName = roster.name;
-                let rPoints = document.getElementById('replacePoints').value;
+
+                element = document.getElementById('replacePoints') as HTMLInputElement;
+                let rPoints: string | number = element.value;
                 if (rPoints.length === 0)
                   rPoints = roster.points;
-                const rDesc = document.getElementById('replaceDesc').value;
+
+                element = document.getElementById('replaceDesc') as HTMLInputElement;
+                const rDesc = element.value;
                 roster.name = rName;
                 roster.points = Number(rPoints);
                 roster.description = rDesc;
@@ -341,8 +348,8 @@ const rosterPage = {
           });
           toggle();
         },
-        Duplicate: async (e) => {
-          const labelCopy = (str) => {
+        Duplicate: async () => {
+          const labelCopy = (str: string) => {
             const match = str.match(/\((\d+)\)$/);
             if (match) {
               const num = parseInt(match[1], 10);
@@ -359,7 +366,7 @@ const rosterPage = {
           await putRoster(clone);
           displayRoster(clone);
         },
-        Delete: async (e) => {
+        Delete: async () => {
             const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal") as HTMLElement;
 
@@ -416,7 +423,7 @@ const rosterPage = {
           });
           toggle();
         },
-        'Import Roster': async (e) => {
+        'Import Roster': async () => {
             const toggle  = Overlay.toggleFactory('block', async () =>{
               const modal = document.querySelector(".modal") as HTMLElement;
 
@@ -520,7 +527,7 @@ const rosterPage = {
               button.style.fontWeight = 'bold';
               button.onclick = async () => {
                   deleteRosters();
-                  const armies = document.getElementById("rosters-list");
+                  const armies = document.getElementById("rosters-list") as HTMLElement;
                   armies.innerHTML = '';
                   await viewRosters();
                   Overlay.disable();
@@ -539,8 +546,8 @@ const rosterPage = {
     async function viewRosters(isLoading=false) {
       createHeaderMenu();
 
-      const section = document.getElementById('rosters-section');
-      const armies = document.getElementById("rosters-list");
+      const section = document.getElementById('rosters-section') as HTMLDivElement;
+      const armies = document.getElementById("rosters-list") as HTMLElement;
       armies.innerHTML = '';
 
       const rosters = await getRosters();
@@ -568,16 +575,22 @@ const rosterPage = {
     }
 
     async function createArmy() {
-      let army = document.getElementById("army").value;
-      const ror = document.getElementById("ror").value;
+      const getValue = (name: string): string | null =>{
+        const ele = document.getElementById(name) as HTMLInputElement | HTMLSelectElement | null;
+        if (!ele)
+          return null;
+        return ele.value;
+      }
+      let army = getValue("army");
+      const ror = getValue("ror");
       if (ror && !ror.includes('Optional')) {
         army = ror;
       }
 
-      const ruleset = document.getElementById("ruleset").value;
-      const points = document.getElementById("points").value;
-      let name = document.getElementById("name").value;
-      const description = document.getElementById("description").value;
+      const ruleset = getValue("ruleset");
+      const points = getValue("points");
+      let name = getValue("name");
+      const description = getValue("description");
 
       if (!army || !ruleset || !points) {
         alert("Please fill in all required fields.");
@@ -609,7 +622,7 @@ const rosterPage = {
 
     const _makePage = () => {
       let rl = document.getElementById('rosters-list');
-      if (rl) {
+      if (rl && rl.parentElement) {
         rl.parentElement.removeChild(rl);
       }
 
@@ -620,7 +633,7 @@ const rosterPage = {
       hidePointsOverlay();
       disableBackButton();
 
-      const div = document.getElementById('loading-content');
+      const div = document.getElementById('loading-content') as HTMLDivElement;
       const button = document.createElement('div');
       button.textContent = '+';
       button.className = 'clickable-style fab';

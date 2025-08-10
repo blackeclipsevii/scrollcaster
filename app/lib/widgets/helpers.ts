@@ -18,7 +18,7 @@ export const whClearDiv = (qualifier: string, parent?: HTMLElement | Document) =
     return div;
 }
 
-export const makeSelectableItemType = (typedObj: string | {type:number, typeName:string|undefined}, isUnit=true) => {
+export const makeSelectableItemType = (typedObj: string | {type:number, typeName?:string}, isUnit=true) => {
     const roleEle = document.createElement('span');
     roleEle.className = 'selectable-item-type ability-label';
     roleEle.style.display = 'inline-block';
@@ -33,7 +33,7 @@ export const makeSelectableItemType = (typedObj: string | {type:number, typeName
     return roleEle;
 }
 
-export const makeSelectableItemName = (namedObj: {name: string}) => {
+export const makeSelectableItemName = (namedObj: {name: string} | string) => {
     let name: string = '';
     if (typeof namedObj === 'string')
         name = namedObj;

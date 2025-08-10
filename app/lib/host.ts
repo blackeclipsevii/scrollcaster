@@ -5,7 +5,8 @@ import { Settings } from "./widgets/header.js";
 export const DYNAMIC_WARSCROLL = false;
 
 export interface Page {
-  loadPage: ((settings:Settings) => unknown);
+  settings: Settings | null;
+  loadPage: ((settings: Settings) => void);
 }
 
 export var dynamicPages: {[name: string]: Page} = {};

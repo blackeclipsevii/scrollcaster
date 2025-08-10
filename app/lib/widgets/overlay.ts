@@ -52,7 +52,7 @@ export const Overlay = {
         if (overlay)
             overlay.style.display = 'none';
     },
-    toggleFactory(visibleStyle: string, ondisplay: ((data:unknown) => unknown)) {
+    toggleFactory(visibleStyle: string, ondisplay: ((data?: unknown) => unknown)) {
         const _enableOverlay = (style: string) => {
             const overlay = document.getElementById("overlay");
             if (!overlay)
@@ -70,7 +70,7 @@ export const Overlay = {
             overlay.style.display = style;
         }
 
-        const toggleFunc = (data: unknown) => {
+        const toggleFunc = (data?: unknown) => {
             visibleStyle = 'flex';
             const overlay = document.getElementById("overlay");
             if (!overlay)

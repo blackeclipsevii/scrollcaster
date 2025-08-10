@@ -16,6 +16,9 @@ export default interface RosterInterf {
     // name of the roster
     name: string;
 
+    // description of the roster
+    description: string | undefined;
+
     // name of the Army this roster is for
     army: string;
 

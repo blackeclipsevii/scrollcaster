@@ -1,18 +1,31 @@
-import { dynamicPages } from "../../lib/host.js";
+import { Force } from "../../../shared-lib/Force.js";
+import { displayPoints, dynamicPages } from "../../lib/host.js";
+import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
+import { makeLayout } from "../../lib/widgets/layout.js";
+import { setHeaderTitle, disableHeaderContextMenu, Settings, dynamicGoTo } from "../../lib/widgets/header.js";
+import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
+import { swapLayout } from "../../lib/widgets/layout.js";
+import { initializeDraggable } from "../../lib/widgets/draggable.js";
+import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
+import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import { WarscrollSettings } from "./warscroll.js";
 
-export class RegimentOfRenownSettings {
-    ror = null;
+export class RegimentOfRenownSettings implements Settings{
+    [name: string] : unknown;
+    ror = null as Force | null;
 };
 
 const rorPage = {
-    settings: null,
-    loadPage(settings) {
+    settings: null as RegimentOfRenownSettings | null,
+    loadPage(settings: Settings) {
         const thisPage = this;
-        thisPage.settings = settings;
-
-        displayUnits = () => {
-            const makeItem = (unit, onclick, listName = 'army-list', points=null) => {
+        thisPage.settings = settings as RegimentOfRenownSettings;
+        const displayUnits = () => {
+            const makeItem = (unit: UnitInterf, onclick: ((this: HTMLDivElement, ev: MouseEvent) => any), listName = 'army-list', points=null) => {
                 const itemList = document.getElementById(listName);
+                if (!itemList) {
+                    return;
+                }
                 const item = document.createElement('div');
                 item.classList.add('selectable-item');
             
@@ -43,24 +56,30 @@ const rorPage = {
                 return item;
             }
 
-            const regiment = thisPage.settings.ror;
-            let containers = regiment.unitContainers;
-            if (containers.length > 1)
-                containers = containers.sort((a,b) => a.unit.type - b.unit.type);
-            for (let i = 0; i < containers.length; ++i) {
-                const unitContainer = containers[i];
-                makeItem(unitContainer.unit, () => {
-                    const settings = new WarscrollSettings;
-                    settings.unit = unitContainer.unit;
-                    dynamicGoTo(settings);
-                }, 'warscrolls-list');
-            }   
+            if (thisPage.settings && thisPage.settings.ror) {
+                const regiment = thisPage.settings.ror;
+                let containers = regiment.unitContainers;
+                if (containers.length > 1)
+                    containers = containers.sort((a,b) => a.unit.type - b.unit.type);
+                for (let i = 0; i < containers.length; ++i) {
+                    const unitContainer = containers[i];
+                    makeItem(unitContainer.unit, () => {
+                        const settings = new WarscrollSettings;
+                        (settings as unknown as Settings).unit = unitContainer.unit;
+                        dynamicGoTo(settings as unknown as Settings);
+                    }, 'warscrolls-list');
+                }   
+            }
         }
 
-        displayAbilities = () => {
+        const displayAbilities = () => {
+            if (thisPage.settings === null || !thisPage.settings.ror)
+                return;
+
             if (thisPage.settings.ror.upgrades.length === 0) {
                 const section = document.getElementById('abilities-section');
-                section.style.display = 'none';
+                if (section)
+                    section.style.display = 'none';
                 return;
             }
             AbilityWidget.display(
@@ -68,10 +87,13 @@ const rorPage = {
                 thisPage.settings.ror.name);
         }
 
-        displayDetails = () => {
-            const div = document.getElementById('regiment-details-section');
+        const displayDetails = () => {
+            if (thisPage.settings === null || thisPage.settings.ror === null)
+                return;
+
+            const div = document.getElementById('regiment-details-section') as HTMLElement;
             div.style.display = '';
-            const container = div.querySelector('.item-list');
+            const container = div.querySelector('.item-list') as HTMLElement;
             container.className = 'details-container';
 
             let title = document.createElement('h4');
@@ -104,7 +126,7 @@ const rorPage = {
             title.innerHTML = 'Regiment can be added to:'
             container.appendChild(title);
             
-            const sortedSi =thisPage.settings.ror.selectableIn.sort((a,b) => a.localeCompare(b));
+            const sortedSi = thisPage.settings.ror.selectableIn.sort((a,b) => a.localeCompare(b));
             sortedSi.forEach(si => {
                 const armyName = document.createElement('p');
                 armyName.className = 'bullet-point';
@@ -121,7 +143,9 @@ const rorPage = {
             ];
             makeLayout(sections, null, null, true);
         }
-        setHeaderTitle(thisPage.settings.ror.name);
+        if (thisPage.settings.ror)
+            setHeaderTitle(thisPage.settings.ror.name);
+
         _makeUnitLayout();
         disableHeaderContextMenu();
         hidePointsOverlay();

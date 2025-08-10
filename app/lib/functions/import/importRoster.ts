@@ -1,11 +1,12 @@
 import { NameRoster, NameUnit } from "../../../../shared-lib/NameRoster.js";
+import RosterInterf from "../../../../shared-lib/RosterInterface.js";
 
 export class NameRosterImporter {
-    canImport(text: string) {
+    canImport(text: string): boolean {
         return false;
     }
-    async import(text: string) {
-        return {};
+    async import(text: string): Promise<RosterInterf | null> {
+        return null;
     }
     newNameRoster() {
         const nameRoster: NameRoster = {
@@ -53,9 +54,9 @@ export const ImportRoster = {
         }
         return false;
     },
-    async import(text: string) {
+    async import(text: string): Promise<RosterInterf | null> {
         const t = this.stripMatchingDelimiters(text);
-        let result = null;
+        let result: RosterInterf | null = null;
         for (let i = 0; i < this._importers.length; ++i ) {
             const importer = this._importers[i];
             if (importer.canImport(t)) {

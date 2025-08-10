@@ -4,6 +4,7 @@ import { bsCharacteristicArrToMetadata } from "./lib/bs/bsCharacteristicArrToMet
 import { WeaponSelectionSet } from "../../shared-lib/WeaponInterf.js";
 
 export default class Weapon implements WeaponInterf {
+    [name: string]: unknown;
     id: string;
     name: string;
     type: number;

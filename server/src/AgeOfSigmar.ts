@@ -12,7 +12,7 @@ import Upgrade from './Upgrade.js';
 import BsConstraint, { ConstraintType, getConstraints, BsModifierAttrObj } from './lib/bs/BsConstraint.js';
 import { BsCatalog, BsGameSystem, BsLibrary } from './lib/bs/BsCatalog.js';
 import BattleProfile from '../../shared-lib/BattleProfile.js';
-import { Force } from '../../shared-lib/Force.js';
+import { Force, UnitContainerInterf } from '../../shared-lib/Force.js';
 
 import { RegimentValidator } from './lib/validation/RegimentValidation.js';
 import { registerAllValidators } from './lib/validation/validators/registerValidators.js';
@@ -310,7 +310,7 @@ export default class AgeOfSigmar {
                             return;
                         }
 
-                        const obj = {
+                        const obj: UnitContainerInterf = {
                             unit : unit,
                             min : 0,
                             max : 0

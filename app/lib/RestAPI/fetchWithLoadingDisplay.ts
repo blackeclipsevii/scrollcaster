@@ -85,6 +85,6 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
   return result;
 }
 
-export const fetchArmies = async (callback: ((result: unknown) => any), displayModalLoad=true) => {
+export const fetchArmies = async (callback: ((result: unknown) => void), displayModalLoad=true) => {
   return await fetchWithLoadingDisplay(`${endpoint}/armies`, callback, displayModalLoad);
 }

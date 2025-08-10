@@ -1,33 +1,50 @@
 import { dynamicPages } from "../../lib/host.js";
+import { dynamicGoTo, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { endpoint } from "../../lib/endpoint.js";
 
-export class SearchSettings {
+import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { SearchableObject } from "../../../shared-lib/SearchableObject.js";
+import { WarscrollSettings } from "./warscroll.js";
+import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
+import { getVar } from "../../lib/functions/getVar.js";
+import { fetchSearch } from "../../lib/RestAPI/search.js";
+import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
+
+export class SearchSettings implements Settings{
+    [name: string]: unknown;
 };
 
 const searchPage = {
-    settings: null,
+    settings: null as SearchSettings | null,
     _cache: {
-        query: null,
-        results: null
+        query: null as string | null,
+        results: null as SearchableObject[] | null
     },
-    async loadPage(settings) {
-        this.settings = settings;
+    async loadPage(settings: Settings) {
+        this.settings = settings as SearchSettings;
         const thisPage = this;
-        async function getSpecificUnit(id, useArmy) {
+        async function getSpecificUnit(id: string, useArmy: string | null) {
             let url = `${endpoint}/units?id=${id}`;
             if (useArmy) {
                 url = `${url}&army=${useArmy}`;
             }
 
             try {
-                const result = await fetchWithLoadingDisplay(encodeURI(url));
-                return result;
+                interface Result {
+                    item: SearchableObject
+                }
+                const result = await fetchWithLoadingDisplay(encodeURI(url)) as Result[] | null;
+                if (result) {
+                    return result.map(res => res.item) as SearchableObject[];
+                }
+                return null;
             } catch (error) {
                 return null;
             }
         }
-        const displaySearchResults = (results) => {
-            const section = document.getElementById('results-section');
-            const itemList = document.querySelector('.item-list');
+        const displaySearchResults = (results: SearchableObject[]) => {
+            const section = document.getElementById('results-section') as HTMLElement;
+            const itemList = document.querySelector('.item-list') as HTMLElement;
             section.style.display = '';
             itemList.innerHTML = '';
 
@@ -39,8 +56,10 @@ const searchPage = {
             //     keywords: string[];
             // };
 
-            const makeSelectableItem = (displayableObj, isUnit, parentList, onclick) => {
-                const section = parentList.closest('.section');
+            const makeSelectableItem = (displayableObj: SearchableObject, isUnit: boolean, parentList: HTMLElement, onclick: (this: HTMLDivElement, ev: MouseEvent) => any) => {
+                const section = parentList.closest('.section') as HTMLElement | null;
+                if (!section)
+                    return;
                 section.style.display = 'block';
 
                 const item = document.createElement('div');
@@ -69,15 +88,15 @@ const searchPage = {
             };
         
             results.forEach(result => {
-                makeSelectableItem(result.item, true, itemList, async () =>{
-                    let armyName = result.item.armyName;
+                makeSelectableItem(result, true, itemList, async () =>{
+                    let armyName: string | null = result.armyName;
                     if (armyName.toLowerCase() === 'core')
                         armyName = null;
 
-                    const unit = await getSpecificUnit(result.item.id, armyName);
+                    const unit = await getSpecificUnit(result.id, armyName);
                     const settings = new WarscrollSettings;
-                    settings.unit = unit;
-                    dynamicGoTo(settings);
+                    (settings as unknown as Settings).unit = unit;
+                    dynamicGoTo(settings as unknown as Settings);
                 });
             });
         }
@@ -97,10 +116,10 @@ const searchPage = {
                 </div>
             `;
 
-            const section = document.getElementById('results-section');
+            const section = document.getElementById('results-section') as HTMLElement;
             section.style.display = '';
 
-            const itemList = section.querySelector('.item-list');
+            const itemList = section.querySelector('.item-list') as HTMLElement;
             itemList.style.display = '';
             const emptySearchDisplay = `
                 <p style='color: ${getVar('white-3')};'>
@@ -108,15 +127,15 @@ const searchPage = {
                 </p>
             `;
 
-            const input = div.querySelector('.search-bar-input');
+            const input = div.querySelector('.search-bar-input') as HTMLInputElement;
             input.placeholder = 'Start typing...';
-            const content = document.getElementById('loading-content');
+            const content = document.getElementById('loading-content') as HTMLElement;
             content.insertBefore(div, content.firstChild);
 
             const minSearchLength = 3;
-            let debounceTimer;
+            let debounceTimer: unknown;
             input.addEventListener('input', () => {
-                clearTimeout(debounceTimer); // Reset timer on each keystroke
+                clearTimeout(debounceTimer as number); // Reset timer on each keystroke
                 debounceTimer = setTimeout(async () => {
                     const value = input.value.trim();
                     
@@ -129,7 +148,7 @@ const searchPage = {
                         const result = await fetchSearch(value);
                         thisPage._cache.query = value;
                         thisPage._cache.results = result;
-                        displaySearchResults(result);
+                        displaySearchResults(result as SearchableObject[]);
                     } 
                     else {
                         itemList.innerHTML = `
@@ -139,10 +158,10 @@ const searchPage = {
                         `;
                     }
                     // You can trigger a search or update UI here
-                }, 1000); // 1000 ms = 1 second
+                }, 1000) as unknown; // 1000 ms = 1 second
             });
 
-            if (thisPage._cache.results) {
+            if (thisPage._cache.results && thisPage._cache.query) {
                 input.value = thisPage._cache.query;
                 displaySearchResults(thisPage._cache.results);
             } else {
