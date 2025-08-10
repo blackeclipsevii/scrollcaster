@@ -14,9 +14,9 @@
   <div style='display: none' id="loading-content"></div>
   <script type="module" src="./dist/lib/main.js"></script>
   <script>
-    history.pushState(null, null, location.href);
-    window.addEventListener('popstate', () => {
-        history.pushState(null, null, location.href);
+    history.pushState(null, '', location.href);
+    window.addEventListener('popstate', (event) => {
+        history.pushState(null, '', location.href);
         globalThis.goBack();
     });
   </script>

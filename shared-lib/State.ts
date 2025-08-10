@@ -48,30 +48,36 @@ export const serializeUnit = (unit: UnitInterf) => {
         models: {}
     };
     
-    const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
-    enhancementNames.forEach(eName => {
-        if (unit.enhancements[eName].slot) {
-            unitState.enhancements[eName] = unit.enhancements[eName].slot.id;
-        }
-    });
-
-    unit.optionSets.forEach(optionSet => {
-        if (optionSet.selection) {
-            unitState.options[optionSet.name] = optionSet.selection.name;
-        }
-    });
-
-    unit.models.forEach(model => {
-        const modelState: ModelState = {
-            options: {}
-        }
-        model.optionSets.forEach(optionSet => {
-            if (optionSet.selection) {
-                modelState.options[optionSet.name] = optionSet.selection.name;
+    if (unit.enhancements) {
+        const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
+        enhancementNames.forEach(eName => {
+            if (unit.enhancements[eName].slot) {
+                unitState.enhancements[eName] = unit.enhancements[eName].slot.id;
             }
         });
-        unitState.models[model.id] = modelState;
-    });
+    }
+
+    if (unit.optionSets) {
+        unit.optionSets.forEach(optionSet => {
+            if (optionSet.selection) {
+                unitState.options[optionSet.name] = optionSet.selection.name;
+            }
+        });
+    }
+
+    if (unit.models) { // backwards compat
+        unit.models.forEach(model => {
+            const modelState: ModelState = {
+                options: {}
+            }
+            model.optionSets.forEach(optionSet => {
+                if (optionSet.selection) {
+                    modelState.options[optionSet.name] = optionSet.selection.name;
+                }
+            });
+            unitState.models[model.id] = modelState;
+        });
+    }
 
     return unitState;
 };
