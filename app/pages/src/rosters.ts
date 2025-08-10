@@ -554,14 +554,18 @@ const rosterPage = {
           let roster = await getRoster(rosters[i]);
           if (await version.isOutdated(roster)) {
             // update the roster with the latest server data
-            const state = rosterState.serialize(roster);
-            const newRoster = await rosterState.deserialize(state, roster.id);
-            if (newRoster) {
-              roster = newRoster;
-              putRoster(roster);
+            try {
+              const state = rosterState.serialize(roster);
+              const newRoster = await rosterState.deserialize(state, roster.id);
+              if (newRoster) {
+                roster = newRoster;
+                putRoster(roster);
+              }
+              displayRoster(roster);
+            } catch(e) {
+              console.log(`Exception occured while trying to migrate roster to lastest version: ${e}`);
             }
           }
-          displayRoster(roster);
       }
 
       if (rosters.length === 0) {
