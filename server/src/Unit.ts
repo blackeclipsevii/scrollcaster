@@ -1,7 +1,7 @@
 import Ability from "./Ability.js";
 
 import { UnitType, strToUnitType } from "../shared-lib/UnitInterface.js";
-import { BsCategoryLink, BsCharacteristic, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
+import { BsCategoryLink, BsCharacteristic, BsEntryLink, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
 import BattleProfile from "../shared-lib/BattleProfile.js";
@@ -11,6 +11,20 @@ import OptionSet from "../shared-lib/Options.js";
 import { parseOptions } from "./parseOptions.js";
 
 import UnitInterf, { EnhancementSlotInterf, UnitSuperType } from "../shared-lib/UnitInterface.js";
+
+export const isUndersizedUnit = (entry: BsEntryLink) => {
+    let undersized = false;
+    if (entry.categoryLinks) {
+        //to-do allow undersized units
+        undersized = !entry.categoryLinks.every(catLink => {
+            if (catLink['@name'] === 'Undersize Unit') {
+                return false;
+            }
+            return true;
+        });
+    }
+    return undersized;
+}
 
 export default class Unit implements UnitInterf {
     name: string;

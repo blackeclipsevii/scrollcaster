@@ -1,5 +1,5 @@
 
-import Unit from './Unit.js';
+import Unit, { isUndersizedUnit } from './Unit.js';
 import Upgrade from './Upgrade.js'
 import Lores from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
@@ -131,7 +131,7 @@ export default class Army implements ArmyInterf{
         // read all the units out of the libraries
         const names = Object.getOwnPropertyNames(data.libraries);
         names.forEach(name => {
-            (data.libraries[name] as BsLibrary).sharedSelectionEntries.forEach(entry => {
+            (data.libraries[name] as BsLibrary).sharedSelectionEntries.forEach(entry => {                
                 if (entry['@type'] === 'unit' &&
                     entry['@publicationId'] !== LegendsPub
                 ) {
@@ -270,7 +270,7 @@ export default class Army implements ArmyInterf{
         catalogue.entryLinks.forEach(link => {
             // this is the global library for the faction
             let unit = _libraryUnits[link['@targetId']];
-            if (!unit) {
+            if (!unit || isUndersizedUnit(link)) {
                 return;
             }
 

@@ -107,6 +107,7 @@ export interface BsEntryLink extends BsLink {
     '@import': string;
     '@hidden': string;
     entryLinks: BsEntryLink[];
+    categoryLinks: BsCategoryLink[] | undefined;
     costs: BsCost[];
     modifiers: BsModifier[];
     modifierGroups: BsModifierGroup[];
