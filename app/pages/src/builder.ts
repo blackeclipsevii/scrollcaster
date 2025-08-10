@@ -643,8 +643,7 @@ const builderPage = {
                     const _currentRegIdx = Number(_div.textContent);
 
                     const reg = roster.regiments[Number(_currentRegIdx)];
-                    const json = JSON.stringify(unit);
-                    const clone = JSON.parse(json);
+                    const clone = JSON.parse(JSON.stringify(unit));
                     reg.units.push(clone);
                     putRoster(roster);
                     
@@ -861,8 +860,7 @@ const builderPage = {
                     const _div = newRegItem.querySelector('.regiment-idx') as HTMLElement;
                     const _currentIdx = Number(_div.textContent);
                     const reg = roster.regiments[_currentIdx];
-                    const json = JSON.stringify(reg);
-                    const clone = JSON.parse(json);
+                    const clone = JSON.parse(JSON.stringify(reg));
                     roster.regiments.push(clone);
                     putRoster(roster);
                     displayRegiment(roster.regiments.length-1);
@@ -965,6 +963,7 @@ const builderPage = {
             totalPoints += unitsPoints;
 
             refreshPointsOverlay(roster);
+            updateValidationDisplay(roster);
         }
 
         function displayAux(idx: number) {
@@ -978,25 +977,28 @@ const builderPage = {
             
             const callbackMap = {
                 Duplicate: async () => {
-                    const json = JSON.stringify(unit);
-                    const clone = JSON.parse(json);
+                    const clone = JSON.parse(JSON.stringify(unit));
                     roster.auxiliaryUnits.push(clone);
                     putRoster(roster);
                     displayAux(roster.auxiliaryUnits.length-1);
                 },
 
                 Delete: async () => {
-                    roster.auxiliaryUnits.splice(idx, 1);
+                    if (roster.auxiliaryUnits.length === 1)
+                        roster.auxiliaryUnits = []
+                    else
+                        roster.auxiliaryUnits.splice(idx, 1);
                     putRoster(roster);
+
+                    if (roster.auxiliaryUnits.length === 0) {
+                        refreshPointsOverlay(roster);
+                        updateValidationDisplay(roster);
+                    }
                     
                     const parent = document.getElementById(typename) as HTMLElement;
-                    const slots = parent.querySelectorAll('.unit-slot');
-                    slots.forEach(slot => {
-                        const hiddenIdx = slot.querySelector('.unit-idx') as HTMLElement;
-                        if (idx === Number(hiddenIdx.textContent)) {
-                            parent.removeChild(slot);
-                        }
-                    });
+                    parent.innerHTML = '';
+                    for (let i = 0; i < roster.auxiliaryUnits.length; ++i)
+                        displayAux(i);
                 }
             };
 
