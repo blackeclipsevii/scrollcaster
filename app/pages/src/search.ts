@@ -8,17 +8,22 @@ import { WarscrollSettings } from "./warscroll.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { fetchSearch } from "../../lib/RestAPI/search.js";
-import { makeSelectableItem } from "../../lib/widgets/helpers.js";
+import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
+import UnitInterf from "../../../shared-lib/UnitInterface.js";
 
 export class SearchSettings implements Settings{
     [name: string]: unknown;
 };
 
+interface Result {
+    item: SearchableObject
+}
+
 const searchPage = {
     settings: null as SearchSettings | null,
     _cache: {
         query: null as string | null,
-        results: null as SearchableObject[] | null
+        results: null as Result[] | null
     },
     async loadPage(settings: Settings) {
         this.settings = settings as SearchSettings;
@@ -30,31 +35,55 @@ const searchPage = {
             }
 
             try {
-                interface Result {
-                    item: SearchableObject
-                }
-                const result = await fetchWithLoadingDisplay(encodeURI(url)) as Result[] | null;
-                if (result) {
-                    return result.map(res => res.item) as SearchableObject[];
-                }
-                return null;
+                const result = await fetchWithLoadingDisplay(encodeURI(url)) as UnitInterf | null;
+                return result;
             } catch (error) {
                 return null;
             }
         }
-        const displaySearchResults = (results: SearchableObject[]) => {
+        
+        const makeSelectableItem = (searchResult: SearchableObject, isUnit: boolean, parentList: HTMLElement, onclick: ()=>void) => {
+            const section = parentList.closest('.section') as HTMLElement;
+            section.style.display = 'block';
+
+            const item = document.createElement('div');
+            item.classList.add('selectable-item');
+            item.addEventListener('click', onclick);
+
+            const left = document.createElement('div');
+            left.classList.add('selectable-item-left');
+
+            const nameEle = makeSelectableItemName(searchResult);
+            left.appendChild(nameEle);
+
+            const roleEle = makeSelectableItemType(searchResult, isUnit);
+            left.appendChild(roleEle);
+
+            const armyName = makeSelectableItemType(searchResult.armyName);
+            left.appendChild(armyName);
+
+            const right = document.createElement('div');
+            right.classList.add('selectable-item-right');
+
+            item.append(left, right);
+            parentList.appendChild(item);
+            
+            return item;
+        };
+
+        const displaySearchResults = (results: Result[]) => {
             const section = document.getElementById('results-section') as HTMLElement;
             const itemList = document.querySelector('.item-list') as HTMLElement;
             section.style.display = '';
             itemList.innerHTML = '';
 
             results.forEach(result => {
-                makeSelectableItem(result, true, itemList, async () =>{
-                    let armyName: string | null = result.armyName;
+                makeSelectableItem(result.item, true, itemList, async () =>{
+                    let armyName: string | null = result.item.armyName;
                     if (armyName.toLowerCase() === 'core')
                         armyName = null;
 
-                    const unit = await getSpecificUnit(result.id, armyName);
+                    const unit = await getSpecificUnit(result.item.id, armyName);
                     const settings = new WarscrollSettings;
                     (settings as unknown as Settings).unit = unit;
                     dynamicGoTo(settings as unknown as Settings);
@@ -106,10 +135,12 @@ const searchPage = {
                         thisPage._cache.results = null;
                     }
                     else if (value.length >= minSearchLength) {
-                        const result = await fetchSearch(value);
-                        thisPage._cache.query = value;
-                        thisPage._cache.results = result;
-                        displaySearchResults(result as SearchableObject[]);
+                        const result = await fetchSearch(value) as Result[] | null;
+                        if (result) {
+                            thisPage._cache.query = value;
+                            thisPage._cache.results = result;
+                            displaySearchResults(result);
+                        }
                     } 
                     else {
                         itemList.innerHTML = `
