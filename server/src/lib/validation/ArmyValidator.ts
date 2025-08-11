@@ -81,7 +81,7 @@ export class ArmyValidatorCollection {
 // just disallow ror
 export class NoRorValidator implements ArmyValidator {
     validate(army: Army, roster: Roster): string[] | null {
-        let errors = noRegimentOfRenown(roster);
+        const errors = noRegimentOfRenown(roster);
         return errors && errors.length > 0 ? errors : null;
     }
 };
@@ -95,14 +95,14 @@ export class ForcedGeneralValidator {
         this.mustInclude = mustInclude;
     }
     validate(army: Army, roster: Roster): string[] | null {
-        let errors = mustBeYourGeneral(this.generalName, roster.regiments, this.mustInclude);
+        const errors = mustBeYourGeneral(this.generalName, roster.regiments, this.mustInclude);
         return errors && errors.length > 0 ? errors : null;
     }
 };
 
 export class NoTerrainValidator {
     validate(army: Army, roster: Roster): string[] | null {
-        let errors = noFactionTerrain(roster);
+        const errors = noFactionTerrain(roster);
         return errors && errors.length > 0 ? errors : null;
     }
 }
@@ -115,7 +115,7 @@ export class MultiStepValidator {
     validate(army: Army, roster: Roster): string[] | null {
         let errors: string[] = [];
         for (let i = 0; i < this._validators.length; ++i) {
-            let e = this._validators[i].validate(army, roster);
+            const e = this._validators[i].validate(army, roster);
             if (e && e.length > 0)
                 errors = errors.concat(e);
         }

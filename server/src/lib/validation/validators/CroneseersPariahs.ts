@@ -16,7 +16,7 @@ class TheCroneseersPariahsValidator extends ForcedGeneralValidator {
         return left === right;
     }
     validate(army: Army, roster: Roster): string[] | null {
-        let errors: string[] = super.validate(army, roster) || [];
+        const errors: string[] = super.validate(army, roster) || [];
         
         const excludeList = [
             processName('Morathi-Khaine'),
@@ -26,7 +26,7 @@ class TheCroneseersPariahsValidator extends ForcedGeneralValidator {
         const genericError = 'cannot include <Morathi-Khaine> or <The Shadow Queen>';
         
         const checkName = (unit: Unit) => {
-            let name = processName(unit.name);
+            const name = processName(unit.name);
             if (excludeList.includes(name)) {
                 errors.push(genericError);
                 return false;

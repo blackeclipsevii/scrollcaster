@@ -10,14 +10,14 @@ const formatMessageText = (message: string) => {
 }
 
 const regimentErrorMessage = (regiment: Regiment, errors: string | string[]) => {
-    const origText = typeof errors === 'string' ? errors : (errors as string[]).join(', ');
+    const origText = typeof errors === 'string' ? errors : errors.join(', ');
     if (!regiment.leader)
         return origText;
     return `${formatMessageText(origText)} for <b>${regiment.leader.name}</b>'s regiment.`;
 }
 
 const armyErrorMessage = (armyName: string, errors: string | string[]) => {
-    const origText = typeof errors === 'string' ? errors : (errors as string[]).join(', ');
+    const origText = typeof errors === 'string' ? errors : errors.join(', ');
     let name = armyName;
     if (name.includes(' - ')) {
         name = name.split(' - ')[1];
@@ -36,7 +36,7 @@ export const validateRoster = (army: Army, roster: Roster, availableKeywords: st
     });
     
     if (army.validator) {
-        let subErrs = army.validator.validate(army, roster);
+        const subErrs = army.validator.validate(army, roster);
         if (subErrs && subErrs.length > 0) {
             const errMsg = armyErrorMessage(army.name, subErrs);
             armyErrs = armyErrs.concat(errMsg);

@@ -68,7 +68,7 @@ export const deserializeRegiment = (army: Army, regState: RegimentState) => {
         if (leader)
             regiment.leader = leader;
     }
-    regState.units.forEach((unitState: UnitState, i: number) => {
+    regState.units.forEach((unitState: UnitState) => {
         const unit = deserializeUnit(army, unitState);
         if (unit) {
             regiment.units.push(unit);
@@ -82,7 +82,7 @@ export const RosterState = {
     deserialize: (ageOfSigmar: AgeOfSigmar, json: string | RosterStateInterf, id=null) => {
         let state = null;
         if (typeof json === 'string')
-            state = JSON.parse(json);
+            state = JSON.parse(json) as RosterStateInterf;
         else
             state = json;
 

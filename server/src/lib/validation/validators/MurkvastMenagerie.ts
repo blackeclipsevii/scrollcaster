@@ -18,15 +18,15 @@ class MurkvastMenagerieValidator extends ForcedGeneralValidator {
     validate(army: Army, roster: Roster): string[] | null {
         let errors: string[] = super.validate(army, roster) || [];
         
-        let errs = noFactionTerrain(roster);
+        const errs = noFactionTerrain(roster);
         if (errs && errs.length > 0)
             errors = errors.concat(errs);
 
-        let hero = 'HERO';
-        let kruleboyz = 'KRULEBOYZ';
-        let monster = 'MONSTER';
-        let infantry = 'INFANTRY';
-        let shamanAndPotGrot = 'Swampcalla Shaman and Pot-grot';
+        const hero = 'HERO';
+        const kruleboyz = 'KRULEBOYZ';
+        const monster = 'MONSTER';
+        const infantry = 'INFANTRY';
+        const shamanAndPotGrot = 'Swampcalla Shaman and Pot-grot';
 
         let nKruleboyzHeroMonsters = 0;
         let nShamanAndPotGrot = 0;

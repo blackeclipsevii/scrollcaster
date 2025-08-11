@@ -16,26 +16,21 @@ class DaKingsGitzValidator extends ForcedGeneralValidator {
         return left === right;
     }
     validate(army: Army, roster: Roster): string[] | null {
-        let errors: string[] = super.validate(army, roster) || [];
+        const errors: string[] = super.validate(army, roster) || [];
         
         const hero = 'HERO';
         const troggoth = 'TROGGOTH';
         let nTrog = 0;
-        let triggerHeroErr = true;
-        let triggerTrogError = true;
+        let triggerHeroErr = false;
+        let triggerTrogError = false;
 
         const testUnit = (unit: Unit) => {
             if (unit.keywords.includes(troggoth)) {
                 if (unit.keywords.includes(hero)) {
-                    if (triggerHeroErr) {
-                        errors.push(`Only non-<${hero}> <${troggoth}> can be added.`);
-                        triggerHeroErr = false;
-                    }
+                    triggerHeroErr = true;
                 } else {
                     ++ nTrog;
-                    if (nTrog > 2 && triggerTrogError) {
-                        errors.push(`Only 0-2 non-<${hero}> <${troggoth}> units can be added.`);
-                    }
+                    triggerTrogError = nTrog > 2;
                 }
             }
         }
@@ -46,11 +41,23 @@ class DaKingsGitzValidator extends ForcedGeneralValidator {
             reg.units.forEach(unit => {
                 testUnit(unit);
             });
+
+            // quit if we've hit all the errors
+            return !(triggerHeroErr && triggerTrogError);
         });
 
         roster.auxiliaryUnits.every(unit => {
             testUnit(unit);
+
+            // quit if we've hit all the errors
+            return !(triggerHeroErr && triggerTrogError);
         });
+
+        if (triggerHeroErr)
+            errors.push(`Only non-<${hero}> <${troggoth}> can be added.`);
+        
+        if (triggerTrogError)
+            errors.push(`Only 0-2 non-<${hero}> <${troggoth}> units can be added.`);
 
         return errors.length > 0 ? errors : null;
     }

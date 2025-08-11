@@ -48,7 +48,7 @@ class BigWaaaghValidator implements ArmyValidator {
                     ++ nKruelboyz;
                 }
 
-                let errs: string[] = [];
+                const errs: string[] = [];
                 reg.units.forEach(unit => {
                     if(!unit.keywords.includes(keyword)) {
                         if (errs.length === 0 && reg.leader?.name.includes('Kragnos')) {

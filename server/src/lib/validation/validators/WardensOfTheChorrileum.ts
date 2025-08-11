@@ -13,7 +13,7 @@ class WardensOfTheChorrileumValidator extends NoRorValidator {
         return left.startsWith(right);
     }
     validate(army: Army, roster: Roster): string[] | null {
-        let errors: string[] = super.validate(army, roster) || [];
+        const errors: string[] = super.validate(army, roster) || [];
         
         let nEidolon = 0;
 

@@ -13,7 +13,7 @@ class PyrofaneCultValidator extends NoRorValidator {
         return left === right;
     }
     validate(army: Army, roster: Roster): string[] | null {
-        let errors: string[] = super.validate(army, roster) || [];
+        const errors: string[] = super.validate(army, roster) || [];
         
         let nGauntSummoner = 0;
         let triggerErr = true;

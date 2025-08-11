@@ -45,7 +45,7 @@ const meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], avail
         
         if (!availableKeywords.includes(keyOpt.keyword))
         {
-            let name = unit.name.toUpperCase();
+            const name = unit.name.toUpperCase();
             if (keywordCompare(keyOpt.keyword, unit.name.toUpperCase())) {
                 return !isNon;
             }
@@ -212,7 +212,6 @@ export const RegimentValidator = {
 
     // get all the units available to a leader's regiment
     getRegimentOptions: (army: Army, leaderId: string, availableKeywords: string[]) => {
-        // to-do literally just make a schema tehre are too many spaces in the plain text
         const leader = army.units[leaderId];
         if (!leader) {
             console.log(`where are you ${leaderId}`)
@@ -255,7 +254,7 @@ export const RegimentValidator = {
             return ok;
         }
 
-        let units: Unit[] = [];
+        const units: Unit[] = [];
         armyUnits.forEach(unit => {
             if (canFieldUnit(unit)) {
                 units.push(unit);
