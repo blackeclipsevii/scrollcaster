@@ -72,7 +72,9 @@ function getSearch(aos) {
 const allowedOriginRegex = /^https?:\/\/(www\.)?scrollcaster\.(dev|io|app)$/;
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || origin.startsWith('http://127.0.0.1') || allowedOriginRegex.test(origin)) {
+    if (hostname === 'localhost') {
+      callback(null, true);
+    } else if (!origin || origin.startsWith('http://127.0.0.1') || allowedOriginRegex.test(origin)) {
       callback(null, true);
     } else {
       callback(`Not allowed by CORS: ${origin}`, false);
@@ -81,6 +83,7 @@ const corsOptions = {
   methods: ['GET', 'POST'],
   credentials: false
 };
+
 server.use(cors(corsOptions));
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
@@ -212,7 +215,7 @@ server.get('/regimentsOfRenown', (req, res) =>{
 
 server.post('/import', (req, res) => {
   if (!req.body) {
-      console.log ('error: body is undefined');
+      console.log ('PUT import error: body is undefined');
       res.status(400);
       res.end();
       return;

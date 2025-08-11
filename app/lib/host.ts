@@ -3,6 +3,14 @@ import RosterInterf from "../shared-lib/RosterInterface.js";
 import UnitInterf from "../shared-lib/UnitInterface.js";
 import { Settings } from "./widgets/header.js";
 
+export const isDOMAvailable = () => {
+  return (
+    typeof window !== 'undefined' &&
+    typeof document !== 'undefined' &&
+    typeof document.createElement === 'function'
+  );
+}
+
 export const DYNAMIC_WARSCROLL = false;
 
 export interface Page {

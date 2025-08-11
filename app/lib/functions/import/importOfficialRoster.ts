@@ -89,7 +89,7 @@ export default class ImportOfficialRoster extends NameRosterImporter {
 
         for (;i < lines.length; ++i) {
             let line = lines[i].trim();
-            if (line.includes('Battle Tactic Cards')) {
+            if (line.includes('Battle Tactics Cards')) {
                 let cards: string | string[] = line.split(':')[1];
                 cards = cards.replace('cept and ', 'cept & ');
                 cards = cards.split(' and ');

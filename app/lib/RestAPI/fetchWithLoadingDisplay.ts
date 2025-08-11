@@ -1,6 +1,7 @@
 import { Overlay } from "../widgets/overlay.js";
 import { absoluteUrl } from "../widgets/header.js";
 import { endpoint } from "../endpoint.js";
+import { isDOMAvailable } from "../host.js";
 
 export const getLoadingMessage = () => {
     const msgs = [
@@ -42,37 +43,42 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
       console.log(`${url}\n${error}`);
     });
   }
-  const modal = document.querySelector('.modal') as HTMLElement | null;
+  
+  if (isDOMAvailable()) {
+    const modal = document.querySelector('.modal') as HTMLElement | null;
 
-  const loadingOverlay = Overlay.toggleFactory('flex', () => {
-    if (!modal) return;
-    modal.innerHTML = `
-    <div style='border-radius: 4vh; background-color: rgb(0,0,0,.5); display: flex; align-items: center; justify-content: center;'>
-    <div id="loader-box" style="display: inline-block; width: 1em; height: 1em; margin-right: 3em; margin-top: -2em;">
-      <div id="loader" class="loader"></div>
-    </div>
-    <h3 style="display: inline-block;">${getLoadingMessage()}</h3>
-    </div>
-    `;
-    modal.style.display = 'flex';
-    modal.style.justifyContent = 'center';
-    modal.style.flexDirection = 'column';
-    modal.style.height ='20em';
-    modal.style.width ='20em';
-    modal.style.backgroundImage = `URL(${absoluteUrl('resources/dropped-scrolls.jpg')})`
-    modal.style.backgroundSize = 'cover';
-    modal.style.backgroundPosition = 'center';
-    const overlay = modal.closest('.overlay');
-    if (overlay)
-        overlay.classList.add('block-close');
-  });
+    const loadingOverlay = Overlay.toggleFactory('flex', () => {
+      if (!modal) return;
+      modal.innerHTML = `
+      <div style='border-radius: 4vh; background-color: rgb(0,0,0,.5); display: flex; align-items: center; justify-content: center;'>
+      <div id="loader-box" style="display: inline-block; width: 1em; height: 1em; margin-right: 3em; margin-top: -2em;">
+        <div id="loader" class="loader"></div>
+      </div>
+      <h3 style="display: inline-block;">${getLoadingMessage()}</h3>
+      </div>
+      `;
+      modal.style.display = 'flex';
+      modal.style.justifyContent = 'center';
+      modal.style.flexDirection = 'column';
+      modal.style.height ='20em';
+      modal.style.width ='20em';
+      modal.style.backgroundImage = `URL(${absoluteUrl('resources/dropped-scrolls.jpg')})`
+      modal.style.backgroundSize = 'cover';
+      modal.style.backgroundPosition = 'center';
+      const overlay = modal.closest('.overlay');
+      if (overlay)
+          overlay.classList.add('block-close');
+    });
 
-  const timeoutDisplayOverlay = () => {
-    if (!done && showLoadingDisplay) {
-      loadingOverlay(null);
+    const timeoutDisplayOverlay = () => {
+      if (!done && showLoadingDisplay) {
+        loadingOverlay(null);
+      }
     }
+    setTimeout(timeoutDisplayOverlay, 250);
+  } else {
+    showLoadingDisplay = false;
   }
-  setTimeout(timeoutDisplayOverlay, 250);
   await _internalFetch();
 
   while (retry > 0 && !done) {
