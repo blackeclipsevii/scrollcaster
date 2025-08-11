@@ -293,7 +293,6 @@ const battlePage = {
 
             hidePointsOverlay();
             disableHeaderContextMenu();
-            
             makeLayout(sections);
             await loadArmy();
             swapLayout();

@@ -17,7 +17,7 @@ export default tseslint.config(
   // applies only to ts files
   {
     name: "tseslint",
-    files: ["server/**/*.ts"],
+    files: ["lib/**/*.ts", "pages/**/*.ts"],
     extends: [
       //
       ...tseslint.configs.recommendedTypeChecked,
@@ -41,7 +41,7 @@ export default tseslint.config(
   {
     languageOptions: {
       globals: {
-        ...globals.node,
+        ...globals.browser,
       },
     },
   },
