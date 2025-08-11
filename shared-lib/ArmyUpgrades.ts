@@ -11,16 +11,17 @@ export interface Enhancements {
     [name: string]: EnhancementGroup | null;
 }
 
+export interface ArmyLores {
+    [name:string]: LoreLUTInterf;
+    manifestation: LoreLUTInterf;
+    spell: LoreLUTInterf;
+    prayer: LoreLUTInterf;
+}
+
 export interface ArmyUpgrades {
-    [name:string]: UpgradeLUT | null | unknown;
+    [name:string]: UpgradeLUT | ArmyLores | Enhancements;
     battleFormations: UpgradeLUT;
     battleTraits: UpgradeLUT;
-    lores: {
-        [name:string]: LoreLUTInterf;
-        manifestation: LoreLUTInterf;
-        spell: LoreLUTInterf;
-        prayer: LoreLUTInterf;
-    };
-
+    lores: ArmyLores
     enhancements: Enhancements;
 }

@@ -1,9 +1,8 @@
 
 import Unit, { isUndersizedUnit } from './Unit.js';
 import Upgrade from './Upgrade.js'
-import Lores from './Lores.js';
 import AgeOfSigmar from './AgeOfSigmar.js';
-import { BsCatalog, BsLibrary, BsSelectionEntry, BsSelectionEntryGroup } from './lib/bs/BsCatalog.js';
+import { BsSelectionEntry, BsSelectionEntryGroup } from './lib/bs/BsCatalog.js';
 import { Force } from '../shared-lib/Force.js';
 import { UnitType } from '../shared-lib/UnitInterface.js';
 import { ArmyValidator, armyValidatorCollection } from './lib/validation/ArmyValidator.js';
@@ -13,6 +12,7 @@ import { toCamelCase } from './lib/helperFunctions.js';
 import { UpgradeType, UpgradeLUT } from '../shared-lib/UpgradeInterface.js';
 import { ArmyUpgrades } from '../shared-lib/ArmyUpgrades.js';
 import ArmyInterf from '../shared-lib/ArmyInterface.js';
+import LoreInterf from '../shared-lib/LoreInterface.js';
 
 // id designation the legends publication
 const LegendsPub = "9dee-a6b2-4b42-bfee";
@@ -106,13 +106,13 @@ export default class Army implements ArmyInterf{
     }
 
     _parse(ageOfSigmar: AgeOfSigmar, armyName: string) {
-        const data = (ageOfSigmar._database as {[name: string]: any}).armies[armyName];
+        const data = ageOfSigmar._database.armies[armyName];
         if (!data) {
             console.log (`ERROR: data not found for ${armyName}`);
             return;
         }
 
-        const catalogue = data.catalog as BsCatalog;
+        const catalogue = data.catalog;
         if (!catalogue) {
             console.log (`ERROR: catalogue not found for ${armyName}`);
             return;
@@ -131,7 +131,7 @@ export default class Army implements ArmyInterf{
         // read all the units out of the libraries
         const names = Object.getOwnPropertyNames(data.libraries);
         names.forEach(name => {
-            (data.libraries[name] as BsLibrary).sharedSelectionEntries.forEach(entry => {                
+            data.libraries[name].sharedSelectionEntries.forEach(entry => {                
                 if (entry['@type'] === 'unit' &&
                     entry['@publicationId'] !== LegendsPub
                 ) {
@@ -151,9 +151,9 @@ export default class Army implements ArmyInterf{
 
         const addUpgrade = (upgrades: ArmyUpgrades, key: string, element: BsSelectionEntry, parent: BsSelectionEntryGroup | null) => {
             const lu = upgradeLUT[key];
-            const isLore = (lu.type === UpgradeType.ManifestationLore ||
-                            lu.type === UpgradeType.SpellLore ||
-                            lu.type === UpgradeType.PrayerLore);
+            const isLore = (lu.type as UpgradeType === UpgradeType.ManifestationLore ||
+                            lu.type as UpgradeType === UpgradeType.SpellLore ||
+                            lu.type as UpgradeType === UpgradeType.PrayerLore);
 
             if (isLore) {
                 // add lore upgrade
@@ -165,14 +165,14 @@ export default class Army implements ArmyInterf{
                 if (!targetId)
                     return false;
                 
-                let lore = (ageOfSigmar.lores as Lores).lores[lu.alias][targetId];
+                let lore = ageOfSigmar.lores.lores[lu.alias][targetId];
                 if (!lore)
                     return false;
 
                 if (element.costs) {
                     element.costs.forEach(cost => {
                         if (cost['@typeId'] === 'points') {
-                            lore = JSON.parse(JSON.stringify(lore));
+                            lore = JSON.parse(JSON.stringify(lore)) as LoreInterf;
                             lore.points = Number(cost['@value']);
                         }
                     });
@@ -202,27 +202,29 @@ export default class Army implements ArmyInterf{
                     };
                 }
                 const upgrade = new Upgrade(element, lu.type, parent['@name']);
-                upgrades.enhancements[ccName]!.upgrades[upgrade.name] = upgrade;
+                upgrades.enhancements[ccName].upgrades[upgrade.name] = upgrade;
             } else {
                 const upgrade = new Upgrade(element, lu.type, null);
                 (upgrades[lu.alias] as UpgradeLUT)[upgrade.name] = upgrade;
             }
         }
         
-        catalogue.sharedSelectionEntries.forEach(entry => {
-            const lc = entry['@name'].toLowerCase();
-            if (entry['@type'] === 'unit') {
-                const unit = new Unit(ageOfSigmar, entry);
-                _libraryUnits[unit.id] = unit;
-            } else {
-                ulKeys.forEach(key => {
-                    if (lc.includes(key)) {
-                        // console.log(entry, null, 2);
-                        addUpgrade(this.upgrades, key, entry, null);
-                    }
-                });
-            }
-        })
+        if (catalogue.sharedSelectionEntries) {
+            catalogue.sharedSelectionEntries.forEach(entry => {
+                const lc = entry['@name'].toLowerCase();
+                if (entry['@type'] === 'unit') {
+                    const unit = new Unit(ageOfSigmar, entry);
+                    _libraryUnits[unit.id] = unit;
+                } else {
+                    ulKeys.forEach(key => {
+                        if (lc.includes(key)) {
+                            // console.log(entry, null, 2);
+                            addUpgrade(this.upgrades, key, entry, null);
+                        }
+                    });
+                }
+            });
+        }
 
         catalogue.sharedSelectionEntryGroups.forEach(sharedGroup => {
             const lc = sharedGroup['@name'].toLowerCase();
@@ -269,7 +271,7 @@ export default class Army implements ArmyInterf{
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
             // this is the global library for the faction
-            let unit = _libraryUnits[link['@targetId']];
+            const unit = _libraryUnits[link['@targetId']];
             if (!unit || isUndersizedUnit(link)) {
                 return;
             }
@@ -279,10 +281,10 @@ export default class Army implements ArmyInterf{
                 const baseArmyName = armySplit[0];
                 const supplimentalArmyName = armySplit.length > 1 ? armySplit[1] : null;
                 if (!ageOfSigmar.battleProfiles.hasProfilesFor(baseArmyName)) {
-                    throw `Missing battle profiles for ${baseArmyName}`;
+                    throw new Error(`Missing battle profiles for ${baseArmyName}`);
                 }
                 
-                if (unit.type === UnitType.Hero) {
+                if (unit.type as UnitType === UnitType.Hero) {
                     unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
                     if (!unit.battleProfile) {
                         console.log(`profile not found for ${unit.name}`);

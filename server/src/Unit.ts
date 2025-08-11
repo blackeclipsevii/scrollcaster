@@ -87,9 +87,8 @@ export default class Unit implements UnitInterf {
         this._parse(ageOfSigmar, selectionEntry);
         this.type = UnitType.Unknown;
         this.keywords.forEach(keyword => {
-            let type = strToUnitType(keyword);
-            if (this.type !== UnitType.Manifestation &&
-                type < this.type)
+            const type = strToUnitType(keyword);
+            if (this.type as UnitType !== UnitType.Manifestation && (type as number) < this.type)
                 this.type = type;
         });
     }
@@ -97,7 +96,7 @@ export default class Unit implements UnitInterf {
     _parseKeywords(categoryLinks: BsCategoryLink[]) {
         this.keywords = [];
         for (let i = 0; i < categoryLinks.length; ++i) {
-            let link = categoryLinks[i];
+            const link = categoryLinks[i];
             const keyword = link['@name'];
             if (keyword === 'WARMASTER') {
                 this.isWarmaster = true;
@@ -108,10 +107,10 @@ export default class Unit implements UnitInterf {
 
     _parseCharacteristics(chars: BsCharacteristic[]) {
         for (let i = 0; i < chars.length; ++i) {
-            let char = chars[i];
+            const char = chars[i];
             const cName = new String(char['@name']).trim();
             if (char['#text'])
-                (this as unknown as Metadata)[cName] = char['#text'].toString();
+                (this as unknown as Metadata)[cName] = char['#text'];
         }
     }
 

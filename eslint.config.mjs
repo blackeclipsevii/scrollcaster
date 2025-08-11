@@ -8,7 +8,7 @@ import globals from "globals";
 export default tseslint.config(
   // global ignores
   {
-    ignores: ["dist/", "node_modules/", "**/*.test.js"],
+    ignores: ["**/dist/", "node_modules/", "**/*.test.js"],
   },
 
   // applies to everything
@@ -33,6 +33,8 @@ export default tseslint.config(
       },
     },
     rules: {
+      // this rule doesn't really work
+      "@typescript-eslint/no-unnecessary-condition": "off",
       "@typescript-eslint/no-unused-vars": "warn",
     },
   },

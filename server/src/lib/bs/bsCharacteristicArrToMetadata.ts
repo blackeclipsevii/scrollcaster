@@ -10,8 +10,9 @@ export const bsCharacteristicArrToMetadata = (chars: BsCharacteristic[]): Metada
     for (let i = 0; i < chars.length; ++i) {
         const char = chars[i];
         const cName = new String(char['@name']).trim();
-        const value = bsTextSmoother(char['#text']);
-        metadata[cName] = value ? value.toString() : '-';
+        const text = char['#text'];
+        const value = text ? bsTextSmoother(text) : null;
+        metadata[cName] = value ? value : '-';
     }
     return metadata;
 }

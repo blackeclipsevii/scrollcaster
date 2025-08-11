@@ -15,7 +15,8 @@ export class BattleTactic implements BattleTacticInterf {
             name: name,
             index: index
         };
-        this.text = bsTextSmoother(text);
+
+        this.text = bsTextSmoother(text) as string;
         this.text = `<b>${this.text.replace(':', ':</b>')}`;
     }
 }
@@ -40,7 +41,7 @@ export default class BattleTacticCard implements BattleTacticCardInterf {
             new BattleTactic('Domination', 2, '')
         ];
         if (entry.profiles === undefined) {
-            throw 'Battle Tactic Card is missing profiles.';
+            throw new Error('Battle Tactic Card is missing profiles.');
         }
         entry.profiles[0].characteristics.forEach(phase => {
             if (phase['#text'] === undefined)
@@ -48,7 +49,7 @@ export default class BattleTacticCard implements BattleTacticCardInterf {
 
             if (phase['@name'] === 'Card') {
                 const text = phase['#text'];
-                this.text = text ? bsTextSmoother(text) : '';
+                this.text = text ? bsTextSmoother(text) as string : '';
             } else if (phase['@name'] === 'Affray') {
                 this.tactics[0].text = phase['#text'];
             } else if (phase['@name'] === 'Strike') {

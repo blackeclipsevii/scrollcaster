@@ -16,7 +16,7 @@ export class Option {
     }
 }
 
-export class Options {
+export interface Options {
     [name: string]: Option;
 }
 

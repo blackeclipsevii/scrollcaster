@@ -20,7 +20,8 @@ export default class Ability {
             const lcName = char['@name'].toLowerCase();
             if (lcName !== 'used by' && char['#text']) {
                 const value = bsTextSmoother(char['#text']);
-                (this as unknown as Metadata)[lcName] = value;
+                if (value)
+                    (this as unknown as Metadata)[lcName] = value;
             }
         });
 

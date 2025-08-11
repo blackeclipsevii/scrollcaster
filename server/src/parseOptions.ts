@@ -10,7 +10,7 @@ export const parseOptions = (optionSets: OptionSet[], ageOfSigmar: AgeOfSigmar, 
             return;
 
         const setName = og["@name"];
-        const options = new Options;
+        const options: Options = {};
 
         const addOptions = (entry: BsSelectionEntry) => {
             const optionName = entry["@name"];

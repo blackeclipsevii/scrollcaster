@@ -172,9 +172,9 @@ export const RegimentValidator = {
         //const sortedKeywords = sortKeywords(keywords);
         const slotUnit = (unit: Unit) => {
             const genericError = `Invalid Unit Selection: ${unit.name}`;
-            if (unit.type === UnitType.Manifestation ||
-                unit.type === UnitType.Terrain ||
-                unit.type === UnitType.Unknown
+            if (unit.type as UnitType === UnitType.Manifestation ||
+                unit.type as UnitType === UnitType.Terrain ||
+                unit.type as UnitType === UnitType.Unknown
             ) {// it literally shouldn't be possible to hit this error
                 return genericError;
             }
@@ -213,11 +213,6 @@ export const RegimentValidator = {
     // get all the units available to a leader's regiment
     getRegimentOptions: (army: Army, leaderId: string, availableKeywords: string[]) => {
         const leader = army.units[leaderId];
-        if (!leader) {
-            console.log(`where are you ${leaderId}`)
-            return;
-        }
-
         const options = leader.battleProfile?.regimentOptions.toUpperCase().split(',');
         if(!options) {
             console.log(`${leader.name} as no regiment options.`);
@@ -234,9 +229,9 @@ export const RegimentValidator = {
         // longer keywords also take presidence
         //const sortedKeywords = sortKeywords(keywords);
         const canFieldUnit = (unit: Unit) => {
-            if (unit.type === UnitType.Manifestation ||
-                unit.type === UnitType.Terrain ||
-                unit.type === UnitType.Unknown
+            if (unit.type as UnitType === UnitType.Manifestation ||
+                unit.type as UnitType === UnitType.Terrain ||
+                unit.type as UnitType === UnitType.Unknown
             ) { // these don't go in a regiment
                 return false;
             }

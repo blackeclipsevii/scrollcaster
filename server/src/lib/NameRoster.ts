@@ -3,9 +3,9 @@ import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
 import Upgrade from "../Upgrade.js";
 
-import { UpgradeLUT } from "../../shared-lib/UpgradeInterface.js";
+import UpgradeInterf, { UpgradeLUT } from "../../shared-lib/UpgradeInterface.js";
 import { NameRoster, NameUnit } from "../../shared-lib/NameRoster.js";
-import { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
+import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
 
 export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRoster) => {
     const army = ageOfSigmar.getArmy(nameRoster.armyName);
@@ -37,9 +37,10 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
     }
 
     const findUpgradeByName = (name: string | null, ugLUT: UpgradeLUT | LoreLUTInterf) => {
-        const upgrades = Object.values(ugLUT);
         if (name === null)
             return null;
+
+        const upgrades = Object.values(ugLUT) as (UpgradeInterf | LoreInterf)[];
         let result = null;
         upgrades.every(upgrade => {
             if (namesEqual(upgrade.name, name)) {

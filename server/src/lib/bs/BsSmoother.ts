@@ -1,4 +1,4 @@
-export function replaceAlternatingBoldMarkers(str) {
+export function replaceAlternatingBoldMarkers(str: string) {
   let count = -1;
   return str.replace(/\*\*/g, () => {
     count++;
@@ -6,7 +6,7 @@ export function replaceAlternatingBoldMarkers(str) {
   });
 }
 
-export function replaceAlternatingItalicMarkers(str) {
+export function replaceAlternatingItalicMarkers(str: string) {
   let count = -1;
   return str.replace(/\^\^/g, () => {
     count++;
@@ -14,28 +14,31 @@ export function replaceAlternatingItalicMarkers(str) {
   });
 }
 
-export function makeBulletPointsBulletPoint(str) {
+export function makeBulletPointsBulletPoint(str: string) {
   return str.replace(/•/g, '<br>•');
 
 }
 
-export default function bsTextSmoother(text) {
+export default function bsTextSmoother(text: string | null) {
     if (!text)
         return text;
-    let newText = text.toString();
-    newText = replaceAlternatingBoldMarkers(newText);
+    let newText = replaceAlternatingBoldMarkers(text);
     newText = replaceAlternatingItalicMarkers(newText);
     newText = makeBulletPointsBulletPoint(newText);
     return newText;
 }
 
+interface UnknownObject {
+    [name: string]: unknown
+}
+
 // Removes annoying bsdata standard of wrapping every array in an object
-export function bsLayoutSmoother(bsData) {
+export function bsLayoutSmoother(bsData: UnknownObject) {
     for (const [key, value] of Object.entries(bsData)) {
         if (typeof(value) === 'object') {
             if (!Array.isArray(value) && key.endsWith('s')) {
-                if (Object.entries(value).length === 1) {
-                    for (const [_, singularValue] of Object.entries(value)) {
+                if (Object.entries(value as unknown[]).length === 1) {
+                    for (const [_, singularValue] of Object.entries(value as UnknownObject)) {
                         if (Array.isArray(singularValue)) {
                             bsData[key] = singularValue;
                         } else {
@@ -49,15 +52,13 @@ export function bsLayoutSmoother(bsData) {
             // recurse
             if (Array.isArray(newValue)) {
                 if (typeof(newValue[0]) === 'object') {
-                    let n = newValue.length;
-                    let i = 0;
-                    for (; i < n; ++i) {
-                        newValue[i] = bsLayoutSmoother(newValue[i]);
+                    for (let i = 0; i < newValue.length; ++i) {
+                        newValue[i] = bsLayoutSmoother(newValue[i] as UnknownObject);
                     }
                 }
             }
             else {
-                bsData[key] = bsLayoutSmoother(newValue);
+                bsData[key] = bsLayoutSmoother(newValue as UnknownObject);
             }
         }
     }

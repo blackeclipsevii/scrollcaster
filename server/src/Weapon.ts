@@ -18,7 +18,7 @@ export default class Weapon implements WeaponInterf {
     constructor(profileXml: BsProfile) {
         if (!profileXml["@typeName"].includes('Weapon')) {
             console.log(JSON.stringify(profileXml));
-            throw `Invalid type for constructing Weapon: ${profileXml["@typeName"]}`;
+            throw new Error(`Invalid type for constructing Weapon: ${profileXml["@typeName"]}`);
         }
 
         this.id = profileXml["@id"];

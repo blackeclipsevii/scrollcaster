@@ -16,9 +16,12 @@ export default function parseCatalog(path: string): BsCatalog | BsLibrary | null
         return null;
 
     const parser = new XMLParser(options);
-    let root = parser.parse(xmlContent);
+    let root = parser.parse(xmlContent) as {[name:string]: unknown} | null;
+    if (!root)
+        return null;
+    
     root = bsLayoutSmoother(root);
-    return root.catalogue;
+    return root.catalogue as BsCatalog | BsLibrary;
 }
 
 export function parseGameSystem(path: string): BsGameSystem | null{
@@ -34,7 +37,7 @@ export function parseGameSystem(path: string): BsGameSystem | null{
         return null;
 
     const parser = new XMLParser(options);
-    let root = parser.parse(xmlContent);
+    let root = parser.parse(xmlContent) as {[name: string]: unknown};
     if (!root)
         return null;
     

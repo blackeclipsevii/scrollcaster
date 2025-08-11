@@ -47,8 +47,10 @@ export const serializeUnit = (unit: UnitInterf) => {
         options: {},
         models: {}
     };
-    
-    if (unit.enhancements) {
+
+    // these ifs are for backwards compatibility and can be removed in september
+
+    if (unit.enhancements) { // eslint-disable-line
         const enhancementNames = Object.getOwnPropertyNames(unit.enhancements);
         enhancementNames.forEach(eName => {
             if (unit.enhancements[eName].slot) {
@@ -57,7 +59,7 @@ export const serializeUnit = (unit: UnitInterf) => {
         });
     }
 
-    if (unit.optionSets) {
+    if (unit.optionSets) { // eslint-disable-line
         unit.optionSets.forEach(optionSet => {
             if (optionSet.selection) {
                 unitState.options[optionSet.name] = optionSet.selection.name;
@@ -65,7 +67,7 @@ export const serializeUnit = (unit: UnitInterf) => {
         });
     }
 
-    if (unit.models) { // backwards compat
+    if (unit.models) { // eslint-disable-line
         unit.models.forEach(model => {
             const modelState: ModelState = {
                 options: {}

@@ -158,7 +158,7 @@ export interface BsForceEntry extends BsIdentifiable, BsNamed {
 export interface BsCatalog extends BsIdentifiable, BsNamed {
     '@library': string;
     sharedSelectionEntryGroups: BsSelectionEntryGroup[];
-    sharedSelectionEntries: BsSelectionEntry[];
+    sharedSelectionEntries: BsSelectionEntry[] | undefined;
     entryLinks: BsEntryLink[];
     catalogueLinks: BsCatalogueLink[];
     categoryEntries: BsCategoryEntry[];

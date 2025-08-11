@@ -20,7 +20,7 @@ class BigWaaaghValidator implements ArmyValidator {
 
         let wildcard = false;
         roster.regiments.forEach(reg => {
-            let keyword = '';
+            let keyword: string | null = null;
             if (reg.leader) {
                 if (reg.leader.name.startsWith('Kragnos')) {
                     if (reg.units.length === 0) {
@@ -41,7 +41,7 @@ class BigWaaaghValidator implements ArmyValidator {
                 }
             }
 
-            if (keyword.length > 0) {
+            if (keyword) {
                 if (keyword === ironjawz) {
                     ++ nIronjawz;
                 } else {
@@ -51,10 +51,11 @@ class BigWaaaghValidator implements ArmyValidator {
                 const errs: string[] = [];
                 reg.units.forEach(unit => {
                     if(!unit.keywords.includes(keyword)) {
-                        if (errs.length === 0 && reg.leader?.name.includes('Kragnos')) {
+                        const regLeaderName = reg.leader ? reg.leader.name : '';
+                        if (errs.length === 0 && regLeaderName.includes('Kragnos')) {
                             errs.push(`Kragnos can only include units with either the <${ironjawz}> or <${kruelboyz}> faction keyword, but not both.`);
                         }
-                        const err = `<${unit.name}> does not have the <${keyword}> faction keyword required by <${reg.leader?.name}>'s regiment.`;
+                        const err = `<${unit.name}> does not have the <${keyword}> faction keyword required by <${regLeaderName}>'s regiment.`;
                         errs.push(err);
                     }
                 });
@@ -77,7 +78,7 @@ class BigWaaaghValidator implements ArmyValidator {
         }
 
         if (nKruelboyz !== nIronjawz) {
-            errors.push(`The number of <${ironjawz}> (<${nIronjawz}>) and <${kruelboyz}> (<${nKruelboyz}>) regiments must be equal.`);
+            errors.push(`The number of <${ironjawz}> (<${nIronjawz.toString()}>) and <${kruelboyz}> (<${nKruelboyz.toString()}>) regiments must be equal.`);
         }
         
         return errors.length > 0 ? errors : null;

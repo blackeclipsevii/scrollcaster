@@ -6,7 +6,7 @@ import { UnitType } from "../shared-lib/UnitInterface.js";
 import Army from "./Army.js";
 import Unit from "./Unit.js";
 import BattleTacticCard from "./BattleTacticCard.js";
-import { Lore, LoreLUT } from "./Lores.js";
+import { Lore } from "./Lores.js";
 import { Force } from "../shared-lib/Force.js";
 import Upgrade from "./Upgrade.js";
 
@@ -96,23 +96,22 @@ export default class Roster implements RosterInterf {
         const unitIds = Object.getOwnPropertyNames(army.units);
         unitIds.forEach(id => {
             const unit = (army.units as {[name:string]: Unit})[id];
-            if (unit.type === UnitType.Terrain) {
+            if (unit.type as UnitType === UnitType.Terrain) {
                 if (!unit.points || unit.points === 0) {
                     this.terrainFeature = unit;
                 }
             }
         });
 
-        const armyLores = ((army.upgrades as {[name:string]:any}).lores as LoreLUT);
         let names = Object.getOwnPropertyNames(army.upgrades.lores.spell);
         if (names.length === 1)
-            this.lores.spell = armyLores.spell[names[0]];
+            this.lores.spell = army.upgrades.lores.spell[names[0]];
         else if (names.length === 0)
             this.lores.canHaveSpell = false;
 
         names = Object.getOwnPropertyNames(army.upgrades.lores.prayer);
         if (names.length === 1)
-            this.lores.prayer = armyLores.prayer[names[0]];
+            this.lores.prayer = army.upgrades.lores.prayer[names[0]];
         else if (names.length === 0)
             this.lores.canHavePrayer = false;
     }

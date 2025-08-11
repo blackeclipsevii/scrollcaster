@@ -84,7 +84,7 @@ export default class Lores {
         
         const _cat = parseCatalog(`${dir}/Lores.cat`) as BsLibrary | null;
         if (!_cat)
-            throw `Unable to parse ${dir}/Lores.cat`
+            throw new Error(`Unable to parse ${dir}/Lores.cat`);
         this.catalogue = _cat;
 
         this.catalogue.sharedSelectionEntryGroups.forEach(group => {
@@ -94,9 +94,9 @@ export default class Lores {
             }
 
             const lore = new Lore(group);
-            if (lore.type === UpgradeType.ManifestationLore)
+            if (lore.type as UpgradeType === UpgradeType.ManifestationLore)
                 this.lores.manifestation[lore.id] = lore;
-            else if (lore.type === UpgradeType.PrayerLore)
+            else if (lore.type as UpgradeType === UpgradeType.PrayerLore)
                 this.lores.prayer[lore.id] = lore;
             else
                 this.lores.spell[lore.id] = lore;

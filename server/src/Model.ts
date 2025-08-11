@@ -49,7 +49,7 @@ export default class Model implements ModelInterf {
         if (modelSe.selectionEntries) {
             modelSe.selectionEntries.forEach(entry => {
                 const weaponSelection = new WeaponSelection(entry["@name"], entry['@id']);
-                let maxConstraintIds: string[] = [];
+                const maxConstraintIds: string[] = [];
 
                 if (entry.constraints) {
                     //<constraint type="max" value="1" field="selections" scope="9544-33d8-1d69-2be9" shared="true" id="a709-2d5c-ae85-6aeb" includeChildSelections="true"/>

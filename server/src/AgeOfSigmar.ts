@@ -58,13 +58,13 @@ class ArmyData extends RorData {
 
 export interface AosDatabase {
     path: string;
-    armyLUT: {[name: string]: string};
-    armies: {[name: string]: ArmyData};
+    armyLUT: {[name: string]: string | undefined};
+    armies: {[name: string]: ArmyData | undefined};
 }
 
 export class BattleProfileCollection {
     _collection: {
-        [name:string]: {[name:string]: Partial<BattleProfile>}
+        [name:string]: {[name:string]: Partial<BattleProfile> | null} | null;
     };
     constructor() {
         this._collection = {};
@@ -94,7 +94,7 @@ export class BattleProfileCollection {
     hasProfilesFor(army: string) {
         const lc = army.toLowerCase();
         const armyset = this._collection[lc];
-        return armyset !== null && armyset !== undefined;
+        return armyset ? true : false;
     }
 }
 
@@ -122,7 +122,7 @@ export default class AgeOfSigmar {
 
         const gs = parseGameSystem(`${path}/Age of Sigmar 4.0.gst`);
         if (!gs) {
-            throw 'Unable to read AOS gst';
+            throw new Error('Unable to read AOS gst');
         }
 
         this.gameSystem = gs;
@@ -165,10 +165,14 @@ export default class AgeOfSigmar {
             const lc = name.toLowerCase();
             if (lc.includes('regiments of renown') || lc.includes('[legends]'))
                 return;
-            result.push({
-                name: name,
-                alliance: this._database.armies[name].alliance
-            });
+            
+            const army = this._database.armies[name];
+            if (army) {
+                result.push({
+                    name: name,
+                    alliance: army.alliance
+                });
+            }
         });
         const allianceNumber = (alliance: GrandAlliance) => {
             if (alliance === GrandAlliance.ORDER)
@@ -205,13 +209,15 @@ export default class AgeOfSigmar {
         const motherloadOfUnits: {[name: string]: Unit} = {};
         const names = Object.getOwnPropertyNames(rorData.libraries);
         names.forEach(name => {
-            rorData.catalog.sharedSelectionEntries.forEach(entry => {
-                // gotrek is in here
-                if (entry['@type'] === 'unit') {
-                    const unit = new Unit(this, entry);
-                    motherloadOfUnits[unit.id] = unit;
-                }
-            });
+            if (rorData.catalog.sharedSelectionEntries) {
+                rorData.catalog.sharedSelectionEntries.forEach(entry => {
+                    // gotrek is in here
+                    if (entry['@type'] === 'unit') {
+                        const unit = new Unit(this, entry);
+                        motherloadOfUnits[unit.id] = unit;
+                    }
+                });
+            }
 
             rorData.libraries[name].sharedSelectionEntries.forEach(entry => {
                 if (entry['@type'] === 'unit') {
@@ -344,29 +350,31 @@ export default class AgeOfSigmar {
 
         // libraries have been populated already
         // the ror abilities
-        rorData.catalog.sharedSelectionEntries.forEach(entry => {
-            if (entry['@type'] === 'upgrade') {
-                const upgrade = new Upgrade(entry, UpgradeType.RegimentOfRenown, null);
-                if (entry.modifiers) {
-                    entry.modifiers.forEach(mod => {
-                        if (mod.conditions) {
-                            mod.conditions.forEach(condition => {
-                                if (condition['@field'] === 'selections' &&
-                                    condition['@scope'] === 'roster') {
-                                    const childId = condition['@childId'];
-                                    const force = parsedForces[childId];
-                                    if (!force) {
-                                    // console.log(`upgrade missing its force? ${upgrade.id} ${upgrade.name}`);
-                                        return;
+        if (rorData.catalog.sharedSelectionEntries) {
+            rorData.catalog.sharedSelectionEntries.forEach(entry => {
+                if (entry['@type'] === 'upgrade') {
+                    const upgrade = new Upgrade(entry, UpgradeType.RegimentOfRenown, null);
+                    if (entry.modifiers) {
+                        entry.modifiers.forEach(mod => {
+                            if (mod.conditions) {
+                                mod.conditions.forEach(condition => {
+                                    if (condition['@field'] === 'selections' &&
+                                        condition['@scope'] === 'roster') {
+                                        const childId = condition['@childId'];
+                                        const force = parsedForces[childId];
+                                        if (!force) {
+                                        // console.log(`upgrade missing its force? ${upgrade.id} ${upgrade.name}`);
+                                            return;
+                                        }
+                                        force.upgrades.push(upgrade);
                                     }
-                                    force.upgrades.push(upgrade);
-                                }
-                            });
-                        }
-                    });
+                                });
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // aos can see them all TO-DO maybe overkill
         this.regimentsOfRenown = parsedForces;
@@ -377,7 +385,6 @@ export default class AgeOfSigmar {
         const profileFiles = fs.readdirSync(profileDir);
         // const armyCatNames = Object.getOwnPropertyNames(this._database.armies);
         // populate the armies and seperate the libraries
-        const aos = this;
         profileFiles.forEach(file => {
             const lc = file.toLowerCase();
             if (path.extname(lc) === '.json') {
@@ -385,7 +392,7 @@ export default class AgeOfSigmar {
                 const json = fs.readFileSync(path.join(profileDir, file)).toString();
                 const profileList = JSON.parse(json) as BattleProfile[];
                 profileList.forEach(profile => {
-                    aos.battleProfiles.put(armyName, profile);
+                    this.battleProfiles.put(armyName, profile);
                 });
             }
         });
@@ -393,7 +400,7 @@ export default class AgeOfSigmar {
 
     _populateLibraries(dir: string) {
         const catFiles = fs.readdirSync(dir);
-        const libraries: {[name:string]: BsLibrary} = {}
+        const libraries: {[name:string]: BsLibrary | null} = {}
         let rorData: RorData | null = null;
         // populate the armies and seperate the libraries
         catFiles.forEach(file => {
@@ -414,7 +421,7 @@ export default class AgeOfSigmar {
                         }
                     } 
                     else  {
-                        libraries[data['@id']] = data;
+                        libraries[data['@id']] = data as BsLibrary;
                     }
                 }
             }
@@ -440,11 +447,11 @@ export default class AgeOfSigmar {
                                         let cont = true;
                                         if(entry['@type'] === 'unit') {
                                             entry.categoryLinks?.every(link => {
-                                                if (link['@name'] === GrandAlliance.CHAOS ||
-                                                    link['@name'] === GrandAlliance.DEATH ||
-                                                    link['@name'] === GrandAlliance.ORDER ||
-                                                    link['@name'] === GrandAlliance.DESTRUCTION) {
-                                                    data.alliance = link['@name'];
+                                                if (link['@name'] as GrandAlliance === GrandAlliance.CHAOS ||
+                                                    link['@name'] as GrandAlliance === GrandAlliance.DEATH ||
+                                                    link['@name'] as GrandAlliance === GrandAlliance.ORDER ||
+                                                    link['@name'] as GrandAlliance === GrandAlliance.DESTRUCTION) {
+                                                    data.alliance = link['@name'] as GrandAlliance;
                                                     cont = false;
                                                 }
                                                 return cont;
@@ -477,13 +484,12 @@ export default class AgeOfSigmar {
         }
 
         // now attach the libraries to their armies
-        const armyIds = Object.getOwnPropertyNames(this._database.armies);
-        armyIds.forEach(armyName => {
-            const data = this._database.armies[armyName];
-            attachLibraries(data);
+        const armies = Object.values(this._database.armies);
+        armies.forEach(army => {
+            attachLibraries(army as ArmyData);
         });
 
-        if (rorData !== null) {
+        if (rorData) {
             attachLibraries(rorData);
             this._loadRegimentsOfRenown(rorData);
         }
