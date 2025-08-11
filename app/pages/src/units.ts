@@ -16,6 +16,7 @@ import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widget
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
 import { WarscrollSettings } from "./warscroll.js";
+import { BasicObject } from "../../shared-lib/BasicObject.js";
 
 export class UnitSettings implements Settings {
     [name: string]: unknown;
@@ -137,7 +138,7 @@ const unitPage = {
             }
         }
 
-        const _makeSelectableItem = (displayableObj: UnitInterf | UpgradeInterf, 
+        const _makeSelectableItem = (displayableObj: BasicObject, 
                                      unitList: HTMLElement, 
                                      itemOnClick: (this: HTMLDivElement, ev: MouseEvent) => any, 
                                      addOnClick: ((event:Event) => void) | null=null, 
@@ -273,7 +274,7 @@ const unitPage = {
                     }
 
                     const seletableItem = _makeSelectableItem(
-                        regimentOfRenown.upgrades[0],
+                        regimentOfRenown,
                         unitList, 
                         displayInfoOnClick, 
                         addButtonOnClick, 
