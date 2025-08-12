@@ -1,6 +1,6 @@
 import { Force } from "../../shared-lib/Force.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
+import UnitInterf, { UnitType } from "../../shared-lib/UnitInterface.js";
 import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 import { endpoint } from "../../lib/endpoint.js";
 import { getVar } from "../../lib/functions/getVar.js";
@@ -35,21 +35,21 @@ export class UnitSettings implements Settings {
 
 const getUnitList = (unit: {type: number}) => {
     let unitList = null;
-    if (unit.type === 0) {
+    if (unit.type === UnitType.Hero) {
         unitList = document.getElementById('hero-list');
-    } else if (unit.type == 1) {
+    } else if (unit.type === UnitType.Infantry) {
         unitList = document.getElementById('infantry-list');
-    } else if (unit.type == 2) {
+    } else if (unit.type === UnitType.Cavalry) {
         unitList = document.getElementById('cavalry-list');
-    } else if (unit.type == 3) {
+    } else if (unit.type === UnitType.Beast) {
         unitList = document.getElementById('beast-list');
-    } else if (unit.type == 4) {
+    } else if (unit.type === UnitType.Monster) {
         unitList = document.getElementById('monster-list');
-    } else if (unit.type == 5) {
+    } else if (unit.type === UnitType.WarMachine) {
         unitList = document.getElementById('war-machine-list');
-    } else if (unit.type == 6) {
+    } else if (unit.type === UnitType.Manifestation) {
         unitList = document.getElementById('manifestations-list');
-    } else if (unit.type == 7) {
+    } else if (unit.type === UnitType.Terrain) {
         unitList = document.getElementById('faction-terrain-list');
     } else {
         unitList = document.getElementById('manifestations-list');
@@ -342,7 +342,7 @@ const unitPage = {
 
                     if (thisPage.settings.auxiliary) {
                         roster.auxiliaryUnits.push(clone);
-                    } else if (unit.type == 7) {
+                    } else if (unit.type === UnitType.Terrain) {
                         roster.terrainFeature = clone;
                     } else {
                         const regiment = roster.regiments[thisPage.settings.regimentIndex!!];
@@ -354,7 +354,7 @@ const unitPage = {
                     }
 
                     await putRoster(roster);
-                    if (isSelectingLeader || unit.type == 7) {
+                    if (isSelectingLeader || unit.type === UnitType.Terrain) {
                         goBack();
                     } else {
                         armyUnitCounts.updateCount(unit);

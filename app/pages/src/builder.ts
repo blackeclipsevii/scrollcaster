@@ -1376,7 +1376,7 @@ const builderPage = {
                 const result = await unitsApi.get(roster.army);
                 if (result) {
                     const units = Object.values(result);
-                    const terrain = units.some(unit => unit.type === 7);
+                    const terrain = units.some(unit => unit.type === UnitType.Terrain);
                     if (!terrain) {
                         const terrainSection = document.getElementById('faction-terrain-section') as HTMLElement;
                         const tb = terrainSection.querySelector('button') as HTMLButtonElement;

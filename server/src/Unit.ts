@@ -109,8 +109,8 @@ export default class Unit implements UnitInterf {
         for (let i = 0; i < chars.length; ++i) {
             const char = chars[i];
             const cName = new String(char['@name']).trim();
-            if (char['#text'])
-                (this as unknown as Metadata)[cName] = char['#text'];
+            if (char['#text'] !== undefined)
+                (this as unknown as Metadata)[cName] = char['#text'].toString();
         }
     }
 

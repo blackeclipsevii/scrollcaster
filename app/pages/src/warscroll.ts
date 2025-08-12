@@ -2,7 +2,7 @@
 import ModelInterf from "../../shared-lib/ModelInterface.js";
 import OptionSet from "../../shared-lib/Options.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
-import WeaponInterf from "../../shared-lib/WeaponInterf.js";
+import WeaponInterf, { WeaponType } from "../../shared-lib/WeaponInterf.js";
 import { DYNAMIC_WARSCROLL, dynamicPages } from "../../lib/host.js";
 import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
@@ -105,9 +105,9 @@ const warscrollPage = {
                     return true;
 
                 if (qualifier === 'melee')
-                    return weapon.type === 0;
+                    return weapon.type === WeaponType.Melee;
                 
-                return weapon.type === 1;
+                return weapon.type === WeaponType.Ranged;
             }
 
             const addToSet = (weapon: WeaponInterf) => {

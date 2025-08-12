@@ -19,10 +19,10 @@ export function makeBulletPointsBulletPoint(str: string) {
 
 }
 
-export default function bsTextSmoother(text: string | null) {
-    if (!text)
-        return text;
-    let newText = replaceAlternatingBoldMarkers(text);
+export default function bsTextSmoother(text: number | string | null): null | string {
+    if (text === null || text === undefined)
+        return null;
+    let newText = replaceAlternatingBoldMarkers(text.toString());
     newText = replaceAlternatingItalicMarkers(newText);
     newText = makeBulletPointsBulletPoint(newText);
     return newText;

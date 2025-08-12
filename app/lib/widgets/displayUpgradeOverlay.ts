@@ -1,7 +1,7 @@
 import { Overlay } from "./overlay.js";
 import { getVar } from "../functions/getVar.js";
 import { AbilityWidget } from "./AbilityWidget.js";
-import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
+import UpgradeInterf, { UpgradeType } from "../../shared-lib/UpgradeInterface.js";
 import { Force } from "../../shared-lib/Force.js";
 import LoreInterf from "../../shared-lib/LoreInterface.js";
 
@@ -28,7 +28,9 @@ export const displayUpgradeOverlay = Overlay.toggleFactory('block', (u: unknown)
     _initAbSection();
     const upgrade = u as UpgradeInterf;
 
-    if (upgrade.type === 3 || upgrade.type === 4 || upgrade.type === 6) {
+    if (upgrade.type === UpgradeType.SpellLore ||
+        upgrade.type === UpgradeType.PrayerLore ||
+        upgrade.type === UpgradeType.ManifestationLore) {
         AbilityWidget.display((upgrade as unknown as LoreInterf).abilities, upgrade.name);
     } else {
         AbilityWidget.display(upgrade, upgrade.name);

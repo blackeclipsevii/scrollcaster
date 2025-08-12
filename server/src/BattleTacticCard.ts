@@ -51,11 +51,11 @@ export default class BattleTacticCard implements BattleTacticCardInterf {
                 const text = phase['#text'];
                 this.text = text ? bsTextSmoother(text) as string : '';
             } else if (phase['@name'] === 'Affray') {
-                this.tactics[0].text = phase['#text'];
+                this.tactics[0].text = phase['#text'].toString();
             } else if (phase['@name'] === 'Strike') {
-                this.tactics[1].text = phase['#text'];
+                this.tactics[1].text = phase['#text'].toString();
             } else if (phase['@name'] === 'Domination') {
-                this.tactics[2].text = phase['#text'];
+                this.tactics[2].text = phase['#text'].toString();
             }
         })
     }

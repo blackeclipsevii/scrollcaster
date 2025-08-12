@@ -51,7 +51,7 @@ export interface BsAttribute extends BsNamed {
 
 export interface BsCharacteristic extends BsNamed {
     '@typeId': string;
-    '#text': string | undefined;
+    '#text': number | string | undefined;
 }
 
 export interface BsConstraintInter extends BsTyped, BsIdentifiable {

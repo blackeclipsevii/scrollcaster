@@ -1,4 +1,4 @@
-import WeaponInterf from "../../shared-lib/WeaponInterf.js";
+import WeaponInterf, { WeaponType } from "../../shared-lib/WeaponInterf.js";
 import { whClearDiv } from "./helpers.js";
 import { getVar } from "../functions/getVar.js";
 
@@ -184,7 +184,7 @@ export const WeaponWidget = {
         const ranged: WeaponInterf[] = [];
         const melee: WeaponInterf[] = [];
         weapons.forEach(weapon => {
-            if (weapon.type === 0)
+            if (weapon.type === WeaponType.Melee)
                 melee.push(weapon);
             else
                 ranged.push(weapon);

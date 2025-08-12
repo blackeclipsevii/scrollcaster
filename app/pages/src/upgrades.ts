@@ -1,6 +1,6 @@
 import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
-import UpgradeInterf, { UpgradeLUT, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
+import UpgradeInterf, { UpgradeLUT, UpgradeType, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
 import { _inCatalog, displayPoints, dynamicPages } from "../../lib/host.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
@@ -132,11 +132,11 @@ const upgradePage = {
                         if (type) {
                             if (type.includes('battleFormation')) {
                                 roster.battleFormation = upgrade as UpgradeInterf;
-                            } else if (upgrade.type == 3) {
+                            } else if (upgrade.type === UpgradeType.SpellLore) {
                                 roster.lores.spell = upgrade as LoreInterf;   
-                            } else if (upgrade.type == 4) {
+                            } else if (upgrade.type === UpgradeType.ManifestationLore) {
                                 roster.lores.manifestation = upgrade as LoreInterf;
-                            } else if (upgrade.type == 6) {
+                            } else if (upgrade.type === UpgradeType.PrayerLore) {
                                 roster.lores.prayer = upgrade as LoreInterf;
                             }
                         }
@@ -150,17 +150,17 @@ const upgradePage = {
                     item.classList.add('added');
                 }
 
-                if (upgrade.type === 3 && roster.lores.spell) {
+                if (upgrade.type === UpgradeType.SpellLore && roster.lores.spell) {
                     if (upgrade.id.localeCompare(roster.lores.spell.id) === 0) {
                         doEnable();
                     }
                 } 
-                else if (upgrade.type === 4 && roster.lores.manifestation) {
+                else if (upgrade.type === UpgradeType.ManifestationLore && roster.lores.manifestation) {
                     if (upgrade.id.localeCompare(roster.lores.manifestation.id) === 0) {
                         doEnable();
                     }
                 }
-                else if (upgrade.type === 6 && roster.lores.prayer) {
+                else if (upgrade.type === UpgradeType.PrayerLore && roster.lores.prayer) {
                     if (upgrade.id.localeCompare(roster.lores.prayer.id) === 0) {
                         doEnable();
                     }

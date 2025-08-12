@@ -1,7 +1,7 @@
 import { Overlay } from "./overlay.js";
 import { WeaponWidget } from "./WeaponWidget.js";
 import { getVar } from "../functions/getVar.js";
-import WeaponInterf from "../../shared-lib/WeaponInterf.js";
+import WeaponInterf, { WeaponType } from "../../shared-lib/WeaponInterf.js";
 
 const _initWeaponsSection = (qualifier: string, parent: HTMLElement) => {
     let section = document.getElementById(`${qualifier}-weapons-section`);
@@ -22,10 +22,10 @@ export const displayWeaponOverlay = Overlay.toggleFactory('flex', (input: unknow
     const name = weaponsObj.name;
     
     const hasMelee = !weapons.every(weapon => {
-        return weapon.type === 1;
+        return weapon.type === WeaponType.Ranged;
     });
     const hasRanged = !weapons.every(weapon => {
-        return weapon.type === 0;
+        return weapon.type === WeaponType.Melee;
     });
     const parentSection = document.createElement('div');
     parentSection.style.padding = '0';
