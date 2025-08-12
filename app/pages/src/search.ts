@@ -10,6 +10,7 @@ import { getVar } from "../../lib/functions/getVar.js";
 import { fetchSearch } from "../../lib/RestAPI/search.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
+import { Typed } from "../../shared-lib/BasicObject.js";
 
 export class SearchSettings implements Settings{
     [name: string]: unknown;
@@ -56,7 +57,10 @@ const searchPage = {
             const nameEle = makeSelectableItemName(searchResult);
             left.appendChild(nameEle);
 
-            const roleEle = makeSelectableItemType(searchResult, isUnit);
+            const roleEle = makeSelectableItemType({
+                type: searchResult.type,
+                superType: 'Unit'
+            });
             left.appendChild(roleEle);
 
             const armyName = makeSelectableItemType(searchResult.armyName);

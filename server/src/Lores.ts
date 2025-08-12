@@ -4,7 +4,7 @@ import Upgrade from "./Upgrade.js";
 import { BsLibrary, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
 import { UpgradeType } from "../shared-lib/UpgradeInterface.js";
 
-import LoreInterf, {LoreLUTInterf, LoreSuperType} from "../shared-lib/LoreInterface.js";
+import LoreInterf, {LoreLUTInterf, LoreSuperType, LoreType} from "../shared-lib/LoreInterface.js";
 
 export class Lore implements LoreInterf {
     name: string;
@@ -21,7 +21,7 @@ export class Lore implements LoreInterf {
         this.superType = LoreSuperType;
         this.abilities = [];
         this.unitIds = [];
-        this.type = UpgradeType.SpellLore;
+        this.type = LoreType.SpellLore;
         this.points = 0;
         if (selectionEntryGroup.selectionEntries) {
             selectionEntryGroup.selectionEntries.forEach(selectionEntry => {
@@ -36,10 +36,20 @@ export class Lore implements LoreInterf {
                     type = UpgradeType.PrayerLore;
                 }
                 const upgrade = new Upgrade(selectionEntry, type, null);
-                
                 this.abilities.push(upgrade);
             });
-            this.type = this.abilities[0].type;
+        
+            switch(this.abilities[0].type) {
+                case UpgradeType.SpellLore:
+                    this.type = LoreType.SpellLore;
+                    break;
+                case UpgradeType.PrayerLore:
+                    this.type = LoreType.PrayerLore;
+                    break;
+                case UpgradeType.ManifestationLore:
+                    this.type = LoreType.ManifestationLore;
+                    break;
+            }
         }
 
         // assicated the manifestations with the lore

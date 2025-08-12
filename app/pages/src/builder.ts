@@ -30,9 +30,9 @@ import { UpgradeSettings } from "./upgrades.js";
 import { WarscrollSettings } from "./warscroll.js";
 import LoreInterf from "../../shared-lib/LoreInterface.js";
 import { UnitType } from "../../shared-lib/UnitInterface.js";
-import { Costed, Identifiable, Typed } from "../../shared-lib/BasicObject.js";
+import { BasicObject, Costed, Identifiable, Typed } from "../../shared-lib/BasicObject.js";
 
-var totalPoints = 0;
+import UnitSlot, {toggleUnitAddButton} from "../../lib/widgets/builder/UnitSlot.js";
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
@@ -78,97 +78,8 @@ const builderPage = {
 
         // Update the points display before removing a pointed object (obj.points)
         const removeObjectPoints = (pointedObj: {points: number}) => {
-            totalPoints -= pointedObj.points;
             refreshPointsOverlay(roster);
             updateValidationDisplay(roster);
-        }
-
-        const disableArrow = (arrow: HTMLElement) => {
-            const img = arrow.querySelector('img') as HTMLImageElement;
-            img.src = `../resources/${getVar('ab-control')}`
-            img.style.height = '.5em';
-            img.style.width = '.5em';
-            img.style.margin = '.75em';
-            const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement;
-            wrapper.style.cursor = 'default';
-        }
-
-        const clearDetailsSection = (item: HTMLElement) => {
-            removeSection(item, 'is-general');
-            removeSection(item, 'is-reinforced');
-        }
-
-        const toggleUnitAddButton = (regItem: HTMLElement, _regiment: RegimentInterf) => {
-            const btn = regItem.querySelector('.add-unit-button') as HTMLButtonElement;
-            let maxUnits = 3;
-            if ( _regiment.leader && _regiment.leader.isGeneral)
-                maxUnits = 4;
-            btn.disabled = (_regiment.units.length >= maxUnits) && _regiment.leader !== null;
-
-            if (!_regiment.leader) {
-                btn.textContent = 'Add Leader +';
-                const leaderBtnColor = getVar('red-color');
-                btn.style.borderColor = leaderBtnColor;
-                btn.style.color = leaderBtnColor;
-            }
-        }
-
-        function _addEnhancementUpgradeSection(newUsItem: HTMLElement, enhancement: EnhancementSlotInterf) {
-            const div = document.createElement('div');
-            div.classList.add('section');
-            div.classList.add('upgrade-section');
-            
-            const h3 = document.createElement('h3');
-            h3.className = 'section-title';
-            h3.textContent = `${enhancement.name}:`;
-            div.appendChild(h3);
-
-            const details = newUsItem.querySelector('.unit-details') as HTMLElement;
-            details.appendChild(div);
-            return div;
-        }
-
-        function _newUnitSlot() {
-            const unitSlot = document.createElement('div');
-
-            unitSlot.innerHTML = `
-                <span style="display: none;" class="unit-idx"></span>
-                <div class='unit-slot-display-wrapper'>
-                <div class='arrow-wrapper'>
-                    <div class='arrow'>
-                        <img class='invert-img' src='../resources/${getVar('right-arrow')}'></img>
-                    </div>
-                </div>
-                <div class='unit-slot-selectable-item-wrapper'>
-                    <div class="selectable-item unit-slot-selectable-item">
-                        <div class="selectable-item-left">
-                            <span class="general-label" style="display: none;">GENERAL</span>
-                            <span class="reinforced-label" style="display: none;">REINFORCED</span>
-                        </div>
-
-                        <div class="selectable-item-right">
-                            <div>
-                            <span class="unit-slot-points points-label"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </div>
-
-                <div class="unit-details">
-                    <div class="section upgrade-section">
-                        <label class="upgrade-label is-general">
-                            <input type="checkbox" class="upgrade-checkbox general-checkbox"> General
-                        </label>
-                        <label class="upgrade-label is-reinforced">
-                            <input type="checkbox" class="upgrade-checkbox reinforced-checkbox"> Reinforced
-                        </label>
-                    </div>
-                </div>
-            `
-            
-            unitSlot.className = `unit-slot`;
-            return unitSlot;
         }
 
         const _newRegimentItem = () => {
@@ -207,210 +118,12 @@ const builderPage = {
             return div;
         }
 
-        function updateSelectableItemPrototype(prototype: HTMLElement,
-                                               displayableObj: Identifiable & Typed,
-                                               isUnit: boolean,
-                                               leftOnClick: (this: HTMLElement, ev: MouseEvent) => any) {
-            const selectableItem = prototype.querySelector('.unit-slot-selectable-item-wrapper') as HTMLElement;
-            selectableItem.addEventListener('click', leftOnClick);
-
-            const nameEle = makeSelectableItemName(displayableObj);
-            nameEle.classList.add('unit-text');
-
-            const left = prototype.querySelector('.selectable-item-left') as HTMLElement;
-            left.appendChild(nameEle);
-
-            const roleEle = makeSelectableItemType(displayableObj, isUnit);
-
-            left.insertBefore(roleEle, left.firstChild);
-            left.insertBefore(nameEle, left.firstChild);
-        }
-
         function clonePrototype(id: string, newId = '') {
-            const newUsItem = id.includes('unit') ? _newUnitSlot() : _newRegimentItem();
+            if (id.includes('unit'))
+                throw new Error('clone prototype is no longer used for unit slot.');
+            const newUsItem = _newRegimentItem();
             newUsItem.id = newId;
-            if (id.includes('unit')) {
-                newUsItem.style.padding = "0.4em";
-               // newUsItem.style.background = "#ddd";
-                newUsItem.style.marginBottom = "0.3rem";
-                newUsItem.style.borderRadius = "4px";
-            }
             return newUsItem;
-        }
-
-        const arrowOnClick = (arrow: HTMLElement, details: HTMLElement | null) => {
-            if(!details)
-                return;
-            
-            if (details.style.maxHeight) {
-                details.style.maxHeight = '';
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                details.style.maxHeight = details.scrollHeight + "px";
-                arrow.style.transform = 'rotate(90deg)';
-            }
-        }
-
-        async function displayWarscrollOption(unit: UnitInterf, optionSet: OptionSet, newUsItem: HTMLElement) {
-            const details = newUsItem.querySelector('.unit-details') as HTMLElement;
-            const warOptDiv = document.createElement('div');
-            warOptDiv.className = 'section upgrade-section';
-            warOptDiv.innerHTML = `
-                <h3 class="section-title">${optionSet.name}:</h3>
-            `;
-            const options = Object.values(optionSet.options);
-            options.forEach(option => {
-                const upgradeDiv = document.createElement('div');
-                upgradeDiv.className = 'upgrade-group';
-                upgradeDiv.innerHTML = `
-                <div class='upgrade-group-left'>
-                    <label class="upgrade-label">
-                        <input type="checkbox" class="upgrade-checkbox">${option.name}
-                    </label>
-                </div>
-                <div class='upgrade-group-right'>
-                    <button class="upgrade-button">🔎</button>
-                    <div style='display: inline-block' class='upgrade-points points-label'>${option.points} PTS</div>
-                </div>`;
-
-                const costsPoints = option.points && option.points > 0;
-                if (!costsPoints) {
-                    const pl = upgradeDiv.querySelector('.points-label')as HTMLElement;
-                    pl.style.display = 'none';
-                }
-
-                const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
-                label.onclick = () => {
-                    if (option.weapons.length > 0) {
-                        displayWeaponOverlay({
-                            name: option.name,
-                            weapons: option.weapons
-                        });
-                    }
-                    
-                    if (option.abilities.length > 0)
-                        displayUpgradeOverlay(option);
-                };
-
-                if (option.weapons.length === 0 &&
-                    option.abilities.length === 0) {
-                    label.style.display = 'none';
-                }
-
-                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
-                if (optionSet.selection && optionSet.selection.name === option.name) {
-                    checkbox.checked = true;
-                }
-
-                const handlechange = (points: number, subtract=false) => {
-                    if (costsPoints) {
-                        const unitPoints = unitTotalPoints(unit);
-                        const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-                        displayPoints(usPoints, unitPoints, 'PTS');
-                        if (subtract)
-                            totalPoints -= points;
-                        else
-                            totalPoints += points;
-                        refreshPointsOverlay(roster);
-                    }
-                    updateValidationDisplay(roster);
-                    putRoster(roster);
-                }
-
-                checkbox.onchange = () => {
-                    if (checkbox.checked) {
-                        if (!optionSet.selection) {
-                            optionSet.selection = option;
-                            handlechange(option.points, false);
-                        }
-                        else if (optionSet.selection.name !== option.name) {
-                            checkbox.checked = false;
-                        }
-                    } else {
-                        if (optionSet.selection && optionSet.selection.name === option.name) {
-                            optionSet.selection = null;
-                            handlechange(option.points, true);
-                        }
-                    }
-                };
-                warOptDiv.appendChild(upgradeDiv);
-            });
-            details.appendChild(warOptDiv);
-        }
-
-        async function displayEnhancements(unit: UnitInterf, newUsItem: HTMLElement, type: string) {
-            const details =  _addEnhancementUpgradeSection(newUsItem, unit.enhancements[type]);
-            const allUpgrades = await thisPage.fetchUpgrades();
-            if (!allUpgrades)
-                return;
-            const enhancementGroup = allUpgrades.enhancements[type];
-            if (!enhancementGroup)
-                return;
-
-            const values = Object.values(enhancementGroup.upgrades);
-            values.forEach(upgrade => {
-                const upgradeDiv = document.createElement('div');
-                upgradeDiv.className = 'upgrade-group';
-
-                upgradeDiv.innerHTML = `
-                <div class='upgrade-group-left'>
-                <label class="upgrade-label">
-                    <input type="checkbox" class="upgrade-checkbox">${upgrade.name}
-                </label>
-                </div>
-                <div class='upgrade-group-right'>
-                    <button class="upgrade-button">🔎</button>
-                    <div style='display: inline-block' class='upgrade-points points-label'>${upgrade.points} PTS</div>
-                </div>`;
-
-                const costsPoints = upgrade.points && upgrade.points > 0;
-                if (!costsPoints) {
-                    const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
-                    pl.style.display = 'none';
-                }
-
-                const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
-                label.onclick = () => {
-                    displayUpgradeOverlay(upgrade);
-                };
-
-                const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
-                if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
-                    checkbox.checked = true;
-                }
-
-                checkbox.onchange = () => {
-                    if (checkbox.checked) {
-                        if (!unit.enhancements[type].slot) {
-                            unit.enhancements[type].slot = upgrade;
-                            if (costsPoints) {
-                                const unitPoints = unitTotalPoints(unit);
-                                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-                                displayPoints(usPoints, unitPoints, 'PTS');
-                                totalPoints += upgrade.points;
-                                refreshPointsOverlay(roster);
-                            }
-                            updateValidationDisplay(roster);
-                            putRoster(roster);
-                        } else if (unit.enhancements[type].slot.id !== upgrade.id) {
-                            checkbox.checked = false;
-                        }
-                    } else {
-                        if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
-                            unit.enhancements[type].slot = null;
-                            if (costsPoints) {
-                                const unitPoints = unitTotalPoints(unit);
-                                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-                                displayPoints(usPoints, unitPoints, 'PTS');
-                                removeObjectPoints(upgrade);
-                            }
-                            updateValidationDisplay(roster);
-                            putRoster(roster);
-                        }
-                    }
-                };
-                details.appendChild(upgradeDiv);
-            });
         }
 
         const exportListAndDisplay = Overlay.toggleFactory('block', async () =>{
@@ -448,185 +161,63 @@ const builderPage = {
                                       unit: UnitInterf | BattleTacticCardInterf | UpgradeInterf | LoreInterf, 
                                       idx: number, 
                                       callbackMap: CallbackMap | string, 
-                                      onclick: (this: HTMLElement, ev: MouseEvent) => any, isUnit: boolean){
+                                      onclick: (this: HTMLElement, ev: MouseEvent) => any, isUnit: boolean): Promise<UnitSlot | null> {
             if (!unit)
-                return;
-            const newUsItem = clonePrototype('unit-slot-prototype');
+                return null;
+
+            const unitSlot = new UnitSlot(parent, unit);
+            unitSlot.setUnitIndex(idx);
+            let displayDrawer = false;
             
-            const hiddenIdx = newUsItem.querySelector('.unit-idx') as HTMLElement;
-            hiddenIdx.textContent = `${idx}`;
-
-            let numOptions = 0;
-            const canBeGeneral = !(unit.type !== UnitType.Hero || !parent.className.includes('regiment'));
-            if (unit.type !== UnitType.Hero || !parent.className.includes('regiment')) {
-                removeSection(newUsItem, 'is-general');
-            } else {
-                ++ numOptions;
-                const checkbox = newUsItem.querySelector('.general-checkbox') as HTMLInputElement;
-                checkbox.onchange = () => {
-                    const unitContainer = checkbox.closest('.unit-slot') as HTMLElement;
-                    const generalLabel = unitContainer.querySelector('.general-label') as HTMLElement;
-
-                    generalLabel.style.display = checkbox.checked ? 'inline' : 'none';
-
-                    let regiment = null;
-                    let div = checkbox.closest(".regiment-item");
-                    if (div) {
-                        div = div.querySelector(".regiment-idx") as HTMLElement;
-                        const regIdx = Number(div.textContent);
-                        regiment = roster.regiments[regIdx];
-                    }
-
-                    let unit = null;
-                    div = checkbox.closest(".unit-slot") as HTMLElement;
-                    div = div.querySelector(".unit-idx") as HTMLElement;
-                    const unitIdx = Number(div.textContent);
-                    if (regiment) {
-                        unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
-                    } else {
-                        unit = roster.auxiliaryUnits[unitIdx];
-                    }
-
-                    unit!!.isGeneral = checkbox.checked;
-                    putRoster(roster);
-                    updateValidationDisplay(roster);
-
-                    if (regiment) {
-                        const regItem = parent.closest('.regiment-item') as HTMLElement;
-                        toggleUnitAddButton(regItem, regiment);
-                    }
-                };
+            const canBeGeneral = unit.type === UnitType.Hero && parent.className.includes('regiment');
+            if (canBeGeneral) {
+                displayDrawer = true;
+                unitSlot.addGeneralLabel(roster, unit as UnitInterf);
             }
 
-            if (!(unit as UnitInterf).canBeReinforced) {
-                if (!canBeGeneral) {
-                    const child = newUsItem.querySelector(`.is-reinforced`) as HTMLElement;
-                    const parentSection = child.closest('.section') as HTMLElement;
-                    parentSection.style.display = 'none';
-                }
-                {
-                    removeSection(newUsItem, 'is-reinforced');
-                }
-            } else {
-                ++ numOptions;
-                const checkbox = newUsItem.querySelector('.reinforced-checkbox') as HTMLInputElement;
-                checkbox.onchange = () => {
-                    const unitContainer = checkbox.closest('.unit-slot') as HTMLElement;
-                    const reinLabel = unitContainer.querySelector('.reinforced-label') as HTMLElement;
-                    reinLabel.style.display = checkbox.checked ? 'inline' : 'none';
-
-                    let regiment = null;
-                    let div = checkbox.closest(".regiment-item");
-                    if (div) {
-                        div = div.querySelector(".regiment-idx") as HTMLElement;
-                        const regIdx = Number(div.textContent);
-                        regiment = roster.regiments[regIdx];
-                    }
-
-                    let unit = null;
-                    div = checkbox.closest(".unit-slot") as HTMLElement;
-                    div = div.querySelector(".unit-idx") as HTMLElement;
-                    const unitIdx = Number(div.textContent);
-                    if (regiment) {
-                        unit = unitIdx === -1 ? regiment.leader : regiment.units[unitIdx];
-                    } else {
-                        unit = roster.auxiliaryUnits[unitIdx];
-                    }
-
-                    const ptsBefore = unitTotalPoints(unit!!);
-                    unit!!.isReinforced = checkbox.checked;
-                    const ptsAfter = unitTotalPoints(unit!!);
-                    putRoster(roster);
-
-                    const usPoints = unitContainer.querySelector('.unit-slot-points') as HTMLElement;
-                    usPoints.textContent = `${ptsAfter} PTS`;
-                    totalPoints = totalPoints - (ptsBefore - ptsAfter);
-                    refreshPointsOverlay(roster);
-                    updateValidationDisplay(roster);
-                };
+            if ((unit as UnitInterf).canBeReinforced) {
+                displayDrawer = true;
+                unitSlot.addReinforcedLabel(roster, unit as UnitInterf);
             }
 
             if ((unit as UnitInterf).enhancements) {
-                const enhancementNames = Object.getOwnPropertyNames((unit as UnitInterf).enhancements);
-                if (enhancementNames.length > 1)
-                    enhancementNames.sort((a,b) => a.localeCompare(b));
-                for (let e = 0; e < enhancementNames.length; ++e) {
-                    ++ numOptions;
-                    await displayEnhancements((unit as UnitInterf), newUsItem, enhancementNames[e]);
+                const allUpgrades = await thisPage.fetchUpgrades();
+                if (allUpgrades) {
+                    const enhancementNames = Object.getOwnPropertyNames((unit as UnitInterf).enhancements);
+                    if (enhancementNames.length > 1)
+                        enhancementNames.sort((a,b) => a.localeCompare(b));
+                    for (let e = 0; e < enhancementNames.length; ++e) {
+                        displayDrawer = true;
+                        await unitSlot.displayEnhancements(roster, (unit as UnitInterf), enhancementNames[e], allUpgrades);
+                    }
                 }
             }
 
             if ((unit as UnitInterf).optionSets) {
                 (unit as UnitInterf).optionSets.forEach(optionSet => {
-                    ++numOptions;
-                    displayWarscrollOption((unit as UnitInterf), optionSet, newUsItem);
+                    displayDrawer = true;
+                    unitSlot.displayWarscrollOption(roster, unit as UnitInterf, optionSet);
                 });
             }
             
-            // to-do display as part of the model
             if ((unit as UnitInterf).models) {
                 (unit as UnitInterf).models.forEach(model => {
                     model.optionSets.forEach(optionSet => {
-                        ++numOptions;
-                        displayWarscrollOption((unit as UnitInterf), optionSet, newUsItem);
+                        displayDrawer = true;
+                        unitSlot.displayWarscrollOption(roster, unit as UnitInterf, optionSet);
                     });
                 });
             }
 
-            if (numOptions < 1) {
-                // remove drawer
-                removeSection(newUsItem, "unit-details");
-                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
-                disableArrow(arrow);
+            if (displayDrawer) {
+                unitSlot.enableDrawer();
             } else {
-                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
-                const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement;
-                wrapper.onclick = (event) => {
-                    event.stopPropagation();
-                    arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
-                }
+                unitSlot.disableDrawer();
             }
 
-            if ((unit as UnitInterf).isGeneral) {
-                // Temporarily disable onchange event
-                const icon = newUsItem.querySelector('.general-label') as HTMLElement;
-                const checkbox = newUsItem.querySelector(`.general-checkbox`) as HTMLInputElement;
-                const originalOnChange = checkbox.onchange;
-                checkbox.onchange = null;
+            if (unit.superType !== 'Other')
+                unitSlot.displayPoints(unit as BasicObject);
 
-                // Set checkbox value
-                checkbox.checked = true;
-                icon.style.display = 'inline';
-
-                // Restore onchange
-                checkbox.onchange = originalOnChange;
-            }
-
-            if ((unit as UnitInterf).isReinforced) {
-                // Temporarily disable onchange event
-                const icon = newUsItem.querySelector('.reinforced-label') as HTMLElement;
-                const checkbox = newUsItem.querySelector(`.reinforced-checkbox`) as HTMLInputElement;
-                const originalOnChange = checkbox.onchange;
-                checkbox.onchange = null;
-
-                // Set checkbox value
-                checkbox.checked = true;
-                icon.style.display = 'inline';
-
-                // Restore onchange
-                checkbox.onchange = originalOnChange;
-            }
-
-            let unitPoints = 0;
-            if (unit.superType === 'Unit')
-                unitPoints = unitTotalPoints(unit as UnitInterf);
-            else if (unit.superType !== 'Other')
-                unitPoints = (unit as Costed).points;
-
-            const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-            displayPoints(usPoints, unitPoints, 'PTS');
-
-            let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
             if (typeof callbackMap === 'string') {
                 const regItem = parent.closest('.regiment-item') as HTMLElement;
                 if (regItem) {
@@ -649,7 +240,6 @@ const builderPage = {
                     toggleUnitAddButton(regItem, reg);
 
                     await createUnitSlot(parent, clone, reg.units.length-1, 'foo', onclick, isUnit);
-                    totalPoints += unitTotalPoints(clone);
                     refreshPointsOverlay(roster);
                     updateValidationDisplay(roster);
                 };
@@ -661,7 +251,7 @@ const builderPage = {
                     const _currentRegIdx = Number(_div.textContent);
 
                     // get the unit index, don't assume it hasn't changed
-                    _div = newUsItem.querySelector('.unit-idx') as HTMLElement;
+                    _div = unitSlot._unitSlot.querySelector('.unit-idx') as HTMLElement;
                     const _currentIdx = Number(_div.textContent);
 
                     // remove from the object
@@ -675,10 +265,11 @@ const builderPage = {
                     toggleUnitAddButton(regItem, roster.regiments[_currentRegIdx]);
 
                     // update the points
-                    removeObjectPoints(unit as UnitInterf);
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
 
                     // remove the div and move all of the other unit indices
-                    parent.removeChild(newUsItem);
+                    parent.removeChild(unitSlot._unitSlot);
                     const slots = parent.querySelectorAll('.unit-slot');
                     slots.forEach((slot, newIdx) => {
                         const hiddenIdx = slot.querySelector('.unit-idx') as HTMLElement;
@@ -687,14 +278,14 @@ const builderPage = {
                     toggleUnitAddButton(parent, roster.regiments[_currentRegIdx]);
                 }
             }
+
             if (callbackMap) {
-                const menu = ContextMenu.create(callbackMap);
-                unitHdr.appendChild(menu);
+                unitSlot.initializeContextMenu(callbackMap);
             }
-            updateSelectableItemPrototype(newUsItem, unit, isUnit, onclick);
-            parent.appendChild(newUsItem);
-            newUsItem.style.display = "";
-            return newUsItem;
+
+            unitSlot.setOnClick(onclick);
+            unitSlot.attachAndDisplay();
+            return unitSlot;
         }
 
         async function displayRegimentOfRenown() {
@@ -717,65 +308,32 @@ const builderPage = {
             
             // slot for the ability
             const addRorAbility = () => {
-                const newUsItem = clonePrototype('unit-slot-prototype');
+                const unitSlot = new UnitSlot(content, regiment);
+                unitSlot.enableDrawer();
+                unitSlot.displayPoints(regiment);
+                unitSlot.initializeContextMenu({});
+                unitSlot.attachAndDisplay();
                 
-                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
-                const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement
-                wrapper.onclick = (event: Event) => {
-                    event.stopPropagation();
-                    arrowOnClick(arrow, newUsItem.querySelector('.unit-details'));
-                }
-                updateSelectableItemPrototype(newUsItem, regiment, true, () => {
+                unitSlot.setOnClick(() => {
                     displayRorOverlay(regiment);
                 });
 
-                // these are all for units
-                clearDetailsSection(newUsItem);
-
-                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-                displayPoints(usPoints, regiment.points, 'PTS');
-
-                let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
-                // does nothing but helps positioning be consistant
-                const menu = ContextMenu.create({});
-                unitHdr.appendChild(menu);
-
-                content.appendChild(newUsItem);
-                newUsItem.style.display = "";
-                const details = newUsItem.querySelector('.unit-details') as HTMLElement;
-                const detailSection = details.querySelector('.section') as HTMLElement;
-                detailSection.style.display = 'none';
-                return details;
+                return unitSlot.getDetails();
             }
 
             const details = addRorAbility();
 
             const _createUnitSlot = async (unit: UnitInterf) => {
-                const newUsItem = clonePrototype('unit-slot-prototype');
-                
-                updateSelectableItemPrototype(newUsItem, unit, true, () => {
+                const unitSlot = new UnitSlot(details, unit);
+                unitSlot.initializeContextMenu({});
+                unitSlot.disableDrawer();
+                unitSlot.attachAndDisplay();
+
+                unitSlot.setOnClick(() => {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
                     dynamicGoTo(settings);
                 });
-
-                // remove toggle
-                removeSection(newUsItem, "unit-details");
-                const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
-                disableArrow(arrow);
-        
-                const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-                usPoints.style.display = 'none';
-                usPoints.textContent = '';
-
-                let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
-                // does nothing but helps positioning be consistant
-                const menu = ContextMenu.create({});
-                unitHdr.appendChild(menu);
-
-            // detailsSection.appendChild(newUsItem);
-                details.appendChild(newUsItem);
-                newUsItem.style.display = "";
             }
 
             for (let i = 0; i < regiment.unitContainers.length; ++i) {
@@ -786,7 +344,6 @@ const builderPage = {
 
             const pointsSpan = newRegItem.querySelector('.regiment-item-points') as HTMLElement;
             displayPoints(pointsSpan, regiment.points, 'pts');
-            totalPoints += regiment.points;
 
             const callbackMap = {
                 Delete: async () => {
@@ -851,7 +408,6 @@ const builderPage = {
             const pointsSpan = newRegItem.querySelector('.regiment-item-points') as HTMLElement;
             if (points > 0) {
                 pointsSpan.textContent = `${points} pts`;
-                totalPoints += points;
             }
 
             const callbackMap = {
@@ -875,14 +431,10 @@ const builderPage = {
                     const _div = newRegItem.querySelector('.regiment-idx') as HTMLElement;
                     const _currentIdx = Number(_div.textContent);
                     const reg = roster.regiments[_currentIdx];
-                    if (reg.leader)
-                        totalPoints -= unitTotalPoints(reg.leader);
-                    reg.units.forEach(unit => {
-                        totalPoints -= unitTotalPoints(unit);
-                    });
                     roster.regiments.splice(_currentIdx, 1);
                     putRoster(roster);
                     refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
 
                     // remove this regiment
                     regimentsDiv.removeChild(newRegItem);
@@ -955,12 +507,6 @@ const builderPage = {
                 return;
             
             createUnitSlot(parent, unit, idx, callbackMap, onclick, isUnit);
-
-            let unitsPoints = unit.points;
-            if (unit.superType === 'Unit') 
-                unitsPoints = unitTotalPoints(unit as UnitInterf);
-            totalPoints += unitsPoints;
-
             refreshPointsOverlay(roster);
             updateValidationDisplay(roster);
         }
@@ -1049,32 +595,24 @@ const builderPage = {
             const onclick = () => {
                 displayUpgradeOverlay(trait);
             };
-            const newUsItem = clonePrototype('unit-slot-prototype');
+            const parent = document.getElementById(typename) as HTMLElement;
+            const unitSlot = new UnitSlot(parent, trait);
+            unitSlot.disableDrawer();
+            unitSlot.initializeContextMenu({});
+            unitSlot.setOnClick(onclick);
             
-            updateSelectableItemPrototype(newUsItem, trait, false, onclick);
-
-            const usName = newUsItem.querySelector('.unit-text') as HTMLElement;
+            const usName = unitSlot._unitSlot.querySelector('.unit-text') as HTMLElement;
             usName.textContent = trait.name.replace("Battle Traits: ", "");
 
-            const label = newUsItem.querySelector('.ability-label') as HTMLElement;
+            const label = unitSlot._unitSlot.querySelector('.ability-label') as HTMLElement;
             label.textContent = 'Battle Traits';
 
-            const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-            usPoints.style.display = 'none';
-            usPoints.innerHTML = '';
-
-            removeSection(newUsItem, "unit-details");
-            const arrow = newUsItem.querySelector('.arrow') as HTMLElement;
-            disableArrow(arrow);
+            unitSlot.attachAndDisplay();
             
-            let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
-            // does nothing but helps positioning be consistant
-            const menu = ContextMenu.create({});
-            unitHdr.appendChild(menu);
 
-            const parent = document.getElementById(typename) as HTMLElement;
-            parent.appendChild(newUsItem);
-            newUsItem.style.display = "";
+            // const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
+            // usPoints.style.display = 'none';
+            // usPoints.innerHTML = '';
         }
 
         function displayBattleFormation() {
@@ -1110,12 +648,12 @@ const builderPage = {
 
             const slot = await createUnitSlot(parent, indexedLores[lcName], 0, callbackMap, onclick, false);
             if (slot)
-                slot.id = `${lcName}-slot`;
+                slot._unitSlot.id = `${lcName}-slot`;
 
             const unitsPoints = indexedLores[lcName].points;
             if (unitsPoints) {
-                totalPoints += unitsPoints;
                 refreshPointsOverlay(roster);
+                updateValidationDisplay(roster);
             }
         }
 
@@ -1198,53 +736,26 @@ const builderPage = {
                 return;
 
             const parent = document.getElementById('lores-container') as HTMLElement;
-            const newUsItem = clonePrototype('unit-slot-prototype') as HTMLElement;
-            
-            updateSelectableItemPrototype(newUsItem, lore, false, () => {
+            const manLoreSlot = new UnitSlot(parent, lore);
+            manLoreSlot.setOnClick(() => {
                 displayUpgradeOverlay(roster.lores.manifestation);
             });
+            manLoreSlot.enableDrawer();
 
-            const arrow = newUsItem.querySelector('.arrow');
-            if (arrow) {
-                const wrapper = arrow.closest('.arrow-wrapper') as HTMLElement;
-                wrapper.onclick = (event: Event) => {
-                    event.stopPropagation();
-                    arrowOnClick(arrow as HTMLElement, newUsItem.querySelector('.unit-details'));
-                }
-            }
-            
             async function displayManifestations() {
                 const result = await getManifestationUnits();
                 if (!result)
                     return;
 
-                const details = newUsItem.querySelector('.unit-details') as HTMLElement;
-                const detailSection = details.querySelector('.section') as HTMLElement;
-                detailSection.style.display = 'none';
+                const details = manLoreSlot.getDetails();
 
                 const createManifestSlot = async (unit: UnitInterf, onclick: (this: GlobalEventHandlers, ev: MouseEvent) => any) => {
-                    const subUsItem = clonePrototype('unit-slot-prototype');
-                    
-                    updateSelectableItemPrototype(subUsItem, unit, true, onclick);
-
-                    clearDetailsSection(subUsItem);
-                    const arrow = subUsItem.querySelector('.arrow') as HTMLElement;
-                    disableArrow(arrow);
-
-                    const unitPoints = unitTotalPoints(unit);
-                    const usPoints = subUsItem.querySelector('.unit-slot-points') as HTMLElement;
-                    displayPoints(usPoints, unitPoints);
-
-                    let unitHdr = subUsItem.querySelector(".selectable-item-right") as HTMLElement;
-                    
-                    // does nothing but helps positioning be consistant
-                    const menu = ContextMenu.create({});
-                    unitHdr.appendChild(menu);
-
-                    unitHdr = subUsItem.querySelector(".unit-slot-selectable-item-wrapper") as HTMLElement;
-                    unitHdr.onclick = onclick;
-                    details.appendChild(subUsItem);
-                    subUsItem.style.display = "";
+                    const subUnitSlot = new UnitSlot(details, unit);
+                    subUnitSlot.disableDrawer();
+                    subUnitSlot.displayPoints(unit);
+                    subUnitSlot.initializeContextMenu({});
+                    subUnitSlot.setOnClick(onclick);
+                    subUnitSlot.attachAndDisplay();
                 }
 
                 for(let i = 0; i < result.units.length; ++i) {
@@ -1256,20 +767,13 @@ const builderPage = {
                     });
                 }
             }
-
             
-            const usName = newUsItem.querySelector('.unit-text') as HTMLElement;
-            // Find the crown icon
+            const usName = manLoreSlot._unitSlot.querySelector('.unit-text') as HTMLElement;
             usName.textContent = lore.name;
+            manLoreSlot.displayPoints(lore);
 
-            // these are all for units
-            clearDetailsSection(newUsItem);
-
-            const unitPoints = lore.points;
-            const usPoints = newUsItem.querySelector('.unit-slot-points') as HTMLElement;
-            displayPoints(usPoints, unitPoints, 'PTS');
-            totalPoints += unitPoints;
             refreshPointsOverlay(roster);
+            updateValidationDisplay(roster);
 
             const callbackMap = {
                 Delete: async () => {
@@ -1277,23 +781,16 @@ const builderPage = {
                         removeObjectPoints(roster.lores.manifestation);
                         roster.lores.manifestation = null;
                         putRoster(roster);
-                        parent.removeChild(newUsItem);
+                        parent.removeChild(manLoreSlot._unitSlot);
                     }
                 }
             };
+
+            manLoreSlot.initializeContextMenu(callbackMap);
             
-            //const regItemMenu = ContextMenu.create(callbackMap);
-          //  const regHdr = newRegItem.querySelector(".regiment-header");
-            //regHdr.appendChild(regItemMenu);
-
-            const menu = ContextMenu.create(callbackMap);
-            let unitHdr = newUsItem.querySelector(".selectable-item-right") as HTMLElement;
-            unitHdr.appendChild(menu);
-
-            parent.appendChild(newUsItem);
-            newUsItem.style.display = "";
-
             displayManifestations();
+
+            manLoreSlot.attachAndDisplay();
         }
 
         async function displayTactics() {
@@ -1332,9 +829,9 @@ const builderPage = {
                     }
                 };
 
-                const newItem = await createUnitSlot(parent, tactic, i, callbackMap, onclick, false);
-                if (newItem) {
-                    const label = newItem.querySelector('.ability-label') as HTMLElement;
+                const unitSlot = await createUnitSlot(parent, tactic, i, callbackMap, onclick, false);
+                if (unitSlot) {
+                    const label = unitSlot._unitSlot.querySelector('.ability-label') as HTMLElement;
                     label.textContent = 'Battle Tactic Card';
                 }
             }
@@ -1353,8 +850,6 @@ const builderPage = {
             const upgrades = await thisPage.fetchUpgrades();
             const sections = document.querySelectorAll('.section-container');
             sections.forEach(section => section.innerHTML = '');
-
-            totalPoints = 0;
 
             for (let i = 0; i < roster.regiments.length; ++i)
                 await displayRegiment(i);

@@ -1,5 +1,8 @@
-import UnitInterf, { unitTypeToString } from "../../shared-lib/UnitInterface.js";
-import { upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
+import { Typed } from "../../shared-lib/BasicObject.js";
+import { LoreSuperType, loreTypeToString } from "../../shared-lib/LoreInterface.js";
+import { otherTypesToString } from "../../shared-lib/OtherTypes.js";
+import UnitInterf, { UnitSuperType, unitTypeToString } from "../../shared-lib/UnitInterface.js";
+import { UpgradeSuperType, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
 
 export const whClearDiv = (qualifier: string, parent?: HTMLElement | Document) => {
     let div = null;
@@ -17,18 +20,28 @@ export const whClearDiv = (qualifier: string, parent?: HTMLElement | Document) =
     return div;
 }
 
-export const makeSelectableItemType = (typedObj: string | {type:number, typeName?:string}, isUnit=true) => {
+export const makeSelectableItemType = (typedObj: string | {typeName?:string} | Typed) => {
     const roleEle = document.createElement('span');
     roleEle.className = 'selectable-item-type ability-label';
     roleEle.style.display = 'inline-block';
     if (typeof typedObj === 'string')
         roleEle.textContent = typedObj;
-    else if (typedObj.typeName)
-        roleEle.textContent = typedObj.typeName
-    else if (isUnit)
-        roleEle.textContent = unitTypeToString(typedObj as unknown as UnitInterf);
-    else
-        roleEle.textContent = upgradeTypeToString(typedObj.type);
+    else if ((typedObj as {typeName:string}).typeName)
+        roleEle.textContent = (typedObj as {typeName:string}).typeName
+    else if ((typedObj as Typed).superType) {
+        const to = typedObj as Typed;
+        if (to.superType === UnitSuperType) {
+            roleEle.textContent = unitTypeToString(typedObj as unknown as UnitInterf);
+        } else if (to.superType === UpgradeSuperType) {
+            roleEle.textContent = upgradeTypeToString(to.type);
+        }  else if (to.superType === LoreSuperType) {
+            roleEle.textContent = loreTypeToString(to.type);
+        }
+        else {
+            roleEle.textContent = otherTypesToString(to.type);
+        }
+    }
+        
     return roleEle;
 }
 
@@ -64,9 +77,9 @@ export const makeSelectableItem = (displayableObj: {name: string, type?: number,
 
     let roleEle: HTMLElement;
     if (displayableObj.type)
-        roleEle = makeSelectableItemType(displayableObj as {type:number, typeName?:string}, isUnit);
+        roleEle = makeSelectableItemType(displayableObj as {type:number, typeName?:string});
     else
-        roleEle = makeSelectableItemType('Unknown', isUnit);
+        roleEle = makeSelectableItemType('Unknown');
     left.appendChild(roleEle);
 
     if (displayableObj.armyName) {
