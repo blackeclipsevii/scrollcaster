@@ -5,6 +5,7 @@ import Weapon, {Weapons, WeaponSelection} from "./Weapon.js";
 import OptionSet from "../shared-lib/Options.js";
 import { parseOptions } from "./parseOptions.js";
 import ModelInterf from "../shared-lib/ModelInterface.js";
+import { WeaponSelectionPer } from "../shared-lib/WeaponInterf.js";
 
 export default class Model implements ModelInterf {
     id: string;
@@ -57,11 +58,11 @@ export default class Model implements ModelInterf {
                         if (constraint["@field"] === 'selections') {
                             if (constraint["@type"] === 'max') {
                                 if (constraint['@scope'] === unitEntry["@id"]) {
-                                    weaponSelection.per = 'unit';
+                                    weaponSelection.per = WeaponSelectionPer.Unit;
                                     weaponSelection.max = Number(constraint["@value"]);
                                 }
 
-                                if (weaponSelection.per !== 'unit') {
+                                if (weaponSelection.per !== WeaponSelectionPer.Unit) {
                                     weaponSelection.max = Number(constraint["@value"]);
                                 }
 
@@ -72,7 +73,7 @@ export default class Model implements ModelInterf {
                         }
                     });
 
-                    if (entry.modifiers && weaponSelection.per !== 'unit') {
+                    if (entry.modifiers && weaponSelection.per !== WeaponSelectionPer.Unit) {
                         entry.modifiers.forEach(mod => {
                             if (mod["@type"] === 'set' &&
                                 mod["@value"] === '0' &&
@@ -83,7 +84,7 @@ export default class Model implements ModelInterf {
                                         if (condition["@type"] === 'atLeast' &&
                                             condition["@value"] === '1'
                                         ) {
-                                            weaponSelection.replacedBy.push(condition["@childId"])
+                                            weaponSelection._replacedBy.push(condition["@childId"])
                                         }
                                     });
                                 }
@@ -96,7 +97,7 @@ export default class Model implements ModelInterf {
                                                 if (condition["@type"] === 'atLeast' &&
                                                     condition["@value"] === '1'
                                                 ) {
-                                                    weaponSelection.replacedBy.push(condition["@childId"])
+                                                    weaponSelection._replacedBy.push(condition["@childId"])
                                                 }
                                             });
                                         }

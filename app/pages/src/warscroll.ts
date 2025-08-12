@@ -2,7 +2,7 @@
 import ModelInterf from "../../shared-lib/ModelInterface.js";
 import OptionSet from "../../shared-lib/Options.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
-import WeaponInterf, { WeaponType } from "../../shared-lib/WeaponInterf.js";
+import WeaponInterf, { WeaponSelectionPer, WeaponType } from "../../shared-lib/WeaponInterf.js";
 import { DYNAMIC_WARSCROLL, dynamicPages } from "../../lib/host.js";
 import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
@@ -144,20 +144,12 @@ const warscrollPage = {
                 const weaponList = model.weapons.warscroll.filter(isTypeFilter);
                 weaponList.forEach(weapon => addToSet(weapon));
 
-                model.weapons.selections.forEach(selection => {
+                const selections = Object.values(model.weapons.selections);
+                selections.forEach(selection => {
                     selection.weapons.forEach(weapon => {
                         if (isTypeFilter(weapon)) {
                             addToSet(weapon);
                         }
-                    });
-                });
-                model.weapons.selectionSets.forEach(selectionSet => {
-                    selectionSet.options.forEach(selection => {
-                        selection.weapons.forEach(weapon => {
-                            if (isTypeFilter(weapon)) {
-                                addToSet(weapon);
-                            }
-                        });
                     });
                 });
                 doOptionSets(model.optionSets);
@@ -219,17 +211,15 @@ const warscrollPage = {
 
                 // mention selectable weapons
                 unit.models.forEach(model => {
-                    model.weapons.selectionSets.forEach(selectionSet => {
-                        const availableWeaponNames = selectionSet.options.map(selection => selection.name);
-                        selectionSet.options.forEach(selection => {
-                            if (selection.max !== -1 && 
-                                selection.per === 'unit') {
-                                const weaponDisclaimer = document.createElement('p');
-                                const otherOptions = availableWeaponNames.filter(name => name !== selection.name).join(', ');
-                                weaponDisclaimer.innerHTML = `${selection.max}/${model.min} models can replace their <i>${otherOptions}</i> with a <i>${selection.name}</i>`;
-                                container.appendChild(weaponDisclaimer);
-                            }
-                        });
+                    const selections = Object.values(model.weapons.selections);
+                    selections.forEach(availableSelection => {
+                        if (availableSelection.max !== -1 && 
+                            availableSelection.per === WeaponSelectionPer.Unit) {
+                            const weaponDisclaimer = document.createElement('p');
+                            const otherOptions = availableSelection.replaces.map(id => model.weapons.selections[id].name).join(', ');
+                            weaponDisclaimer.innerHTML = `${availableSelection.max}/${model.min} models can replace their <i>${otherOptions}</i> with a <i>${availableSelection.name}</i>`;
+                            container.appendChild(weaponDisclaimer);
+                        }
                     });
                 });
             }

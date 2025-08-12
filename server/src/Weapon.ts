@@ -1,10 +1,10 @@
-import WeaponInterf, {WeaponsInterf, WeaponType} from "../shared-lib/WeaponInterf.js";
+import WeaponInterf, {WeaponSelectionPer, WeaponsInterf, WeaponType} from "../shared-lib/WeaponInterf.js";
 import { BsProfile } from "./lib/bs/BsCatalog.js"
 import { bsCharacteristicArrToMetadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
-import { WeaponSelectionSet } from "../shared-lib/WeaponInterf.js";
+import { WeaponSelectionInterf } from "../shared-lib/WeaponInterf.js";
 
 export default class Weapon implements WeaponInterf {
-    [name: string]: unknown;
+    [name: string]: string | number | null;
     id: string;
     name: string;
     type: number;
@@ -39,66 +39,73 @@ export default class Weapon implements WeaponInterf {
     }
 }
 
-export class WeaponSelection {
+export class WeaponSelection implements WeaponSelectionInterf {
     name: string;
     id: string;
     min: number;
     max: number;
-    per: string;
-    replacedBy: string[];
+    per: WeaponSelectionPer;
+    replaces: string[];
     weapons: Weapon[];
+
+    // the underlying bsdata logic says what a weapon is replaced by
+    // so basic weapon(replaced by) => advanced weapon
+    //
+    // this will be 'hidden' to the app
+    _replacedBy: string[];
     constructor(name: string, id: string) {
         this.name = name;
         this.id = id;
-        this.per = 'model';
+        this.per = WeaponSelectionPer.Model;
         this.min = 0;
         this.max = -1;
-        this.replacedBy = [];
+        this.replaces = [];
+        this._replacedBy = [];
         this.weapons = [];
     }
 }
 
 // maybe overkill
 export class Weapons implements WeaponsInterf {
-    // always there
-    warscroll: Weapon[];
-    // selectable, doesn't affect others
-    selections: WeaponSelection[];
-    // exclusive
-    selectionSets: WeaponSelectionSet[];
+    warscroll: WeaponInterf[];
+    // weapons that are equipped
+    selected: WeaponInterf[];
+    // all the weapon options
+    selections: {[name: string]: WeaponSelectionInterf};
+
     constructor() {
         this.warscroll = [];
-        this.selections = [];
-        this.selectionSets = [];
+        this.selected = [];
+        this.selections = {};
     }
     
     addSelection(selection: WeaponSelection) {
-        this.selections.push(selection);
+        this.selections[selection.id] = selection;
     }
 
     generateSetsFromSelections() {
-        this.selections.forEach(optSelect => {
-            if (optSelect.per === 'unit') {
-                const newSet: WeaponSelectionSet = {
-                    options: [optSelect]
-                };
+        const basicWeapons: WeaponSelection[] = [];
+        const advancedWeapons: WeaponSelection[] = [];
 
-                // remove the optional element
-                this.selections = this.selections.filter(fSelect => fSelect.id != optSelect.id);
-                this.selectionSets.push(newSet);
+        // isolate all the basic options
+        const selections = Object.values(this.selections);
+        selections.forEach(optSelect => {
+            if (optSelect.per === WeaponSelectionPer.Unit) {
+                advancedWeapons.push(optSelect as WeaponSelection);
+            } else {
+                basicWeapons.push(optSelect as WeaponSelection);
             }
         });
 
-        this.selections.forEach(defaultSelection => {
-            defaultSelection.replacedBy.forEach(replacementId => {
-                this.selectionSets.forEach(selectionSet => {
-                    selectionSet.options.every(optionalSelection => {
-                        if (optionalSelection.id === replacementId) {
-                            selectionSet.options.push(defaultSelection);
-                            return false;
-                        }
-                        return true;
-                    });
+        // add the replaces parameter to the advanced weapons
+        basicWeapons.forEach(basicSelection => {
+            basicSelection._replacedBy.forEach(replacementId => {
+                advancedWeapons.every(advancedSelection => {
+                    if (advancedSelection.id === replacementId) {
+                        advancedSelection.replaces.push(basicSelection.id);
+                        return false;
+                    };
+                    return true;
                 });
             });
         });
