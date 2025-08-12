@@ -1,6 +1,6 @@
-import AgeOfSigmar from "../dist/AgeOfSigmar.js";
-import { RegimentValidator } from "../dist/lib/validation/RegimentValidation.js";
-import { deserializeRegiment } from "../dist/lib/RosterState.js";
+import AgeOfSigmar from "../dist/src/AgeOfSigmar.js";
+import { RegimentValidator } from "../dist/src/lib/validation/RegimentValidation.js";
+import { deserializeRegiment } from "../dist/src/lib/RosterState.js";
 import path from 'path'
 
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
