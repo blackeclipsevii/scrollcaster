@@ -1,4 +1,4 @@
-import AgeOfSigmar from "../dist/AgeOfSigmar.js";
+import AgeOfSigmar from "../dist/src/AgeOfSigmar.js";
 import path from 'path'
 
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
