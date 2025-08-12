@@ -85,14 +85,14 @@ export async function exportRoster(roster: RosterInterf) {
                     names.forEach(name => {
                         const quantity = model.weapons.selected[name] * (unit.isReinforced ? 2 : 1);
                         text += `  ${indent}${astrix} ${quantity.toString()}x ${name}\n`;
+                    });   
+                }
+                if (model.optionSets){
+                    model.optionSets.forEach(optionSet => {
+                        if (optionSet.selection) {
+                            text += `  ${indent}${astrix} ${optionSet.selection.name}\n`;
+                        }
                     });
-                    if (model.optionSets){
-                        model.optionSets.forEach(optionSet => {
-                            if (optionSet.selection) {
-                                text += `  ${indent}${astrix} ${optionSet.selection.name}\n`;
-                            }
-                        });
-                    }
                 }
             });
         }
