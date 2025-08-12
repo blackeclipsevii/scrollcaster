@@ -1,6 +1,6 @@
-import AgeOfSigmar from "../dist/AgeOfSigmar.js";
-import { nameRosterToRoster } from "../dist/lib/NameRoster";
-import { RosterState } from "../dist/lib/RosterState.js"
+import AgeOfSigmar from "../dist/src/AgeOfSigmar.js";
+import { nameRosterToRoster } from "../dist/src/lib/NameRoster";
+import { RosterState } from "../dist/src/lib/RosterState.js"
 import path from 'path'
 
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");

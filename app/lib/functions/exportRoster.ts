@@ -1,6 +1,7 @@
 import LoreInterf from "../../shared-lib/LoreInterface.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
+import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
 import { rosterTotalPoints, unitTotalPoints } from "../host.js";
 import { version } from "../RestAPI/version.js";
 
@@ -79,6 +80,11 @@ export async function exportRoster(roster: RosterInterf) {
         if (unit.models) {
             // we have models now
             unit.models.forEach(model => {
+                const names = Object.getOwnPropertyNames(model.weapons.selected);
+                names.forEach(name => {
+                    const quantity = model.weapons.selected[name] * (unit.isReinforced ? 2 : 1);
+                    text += `  ${indent}${astrix} ${quantity.toString()}x ${name}\n`;
+                });
                 if (model.optionSets){
                     model.optionSets.forEach(optionSet => {
                         if (optionSet.selection) {

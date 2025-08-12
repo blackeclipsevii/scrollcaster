@@ -5,6 +5,7 @@ import Weapon, {Weapons, WeaponSelection} from "./Weapon.js";
 import OptionSet from "../shared-lib/Options.js";
 import { parseOptions } from "./parseOptions.js";
 import ModelInterf from "../shared-lib/ModelInterface.js";
+import { WeaponSelectionPer } from "../shared-lib/WeaponInterf.js";
 
 export default class Model implements ModelInterf {
     id: string;
@@ -23,6 +24,11 @@ export default class Model implements ModelInterf {
         this._parse(ageOfSigmar, modelSe, parent);
     }
     _parse(ageOfSigmar: AgeOfSigmar, modelSe: BsSelectionEntry, unitEntry: BsSelectionEntry) {
+        let defaultAmountLUT: string[] = [];
+        if (modelSe["@defaultAmount"]) {
+            defaultAmountLUT = modelSe["@defaultAmount"].split(',');
+        }
+        
         const parseProfiles = (list: Weapon[], profiles: BsProfile[]) => {
             profiles.forEach(profile => {
                 if (profile["@typeName"].includes('Weapon')) {
@@ -48,8 +54,18 @@ export default class Model implements ModelInterf {
         // weapons ?
         if (modelSe.selectionEntries) {
             modelSe.selectionEntries.forEach(entry => {
+                let defaultAmount = 0;
                 const weaponSelection = new WeaponSelection(entry["@name"], entry['@id']);
                 const maxConstraintIds: string[] = [];
+
+                if (entry["@defaultAmount"]) {
+                    const daFlags = entry["@defaultAmount"].split(',');
+                    daFlags.forEach((flag, idx) => {
+                        if (Number(flag) > 0 && idx < defaultAmountLUT.length) {
+                            defaultAmount += Number(defaultAmountLUT[idx]);
+                        }
+                    });
+                }
 
                 if (entry.constraints) {
                     //<constraint type="max" value="1" field="selections" scope="9544-33d8-1d69-2be9" shared="true" id="a709-2d5c-ae85-6aeb" includeChildSelections="true"/>
@@ -57,11 +73,11 @@ export default class Model implements ModelInterf {
                         if (constraint["@field"] === 'selections') {
                             if (constraint["@type"] === 'max') {
                                 if (constraint['@scope'] === unitEntry["@id"]) {
-                                    weaponSelection.per = 'unit';
+                                    weaponSelection.per = WeaponSelectionPer.Unit;
                                     weaponSelection.max = Number(constraint["@value"]);
                                 }
 
-                                if (weaponSelection.per !== 'unit') {
+                                if (weaponSelection.per !== WeaponSelectionPer.Unit) {
                                     weaponSelection.max = Number(constraint["@value"]);
                                 }
 
@@ -72,7 +88,7 @@ export default class Model implements ModelInterf {
                         }
                     });
 
-                    if (entry.modifiers && weaponSelection.per !== 'unit') {
+                    if (entry.modifiers && weaponSelection.per !== WeaponSelectionPer.Unit) {
                         entry.modifiers.forEach(mod => {
                             if (mod["@type"] === 'set' &&
                                 mod["@value"] === '0' &&
@@ -83,7 +99,7 @@ export default class Model implements ModelInterf {
                                         if (condition["@type"] === 'atLeast' &&
                                             condition["@value"] === '1'
                                         ) {
-                                            weaponSelection.replacedBy.push(condition["@childId"])
+                                            weaponSelection._replacedBy.push(condition["@childId"])
                                         }
                                     });
                                 }
@@ -96,7 +112,7 @@ export default class Model implements ModelInterf {
                                                 if (condition["@type"] === 'atLeast' &&
                                                     condition["@value"] === '1'
                                                 ) {
-                                                    weaponSelection.replacedBy.push(condition["@childId"])
+                                                    weaponSelection._replacedBy.push(condition["@childId"])
                                                 }
                                             });
                                         }
@@ -119,6 +135,8 @@ export default class Model implements ModelInterf {
                 }
 
                 this.weapons.addSelection(weaponSelection);
+                if (defaultAmount > 0 && weaponSelection.max > -1 && weaponSelection.per === WeaponSelectionPer.Unit)
+                    this.weapons.selected[weaponSelection.name] = defaultAmount;
             });
             this.weapons.generateSetsFromSelections();
         }
