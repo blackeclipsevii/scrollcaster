@@ -48,7 +48,8 @@ export interface WeaponsInterf {
     // weapons that are just kind of there
     warscroll: WeaponInterf[];
     // weapons that are selected by the user
-    selected: WeaponInterf[];
+    // name : quantity
+    selected: {[name: string]: number};
     // all the weapon options
     selections: {[name: string]: WeaponSelectionInterf};
 }

@@ -69,13 +69,13 @@ export class WeaponSelection implements WeaponSelectionInterf {
 export class Weapons implements WeaponsInterf {
     warscroll: WeaponInterf[];
     // weapons that are equipped
-    selected: WeaponInterf[];
+    selected: {[name: string]: number};
     // all the weapon options
     selections: {[name: string]: WeaponSelectionInterf};
 
     constructor() {
         this.warscroll = [];
-        this.selected = [];
+        this.selected = {};
         this.selections = {};
     }
     

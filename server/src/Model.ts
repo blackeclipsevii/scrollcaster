@@ -24,6 +24,11 @@ export default class Model implements ModelInterf {
         this._parse(ageOfSigmar, modelSe, parent);
     }
     _parse(ageOfSigmar: AgeOfSigmar, modelSe: BsSelectionEntry, unitEntry: BsSelectionEntry) {
+        let defaultAmountLUT: string[] = [];
+        if (modelSe["@defaultAmount"]) {
+            defaultAmountLUT = modelSe["@defaultAmount"].split(',');
+        }
+        
         const parseProfiles = (list: Weapon[], profiles: BsProfile[]) => {
             profiles.forEach(profile => {
                 if (profile["@typeName"].includes('Weapon')) {
@@ -49,8 +54,18 @@ export default class Model implements ModelInterf {
         // weapons ?
         if (modelSe.selectionEntries) {
             modelSe.selectionEntries.forEach(entry => {
+                let defaultAmount = 0;
                 const weaponSelection = new WeaponSelection(entry["@name"], entry['@id']);
                 const maxConstraintIds: string[] = [];
+
+                if (entry["@defaultAmount"]) {
+                    const daFlags = entry["@defaultAmount"].split(',');
+                    daFlags.forEach((flag, idx) => {
+                        if (Number(flag) > 0 && idx < defaultAmountLUT.length) {
+                            defaultAmount += Number(defaultAmountLUT[idx]);
+                        }
+                    });
+                }
 
                 if (entry.constraints) {
                     //<constraint type="max" value="1" field="selections" scope="9544-33d8-1d69-2be9" shared="true" id="a709-2d5c-ae85-6aeb" includeChildSelections="true"/>
@@ -120,6 +135,8 @@ export default class Model implements ModelInterf {
                 }
 
                 this.weapons.addSelection(weaponSelection);
+                if (defaultAmount > 0 && weaponSelection.max > -1 && weaponSelection.per === WeaponSelectionPer.Unit)
+                    this.weapons.selected[weaponSelection.name] = defaultAmount;
             });
             this.weapons.generateSetsFromSelections();
         }

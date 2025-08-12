@@ -80,6 +80,7 @@ export interface BsSelectionEntry extends BsIdentifiable, BsNamed, BsTyped{
     '@import': string,
     '@hidden': string,
     '@publicationId': string | undefined;
+    '@defaultAmount': string | undefined;
     costs: BsCost[] | undefined;
     profiles: BsProfile[] | undefined;
     entryLinks: BsEntryLink[] | undefined;
@@ -106,6 +107,7 @@ export interface BsCost extends BsNamed {
 export interface BsEntryLink extends BsLink {
     '@import': string;
     '@hidden': string;
+    '@defaultAmount': string | undefined;
     entryLinks: BsEntryLink[];
     categoryLinks: BsCategoryLink[] | undefined;
     costs: BsCost[];
