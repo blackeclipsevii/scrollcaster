@@ -35,6 +35,7 @@ export interface GenericSlot {
     attachAndDisplay(): void;
     enableDrawer(): void;
     disableDrawer(): void;
+    getHTMLElement(): HTMLDivElement;
 }
 
 export default class UnitSlot implements GenericSlot {
@@ -87,6 +88,10 @@ export default class UnitSlot implements GenericSlot {
         left.insertBefore(nameEle, left.firstChild);
 
         this._parent = parent;
+    }
+
+    getHTMLElement(): HTMLDivElement {
+        return this._unitSlot;
     }
 
     setOnClick(slotOnClick: (this: HTMLElement, ev: MouseEvent) => any) {

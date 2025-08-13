@@ -1,26 +1,20 @@
 import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
 import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
-import OptionSet from "../../shared-lib/Options.js";
-import RosterInterf, { RegimentInterf } from "../../shared-lib/RosterInterface.js";
-import UnitInterf, { EnhancementSlotInterf } from "../../shared-lib/UnitInterface.js";
+import RosterInterf from "../../shared-lib/RosterInterface.js";
+import UnitInterf from "../../shared-lib/UnitInterface.js";
 import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
-import { endpoint } from "../../lib/endpoint.js";
 import { copyToClipboard } from "../../lib/functions/copyToClipboard.js";
 import { exportRoster } from "../../lib/functions/exportRoster.js";
-import { getVar } from "../../lib/functions/getVar.js";
-import { displayPoints, dynamicPages, unitTotalPoints } from "../../lib/host.js";
-import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { dynamicPages, unitTotalPoints } from "../../lib/host.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
 import { unitsApi } from "../../lib/RestAPI/units.js";
 import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
-import { CallbackMap, ContextMenu } from "../../lib/widgets/contextMenu.js";
+import { CallbackMap } from "../../lib/widgets/contextMenu.js";
 import { displayPointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
 import { displayRorOverlay, displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
-import { displayWeaponOverlay } from "../../lib/widgets/displayWeaponOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { dynamicGoTo, setHeaderTitle, Settings, updateHeaderContextMenu } from "../../lib/widgets/header.js";
-import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { Overlay } from "../../lib/widgets/overlay.js";
 import { BattleSettings } from "./battle.js";
@@ -30,7 +24,7 @@ import { UpgradeSettings } from "./upgrades.js";
 import { WarscrollSettings } from "./warscroll.js";
 import LoreInterf from "../../shared-lib/LoreInterface.js";
 import { UnitType } from "../../shared-lib/UnitInterface.js";
-import { BasicObject, Costed, Identifiable, Typed } from "../../shared-lib/BasicObject.js";
+import { BasicObject } from "../../shared-lib/BasicObject.js";
 
 import UnitSlot, {GenericSlot, toggleUnitAddButton} from "../../lib/widgets/builder/UnitSlot.js";
 import RegimentSlot, { setRegimentIdx } from "../../lib/widgets/builder/RegimentSlot.js";
@@ -104,15 +98,6 @@ const builderPage = {
             modal.appendChild(section);
             modal.appendChild(copyButton);
         });
-
-        function removeSection(section: HTMLElement, className: string) {
-            const child = section.querySelector(`.${className}`) as HTMLElement | null;
-            if (child && child.parentElement) {
-                child.parentElement.removeChild(child);
-            } else {
-                console.log (`failed to remove ${className}`)
-            }
-        }
 
         async function createUnitSlot(parent: HTMLElement, 
                                       unit: UnitInterf | BattleTacticCardInterf | UpgradeInterf | LoreInterf, 
@@ -384,20 +369,6 @@ const builderPage = {
             refreshPointsOverlay(roster);
         }
 
-        async function getSpecificUnit(id: string, useArmy: boolean) {
-            let url = `${endpoint}/units?id=${id}`;
-            if (useArmy) {
-                url = `${url}&army=${roster.army}`;
-            }
-
-            try {
-                const result = await fetchWithLoadingDisplay(encodeURI(url));
-                return result;
-            } catch (error) {
-                return null;
-            }
-        }
-
         async function getManifestationUnits() {
             if (!roster.lores.manifestation)
                 return null;
@@ -406,10 +377,10 @@ const builderPage = {
             let manifestations: UnitInterf[] = [];
             let armySpecific = false;
             for (let i = 0; i < ids.length; ++i) {
-                let unit = await getSpecificUnit(ids[i], armySpecific);
+                let unit = await unitsApi.getUnitById(ids[i], armySpecific ? roster.army : undefined);
                 if (!unit) {
                     armySpecific = !armySpecific;
-                    unit = await getSpecificUnit(ids[i], armySpecific);
+                    unit = await unitsApi.getUnitById(ids[i], armySpecific ? roster.army : undefined);
                 }
 
                 if (unit)
@@ -518,15 +489,15 @@ const builderPage = {
                 displayUpgradeOverlay(trait);
             };
             const parent = document.getElementById(typename) as HTMLElement;
-            const unitSlot = new UnitSlot(parent, trait);
+            const unitSlot = new UnitSlot(parent, trait) as GenericSlot;
             unitSlot.disableDrawer();
             unitSlot.initializeContextMenu({});
             unitSlot.setOnClick(onclick);
             
-            const usName = unitSlot._unitSlot.querySelector('.unit-text') as HTMLElement;
+            const usName = unitSlot.getHTMLElement().querySelector('.unit-text') as HTMLElement;
             usName.textContent = trait.name.replace("Battle Traits: ", "");
 
-            const label = unitSlot._unitSlot.querySelector('.ability-label') as HTMLElement;
+            const label = unitSlot.getHTMLElement().querySelector('.ability-label') as HTMLElement;
             label.textContent = 'Battle Traits';
 
             unitSlot.attachAndDisplay();
@@ -658,7 +629,7 @@ const builderPage = {
                 return;
 
             const parent = document.getElementById('lores-container') as HTMLElement;
-            const manLoreSlot = new UnitSlot(parent, lore);
+            const manLoreSlot = new UnitSlot(parent, lore) as GenericSlot;
             manLoreSlot.setOnClick(() => {
                 displayUpgradeOverlay(roster.lores.manifestation);
             });
@@ -672,7 +643,7 @@ const builderPage = {
                 const details = manLoreSlot.getDetails();
 
                 const createManifestSlot = async (unit: UnitInterf, onclick: (this: GlobalEventHandlers, ev: MouseEvent) => any) => {
-                    const subUnitSlot = new UnitSlot(details, unit);
+                    const subUnitSlot = new UnitSlot(details, unit) as GenericSlot;
                     subUnitSlot.disableDrawer();
                     subUnitSlot.displayPoints(unit);
                     subUnitSlot.initializeContextMenu({});
@@ -690,7 +661,7 @@ const builderPage = {
                 }
             }
             
-            const usName = manLoreSlot._unitSlot.querySelector('.unit-text') as HTMLElement;
+            const usName = manLoreSlot.getHTMLElement().querySelector('.unit-text') as HTMLElement;
             usName.textContent = lore.name;
             manLoreSlot.displayPoints(lore);
 
@@ -703,7 +674,7 @@ const builderPage = {
                         removeObjectPoints(roster.lores.manifestation);
                         roster.lores.manifestation = null;
                         putRoster(roster);
-                        parent.removeChild(manLoreSlot._unitSlot);
+                        parent.removeChild(manLoreSlot.getHTMLElement());
                     }
                 }
             };

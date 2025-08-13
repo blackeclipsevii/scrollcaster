@@ -29,5 +29,18 @@ export const unitsApi = {
             this._cache.leaderId = leaderId;
         }
         return result;
+    },
+    async getUnitById(id: string, useArmy?: string) {
+        let url = `${endpoint}/units?id=${id}`;
+        if (useArmy) {
+            url = `${url}&army=${useArmy}`;
+        }
+
+        try {
+            const result = await fetchWithLoadingDisplay(encodeURI(url));
+            return result;
+        } catch (error) {
+            return null;
+        }
     }
 };
