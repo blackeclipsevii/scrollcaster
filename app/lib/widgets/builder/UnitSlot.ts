@@ -1,4 +1,4 @@
-import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
+import { EnhancementGroup } from "../../../shared-lib/ArmyUpgrades.js";
 import { Costed, BasicObject, Identifiable, Typed } from "../../../shared-lib/BasicObject.js";
 import OptionSet from "../../../shared-lib/Options.js";
 import RosterInterf, { RegimentInterf } from "../../../shared-lib/RosterInterface.js";
@@ -239,12 +239,8 @@ export default class UnitSlot implements GenericSlot {
         return div;
     }
 
-    async displayEnhancements(roster: RosterInterf, unit: UnitInterf, type: string, allUpgrades: ArmyUpgrades) {
+    async displayEnhancements(roster: RosterInterf, unit: UnitInterf, type: string, enhancementGroup: EnhancementGroup) {
         const details =  this._addEnhancementUpgradeSection(unit.enhancements[type]);
-
-        const enhancementGroup = allUpgrades.enhancements[type];
-        if (!enhancementGroup)
-            return;
 
         const values = Object.values(enhancementGroup.upgrades);
         values.forEach(upgrade => {
@@ -308,6 +304,7 @@ export default class UnitSlot implements GenericSlot {
                 }
             };
             details.appendChild(upgradeDiv);
+            return true;
         });
     }
 

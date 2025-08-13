@@ -128,9 +128,13 @@ const builderPage = {
                     const enhancementNames = Object.getOwnPropertyNames((unit as UnitInterf).enhancements);
                     if (enhancementNames.length > 1)
                         enhancementNames.sort((a,b) => a.localeCompare(b));
+                    
                     for (let e = 0; e < enhancementNames.length; ++e) {
-                        displayDrawer = true;
-                        await unitSlot.displayEnhancements(roster, (unit as UnitInterf), enhancementNames[e], allUpgrades);
+                        const enhancementGroup = allUpgrades.enhancements[enhancementNames[e]];
+                        if (enhancementGroup) {
+                            displayDrawer = true;
+                            await unitSlot.displayEnhancements(roster, (unit as UnitInterf), enhancementNames[e], enhancementGroup);
+                        }
                     }
                 }
             }
