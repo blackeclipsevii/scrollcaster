@@ -123,7 +123,11 @@ server.get('/armies', (req, res) => {
   if (parsedUrl.query.army) {
     const armyName = decodeURI(parsedUrl.query.army);
     const army = aos.getArmy(armyName);
-    res.end(JSON.stringify(army));
+    
+    // don't stringify lut, because thats just everything...again
+    res.end(JSON.stringify(army, (key, value) => {
+      return key === 'lut' ? undefined : value;
+    }));
     return;
   }
 
@@ -174,6 +178,27 @@ server.get('/upgrades', (req, res) => {
   const army = aos.getArmy(armyValue);
   res.end(JSON.stringify(army.upgrades));
   res.status(200);
+});
+
+server.get('/lut', (req, res) => {
+  const aos = getAgeOfSigmar();
+  const parsedUrl = url.parse(req.url, true);
+  if (!parsedUrl.query.id || !parsedUrl.query.army) {
+    res.status(400);
+    res.end();
+    return;
+  }
+
+  const id = parsedUrl.query.id;
+  const armyValue = decodeURI(parsedUrl.query.army);
+  const army = aos.getArmy(armyValue);
+  const result = army.lut[id];
+  if (result) {
+    res.end(JSON.stringify(result));
+    res.status(200);
+    return;
+  }
+  res.status(404);
 });
 
 server.get('/regimentsOfRenown', (req, res) =>{
