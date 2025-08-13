@@ -91,7 +91,7 @@ const upgradePage = {
             const nameEle = makeSelectableItemName(upgrade);
             left.appendChild(nameEle);
 
-            const typeEle = makeSelectableItemType(upgrade, false);
+            const typeEle = makeSelectableItemType(upgrade);
             left.appendChild(typeEle);
         
             const right = document.createElement('div');

@@ -38,7 +38,7 @@ const rorPage = {
                 const nameEle = makeSelectableItemName(unit.name);
                 left.appendChild(nameEle);
 
-                const roleEle = makeSelectableItemType(unit, true);
+                const roleEle = makeSelectableItemType(unit);
                 left.appendChild(roleEle);
             
                 const right = document.createElement('div');
