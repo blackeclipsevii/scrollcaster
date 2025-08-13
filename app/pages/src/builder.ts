@@ -32,7 +32,8 @@ import LoreInterf from "../../shared-lib/LoreInterface.js";
 import { UnitType } from "../../shared-lib/UnitInterface.js";
 import { BasicObject, Costed, Identifiable, Typed } from "../../shared-lib/BasicObject.js";
 
-import UnitSlot, {toggleUnitAddButton} from "../../lib/widgets/builder/UnitSlot.js";
+import UnitSlot, {GenericSlot, toggleUnitAddButton} from "../../lib/widgets/builder/UnitSlot.js";
+import RegimentSlot, { setRegimentIdx } from "../../lib/widgets/builder/RegimentSlot.js";
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
@@ -80,50 +81,6 @@ const builderPage = {
         const removeObjectPoints = (pointedObj: {points: number}) => {
             refreshPointsOverlay(roster);
             updateValidationDisplay(roster);
-        }
-
-        const _newRegimentItem = () => {
-            const div = document.createElement('div');
-            div.innerHTML = `
-            <span style="display: none;" class="regiment-idx"></span>
-            <div class="regiment-header" style="display: flex; align-items: center; gap: 0.5rem;">
-                <span class="regiment-item-title"></span>
-                <span class="regiment-item-points" style="margin-left:auto;"></span>
-            </div>
-            
-            <!-- Content that will hold hero/units -->
-            <div class="regiment-content" style="margin-top: 0.5rem;"></div>
-
-            <!-- Add button below content -->
-            <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                <button class="add-unit-button">Add Unit +</button>
-            </div>
-            `;
-            div.className = `regiment-item`;
-            const btn = div.querySelector(`button`) as HTMLButtonElement;
-            btn.onclick = () => {
-                const parent = div;
-                const idx = Number(parent.id.substring(parent.id.length-1)) - 1;
-                const content = parent.querySelector('.regiment-content') as HTMLElement;
-                const count = content.children.length;
-
-                const settings = new UnitSettings;
-                settings.roster = roster;
-                settings.regimentIndex = idx;
-                if (count === 0)
-                    settings.type = 'hero';
-
-                dynamicGoTo(settings);
-            };
-            return div;
-        }
-
-        function clonePrototype(id: string, newId = '') {
-            if (id.includes('unit'))
-                throw new Error('clone prototype is no longer used for unit slot.');
-            const newUsItem = _newRegimentItem();
-            newUsItem.id = newId;
-            return newUsItem;
         }
 
         const exportListAndDisplay = Overlay.toggleFactory('block', async () =>{
@@ -293,27 +250,20 @@ const builderPage = {
             if (!regiment)
                 return;
 
-            const regimentsDiv = document.getElementById('regiments-container') as HTMLElement;
-            const newRegItem = clonePrototype('regiment-item-prototype');
-            newRegItem.id = `regiment-item-of-renown`;
+            const parent = document.getElementById('regiments-container') as HTMLElement;
+            const newRegItem = new RegimentSlot(parent, roster, 'regiment-item-of-renown');
+            newRegItem.setTitle(`Regiment of Renown`);
+            newRegItem.disableAddButton();
 
-            const deadButton = newRegItem.querySelector('.add-unit-button');
-            if (deadButton && deadButton.parentElement)
-                deadButton.parentElement.removeChild(deadButton);
-
-            const title = newRegItem.querySelector('.regiment-item-title') as HTMLElement;
-            title.innerHTML = `Regiment of Renown`;
-
-            const content = newRegItem.querySelector('.regiment-content') as HTMLElement;
+            const content = newRegItem.getContentElement();
             
             // slot for the ability
             const addRorAbility = () => {
-                const unitSlot = new UnitSlot(content, regiment);
+                const unitSlot = new UnitSlot(content, regiment) as GenericSlot;
                 unitSlot.enableDrawer();
                 unitSlot.displayPoints(regiment);
                 unitSlot.initializeContextMenu({});
                 unitSlot.attachAndDisplay();
-                
                 unitSlot.setOnClick(() => {
                     displayRorOverlay(regiment);
                 });
@@ -323,12 +273,11 @@ const builderPage = {
 
             const details = addRorAbility();
 
-            const _createUnitSlot = async (unit: UnitInterf) => {
-                const unitSlot = new UnitSlot(details, unit);
+            const _createUnitSlot = (unit: UnitInterf) => {
+                const unitSlot = new UnitSlot(details, unit) as GenericSlot;
                 unitSlot.initializeContextMenu({});
                 unitSlot.disableDrawer();
                 unitSlot.attachAndDisplay();
-
                 unitSlot.setOnClick(() => {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
@@ -339,47 +288,32 @@ const builderPage = {
             for (let i = 0; i < regiment.unitContainers.length; ++i) {
                 const unitContainer = regiment.unitContainers[i];
                 for (let j = 0; j < unitContainer.min; ++j)
-                    await _createUnitSlot(unitContainer.unit);
+                    _createUnitSlot(unitContainer.unit);
             }
 
-            const pointsSpan = newRegItem.querySelector('.regiment-item-points') as HTMLElement;
-            displayPoints(pointsSpan, regiment.points, 'pts');
+            newRegItem.displayPoints(regiment);
 
             const callbackMap = {
                 Delete: async () => {
                     removeObjectPoints(regiment);
                     roster.regimentOfRenown = null;
                     putRoster(roster);
-                    regimentsDiv.removeChild(newRegItem);
+                    parent.removeChild(newRegItem._regimentSlot);
                 }
             };
 
-            const menu = ContextMenu.create(callbackMap);
-            const regHdr = newRegItem.querySelector(".regiment-header") as HTMLElement;
-            regHdr.appendChild(menu);
-
-            newRegItem.removeAttribute('style');
-            regimentsDiv.appendChild(newRegItem);
+            newRegItem.initializeContextMenu(callbackMap);
+            newRegItem.attachAndDisplay();
             refreshPointsOverlay(roster);
         }
 
         async function displayRegiment(index: number) {
-            const regimentsDiv = document.getElementById('regiments-container') as HTMLElement;
+            const parent = document.getElementById('regiments-container') as HTMLElement;
             const regiment = roster.regiments[index];
-            const newRegItem = clonePrototype('regiment-item-prototype');
-            newRegItem.id = '';
+            const newRegItem = new RegimentSlot(parent, roster, '');
+            newRegItem.setIndex(index);
 
-            const setInternalIdx = (_regItem: HTMLElement, _index: number) => {
-                const hiddenIdx = _regItem.querySelector('.regiment-idx') as HTMLElement;
-                hiddenIdx.textContent = `${_index}`;
-                _regItem.id = `regiment-item-${_index+1}`;
-                const title = _regItem.querySelector('.regiment-item-title') as HTMLElement;
-                title.innerHTML = `Regiment ${_index+1}`;
-            }
-
-            setInternalIdx(newRegItem, index);
-
-            const content = newRegItem.querySelector('.regiment-content') as HTMLElement;
+            const content = newRegItem.getContentElement();
 
             let points = 0;
             if (regiment.leader) {
@@ -390,7 +324,7 @@ const builderPage = {
                 }, true);
                 points += unitTotalPoints(regiment.leader);
             } else {
-                const btn = newRegItem.querySelector('.add-unit-button') as HTMLButtonElement;
+                const btn = newRegItem._regimentSlot.querySelector('.add-unit-button') as HTMLButtonElement;
                 btn.textContent = 'Add Leader +';
             }
 
@@ -405,15 +339,11 @@ const builderPage = {
                 points += unitTotalPoints(unit);
             };
 
-            const pointsSpan = newRegItem.querySelector('.regiment-item-points') as HTMLElement;
-            if (points > 0) {
-                pointsSpan.textContent = `${points} pts`;
-            }
+            newRegItem.displayPoints({points: points});
 
             const callbackMap = {
                 Duplicate: async () => {
-                    const _div = newRegItem.querySelector('.regiment-idx') as HTMLElement;
-                    const _currentIdx = Number(_div.textContent);
+                    const _currentIdx = newRegItem.getIndex();
                     const reg = roster.regiments[_currentIdx];
                     const clone = JSON.parse(JSON.stringify(reg));
                     roster.regiments.push(clone);
@@ -428,8 +358,7 @@ const builderPage = {
                 },
 
                 Delete: async () => {
-                    const _div = newRegItem.querySelector('.regiment-idx') as HTMLElement;
-                    const _currentIdx = Number(_div.textContent);
+                    const _currentIdx = newRegItem.getIndex();
                     const reg = roster.regiments[_currentIdx];
                     roster.regiments.splice(_currentIdx, 1);
                     putRoster(roster);
@@ -437,13 +366,11 @@ const builderPage = {
                     updateValidationDisplay(roster);
 
                     // remove this regiment
-                    regimentsDiv.removeChild(newRegItem);
+                    newRegItem.delete();
 
                     // update remaining regiments
-                    const divs = regimentsDiv.querySelectorAll('.regiment-item') as NodeListOf<HTMLElement>;
-                    divs.forEach((div, idx)=> {
-                        setInternalIdx(div, idx);
-                    });
+                    const divs = parent.querySelectorAll('.regiment-item') as NodeListOf<HTMLDivElement>;
+                    divs.forEach((div, idx)=> setRegimentIdx(div, idx));
                     
                     if (roster.regiments.length < 5) {
                         const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
@@ -452,13 +379,8 @@ const builderPage = {
                 }
             };
 
-            const menu = ContextMenu.create(callbackMap);
-            const regHdr = newRegItem.querySelector(".regiment-header") as HTMLElement;
-            regHdr.appendChild(menu);
-
-            newRegItem.removeAttribute('style');
-            regimentsDiv.appendChild(newRegItem);
-
+            newRegItem.initializeContextMenu(callbackMap);
+            newRegItem.attachAndDisplay();
             refreshPointsOverlay(roster);
         }
 

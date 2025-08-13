@@ -27,7 +27,17 @@ export const toggleUnitAddButton = (regItem: HTMLElement, _regiment: RegimentInt
     }
 }
 
-export default class UnitSlot {
+export interface GenericSlot {
+    setOnClick(slotOnClick: (this: HTMLElement, ev: MouseEvent) => any): void;
+    getDetails(): HTMLDivElement;
+    displayPoints(unit: BasicObject): void;
+    initializeContextMenu(callbackMap: CallbackMap): void;
+    attachAndDisplay(): void;
+    enableDrawer(): void;
+    disableDrawer(): void;
+}
+
+export default class UnitSlot implements GenericSlot {
     _unitSlot: HTMLDivElement;
     _parent: HTMLElement;
     pointSet: boolean;
