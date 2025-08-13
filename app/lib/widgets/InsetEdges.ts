@@ -16,7 +16,7 @@ export class InsetEdges {
         edges.forEach(edge => {
             const value = params.get(`inset-${edge}`);
             if (value)
-                this[edge] = Number(value);
+                this[edge] = Number(value) / 2;
         });
     }
 }
