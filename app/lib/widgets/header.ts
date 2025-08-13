@@ -6,6 +6,7 @@ import { getVar } from "../functions/getVar.js";
 import { CallbackMap } from "./contextMenu.js";
 
 import { SearchSettings } from "../../pages/src/search.js";
+import { Overlay } from "./overlay.js";
 
 interface HistoryEle {
     scrollY: number;
@@ -65,6 +66,16 @@ export async function dynamicGoTo(settings: Settings, updateHistory=true, doLoad
 }
 
 export const goBack = async () => {
+    if (Overlay.isDisplayed()) {
+        // not a blocking overlay, disable it as the 'back' call
+        if (Overlay.canDisable()) {
+            Overlay.disable();
+            return;
+        }
+        
+        // blocking overlay, disable it AND go back a page
+        Overlay.disable();
+    }
     const key = _getHistoryKey();
     const linkStack = _linkStack[key];
     if (linkStack.history.length > 0) {

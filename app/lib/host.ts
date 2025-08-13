@@ -67,7 +67,11 @@ export const rosterTotalPoints = (roster: RosterInterf) => {
   if (roster.terrainFeature && roster.terrainFeature.points) {
     total += roster.terrainFeature.points;
   }
-  
+
+  if (roster.regimentOfRenown) {
+    total += roster.regimentOfRenown.points;
+  }
+
   return total;
 }
 

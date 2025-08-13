@@ -71,12 +71,6 @@ const builderPage = {
 
         const roster = thisPage.settings.roster;
 
-        // Update the points display before removing a pointed object (obj.points)
-        const removeObjectPoints = (pointedObj: {points: number}) => {
-            refreshPointsOverlay(roster);
-            updateValidationDisplay(roster);
-        }
-
         const exportListAndDisplay = Overlay.toggleFactory('block', async () =>{
             const text = await exportRoster(roster);
             const modal = document.querySelector(".modal") as HTMLElement;
@@ -103,10 +97,20 @@ const builderPage = {
                                       unit: UnitInterf | BattleTacticCardInterf | UpgradeInterf | LoreInterf, 
                                       idx: number, 
                                       callbackMap: CallbackMap | string, 
-                                      onclick: (this: HTMLElement, ev: MouseEvent) => any, isUnit: boolean): Promise<UnitSlot | null> {
+                                      onclick: (this: HTMLElement, ev: MouseEvent) => any): Promise<UnitSlot | null> {
             if (!unit)
                 return null;
 
+            const getRegIdx = () => {
+                const regItem = parent.closest('.regiment-item') as HTMLElement;
+                if (regItem) {
+                    const _div = regItem.querySelector('.regiment-idx') as HTMLElement;
+                    return Number(_div.textContent);
+                }
+                return null;
+            }
+
+        
             const unitSlot = new UnitSlot(parent, unit);
             unitSlot.setUnitIndex(idx);
             let displayDrawer = false;
@@ -165,50 +169,48 @@ const builderPage = {
                 unitSlot.displayPoints(unit as BasicObject);
 
             if (typeof callbackMap === 'string') {
-                const regItem = parent.closest('.regiment-item') as HTMLElement;
-                if (regItem) {
-                    const _div = regItem.querySelector('.regiment-idx') as HTMLElement;
-                    const _currentRegIdx = Number(_div.textContent);
-                    toggleUnitAddButton(regItem, roster.regiments[Number(_currentRegIdx)]);
-                }
+                const _toggleThisUnitAddButton = () => {
+                    const regItem = parent.closest('.regiment-item') as HTMLElement;
+                    if (regItem)
+                        toggleUnitAddButton(regItem, roster.regiments[getRegIdx() as number]);
+                };
+                _toggleThisUnitAddButton();
                 
                 callbackMap = {};
                 callbackMap.Duplicate = async () => {
-                    const regItem = parent.closest('.regiment-item') as HTMLElement;
-                    const _div = regItem.querySelector('.regiment-idx') as HTMLElement;
-                    const _currentRegIdx = Number(_div.textContent);
-
-                    const reg = roster.regiments[Number(_currentRegIdx)];
+                    const _currentRegIdx = getRegIdx();
                     const clone = JSON.parse(JSON.stringify(unit));
-                    reg.units.push(clone);
+                    if (_currentRegIdx) {
+                        const reg = roster.regiments[Number(_currentRegIdx)];
+                        reg.units.push(clone);
+                        _toggleThisUnitAddButton();
+                        await createUnitSlot(parent, clone, reg.units.length-1, 'foo', onclick);
+                    } else {
+                        roster.auxiliaryUnits.push(clone);
+                        await createUnitSlot(parent, clone, 0, 'foo', onclick);
+                    }
                     putRoster(roster);
-                    
-                    toggleUnitAddButton(regItem, reg);
-
-                    await createUnitSlot(parent, clone, reg.units.length-1, 'foo', onclick, isUnit);
                     refreshPointsOverlay(roster);
                     updateValidationDisplay(roster);
                 };
 
                 callbackMap.Delete = async () => {
                     // get the regiment index, dont assume it hasnt changed
-                    const regItem = parent.closest('.regiment-item') as HTMLElement;
-                    let _div = regItem.querySelector('.regiment-idx') as HTMLElement;
-                    const _currentRegIdx = Number(_div.textContent);
+                    const _currentRegIdx = getRegIdx();
 
                     // get the unit index, don't assume it hasn't changed
-                    _div = unitSlot._unitSlot.querySelector('.unit-idx') as HTMLElement;
-                    const _currentIdx = Number(_div.textContent);
+                    const _currentIdx = unitSlot.getUnitIndex();
 
                     // remove from the object
-                    if (_currentIdx === -1) {
+                    if (_currentRegIdx === null) {
+                        roster.auxiliaryUnits.splice(_currentIdx, 1);
+                    } else if (_currentIdx === -1) {
                         roster.regiments[_currentRegIdx].leader = null;
                     } else {
                         roster.regiments[_currentRegIdx].units.splice(_currentIdx, 1);
                     }
                     putRoster(roster);
-                    
-                    toggleUnitAddButton(regItem, roster.regiments[_currentRegIdx]);
+                    _toggleThisUnitAddButton();
 
                     // update the points
                     refreshPointsOverlay(roster);
@@ -221,7 +223,7 @@ const builderPage = {
                         const hiddenIdx = slot.querySelector('.unit-idx') as HTMLElement;
                         hiddenIdx.textContent = `${newIdx}`;
                     });
-                    toggleUnitAddButton(parent, roster.regiments[_currentRegIdx]);
+                    _toggleThisUnitAddButton();
                 }
             }
 
@@ -252,18 +254,16 @@ const builderPage = {
                 unitSlot.enableDrawer();
                 unitSlot.displayPoints(regiment);
                 unitSlot.initializeContextMenu({});
-                unitSlot.attachAndDisplay();
                 unitSlot.setOnClick(() => {
                     displayRorOverlay(regiment);
                 });
-
-                return unitSlot.getDetails();
+                return unitSlot;
             }
 
-            const details = addRorAbility();
+            const rorAbilitySlot = addRorAbility();
 
             const _createUnitSlot = (unit: UnitInterf) => {
-                const unitSlot = new UnitSlot(details, unit) as GenericSlot;
+                const unitSlot = new UnitSlot(rorAbilitySlot.getDetails(), unit) as GenericSlot;
                 unitSlot.initializeContextMenu({});
                 unitSlot.disableDrawer();
                 unitSlot.attachAndDisplay();
@@ -280,23 +280,28 @@ const builderPage = {
                     _createUnitSlot(unitContainer.unit);
             }
 
+            rorAbilitySlot.attachAndDisplay();
             newRegItem.displayPoints(regiment);
 
             const callbackMap = {
                 Delete: async () => {
-                    removeObjectPoints(regiment);
                     roster.regimentOfRenown = null;
                     putRoster(roster);
                     parent.removeChild(newRegItem._regimentSlot);
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
                 }
             };
 
             newRegItem.initializeContextMenu(callbackMap);
             newRegItem.attachAndDisplay();
-            refreshPointsOverlay(roster);
+
+            // this happens only on initial load
+            // refreshPointsOverlay(roster);
+            // updateValidationDisplay(roster);
         }
 
-        async function displayRegiment(index: number) {
+        async function displayRegiment(index: number, doValidation: boolean) {
             const parent = document.getElementById('regiments-container') as HTMLElement;
             const regiment = roster.regiments[index];
             const newRegItem = new RegimentSlot(parent, roster, '');
@@ -310,7 +315,7 @@ const builderPage = {
                     const settings = new WarscrollSettings;
                     settings.unit = regiment.leader;
                     dynamicGoTo(settings);
-                }, true);
+                });
                 points += unitTotalPoints(regiment.leader);
             } else {
                 const btn = newRegItem._regimentSlot.querySelector('.add-unit-button') as HTMLButtonElement;
@@ -324,7 +329,7 @@ const builderPage = {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
                     dynamicGoTo(settings);
-                }, true);
+                });
                 points += unitTotalPoints(unit);
             };
 
@@ -337,8 +342,7 @@ const builderPage = {
                     const clone = JSON.parse(JSON.stringify(reg));
                     roster.regiments.push(clone);
                     putRoster(roster);
-                    displayRegiment(roster.regiments.length-1);
-                    updateValidationDisplay(roster);
+                    displayRegiment(roster.regiments.length-1, true);
 
                     if (roster.regiments.length > 4) {
                         const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
@@ -351,8 +355,6 @@ const builderPage = {
                     const reg = roster.regiments[_currentIdx];
                     roster.regiments.splice(_currentIdx, 1);
                     putRoster(roster);
-                    refreshPointsOverlay(roster);
-                    updateValidationDisplay(roster);
 
                     // remove this regiment
                     newRegItem.delete();
@@ -365,12 +367,19 @@ const builderPage = {
                         const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
                         btn.disabled = false;
                     }
+
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
                 }
             };
 
             newRegItem.initializeContextMenu(callbackMap);
             newRegItem.attachAndDisplay();
-            refreshPointsOverlay(roster);
+
+            if (doValidation) {
+                refreshPointsOverlay(roster);
+                updateValidationDisplay(roster);
+            }
         }
 
         async function getManifestationUnits() {
@@ -397,18 +406,15 @@ const builderPage = {
                                   callbackMap: CallbackMap,
                                   unit: UnitInterf | UpgradeInterf,
                                   idx: number,
-                                  onclick: (this: HTMLElement, ev: MouseEvent) => any,
-                                  isUnit: boolean) {
+                                  onclick: (this: HTMLElement, ev: MouseEvent) => any) {
             const parent = document.getElementById(typename);
             if (!parent)
                 return;
             
-            createUnitSlot(parent, unit, idx, callbackMap, onclick, isUnit);
-            refreshPointsOverlay(roster);
-            updateValidationDisplay(roster);
+            createUnitSlot(parent, unit, idx, callbackMap, onclick);
         }
 
-        function displayAux(idx: number) {
+        function displayAux(idx: number, doValidation: boolean) {
             const typename = 'auxiliary-units-container';
             const unit = roster.auxiliaryUnits[idx];
             const onclick = () => {
@@ -422,7 +428,7 @@ const builderPage = {
                     const clone = JSON.parse(JSON.stringify(unit));
                     roster.auxiliaryUnits.push(clone);
                     putRoster(roster);
-                    displayAux(roster.auxiliaryUnits.length-1);
+                    displayAux(roster.auxiliaryUnits.length-1, true);
                 },
 
                 Delete: async () => {
@@ -432,19 +438,22 @@ const builderPage = {
                         roster.auxiliaryUnits.splice(idx, 1);
                     putRoster(roster);
 
-                    if (roster.auxiliaryUnits.length === 0) {
-                        refreshPointsOverlay(roster);
-                        updateValidationDisplay(roster);
-                    }
-                    
                     const parent = document.getElementById(typename) as HTMLElement;
                     parent.innerHTML = '';
                     for (let i = 0; i < roster.auxiliaryUnits.length; ++i)
-                        displayAux(i);
+                        displayAux(i, false);
+                    
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
                 }
             };
 
-            displaySingleton(typename, callbackMap, unit, idx, onclick, true);
+            displaySingleton(typename, callbackMap, unit, idx, onclick);
+            
+            if (doValidation) {
+                refreshPointsOverlay(roster);
+                updateValidationDisplay(roster);
+            }
         }
 
         function displayTerrain() {
@@ -467,19 +476,20 @@ const builderPage = {
 
                 Delete: async () => {
                     if (roster.terrainFeature) {
-                        removeObjectPoints(roster.terrainFeature);
                         roster.terrainFeature = null;
                         await putRoster(roster);
                         const terrain = document.getElementById('faction-terrain-container') as HTMLElement;
                         terrain.innerHTML = '';
                         const btn = document.getElementById('faction-terrain-add-button') as HTMLButtonElement;
                         btn.disabled = false;
+                        refreshPointsOverlay(roster);
+                        updateValidationDisplay(roster);
                     }
                 }
             };
 
             if (roster.terrainFeature) {
-                displaySingleton(typename, callbackMap, roster.terrainFeature, 0, onclick, true);
+                displaySingleton(typename, callbackMap, roster.terrainFeature, 0, onclick);
                 const btn = document.getElementById('faction-terrain-add-button') as HTMLButtonElement;
                 btn.disabled = true;
             }
@@ -531,7 +541,7 @@ const builderPage = {
             };
 
             if (roster.battleFormation)
-                displaySingleton(typename, callbackMap, roster.battleFormation, 900, onclick, false);
+                displaySingleton(typename, callbackMap, roster.battleFormation, 900, onclick);
         }
 
         async function displayLore(name: string, callbackMap: CallbackMap, onclick: (this: HTMLElement, ev: MouseEvent) => any) {
@@ -543,7 +553,7 @@ const builderPage = {
 
             const indexedLores =  (roster.lores as unknown as {[name: string]: LoreInterf});
 
-            const slot = await createUnitSlot(parent, indexedLores[lcName], 0, callbackMap, onclick, false);
+            const slot = await createUnitSlot(parent, indexedLores[lcName], 0, callbackMap, onclick);
             if (slot)
                 slot._unitSlot.id = `${lcName}-slot`;
 
@@ -561,12 +571,12 @@ const builderPage = {
 
             const callbackMap = {
                 Replace: async () => {
-                    if (roster.lores.spell)
-                        removeObjectPoints(roster.lores.spell);
-
                     roster.lores.spell = null;
                     putRoster(roster);
                     
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
+
                     const settings = new UpgradeSettings;
                     settings.titleName = 'Lores';
                     settings.roster = roster;
@@ -575,9 +585,6 @@ const builderPage = {
                 },
 
                 Delete: async () => {
-                    if (roster.lores.spell)
-                        removeObjectPoints(roster.lores.spell);
-
                     roster.lores.spell = null;
                     await putRoster(roster);
                     
@@ -585,6 +592,8 @@ const builderPage = {
                     if (ele && ele.parentElement)
                         ele.parentElement.removeChild(ele);
 
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
                 }
             };
             
@@ -598,11 +607,11 @@ const builderPage = {
 
             const callbackMap = {
                 Replace: async () => {
-                    if (roster.lores.prayer)
-                        removeObjectPoints(roster.lores.prayer);
-
                     roster.lores.prayer = null;
                     putRoster(roster);
+
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
 
                     const settings = new UpgradeSettings;
                     settings.titleName = 'Lores';
@@ -612,12 +621,12 @@ const builderPage = {
                 },
 
                 Delete: async () => {
-                    if (roster.lores.prayer)
-                        removeObjectPoints(roster.lores.prayer);
-
                     roster.lores.prayer = null;
                     await putRoster(roster);
                     
+                    refreshPointsOverlay(roster);
+                    updateValidationDisplay(roster);
+
                     const ele = document.getElementById('prayer-slot');
                     if (ele && ele.parentElement)
                         ele.parentElement.removeChild(ele);
@@ -628,10 +637,10 @@ const builderPage = {
         }
 
         async function displayManifestLore() {
-            const lore = roster.lores.manifestation;
-            if (!lore)
+            if (!roster.lores.manifestation)
                 return;
 
+            const lore = roster.lores.manifestation as LoreInterf;
             const parent = document.getElementById('lores-container') as HTMLElement;
             const manLoreSlot = new UnitSlot(parent, lore) as GenericSlot;
             manLoreSlot.setOnClick(() => {
@@ -675,10 +684,11 @@ const builderPage = {
             const callbackMap = {
                 Delete: async () => {
                     if (roster.lores.manifestation) {
-                        removeObjectPoints(roster.lores.manifestation);
                         roster.lores.manifestation = null;
                         putRoster(roster);
                         parent.removeChild(manLoreSlot.getHTMLElement());
+                        refreshPointsOverlay(roster);
+                        updateValidationDisplay(roster);
                     }
                 }
             };
@@ -726,7 +736,7 @@ const builderPage = {
                     }
                 };
 
-                const unitSlot = await createUnitSlot(parent, tactic, i, callbackMap, onclick, false);
+                const unitSlot = await createUnitSlot(parent, tactic, i, callbackMap, onclick);
                 if (unitSlot) {
                     const label = unitSlot._unitSlot.querySelector('.ability-label') as HTMLElement;
                     label.textContent = 'Battle Tactic Card';
@@ -749,7 +759,7 @@ const builderPage = {
             sections.forEach(section => section.innerHTML = '');
 
             for (let i = 0; i < roster.regiments.length; ++i)
-                await displayRegiment(i);
+                await displayRegiment(i, false);
 
             if (roster.regimentOfRenown)
                 displayRegimentOfRenown();
@@ -760,7 +770,7 @@ const builderPage = {
             }
 
             for (let i = 0; i< roster.auxiliaryUnits.length; ++i)
-                displayAux(i);
+                displayAux(i, false);
 
             if (roster.terrainFeature) {
                 displayTerrain();

@@ -146,8 +146,7 @@ const unitPage = {
             const section = unitList.closest('.section') as null | HTMLElement;
             if (!section)
                 return null;
-
-            section.style.display = 'block';
+            section.style.display = '';
 
             const item = document.createElement('div');
             item.classList.add('selectable-item');
@@ -208,9 +207,8 @@ const unitPage = {
             if (!units)
                 return null;
 
-            let unitIds = Object.getOwnPropertyNames(units);
-            unitIds.forEach(id => {
-                const unit = units[id];
+            const unitsValues = Object.values(units);
+            unitsValues.forEach(unit => {
                 const unitList = getUnitList(unit);
                 if (!unitList)
                     return;
@@ -280,11 +278,6 @@ const unitPage = {
                         addButtonOnClick, 
                         countMessage);
                 });
-            }
-
-            if (isNewRegiment && !roster.regimentOfRenown) {
-                // we could make the regiment a ror
-                await loadRor();
             }
 
             let leaderId = null;
@@ -369,6 +362,11 @@ const unitPage = {
                     addButtonOnClick,
                     countMessage);
             });
+
+            if (isNewRegiment && !roster.regimentOfRenown) {
+                // we could make the regiment a ror
+                await loadRor();
+            }
         }
 
         const _makeUnitLayout = () => {

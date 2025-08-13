@@ -402,6 +402,11 @@ export default class UnitSlot implements GenericSlot {
         this.pointSet = true;
         displayPoints(usPoints, unitPoints, 'PTS');
     }
+    
+    getUnitIndex() {
+        const hiddenIdx = this._unitSlot.querySelector('.unit-idx') as HTMLElement;
+        return Number(hiddenIdx.textContent);
+    }
 
     setUnitIndex(index: number) {
         const hiddenIdx = this._unitSlot.querySelector('.unit-idx') as HTMLElement;
