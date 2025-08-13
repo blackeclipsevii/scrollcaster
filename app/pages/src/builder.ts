@@ -1,8 +1,8 @@
 import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
 import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
+import UnitInterf, { UnitSuperType } from "../../shared-lib/UnitInterface.js";
+import UpgradeInterf, { UpgradeSuperType } from "../../shared-lib/UpgradeInterface.js";
 import { copyToClipboard } from "../../lib/functions/copyToClipboard.js";
 import { exportRoster } from "../../lib/functions/exportRoster.js";
 import { dynamicPages, unitTotalPoints } from "../../lib/host.js";
@@ -24,10 +24,11 @@ import { UpgradeSettings } from "./upgrades.js";
 import { WarscrollSettings } from "./warscroll.js";
 import LoreInterf from "../../shared-lib/LoreInterface.js";
 import { UnitType } from "../../shared-lib/UnitInterface.js";
-import { BasicObject } from "../../shared-lib/BasicObject.js";
+import { BasicObject, Typed } from "../../shared-lib/BasicObject.js";
 
 import UnitSlot, {GenericSlot, toggleUnitAddButton} from "../../lib/widgets/builder/UnitSlot.js";
 import RegimentSlot, { setRegimentIdx } from "../../lib/widgets/builder/RegimentSlot.js";
+import { fetchLUT } from "../../lib/RestAPI/lut.js";
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
@@ -129,15 +130,43 @@ const builderPage = {
             if ((unit as UnitInterf).enhancements) {
                 const allUpgrades = await thisPage.fetchUpgrades();
                 if (allUpgrades) {
-                    const enhancementNames = Object.getOwnPropertyNames((unit as UnitInterf).enhancements);
+                    const _unit = unit as UnitInterf;
+                    const enhancementNames = Object.getOwnPropertyNames(_unit.enhancements);
                     if (enhancementNames.length > 1)
                         enhancementNames.sort((a,b) => a.localeCompare(b));
                     
                     for (let e = 0; e < enhancementNames.length; ++e) {
-                        const enhancementGroup = allUpgrades.enhancements[enhancementNames[e]];
+                        const eName = enhancementNames[e];
+                        const enhancementGroup = allUpgrades.enhancements[eName];
                         if (enhancementGroup) {
                             displayDrawer = true;
-                            await unitSlot.displayEnhancements(roster, (unit as UnitInterf), enhancementNames[e], enhancementGroup);
+                            await unitSlot.displayEnhancements(roster, _unit, eName, enhancementGroup);
+                        } else {
+                            // the enhancement isn't an enhancement
+                            // there's one case for this (that i know of) and its the endrin dock
+                            const id = _unit.enhancements[eName].id;
+                            const result = await fetchLUT(roster.army, id);
+                            if (result) {
+                                const typedResult = result as Typed;
+                                if (typedResult.superType) {
+                                    if (typedResult.superType === UnitSuperType) {
+                                        displayDrawer = true;
+                                        const unitResult = result as UnitInterf;
+                                        createUnitSlot(unitSlot.getDetails(), unitResult, 0, {}, () => {
+                                            const settings = new WarscrollSettings;
+                                            settings.unit = unitResult;
+                                            dynamicGoTo(settings);
+                                        });
+                                    }
+                                    else if (typedResult.superType === UpgradeSuperType) {
+                                        displayDrawer = true;
+                                        const upgradeResult = result as UpgradeInterf;
+                                        createUnitSlot(unitSlot.getDetails(), upgradeResult, 0, {}, () => {
+                                            displayUpgradeOverlay(upgradeResult);
+                                        });
+                                    }
+                                }
+                            }
                         }
                     }
                 }

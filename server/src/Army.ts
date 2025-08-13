@@ -60,6 +60,7 @@ export default class Army implements ArmyInterf{
     _tags: {[name:string]: string};
     isArmyOfRenown: boolean;
     validator: ArmyValidator | null;
+    lut: {[id: string]: unknown};
 
     constructor(ageOfSigmar: AgeOfSigmar, armyName: string) {
         // the name of the army
@@ -101,6 +102,9 @@ export default class Army implements ArmyInterf{
         // Tags - keywords that aren't really keywords
         this._tags = {};
 
+        // lookup anything
+        this.lut = {};
+
         this.isArmyOfRenown = armyName.includes(' - ') && !armyName.includes('Library');
         this._parse(ageOfSigmar, armyName);
     }
@@ -137,6 +141,7 @@ export default class Army implements ArmyInterf{
                 ) {
                     const unit = new Unit(ageOfSigmar, entry);
                     _libraryUnits[unit.id] = unit;
+                    this.lut[unit.id] = unit;
                 }
             });
         })
@@ -144,6 +149,7 @@ export default class Army implements ArmyInterf{
         if (catalogue.categoryEntries) {
             catalogue.categoryEntries.forEach(category => {
                 this.keywordLUT[category['@id']] = category['@name'];
+                this.lut[category['@id']] = category['@name'];
             });
         }
 
@@ -202,9 +208,11 @@ export default class Army implements ArmyInterf{
                     };
                 }
                 const upgrade = new Upgrade(element, lu.type, parent['@name']);
+                this.lut[upgrade.id] = upgrade;
                 upgrades.enhancements[ccName].upgrades[upgrade.name] = upgrade;
             } else {
                 const upgrade = new Upgrade(element, lu.type, null);
+                this.lut[upgrade.id] = upgrade;
                 (upgrades[lu.alias] as UpgradeLUT)[upgrade.name] = upgrade;
             }
         }
@@ -215,6 +223,7 @@ export default class Army implements ArmyInterf{
                 if (entry['@type'] === 'unit') {
                     const unit = new Unit(ageOfSigmar, entry);
                     _libraryUnits[unit.id] = unit;
+                    this.lut[unit.id] = unit;
                 } else {
                     ulKeys.forEach(key => {
                         if (lc.includes(key)) {
@@ -337,7 +346,7 @@ export default class Army implements ArmyInterf{
                         // add enhancement slot
                         unit.enhancements[toCamelCase(ele['@name'])] = {
                             name: ele['@name'],
-                            id: ele['@id'],
+                            id: ele['@targetId'],
                             slot: null
                         };
                     }
@@ -387,6 +396,7 @@ export default class Army implements ArmyInterf{
             ror.selectableIn.forEach(name => {
                 if (armyName === name) {
                     this.regimentsOfRenown.push(ror);
+                    this.lut[ror.id] = ror;
                 }
             });
         });

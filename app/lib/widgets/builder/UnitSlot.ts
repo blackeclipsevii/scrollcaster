@@ -304,7 +304,6 @@ export default class UnitSlot implements GenericSlot {
                 }
             };
             details.appendChild(upgradeDiv);
-            return true;
         });
     }
 
