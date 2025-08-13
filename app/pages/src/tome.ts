@@ -6,7 +6,7 @@ import { makeSelectableItemName } from "../../lib/widgets/helpers.js";
 import { UpgradeSettings } from "./upgrades.js";
 import { TacticsSettings } from "./tactics.js";
 import { UnitSettings } from "./units.js";
-import { clearLayout, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
+import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { ForceLUT } from "../../shared-lib/Force.js";
@@ -21,10 +21,6 @@ export class CatalogSettings implements Settings{
     core = false;
     _doSub = true; // this is not intended for external use, just tracking history
 };
-
-const getArmySection = () => {
-    return document.getElementById('army-section') as HTMLElement;
-}
 
 const catalogPage = {
     settings: new CatalogSettings,
@@ -46,25 +42,7 @@ const catalogPage = {
         this.settings = settings as CatalogSettings;
         const thisPage = this;
 
-        const alliancesVisible = (visible: boolean) => {
-            getArmySection().style.display = visible ? 'none' : '';
-            ['order', 'chaos', 'death', 'destruction'].forEach(type =>
-            (document.getElementById(`${type}-section`) as HTMLElement).style.display = visible ? '' : 'none');
-        }
-
-        const coreVisible = (visible: boolean) => {
-            visible ? disableBackButton() : enableBackButton();
-            const sec = document.getElementById('core-section') as HTMLElement;
-            sec.style.display = visible ? '' : 'none';
-            alliancesVisible(visible);
-        }
-        
-        const resetLists = () => {
-            const lists = document.querySelectorAll('.item-list');
-            lists.forEach(l => l.innerHTML = '');
-        }
-        
-        const makeItem = (name: string, onclick: (this: HTMLDivElement, ev: MouseEvent) => any, listName = 'army-list', points: number | null = null) => {
+        const makeItem = (name: string, onclick: (this: HTMLDivElement, ev: MouseEvent) => any, listName: string, points: number | null = null) => {
             const itemList = document.getElementById(listName) as HTMLElement | null;
             if (!itemList) {
                 return;
@@ -97,67 +75,66 @@ const catalogPage = {
         }
         
         async function loadCore() {
-            coreVisible(false);
-            resetLists();
-            const sections = document.getElementById('army-section') as HTMLElement;
-            const h2 = sections.querySelector('.section-title') as HTMLHeadingElement;
-            h2.textContent = 'Age of Sigmar';
-        
+            makeLayout(['Age of Sigmar'], null, null, true);
+            
             makeItem('Warscrolls', () => {
                 dynamicGoTo((new UnitSettings) as unknown as Settings);
-            });
+            }, 'age-of-sigmar-list');
             
             makeItem('Battle Tactic Cards', () => {
                 dynamicGoTo(new TacticsSettings);
-            });          
+            }, 'age-of-sigmar-list');          
         
             makeItem('Lores', () => {
                 const settings = new UpgradeSettings;
                 (settings as unknown as Settings).type = 'lores';
                 (settings as unknown as Settings).titleName = 'Lores';
                 dynamicGoTo(settings as unknown as Settings);
-            });
+            }, 'age-of-sigmar-list');
+
+            enableBackButton(); 
+            swapLayout();
         }
         
         async function loadRor() {
-            coreVisible(false);
-            resetLists();
-            const h2 = getArmySection().querySelector('.section-title') as HTMLHeadingElement;
-            h2.textContent = 'Regiments of Renown';
-        
             const unitsLUT = await thisPage.fetchRegimentsOfRenown();
             if (!unitsLUT)
                 return;
-
+            
+            makeLayout(['Regiments of Renown'], null, null, true);
+        
             const units = Object.values(unitsLUT);
             units.forEach(regimentOfRenown => {
                 makeItem(regimentOfRenown.name, () => {
                     const settings = new RegimentOfRenownSettings;
                     settings.ror = regimentOfRenown;
                     dynamicGoTo(settings);
-                }, 'army-list', regimentOfRenown.points);
+                }, 'regiments-of-renown-list', regimentOfRenown.points);
             });
+
+            enableBackButton();
+            swapLayout();
         }
         
         async function loadTome() {
-            coreVisible(false);
-            resetLists();
-            const h2 = getArmySection().querySelector('.section-title') as HTMLHeadingElement;
-            h2.textContent = thisPage.settings.armyName;
-        
             const _loadFaction = async (subFactionName: string) => {
-                resetLists();
+                const split = subFactionName.split (' - ');
+                let name = split[0];
+                if (split.length > 1)
+                    name = split[1];
+                makeLayout([name], null, null, true);
+                const listName = name.toLowerCase().trim().replace(/ /g, '-') + '-list';
+                
                 const url = `${endpoint}/armies?army=${subFactionName}`;
                 await fetchWithLoadingDisplay(encodeURI(url), (uk: unknown) => {
                     const army = uk as ArmyInterf;
-                    h2.textContent = army.name;
         
                     if (Object.getOwnPropertyNames(army.units).length > 0) {
                         makeItem('Warscrolls', () => {
                             const settings = new UnitSettings;
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
-                        });
+                        }, listName);
                     }
         
                     if (Object.getOwnPropertyNames(army.upgrades.battleTraits).length > 0) {
@@ -168,7 +145,7 @@ const catalogPage = {
                                 traits.push(army.upgrades.battleTraits[name]);
                             })
                             displayUpgradeOverlay(traits);
-                        });          
+                        }, listName);          
                     }
         
                     if (!army.isArmyOfRenown && army.upgrades.battleFormations) {
@@ -178,7 +155,7 @@ const catalogPage = {
                             settings.type = 'battleFormations';
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
-                        });          
+                        }, listName);          
                     }
         
                     if (army.upgrades.enhancements) {
@@ -190,7 +167,7 @@ const catalogPage = {
                                 settings.type = eName;
                                 settings.armyName = subFactionName;
                                 dynamicGoTo(settings);
-                            });   
+                            }, listName);   
                         });
                     }
                     
@@ -203,13 +180,17 @@ const catalogPage = {
                             settings.type = 'lores';
                             settings.armyName = subFactionName;
                             dynamicGoTo(settings);
-                        });          
+                        }, listName);          
                     }
+
+                    enableBackButton(); 
+                    swapLayout();
                 });
             }
         
             if (thisPage.settings._doSub) {
                 const subfactions: string[] = [];
+
                 await fetchArmies(async (uk: unknown) => {
                     const armyAlliances = uk as {name: string, alliance: string}[];
                     armyAlliances.forEach(alliance => {
@@ -220,6 +201,11 @@ const catalogPage = {
                     });
         
                     if (subfactions.length > 1) {
+                        //const name = thisPage.settings.armyName as string;
+                        makeLayout(['Armies'], null, null, true);
+
+                        const listName = 'armies-list'; //name.toLowerCase().trim().replace(/ /g, '-') + '-list';
+                        
                          subfactions.every(army => {
                             if (!army.includes(' - ')) {
                                 makeItem(army, () => {
@@ -229,7 +215,7 @@ const catalogPage = {
                                     dynamicGoTo(settings, true, false); // update history but dont go
                                     thisPage.settings = settings;
                                     _loadFaction(army);
-                                });
+                                }, listName);
                                 return false;
                             }
                             return true;
@@ -244,9 +230,12 @@ const catalogPage = {
                                     dynamicGoTo(settings, true, false); // update history but dont go
                                     thisPage.settings = settings;
                                     _loadFaction(army);
-                                });
+                                }, listName);
                             }
                         });
+
+                        enableBackButton(); 
+                        swapLayout();
                     } else {
                         if (thisPage.settings.armyName)
                             _loadFaction(thisPage.settings.armyName);
@@ -254,6 +243,7 @@ const catalogPage = {
                             console.log('expected army name');
                     }
                 });
+
             } else {
                 if (thisPage.settings.armyName)
                     _loadFaction(thisPage.settings.armyName);
@@ -263,36 +253,25 @@ const catalogPage = {
         }
         
         async function loadArmies() {
-            coreVisible(true);
-            alliancesVisible(true);
-
+            disableBackButton();
+            const sections = ['Core', 'Order', 'Chaos', 'Death', 'Destruction'];
+            makeLayout(sections, null, null, true);
+                
             let item = makeItem('Age of Sigmar', async () => {
                 const settings = new CatalogSettings;
                 settings.core = true;
                 dynamicGoTo(settings, true, false); // update history but dont go
-                coreVisible(false);
-                resetLists();
                 thisPage.settings = settings;
                 await loadCore();
             }, 'core-list');
-            //let right = item.querySelector('.selectable-item-right');
-            //let type = makeSelectableItemType('CORE');
-            //right.appendChild(type);
+
             item = makeItem('Regiments of Renown', () => {
                 const settings = new CatalogSettings;
                 settings.armyName = 'ror';
                 dynamicGoTo(settings, true, false); // update history but dont go
-                coreVisible(false);
-                resetLists();
                 thisPage.settings = settings;
                 loadRor();
             }, 'core-list');
-            //right = item.querySelector('.selectable-item-right');
-            //type = makeSelectableItemType('CORE');
-            //right.appendChild(type);
-
-            const loader = document.getElementById('armies-loader-box');
-            //loader.style.display = 'block';
 
             await fetchArmies(async (uk: unknown) => {
                 const alliances = uk as {name: string, alliance: string}[];
@@ -305,27 +284,18 @@ const catalogPage = {
                         const settings = new CatalogSettings;
                         settings.armyName = army;
                         dynamicGoTo(settings, true, false); // update history but dont go
-                        coreVisible(false);
-                        resetLists();
                         thisPage.settings = settings;
                         loadTome();
                     }, `${alliance.alliance.toLowerCase()}-list`);
                 });
             });
+
+            swapLayout();
         }
         
         const loadTomePage = async () => {
-            const sections = [
-                'Core', 'Army', 'Order', 'Chaos', 'Death', 'Destruction'
-            ];
-            if (document.getElementById('core-section')) {
-                clearLayout();
-            }
-            makeLayout(sections);
-
             enableSearchButton();
             hidePointsOverlay();
-            getArmySection().style.display = '';
 
             if (thisPage.settings.armyName)
                 thisPage.settings.armyName === 'ror' ? await loadRor() : await loadTome();
@@ -334,7 +304,6 @@ const catalogPage = {
             else
                 await loadArmies();
             
-            swapLayout();
             initializeDraggable('catalog');
         }
         setHeaderTitle('Catalog');

@@ -3,25 +3,35 @@ import { InsetEdges } from "./InsetEdges.js";
 
 export const layoutDefaultFactory = (main: HTMLElement, name: string, show=true) => {
     const adjustedName = name.toLowerCase().replace(/ /g, '-');
-    const section = document.createElement('div');
-    if (!show)
-        section.style.display = 'none';
-    section.className = 'section draggable';
-    section.id = `${adjustedName}-section`;
-    section.innerHTML = `
-        <div class="draggable-grip">
-            <span class="grip-icon">⋮⋮⋮</span>
-            <h3 class="section-title">${name}</h3>
-        </div>
-        <div class="item-list" id="${adjustedName}-list"></div>
-    `;
 
-    const oldElement = document.getElementById(section.id);
+    const sectionId = `${adjustedName}-section`;;
+    let section = null;
+    const oldElement = document.getElementById(sectionId);
     if (oldElement && oldElement.parentElement) {
         // we have to destroy it
         oldElement.parentElement.removeChild(oldElement);
+        const list = oldElement.querySelector('item-list');
+        if (list) {
+            list.innerHTML = '';
+            section = oldElement;
+        }
+    } 
+
+    if (!section) {
+        section = document.createElement('div');
+        if (!show)
+            section.style.display = 'none';
+        section.className = 'section draggable';
+        section.id = sectionId;
+        section.innerHTML = `
+            <div class="draggable-grip">
+                <span class="grip-icon">⋮⋮⋮</span>
+                <h3 class="section-title">${name}</h3>
+            </div>
+            <div class="item-list" id="${adjustedName}-list"></div>
+        `;
     }
-    
+
     //const snapZone = document.createElement('div');
     //snapZone.className ='snap-zone';
     main.append(section);

@@ -1,5 +1,6 @@
 
 export const Overlay = {
+    _isDisplayed: false,
     //private
     _getScrollbarWidth: () => {
         // Create a temporary container with forced scrollbars
@@ -49,8 +50,10 @@ export const Overlay = {
     },
     disable() {
         const overlay = document.getElementById('overlay');
-        if (overlay)
+        if (overlay) {
+            this._isDisplayed = false;
             overlay.style.display = 'none';
+        }
     },
     toggleFactory(visibleStyle: string, ondisplay: ((data?: unknown) => unknown)) {
         const _enableOverlay = (style: string) => {
@@ -68,6 +71,7 @@ export const Overlay = {
             modal.className = 'modal';
             overlay.className = 'overlay';
             overlay.style.display = style;
+            this._isDisplayed = true;
         }
 
         const toggleFunc = (data?: unknown) => {
@@ -92,5 +96,14 @@ export const Overlay = {
             }
         };
         return toggleFunc;
+    },
+    isDisplayed() {
+        return this._isDisplayed;
+    },
+    canDisable() {
+        const overlay = document.getElementById('overlay');
+        if (!overlay)
+            return false;
+        return !overlay.classList.contains('block-close');
     }
 }
