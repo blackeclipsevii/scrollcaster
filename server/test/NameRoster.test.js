@@ -1,6 +1,6 @@
 import AgeOfSigmar from "../dist/src/AgeOfSigmar.js";
-import { nameRosterToRoster } from "../dist/src/lib/NameRoster";
-import { RosterState } from "../dist/src/lib/RosterState.js"
+import { nameRosterToRoster } from "../dist/src/lib/NameRoster.js";
+import RosterStateConverter from "../dist/src/lib/RosterStateConverterImpl.js"
 import path from 'path'
 
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
@@ -26,7 +26,8 @@ test('Import name roster', () => {
     expect(roster.lores.prayer).toBeTruthy();
     expect(roster.lores.manifestation).toBeTruthy();
 
-    const json = RosterState.serialize(roster);
+    const rsc = new RosterStateConverter(aos);
+    const json = rsc.serialize(roster);
     const state = JSON.parse(json);
     expect(state.name).toBe('Gordrakk Kragnos');
     expect(state.regiments.length).toBe(4);
@@ -35,4 +36,19 @@ test('Import name roster', () => {
     expect(state.lores.spell).toBeTruthy();
     expect(state.lores.prayer).toBeTruthy();
     expect(state.lores.manifestation).toBeTruthy();
+});
+
+test('nameRosterToRoster convert weapons', async () => {
+    const aos = getAos();
+    nameRosterStr = `{"name":"Kharadron Overlords","armyName":"Kharadron Overlords","battleFormation":"Endrineers Guild Expeditionary Force","battleTacticCards":["Master the Paths","Intercept and Recover"],"lores":{"manifestation":"Aetherwrought Machineries"},"factionTerrain":"Zontari Endrin Dock","regimentOfRenown":"Fjori's Flamebearers","regiments":[[{"name":"Endrinriggers","isGeneral":false,"isReinforced":true,"other":["2x Skyrigger Heavy Weapon and Gun Butt","1x Aethermatic Volley Gun and Gun Butt"]}],[{"name":"Aether-Khemist","isGeneral":false,"isReinforced":false,"other":[]}]],"auxUnits":[{"name":"Arkanaut Frigate","isGeneral":false,"isReinforced":false,"other":[]}]}`
+    const roster = nameRosterToRoster(aos, JSON.parse(nameRosterStr));
+    expect(roster).toBeTruthy();
+    expect(roster.regiments.length).toEqual(2);
+    expect(roster.regiments[0].units.length).toEqual(1);
+    const unit = roster.regiments[0].units[0];
+    expect(unit).toBeTruthy();
+    expect(unit.models[0].weapons.selected).toEqual( {
+      "Aethermatic Volley Gun and Gun Butt": 1,
+      "Skyrigger Heavy Weapon and Gun Butt": 2,
+    });
 });

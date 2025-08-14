@@ -23,7 +23,7 @@ import { generateId } from "../../lib/functions/uniqueIdentifier.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import { About } from "../../lib/widgets/About.js";
 import { fetchArmies } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { rosterState } from "../../lib/functions/import/rosterState.js";
+import RosterStateConverter from "../../lib/functions/import/RosterStateConvertImpl.js";
 import { BuilderSettings } from "./builder.js";
 import { ImportRoster } from "../../lib/functions/import/importRoster.js";
 import { clearDraggableOrder } from "../../lib/widgets/draggable.js";
@@ -557,8 +557,9 @@ const rosterPage = {
             isValid = false;
             // update the roster with the latest server data
             try {
-              const state = rosterState.serialize(roster);
-              const newRoster = await rosterState.deserialize(state, roster.id);
+              const rsc = new RosterStateConverter();
+              const state = rsc.serialize(roster);
+              const newRoster = await rsc.deserialize(state, roster.id);
               if (newRoster) {
                 isValid = true;
                 roster = newRoster;

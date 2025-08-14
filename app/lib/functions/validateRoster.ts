@@ -1,10 +1,12 @@
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
+import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
 import { endpoint } from "../endpoint.js";
 import { rosterTotalPoints } from "../host.js";
-import { rosterState } from "./import/rosterState.js";
+import RosterStateConverter from "./import/RosterStateConvertImpl.js";
 
 const validateRosterPOST = async (roster: RosterInterf) => {
+    const rsc = new RosterStateConverter();
     const regArg = encodeURI(`${endpoint}/validate`);
     let errors: string[] = []
     let result = await fetch(regArg, {
@@ -13,7 +15,7 @@ const validateRosterPOST = async (roster: RosterInterf) => {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        body: rosterState.serialize(roster)
+        body: rsc.serialize(roster)
     })
     .then(response => {
         if (response.status === 200) 
@@ -110,6 +112,24 @@ export const validateRoster = async (roster: RosterInterf) => {
                         }
                     }
                 });
+
+                if (_unit.models) {
+                    _unit.models.forEach(model => {
+                        const selections = Object.values(model.weapons.selections);
+                        selections.forEach(selection => {
+                            if (selection.per === WeaponSelectionPer.Unit && selection.max > -1) {
+                                const quantity = model.weapons.selected[selection.name];
+                                if (quantity !== null && quantity !== undefined) {
+                                    const max = selection.max * (_unit.isReinforced ? 2 : 1);
+                                    if (max < quantity) {
+                                        const errorMsg = `Invalid weapon selection option for <b>${_unit.name}</b>. You may only select ${max} instances of <i>${selection.name}</i>.`;
+                                        errors.push(errorMsg);
+                                    }
+                                }
+                            }
+                        });
+                    });
+                }
             }
         }
 

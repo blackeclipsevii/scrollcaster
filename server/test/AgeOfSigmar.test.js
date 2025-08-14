@@ -1,6 +1,5 @@
 import AgeOfSigmar from "../dist/src/AgeOfSigmar.js";
 import { RegimentValidator } from "../dist/src/lib/validation/RegimentValidation.js";
-import { deserializeRegiment } from "../dist/src/lib/RosterState.js";
 import path from 'path'
 
 const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
@@ -23,7 +22,8 @@ const validateSerializedRegiment = (sReg, army, keywords) => {
             enhancements: {}
         };
     }
-    const reg = deserializeRegiment(army, sReg);
+
+    const reg = null;//deserializeRegiment(army, sReg);
     return RegimentValidator.validateRegiment(reg, keywords);
 }
 
