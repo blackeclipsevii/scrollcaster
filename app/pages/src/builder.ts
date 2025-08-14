@@ -30,6 +30,7 @@ import UnitSlot, {GenericSlot, toggleUnitAddButton} from "../../lib/widgets/buil
 import RegimentSlot, { setRegimentIdx } from "../../lib/widgets/builder/RegimentSlot.js";
 import { fetchLUT } from "../../lib/RestAPI/lut.js";
 import { getVar } from "../../lib/functions/getVar.js";
+import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
@@ -126,6 +127,22 @@ const builderPage = {
             if ((unit as UnitInterf).canBeReinforced) {
                 displayDrawer = true;
                 unitSlot.addReinforcedLabel(roster, unit as UnitInterf);
+            }
+
+            if ((unit as UnitInterf).models) {
+                const unitInterf = unit as UnitInterf;
+                const displaySelections = !unitInterf.models.every(model =>{
+                    const selections = Object.values(model.weapons.selections);
+                    if (selections.length > 0) {
+                        return selections.every(selection => 
+                            selection.per === WeaponSelectionPer.Model);
+                    }
+                    return true;
+                });
+                if (displaySelections) {
+                    displayDrawer = true;
+                    unitSlot.displayWeaponSelections(roster, unit as UnitInterf);
+                }
             }
 
             if ((unit as UnitInterf).enhancements) {

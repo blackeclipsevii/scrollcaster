@@ -1,6 +1,7 @@
 import { NameRoster } from "../../../shared-lib/NameRoster.js";
 import { endpoint } from "../../endpoint.js";
-import { rosterState } from "./rosterState.js";
+import { generateId } from "../uniqueIdentifier.js";
+import RosterStateConverter from "./RosterStateConvertImpl.js";
 
 export const nameRosterToRoster = async (nameRoster: NameRoster) => {
     const regArg = encodeURI(`${endpoint}/import`);
@@ -21,7 +22,10 @@ export const nameRosterToRoster = async (nameRoster: NameRoster) => {
         }
     });
 
-    if (result)
-        result = rosterState.deserialize(result);
+    if (result) {
+        const rsc = new RosterStateConverter();
+        result = rsc.deserialize(result, generateId());
+    }
+
     return result;
 }

@@ -2,10 +2,13 @@ import AgeOfSigmar from "../AgeOfSigmar.js";
 import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
 import Upgrade from "../Upgrade.js";
+import { toCamelCase } from '../lib/helperFunctions.js';
 
 import UpgradeInterf, { UpgradeLUT } from "../../shared-lib/UpgradeInterface.js";
 import { NameRoster, NameUnit } from "../../shared-lib/NameRoster.js";
 import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
+import { UnitType } from "../../shared-lib/UnitInterface.js";
+import { WeaponSelectionInterf } from "../../shared-lib/WeaponInterf.js";
 
 export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRoster) => {
     const army = ageOfSigmar.getArmy(nameRoster.armyName);
@@ -115,18 +118,56 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
         const clone = JSON.parse(JSON.stringify(unit)) as Unit;
         clone.isGeneral = nameUnit.isGeneral;
         clone.isReinforced = nameUnit.isReinforced;
+        
+        // 2x Moonstone Hammer
+        function startsWithNumberX(str: string) {
+            return /^[0-9]+x\b/.test(str);
+        }
+
+        // Moonstone Hammer
+        function getWeaponName(str: string) {
+            const match = str.match(/^[0-9]+x\s*(.+)/);
+            return match ? match[1] : null;
+        }
+
+        // 2
+        function getQuantity(str: string) {
+            const match = str.match(/^([0-9]+)x/);
+            return match ? parseInt(match[1], 10) : null;
+        }
+
         nameUnit.other.forEach(otherName => {
+            let checkNext = true;
+
+            if (startsWithNumberX(otherName)) {
+                // its probably a weapon
+                const weaponName = getWeaponName(otherName);
+                const quantity = getQuantity(otherName);
+                if (weaponName && quantity) {
+                    clone.models.forEach(model => {
+                        const selections = Object.values(model.weapons.selections);
+                        const selection = selections.find((value: WeaponSelectionInterf) => value.name === weaponName);
+                        if (selection) {
+                            checkNext = false;
+                            model.weapons.selected[weaponName] = quantity;
+                        }
+                    });             
+                }
+            }
+
             // check the option sets
-            let checkNext = clone.optionSets.every(set => {
-                const options = Object.values(set.options);
-                return options.every(option => {
-                    if (option.name === otherName) {
-                        set.selection = option;
-                        return false;
-                    }
-                    return true;
+            if (checkNext) {
+                checkNext = clone.optionSets.every(set => {
+                    const options = Object.values(set.options);
+                    return options.every(option => {
+                        if (option.name === otherName) {
+                            set.selection = option;
+                            return false;
+                        }
+                        return true;
+                    });
                 });
-            });
+            }
 
             if (checkNext) {
                 checkNext = clone.models.every(model => {
@@ -172,7 +213,7 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
         nameReg.forEach((nameUnit, index) => {
             const unit = nameUnitToUnit(nameUnit);
             if (unit) {
-                if (index === 0)
+                if (index === 0 && unit.type == UnitType.Hero)
                     regiment.leader = unit;
                 else
                     regiment.units.push(unit);

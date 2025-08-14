@@ -147,3 +147,55 @@ button:disabled {
     width: 1.25em;
     height: 1.25em;
 }
+
+.weapon-selection {
+    height: 3em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: .5em;
+}
+
+.weapon-selection-title {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+.weapon-selection-title-wrapper {
+    text-align: start;
+    width:65%;
+}
+
+.weapon-selection-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: .25em;
+    background-color: var(--white-1);
+    border-radius: var(--border-radius);
+    border: 2px solid var(--white-3);
+}
+
+.weapon-selection-quantity {
+    width: 1.5em;
+    height: 100%;
+    color: black;
+}
+
+.weapon-selection-button {
+    width: 1em;
+    height: 1em;
+    padding: .5em;
+}
+
+.weapon-selection-increment-icon {
+    width: 1em;
+    height: 1em;
+}

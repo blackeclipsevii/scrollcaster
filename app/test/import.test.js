@@ -1,6 +1,7 @@
 
 import { ImportRoster } from '../dist/lib/functions/import/importRoster.js';
 import { registerAllImporters } from '../dist/lib/functions/import/registerAllImporters.js'
+import RosterStateConverter from '../dist/lib/functions/import/RosterStateConvertImpl.js';
 
 var register = true;
 test('Import official (iOS)', async () =>{
@@ -56,6 +57,12 @@ App: v1.18.0 (1) | Data: v334
     expect(roster.regimentOfRenown.name).toEqual(`Saviours of Cinderfall`);
     expect(roster.terrainFeature.name).toEqual('Shrine Luminor');
     expect(roster.battleTacticCards.length).toEqual(2);
+
+    // serialize / deserialize round trip
+    const rsc = new RosterStateConverter();
+    const idRoster = rsc.serialize(roster);
+    const roster2 = await rsc.deserialize(idRoster, roster.id);
+    expect(roster2).toEqual(roster);
 });
 
 test('Import official (android)', async () =>{
@@ -106,6 +113,12 @@ App: 1.18.0 | Data: 334
     expect(roster.regimentOfRenown).toEqual(null);
     expect(roster.terrainFeature).toEqual(null);
     expect(roster.battleTacticCards.length).toEqual(0);
+    
+    // serialize / deserialize round trip
+    const rsc = new RosterStateConverter();
+    const idRoster = rsc.serialize(roster);
+    const roster2 = await rsc.deserialize(idRoster, roster.id);
+    expect(roster2).toEqual(roster);
 });
 
 test('Import new recruit', async () =>{
@@ -160,6 +173,12 @@ Data Version: v20
     expect(roster.lores.prayer).toEqual(null);
     expect(roster.terrainFeature.name).toEqual('Shrine Luminor');
     expect(roster.battleTacticCards.length).toEqual(2);
+
+    // serialize / deserialize round trip
+    const rsc = new RosterStateConverter();
+    const idRoster = rsc.serialize(roster);
+    const roster2 = await rsc.deserialize(idRoster, roster.id);
+    expect(roster2).toEqual(roster);
 });
 
 
@@ -210,5 +229,11 @@ Client: 0.10.3beta | BSData: 48e97d5
     expect(roster.lores.spell.name).toEqual('Spell Lore: Big Waaagh!');
     expect(roster.lores.prayer.name).toEqual('Prayer Lore: Big Waaagh!');
     expect(roster.battleTacticCards.length).toEqual(2);
+    
+    // serialize / deserialize round trip
+    const rsc = new RosterStateConverter();
+    const idRoster = rsc.serialize(roster);
+    const roster2 = await rsc.deserialize(idRoster, roster.id);
+    expect(roster2).toEqual(roster);
 });
 

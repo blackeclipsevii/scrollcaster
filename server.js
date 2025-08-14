@@ -7,7 +7,7 @@ import  cors from 'cors'
 
 import AgeOfSigmar from './server/dist/src/AgeOfSigmar.js';
 import Roster from './server/dist/src/Roster.js';
-import { RosterState } from './server/dist/src/lib/RosterState.js'
+import RosterStateConverter from './server/dist/src/lib/RosterStateConverterImpl.js'
 import { validateRoster } from './server/dist/src/lib/validation/RosterValidation.js'
 import { nameRosterToRoster } from './server/dist/src/lib/NameRoster.js'
 
@@ -254,13 +254,14 @@ server.post('/import', (req, res) => {
     return;
   }
 
-  const state = RosterState.serialize(roster);
+  const rsc = new RosterStateConverter(aos);
+  const state = rsc.serialize(roster);
   res.end(JSON.stringify(state));
   res.status(200);
   return;
 });
 
-server.post('/validate', (req, res) => {
+server.post('/validate', async (req, res) => {
   if (!req.body) {
       console.log ('error: body is undefined');
       res.status(400);
@@ -269,7 +270,8 @@ server.post('/validate', (req, res) => {
   }
 
   const aos = getAgeOfSigmar();
-  const roster = RosterState.deserialize(aos, req.body);
+  const rsc = new RosterStateConverter(aos);
+  const roster = await rsc.deserialize(req.body, 'no-id');
   if (!roster) {
       res.status(400);
       res.end();
@@ -277,6 +279,12 @@ server.post('/validate', (req, res) => {
   }
 
   const army = aos.getArmy(roster.army);
+  if (!army) {
+      res.status(404);
+      res.end();
+      return;
+  }
+
   const keywords = aos._getAvailableKeywords(army);
   let errs = validateRoster(army, roster, keywords);
   res.end(JSON.stringify(errs));

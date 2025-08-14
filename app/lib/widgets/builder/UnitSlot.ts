@@ -1,8 +1,10 @@
 import { EnhancementGroup } from "../../../shared-lib/ArmyUpgrades.js";
 import { Costed, BasicObject, Identifiable, Typed } from "../../../shared-lib/BasicObject.js";
+import ModelInterf from "../../../shared-lib/ModelInterface.js";
 import OptionSet from "../../../shared-lib/Options.js";
 import RosterInterf, { RegimentInterf } from "../../../shared-lib/RosterInterface.js";
 import UnitInterf, { EnhancementSlotInterf } from "../../../shared-lib/UnitInterface.js";
+import { WeaponSelectionInterf, WeaponSelectionPer } from "../../../shared-lib/WeaponInterf.js";
 import { getVar } from "../../functions/getVar.js";
 import { displayPoints, unitTotalPoints } from "../../host.js";
 import { putRoster } from "../../RestAPI/roster.js";
@@ -118,6 +120,91 @@ export default class UnitSlot implements GenericSlot {
         return details;
     }
 
+    _addWeaponSelections(roster: RosterInterf, unit: UnitInterf) {
+        const section = document.createElement('div');
+        section.className = 'section weapon-selection-sections';
+        section.innerHTML = `<h3 class='section-title'>Weapon Selections:</h3>`;
+        
+        const _addWeaponSelection = (model: ModelInterf, weaponSelection: WeaponSelectionInterf) => {
+            const div = document.createElement('div');
+            div.className = 'weapon-selection-wrapper';
+            
+            const changeQuantity = (change: number) => {
+                let quantity = model.weapons.selected[weaponSelection.name];
+                if (quantity === null || quantity === undefined)
+                    quantity = 0;
+
+                quantity += change;
+                
+                if (quantity < weaponSelection.min)
+                    quantity = weaponSelection.min;
+
+                let max = weaponSelection.max * (unit.isReinforced ? 2 : 1);
+
+                if (max > 0 && quantity > max)
+                    quantity = max;
+
+                model.weapons.selected[weaponSelection.name] = quantity;
+                const quantityInput = div.querySelector('.weapon-selection-quantity') as HTMLInputElement;
+                quantityInput.textContent = quantity.toString();
+                putRoster(roster)
+                refreshPointsOverlay(roster);
+                updateValidationDisplay(roster);
+            }
+
+            const incrementQuantity = () => {
+                changeQuantity(1);
+            }
+
+            const decrementQuantity = () => {
+                changeQuantity(-1);
+            }
+
+            const quantity = model.weapons.selected[weaponSelection.name];
+            const className = weaponSelection.name.toLowerCase().replace(/ /g, '-');
+            div.innerHTML = `
+                <div class='weapon-selection ${className}-selection'>
+                    <div class='weapon-selection-title-wrapper'>
+                        <div class='weapon-selection-title'>${weaponSelection.name}</div>
+                    </div>
+                    <div class='weapon-selection-controls'>
+                        <div class='rectangle-button-small weapon-selection-button weapon-selection-decrement'>
+                            <div class='plus-wrapper'>
+                                <img class='navigation-img weapon-selection-increment-icon' src='../../resources/${getVar('minus-icon')}'></img>
+                            </div>
+                        </div>
+                        <div class="weapon-selection-quantity">${quantity}</div>
+                        <div class='rectangle-button-small weapon-selection-button weapon-selection-increment'>
+                            <div class='plus-wrapper'>
+                                <img class='navigation-img weapon-selection-increment-icon' src='../../resources/${getVar('plus-icon')}'></img>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let btn = div.querySelector('.weapon-selection-decrement') as HTMLDivElement;
+            btn.onclick = decrementQuantity;
+
+            btn = div.querySelector('.weapon-selection-increment') as HTMLDivElement;
+            btn.onclick = incrementQuantity;
+
+            section.appendChild(div);
+        }
+
+        unit.models.forEach(model => {
+            const selections = Object.values(model.weapons.selections);
+            selections.forEach(selection => {
+                if (selection.per === WeaponSelectionPer.Unit && selection.max > 0) {
+                    _addWeaponSelection(model, selection);
+                }
+            });
+        });
+        
+        const details = this.getDetails();
+        details.appendChild(section);
+    }
+
     // Get the regiment using the embedded regiment index
     _getRegimentByDiv = (element: HTMLElement, roster: RosterInterf): RegimentInterf | null => {
         let div = element.closest(".regiment-item");
@@ -214,6 +301,42 @@ export default class UnitSlot implements GenericSlot {
             const unit = this._getUnitByDiv(roster, regiment)
             if (unit) {
                 unit.isReinforced = checkbox.checked;
+                unit.models.forEach(model => {
+                    const selections = Object.values(model.weapons.selections);
+                    selections.forEach(selection => {
+                        if (selection.per === WeaponSelectionPer.Unit) {
+                            let changed = false;
+                            let quantity = model.weapons.selected[selection.name];
+                            // we're no longer reinforced, cap the quantity
+                            if (!unit.isReinforced && quantity > selection.max) {
+                                changed = true;
+                                quantity = selection.max;
+                            }
+
+                            // we are reinforced, double the quantity
+                            if (unit.isReinforced) {
+                                changed = true;
+                                const reinforcedMax = selection.max * 2;
+                                quantity = quantity * 2;
+
+                                // this is... not possible but we're checking anyways
+                                if (quantity > reinforcedMax)
+                                    quantity = reinforcedMax;
+                            }
+
+                            model.weapons.selected[selection.name] = quantity;
+                            if (changed) {
+                                const wsClassName = selection.name.toLowerCase().replace(/ /g, '-');
+                                const wsClass = this._unitSlot.querySelector(`.${wsClassName}-selection`) as HTMLElement | null;
+                                if (wsClass) {
+                                    const quantityElement = wsClass.querySelector('.weapon-selection-quantity') as HTMLElement;
+                                    quantityElement.textContent = quantity.toString();
+                                }
+                            }
+                        }
+                    });
+                });
+
                 putRoster(roster);
 
                 const usPoints = this._unitSlot.querySelector('.unit-slot-points') as HTMLElement;
@@ -266,6 +389,10 @@ export default class UnitSlot implements GenericSlot {
         }
 
         return upgradeDiv;
+    }
+
+    displayWeaponSelections(roster: RosterInterf, unit: UnitInterf) {
+        this._addWeaponSelections(roster, unit);
     }
 
     async displayEnhancements(roster: RosterInterf, unit: UnitInterf, type: string, enhancementGroup: EnhancementGroup) {
