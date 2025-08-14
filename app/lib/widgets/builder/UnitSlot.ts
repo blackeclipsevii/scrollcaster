@@ -257,8 +257,7 @@ export default class UnitSlot implements GenericSlot {
             </div>
         </div>`;
     
-        const costsPoints = obj.points && obj.points > 0;
-        if (!costsPoints) {
+        if (upgrade.points > 0) {
             const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
             pl.style.display = 'none';
         }
@@ -287,7 +286,7 @@ export default class UnitSlot implements GenericSlot {
                 if (checkbox.checked) {
                     if (!unit.enhancements[type].slot) {
                         unit.enhancements[type].slot = upgrade;
-                        if (costsPoints) {
+                        if (upgrade.points > 0) {
                             const unitPoints = unitTotalPoints(unit);
                             const usPoints = this._unitSlot.querySelector('.unit-slot-points') as HTMLElement;
                             displayPoints(usPoints, unitPoints, 'PTS');
@@ -301,7 +300,7 @@ export default class UnitSlot implements GenericSlot {
                 } else {
                     if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
                         unit.enhancements[type].slot = null;
-                        if (costsPoints) {
+                        if (upgrade.points > 0) {
                             const unitPoints = unitTotalPoints(unit);
                             const usPoints = this._unitSlot.querySelector('.unit-slot-points') as HTMLElement;
                             displayPoints(usPoints, unitPoints, 'PTS');
