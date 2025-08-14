@@ -126,6 +126,7 @@ button:disabled {
 
 .upgrade-button {
     padding: .5em;
+    padding-right: 0em;
     border: 0px;
     margin: 0px;
     margin-left: .5em;
