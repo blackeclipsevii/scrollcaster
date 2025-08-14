@@ -239,30 +239,39 @@ export default class UnitSlot implements GenericSlot {
         return div;
     }
 
+    makeUpgradeGroup = (obj: {name: string, points: number}) => {
+        const upgradeDiv = document.createElement('div');
+        upgradeDiv.className = 'upgrade-group';
+        upgradeDiv.innerHTML = `
+        <div class='upgrade-group-left'>
+            <label class="upgrade-label">
+                <input type="checkbox" class="upgrade-checkbox">${obj.name}
+            </label>
+        </div>
+        <div class='upgrade-group-right'>
+            <div style='display: inline-block' class='upgrade-points points-label'>${obj.points} PTS</div>
+            <div class="upgrade-button">
+                <div class='tiny-magnifier-wrapper'>
+                    <img class='tiny-magnifier invert-img' src='../../resources/${getVar('search-icon')}'></img>
+                </div>
+            </div>
+        </div>`;
+    
+        const costsPoints = obj.points && obj.points > 0;
+        if (!costsPoints) {
+            const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
+            pl.style.display = 'none';
+        }
+
+        return upgradeDiv;
+    }
+
     async displayEnhancements(roster: RosterInterf, unit: UnitInterf, type: string, enhancementGroup: EnhancementGroup) {
         const details =  this._addEnhancementUpgradeSection(unit.enhancements[type]);
 
         const values = Object.values(enhancementGroup.upgrades);
         values.forEach(upgrade => {
-            const upgradeDiv = document.createElement('div');
-            upgradeDiv.className = 'upgrade-group';
-
-            upgradeDiv.innerHTML = `
-            <div class='upgrade-group-left'>
-            <label class="upgrade-label">
-                <input type="checkbox" class="upgrade-checkbox">${upgrade.name}
-            </label>
-            </div>
-            <div class='upgrade-group-right'>
-                <button class="upgrade-button">🔎</button>
-                <div style='display: inline-block' class='upgrade-points points-label'>${upgrade.points} PTS</div>
-            </div>`;
-
-            const costsPoints = upgrade.points && upgrade.points > 0;
-            if (!costsPoints) {
-                const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
-                pl.style.display = 'none';
-            }
+            const upgradeDiv = this.makeUpgradeGroup(upgrade);
 
             const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
             label.onclick = () => {
@@ -316,24 +325,7 @@ export default class UnitSlot implements GenericSlot {
         `;
         const options = Object.values(optionSet.options);
         options.forEach(option => {
-            const upgradeDiv = document.createElement('div');
-            upgradeDiv.className = 'upgrade-group';
-            upgradeDiv.innerHTML = `
-            <div class='upgrade-group-left'>
-                <label class="upgrade-label">
-                    <input type="checkbox" class="upgrade-checkbox">${option.name}
-                </label>
-            </div>
-            <div class='upgrade-group-right'>
-                <button class="upgrade-button">🔎</button>
-                <div style='display: inline-block' class='upgrade-points points-label'>${option.points} PTS</div>
-            </div>`;
-
-            const costsPoints = option.points && option.points > 0;
-            if (!costsPoints) {
-                const pl = upgradeDiv.querySelector('.points-label')as HTMLElement;
-                pl.style.display = 'none';
-            }
+            const upgradeDiv = this.makeUpgradeGroup(option);
 
             const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
             label.onclick = () => {
@@ -359,7 +351,7 @@ export default class UnitSlot implements GenericSlot {
             }
 
             const handlechange = (points: number, subtract=false) => {
-                if (costsPoints) {
+                if (option.points > 0) {
                     const unitPoints = unitTotalPoints(unit);
                     const usPoints = this._unitSlot.querySelector('.unit-slot-points') as HTMLElement;
                     displayPoints(usPoints, unitPoints, 'PTS');
