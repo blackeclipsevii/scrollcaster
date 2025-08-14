@@ -420,6 +420,7 @@ footer {
   100% { transform: rotate(360deg); }
 }
 
+.enhanced-label,
 .leader-label,
 .ability-label,
 .points-label,
@@ -428,11 +429,11 @@ footer {
     position: relative;
     color: var(--label-font-color);
     margin-top: .5em;
-    margin-right: .5em;
+    margin-right: .25em;
     margin-left: 0em;
     margin-bottom: 0px;
     font-size: 12px;
-    padding: 2px 6px;
+    padding: 2px 4px;
     border-radius: var(--border-radius);
     white-space: nowrap;
     display: none;
@@ -445,14 +446,11 @@ footer {
 .general-label {
     background-color: var(--green-color);
 }
-  
 .reinforced-label {
     background-color: var(--blue-color);
 }
-
-.points-label {
-    background-color: var(--red-color);
-    display: inline-block;
+.enhanced-label {
+    background-color: var(--purple-ability);
 }
 
 .ability-label {
@@ -460,6 +458,31 @@ footer {
     background-color: var(--white-3);
     display: inline-block;
 }
+
+.points-label {
+    background-color: var(--red-color);
+    display: inline-block;
+}
+
+/*
+.general-label {
+    border: 1px solid var(--green-ability);
+    color: var(--green-ability);
+}
+.reinforced-label {
+    border: 1px solid var(--blue-ability);
+    color: var(--blue-ability);
+}
+.enhanced-label {
+    border: 1px solid var(--purple-ability);
+    color: var(--purple-ability);
+}
+.ability-label {
+    color: var(--white-3);
+    border: 1px solid var(--white-3);
+    display: inline-block;
+}
+*/
 
 .ability-body {
     background-color: var(--section-color);

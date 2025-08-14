@@ -58,8 +58,9 @@ export default class UnitSlot implements GenericSlot {
                 <div class='unit-slot-selectable-item-wrapper'>
                     <div class="selectable-item unit-slot-selectable-item">
                         <div class="selectable-item-left">
-                            <span class="general-label" style="display: none;">GENERAL</span>
-                            <span class="reinforced-label" style="display: none;">REINFORCED</span>
+                            <span class="general-label" style="display: none;">General</span>
+                            <span class="reinforced-label" style="display: none;">Reinforced</span>
+                            <span class="enhanced-label" style="display: none;">Enhanced</span>
                         </div>
 
                         <div class="selectable-item-right">
@@ -280,8 +281,19 @@ export default class UnitSlot implements GenericSlot {
             };
 
             const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
+            
+            const updateEnhancedLabel = () => {
+                const label = this._unitSlot.querySelector('.enhanced-label') as HTMLElement | null;
+                if (label) {
+                    const values = Object.values(unit.enhancements)
+                    const notEnhanced = values.every(value => value.slot === null);
+                    label.style.display = notEnhanced ? 'none' : 'inline-block';
+                }
+            };
+
             if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
                 checkbox.checked = true;
+                updateEnhancedLabel();
             }
 
             checkbox.onchange = () => {
@@ -312,6 +324,7 @@ export default class UnitSlot implements GenericSlot {
                         putRoster(roster);
                     }
                 }
+                updateEnhancedLabel();
             };
             details.appendChild(upgradeDiv);
         });
