@@ -180,9 +180,13 @@ const unitPage = {
 
             right.append(heart, points);
             if (addOnClick) {
-                const addBtn = document.createElement('button');
+                const addBtn = document.createElement('div');
                 addBtn.classList.add('rectangle-button');
-                addBtn.textContent = '+';
+                addBtn.innerHTML = `
+                    <div class='plus-wrapper'>
+                        <img class='navigation-img' src='../resources/${getVar('plus-icon')}'></img>
+                    </div>
+                `;
                 addBtn.addEventListener('click', async (event) => {
                     await addOnClick(event);
                     if (quantityEle)

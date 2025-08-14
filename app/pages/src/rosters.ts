@@ -642,8 +642,12 @@ const rosterPage = {
 
       const div = document.getElementById('loading-content') as HTMLDivElement;
       const button = document.createElement('div');
-      button.textContent = '+';
       button.className = 'clickable-style fab';
+      button.innerHTML = `
+        <div class='plus-wrapper'>
+          <img class="navigation-img" src="resources/${getVar('plus-icon')}"></img>
+        </div>
+      `
       button.onclick = toggleOverlay;
       const inset = new InsetEdges;
       if (inset.bottom) {

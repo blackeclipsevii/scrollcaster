@@ -75,8 +75,8 @@ export const rosterTotalPoints = (roster: RosterInterf) => {
   return total;
 }
 
-export const displayPoints = (pointsElement: HTMLElement, points: number, pts='pts') => {
-    if (points > 0) {
+export const displayPoints = (pointsElement: HTMLElement, points: number, pts='pts', force?: boolean) => {
+    if (force || points > 0) {
         pointsElement.textContent = `${points} ${pts}`;
     } else {
         pointsElement.style.display = 'none';

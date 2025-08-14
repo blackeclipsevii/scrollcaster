@@ -127,9 +127,11 @@ export function initializeHeader(options: HeaderOptions) {
     if (options.leftButton) {
         const left = header.querySelector('.header-left') as HTMLElement;
         left.innerHTML = `
-        <button class="back-btn"">‹</button>
+        <div class="back-btn"">
+            <img class='navigation-img invert-img' src='../../resources/${getVar('left-arrow')}'></img>
+        </div>
         `;
-        const button = left.querySelector('button') as HTMLButtonElement;
+        const button = left.querySelector('.back-btn') as HTMLButtonElement;
         button.onclick = goBack;
     }
 

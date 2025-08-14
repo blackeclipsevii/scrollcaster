@@ -58,3 +58,13 @@
 a {
   color: var(--blue-color);
 }
+
+.plus-wrapper {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.fab-icon {
+  width: 20px;
+}

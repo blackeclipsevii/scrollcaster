@@ -29,6 +29,7 @@ import { BasicObject, Typed } from "../../shared-lib/BasicObject.js";
 import UnitSlot, {GenericSlot, toggleUnitAddButton} from "../../lib/widgets/builder/UnitSlot.js";
 import RegimentSlot, { setRegimentIdx } from "../../lib/widgets/builder/RegimentSlot.js";
 import { fetchLUT } from "../../lib/RestAPI/lut.js";
+import { getVar } from "../../lib/functions/getVar.js";
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
@@ -375,7 +376,7 @@ const builderPage = {
 
                     if (roster.regiments.length > 4) {
                         const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
-                        btn.disabled = true;
+                        btn.classList.add('disabled-button')
                     }
                 },
 
@@ -394,7 +395,7 @@ const builderPage = {
                     
                     if (roster.regiments.length < 5) {
                         const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
-                        btn.disabled = false;
+                        btn.classList.remove('disabled-button')
                     }
 
                     refreshPointsOverlay(roster);
@@ -510,7 +511,7 @@ const builderPage = {
                         const terrain = document.getElementById('faction-terrain-container') as HTMLElement;
                         terrain.innerHTML = '';
                         const btn = document.getElementById('faction-terrain-add-button') as HTMLButtonElement;
-                        btn.disabled = false;
+                        btn.classList.remove('disabled-button')
                         refreshPointsOverlay(roster);
                         updateValidationDisplay(roster);
                     }
@@ -520,7 +521,7 @@ const builderPage = {
             if (roster.terrainFeature) {
                 displaySingleton(typename, callbackMap, roster.terrainFeature, 0, onclick);
                 const btn = document.getElementById('faction-terrain-add-button') as HTMLButtonElement;
-                btn.disabled = true;
+                btn.classList.add('disabled-button')
             }
         }
 
@@ -777,7 +778,7 @@ const builderPage = {
             if (doGet) {
                 if (roster.isArmyOfRenown) {
                     const btn = document.getElementById('battle-traits-&-formation-add-button') as HTMLButtonElement;
-                    btn.disabled = true;
+                    btn.classList.add('disabled-button')
                 }
                 displayPointsOverlay();
                 refreshPointsOverlay(roster);
@@ -795,7 +796,7 @@ const builderPage = {
 
             if ((roster.regiments.length + (roster.regimentOfRenown ? 1 : 0)) >= 5) {
                 const btn = document.getElementById('regiments-add-button') as HTMLButtonElement;
-                btn.disabled = true;
+                btn.classList.add('disabled-button')
             }
 
             for (let i = 0; i< roster.auxiliaryUnits.length; ++i)
@@ -809,9 +810,8 @@ const builderPage = {
                     const units = Object.values(result);
                     const terrain = units.some(unit => unit.type === UnitType.Terrain);
                     if (!terrain) {
-                        const terrainSection = document.getElementById('faction-terrain-section') as HTMLElement;
-                        const tb = terrainSection.querySelector('button') as HTMLButtonElement;
-                        tb.disabled = true;
+                        const tb = document.getElementById('faction-terrain-add-button') as HTMLButtonElement;
+                        tb.classList.add('disabled-button')
                     }
                 }
             }
@@ -851,7 +851,11 @@ const builderPage = {
                             <span class="grip-icon">⋮⋮⋮</span>
                             <h3 id="${adjustedName}-section-title" class="section-title">${name}</h3>
                         </div>
-                        <button id="${adjustedName}-add-button" class="rectangle-button">+</button>
+                        <div id="${adjustedName}-add-button" class="rectangle-button">
+                            <div class='plus-wrapper'>
+                                <img class='navigation-img' src='../resources/${getVar('plus-icon')}'></img>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="section-container" id="${adjustedName}-container"></div>
@@ -860,6 +864,10 @@ const builderPage = {
 
                 const btn = document.getElementById(`${adjustedName}-add-button`) as HTMLElement;
                 btn.onclick = async () => {
+                    if (btn.classList.contains('disabled-button')) {
+                        return;
+                    }
+
                     if (adjustedName === 'regiments') {
                         let nRegiments = (roster.regimentOfRenown ? 1 : 0) + roster.regiments.length;
                         if (nRegiments < 5) {
@@ -941,7 +949,9 @@ const builderPage = {
             ];
             isConfig.forEach(sectionName => {
                 let btn = document.getElementById(`${sectionName}-add-button`) as HTMLElement;
-                btn.textContent = '⚙︎';
+                const img = btn.querySelector('img');
+                if (img)
+                    img.src = `../resources/${getVar('gear-icon')}`;
             })
 
             await loadArmy(true);

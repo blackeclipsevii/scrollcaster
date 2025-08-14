@@ -89,7 +89,7 @@ export default class RegimentSlot {
     displayPoints(element: Costed) {
         const pointsSpan = this._regimentSlot.querySelector('.regiment-item-points') as HTMLElement | null;
         if (pointsSpan)
-            displayPoints(pointsSpan, element.points, 'pts');
+            displayPoints(pointsSpan, element.points, 'pts', true);
     }
 
     initializeContextMenu(callbackMap: CallbackMap) {
