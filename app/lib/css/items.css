@@ -59,13 +59,3 @@ input.tactic-checkbox,
 input.upgrade-checkbox {
     accent-color: var(--blue-ability);
 }
-
-button.add-btn {
-    background-color: var(--blue-color);
-    color: var(--light-text-color);;
-    border: none;
-    padding: 0.3rem 0.6rem;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-}

@@ -853,7 +853,7 @@ const builderPage = {
                         </div>
                         <div id="${adjustedName}-add-button" class="rectangle-button">
                             <div class='plus-wrapper'>
-                                <img class='navigation-img' src='../resources/${getVar('plus-icon')}'></img>
+                                <img class='navigation-img add-unit-icon' src='../resources/${getVar('plus-icon')}'></img>
                             </div>
                         </div>
                     </div>

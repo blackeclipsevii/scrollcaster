@@ -184,7 +184,7 @@ const unitPage = {
                 addBtn.classList.add('rectangle-button');
                 addBtn.innerHTML = `
                     <div class='plus-wrapper'>
-                        <img class='navigation-img' src='../resources/${getVar('plus-icon')}'></img>
+                        <img class='navigation-img add-unit-icon' src='../resources/${getVar('plus-icon')}'></img>
                     </div>
                 `;
                 addBtn.addEventListener('click', async (event) => {
