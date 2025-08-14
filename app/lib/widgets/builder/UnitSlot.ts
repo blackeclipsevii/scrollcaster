@@ -257,7 +257,7 @@ export default class UnitSlot implements GenericSlot {
             </div>
         </div>`;
     
-        if (upgrade.points > 0) {
+        if (obj.points > 0) {
             const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
             pl.style.display = 'none';
         }
