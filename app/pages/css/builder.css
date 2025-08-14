@@ -60,6 +60,7 @@
     padding-left: 1em;
 }
 
+.disabled-button,
 button:disabled {
     background-color: var(--black-1);
     color: var(--hover-color);
