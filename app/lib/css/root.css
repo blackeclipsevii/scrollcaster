@@ -343,7 +343,7 @@ footer {
     background-color: var(--blue-color);
     color: var(--label-font-color);
     border: none;
-    padding: 1em;
+    padding: .75em;
     border-radius: var(--border-radius);
     cursor: pointer;
 }
