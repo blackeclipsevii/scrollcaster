@@ -14,4 +14,5 @@ export default interface AbilityInterf {
     metadata: {[key: string]: string};
     type: number;
     cost: number | null;
+    timing: string;
 }

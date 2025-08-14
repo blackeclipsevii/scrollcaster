@@ -9,6 +9,7 @@ export default class Ability {
     id: string;
     metadata: Metadata;
     type: number;
+    timing: string;
     cost: number | null;
     constructor(profile: BsProfile) {
         this.name = profile['@name'];
@@ -16,6 +17,7 @@ export default class Ability {
         this.metadata = {};
         this.type = AbilityType.Passive;
         this.cost = null;
+        this.timing = 'Passive';
         profile.characteristics.forEach((char) => {
             const lcName = char['@name'].toLowerCase();
             if (lcName !== 'used by' && char['#text']) {

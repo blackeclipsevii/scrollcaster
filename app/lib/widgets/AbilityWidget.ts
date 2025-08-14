@@ -38,9 +38,6 @@ export const AbilityWidget = {
             return null;
         }
 
-        //if (!ability.timing)
-        //    ability.timing = 'Passive';
-
         let invertPng = true;
         let headerFontColor = getVar('header-font-color');
         let color = getVar('gray-ability');
