@@ -260,6 +260,8 @@ export default class UnitSlot implements GenericSlot {
         if (obj.points === 0) {
             const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
             pl.style.display = 'none';
+            const groupLeft = upgradeDiv.querySelector('.upgrade-group-left') as HTMLDivElement;
+            groupLeft.style.maxWidth = '90%';
         }
 
         return upgradeDiv;

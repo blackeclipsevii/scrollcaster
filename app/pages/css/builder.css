@@ -104,6 +104,8 @@ button:disabled {
 
 .upgrade-group label {
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     padding-top: .5em;
     padding-bottom: .5em;
 }
@@ -116,7 +118,7 @@ button:disabled {
 }
 
 .upgrade-group-left {
-    max-width: 75%;
+    max-width: 70%;
 }
 .upgrade-group-right {
     margin-left: auto;
