@@ -13,6 +13,15 @@ export const displayPointsOverlay = () => {
         const main = document.querySelector('.persist');
         overlay = document.createElement('div');
         overlay.id = 'pointsOverlay';
+        overlay.innerHTML = `
+            <div id='validation-icon-wrapper'>
+                <img id='validation-icon' src='../../resources/${getVar('check-icon')}'></img>
+            </div>
+            <div id='points-display-wrapper'>
+                <div id='points-display'></div>
+                <div id='the-word-points'>points</div>
+            </div>
+        `
         if (main)
             main.appendChild(overlay);
     } else {
@@ -35,6 +44,12 @@ export async function updateValidationDisplay(roster: RosterInterf) {
     const errors = await validateRoster(roster);
     const hasErrors = errors.length > 0;
     const postfix = hasErrors ? 'invalid' : 'valid';
+    const validationIcon = document.getElementById('validation-icon') as HTMLImageElement;
+    if (hasErrors) {
+        validationIcon.src = `../../resources/${getVar('danger-icon')}`;
+    } else {
+        validationIcon.src = `../../resources/${getVar('check-icon')}`;
+    }
 
     const pointsOverlay = document.getElementById('pointsOverlay') as HTMLElement | null;
     if (!pointsOverlay)
@@ -112,9 +127,9 @@ export async function updateValidationDisplay(roster: RosterInterf) {
 };
 
 export function refreshPointsOverlay(roster: RosterInterf) {
-    let pointsOverlay = document.getElementById('pointsOverlay');
+    const pointsOverlay = document.getElementById('points-display');
     if (!pointsOverlay)
         return;
 
-    pointsOverlay.textContent = `${rosterTotalPoints(roster)} / ${roster.points} pts`;
+    pointsOverlay.innerHTML = `${rosterTotalPoints(roster)}/${roster.points}`;
 }
