@@ -428,7 +428,7 @@ const rosterPage = {
 
               const section = document.createElement('textarea');
               section.innerHTML = '';
-              section.placeholder = 'Paste a list (supported formats: Official App, New Recruit, Scrollcaster).'
+              section.placeholder = 'Paste a list'
               section.style.height = '30em';
               section.style.width = '95%';
               section.style.fontSize = '14px';
