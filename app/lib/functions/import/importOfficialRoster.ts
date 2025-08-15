@@ -74,15 +74,44 @@ export default class ImportOfficialRoster extends NameRosterImporter {
         }
         return i;
     }
+    parseBattleTacticCards(line: string) {
+        let cardsStr = line;
+        if (line.includes(':')) {
+            cardsStr = this.safeSplit(line, ':', 1);
+        } else if (line.includes('-')) {
+            cardsStr = this.safeSplit(line, '-', 1);
+        }
+
+        if (cardsStr.includes(',')) {
+            return cardsStr.split(', ');
+        }
+
+        // the delimiter might be an and
+        cardsStr = cardsStr.replace('cept and ', 'cept & ');
+        let cards = cardsStr.split(' and ');
+
+        for (let c = 0; c < cards.length; ++c) {
+            if (cards[c].includes('&'))
+                cards[c] = cards[c].replace('&', 'and');
+        }
+
+        return cards;
+    }
     async createNameRoster(lines: string[]): Promise<NameRoster|Error> {
         const nameRoster = this.newNameRoster();
         let foundName = false;
         let i = 0;
-        if (/\d/.test(lines[i])) {
+        if (lines[i].includes('(')) {
+            foundName = true;
+            nameRoster.name = this.safeSplit(lines[i], '(', 0);
+            ++i;
+        }
+        else if (/\d/.test(lines[i])) {
             foundName = true;
             nameRoster.name = lines[0].split(' ').slice(0, -2).join(' ');
             ++ i;
         }
+
         while (this.isEmptyOrHyphens(lines[i]))
             ++i
 
@@ -93,36 +122,41 @@ export default class ImportOfficialRoster extends NameRosterImporter {
             nameRoster.battleFormation = factionParts[2].trim();
         } else {
             nameRoster.armyName = lines[i].trim();
-            ++ i;
-            nameRoster.battleFormation = lines[i].trim();
-            ++ i;
+            
+            ++i;
+            if (!lines[i].startsWith('Auxiliaries:')) {
+                nameRoster.battleFormation = lines[i];
+            }
         }
 
+        ++i;
+    
         if (!foundName) {
             nameRoster.name = nameRoster.armyName;
             foundName = true;
         }
 
+        const parseLore = (str: string) => {
+            let result = this.safeSplit(str, ' - ', 1);
+            if (result.includes(' (')) {
+                result = this.safeSplit(result, ' (', 0);
+            }
+            return result;
+        }
+
         for (;i < lines.length; ++i) {
             let line = lines[i].trim();
             if (line.includes('Battle Tactic')) {
-                let cards: string | string[] = this.safeSplit(line, ':', 1);
-                cards = cards.replace('cept and ', 'cept & ');
-                cards = cards.split(' and ');
-                for (let c = 0; c < cards.length; ++c) {
-                    if (cards[c].includes('&'))
-                        cards[c] = cards[c].replace('&', 'and');
-                }
-                nameRoster.battleTacticCards = cards;
+                nameRoster.battleTacticCards = this.parseBattleTacticCards(line);
             }
             else if (line.includes('Spell Lore')) {
-                nameRoster.lores.spell = this.safeSplit(line, ' - ', 1);
+                nameRoster.lores.spell = parseLore(line);
             }
             else if (line.includes('Prayer Lore')) {
-                nameRoster.lores.prayer = this.safeSplit(line, ' - ', 1);
+                nameRoster.lores.prayer = parseLore(line);
             }
             else if (line.includes('Manifestation Lore')) {
-                nameRoster.lores.manifestation = this.safeSplit(line, ' - ', 1);
+                nameRoster.lores.manifestation = parseLore(line);
             }
             else if (line.includes('Regiments of Renown')) {
                 ++ i;

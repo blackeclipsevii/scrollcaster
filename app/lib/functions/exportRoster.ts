@@ -1,7 +1,6 @@
 import LoreInterf from "../../shared-lib/LoreInterface.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
-import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
 import { rosterTotalPoints, unitTotalPoints } from "../host.js";
 import { version } from "../RestAPI/version.js";
 
@@ -9,10 +8,11 @@ export async function exportRoster(roster: RosterInterf) {
     const totalPoints = rosterTotalPoints(roster);
 
     const astrix = '•';
-    let text = `${roster.name} (${totalPoints} points) - GHB 2025-26\n\n`
+    let text = `${roster.name} ${totalPoints}/${roster.points} pts\n\n`
     text += `${roster.army}\n`;
     if (roster.battleFormation)
         text += `${roster.battleFormation.name}\n`;
+    text += `General's Handbook 2025-26\n`;
     text += `Auxiliaries: ${roster.auxiliaryUnits.length}\n`;
 
     let drops = roster.auxiliaryUnits.length + (roster.regimentOfRenown ? 1 : 0);
@@ -23,16 +23,8 @@ export async function exportRoster(roster: RosterInterf) {
     });
     text += `Drops: ${drops}\n`;
     
-    if (roster.battleTacticCards.length > 0) {
-        text += '\nBattle Tactic Cards: \n'
-        roster.battleTacticCards.forEach(card => {
-            text += `  ${astrix} ${card.name}\n`;
-        });
-    }
-
     const displayLore = (name: string, lore: LoreInterf) => {
-        let text = `\n${name} Lore: \n`
-        text += `  ${astrix} ${lore.name}`;
+        let text = `${name} Lore - ${lore.name}`
         if (lore.points > 0) {
             text += ` (${lore.points})`;
         }
@@ -40,7 +32,7 @@ export async function exportRoster(roster: RosterInterf) {
         return text;
     }
 
-    const lores = ['Manifestation', 'Spell', 'Prayer'];
+    const lores = ['Spell', 'Prayer', 'Manifestation'];
     lores.forEach(loreName => {
         const llc = loreName.toLowerCase();
         if ((roster.lores as unknown as {[name: string]: LoreInterf})[llc]) {
@@ -48,31 +40,36 @@ export async function exportRoster(roster: RosterInterf) {
         }
     });
 
+    if (roster.battleTacticCards.length > 0) {
+        const cardNames = roster.battleTacticCards.map(card => card.name);
+        text += `Battle Tactic Cards: ${cardNames.join(', ')}\n`;
+    }
+
     if (roster.regimentOfRenown) {
         text += `\nRegiment of Renown: \n`;
         text += `  ${roster.regimentOfRenown.name} (${roster.regimentOfRenown.points})\n`
     }
 
-    const unitToText = (unit: UnitInterf, indent: string) => {
-        text += `${indent}${unit.name} (${unitTotalPoints(unit)})\n`
+    const unitToText = (unit: UnitInterf) => {
+        text += `${unit.name} (${unitTotalPoints(unit)})\n`
         if (unit.isGeneral) {
-            text += `  ${indent}${astrix} General\n`;
+            text += `  ${astrix} General\n`;
         }
         if (unit.isReinforced) {
-            text += `  ${indent}${astrix} Reinforced\n`;
+            text += `  ${astrix} Reinforced\n`;
         }
 
         const enhancements = Object.values(unit.enhancements);
         enhancements.forEach(enhance => {
             if (enhance.slot !== null) {
-                text += `  ${indent}${astrix} ${enhance.slot.name}\n`;
+                text += `  ${astrix} ${enhance.slot.name}\n`;
             }
         });
 
         if (unit.optionSets) {
             unit.optionSets.forEach(optionSet => {
                 if (optionSet.selection) {
-                    text += `  ${indent}${astrix} ${optionSet.selection.name}\n`;
+                    text += `  ${astrix} ${optionSet.selection.name}\n`;
                 }
             });
         }
@@ -85,13 +82,13 @@ export async function exportRoster(roster: RosterInterf) {
                     names.forEach(name => {
                         const quantity = model.weapons.selected[name];
                         if (quantity > 0)
-                            text += `  ${indent}${astrix} ${quantity.toString()}x ${name}\n`;
+                            text += `  ${astrix} ${quantity.toString()}x ${name}\n`;
                     });   
                 }
                 if (model.optionSets){
                     model.optionSets.forEach(optionSet => {
                         if (optionSet.selection) {
-                            text += `  ${indent}${astrix} ${optionSet.selection.name}\n`;
+                            text += `  ${astrix} ${optionSet.selection.name}\n`;
                         }
                     });
                 }
@@ -104,10 +101,10 @@ export async function exportRoster(roster: RosterInterf) {
             continue;
 
         if (roster.regiments[i].leader!!.isGeneral) {
-            text += `\nGeneral's Regiment: \n`;
-            unitToText(roster.regiments[i].leader!!, '  ');
+            text += `\nGeneral's Regiment\n`;
+            unitToText(roster.regiments[i].leader!!);
             roster.regiments[i].units.forEach(unit => {
-                unitToText(unit, '  ');
+                unitToText(unit);
             });
             break;
         }
@@ -121,28 +118,28 @@ export async function exportRoster(roster: RosterInterf) {
         if (regiment.leader && regiment.leader.isGeneral) {
           return;
         } else {
-          text += `\nRegiment ${regIdx}: \n`;
+          text += `\nRegiment ${regIdx}\n`;
           regIdx += 1;
         }
 
         if (regiment.leader)
-            unitToText(regiment.leader, '  ');
+            unitToText(regiment.leader);
         regiment.units.forEach(unit => {
-            unitToText(unit, '  ');
+            unitToText(unit);
         });
     });
 
     if (roster.auxiliaryUnits.length > 0)
-        text += `\nAuxiliary Units: \n`;
+        text += `\nAuxiliary Units\n`;
 
     roster.auxiliaryUnits.forEach(unit => {
-        unitToText(unit, '  ');
+        unitToText(unit);
     });
 
     
     if (roster.terrainFeature) {
-        text += `\nFaction Terrain: \n`;
-        text += `  ${astrix} ${roster.terrainFeature.name}`
+        text += `\nFaction Terrain\n`;
+        text += `${roster.terrainFeature.name}`
         if (roster.terrainFeature.points > 0)
             text += ` (${roster.terrainFeature.points})`
     }
