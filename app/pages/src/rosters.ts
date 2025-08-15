@@ -27,6 +27,7 @@ import RosterStateConverter from "../../lib/functions/import/RosterStateConvertI
 import { BuilderSettings } from "./builder.js";
 import { ImportRoster } from "../../lib/functions/import/importRoster.js";
 import { clearDraggableOrder } from "../../lib/widgets/draggable.js";
+import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
 
 export class RosterSettings implements Settings {
   [name: string]: unknown;
@@ -229,6 +230,7 @@ const rosterPage = {
       }
       const item = document.createElement('div');
       item.classList.add('selectable-item');
+      item.id = roster.id;
   
       const left = document.createElement('div');
       left.classList.add('selectable-item-left');
@@ -445,15 +447,17 @@ const rosterPage = {
               copyButton.textContent = 'Import Roster';
               copyButton.onclick = async () => {
                   const roster = await ImportRoster.import(section.value);
-                  if ((roster as Error).message) {
-                    // do error message stuff
-                    console.log((roster as Error).message);
-                  } else {
-                    (roster as RosterInterf).description = 'Imported';
-                    await putRoster(roster as RosterInterf);
-                    await viewRosters();
-                  }
                   Overlay.disable();
+                  
+                  if ((roster as Error).message) {
+                    displaySlidebanner((roster as Error).message, SlideBannerMessageType.Bad);
+                  } else {
+                    const asRoster = roster as RosterInterf;
+                    // displaySlidebanner(`${asRoster.name} imported`, SlideBannerMessageType.Good);
+                    asRoster.description = 'Imported';
+                    await putRoster(asRoster);
+                    goToRoster(asRoster);
+                  }
               };
 
               modal.appendChild(section);

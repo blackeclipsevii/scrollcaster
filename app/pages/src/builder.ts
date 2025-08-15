@@ -31,6 +31,7 @@ import RegimentSlot, { setRegimentIdx } from "../../lib/widgets/builder/Regiment
 import { fetchLUT } from "../../lib/RestAPI/lut.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
+import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
@@ -89,6 +90,7 @@ const builderPage = {
             copyButton.textContent = 'Copy to Clipboard';
             copyButton.onclick = () => {
                 copyToClipboard(text);
+                displaySlidebanner('List copied!', SlideBannerMessageType.Good);
                 Overlay.disable();
             };
 

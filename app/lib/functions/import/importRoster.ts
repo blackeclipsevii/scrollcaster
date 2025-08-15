@@ -78,6 +78,6 @@ export const ImportRoster = {
         };
 
         // cant read this at all
-        return new Error('No importers can read this roster.');
+        return new Error('No importers could parse the list.');
     }
 }
