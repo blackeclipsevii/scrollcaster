@@ -1,16 +1,18 @@
 export function replaceAlternatingBoldMarkers(str: string) {
   let count = -1;
-  return str.replace(/\*\*/g, () => {
-    count++;
-    return count % 2 === 0 ? "<b>" : "</b>";
-  });
+  return str.replace(/\*\*/g, () => ++count % 2 === 0 ? "<b>" : "</b>");
 }
 
+// MUST COME AFTER BOLD
 export function replaceAlternatingItalicMarkers(str: string) {
   let count = -1;
+  return str.replace(/\*/g, () => ++count % 2 === 0 ? "<i>" : "</i>");
+}
+
+export function replaceAlternatingSmallcapsMarkers(str: string) {
+  let count = -1;
   return str.replace(/\^\^/g, () => {
-    count++;
-    return count % 2 === 0 ? "<i>" : "</i>";
+    return ++count % 2 === 0 ? `<span style="font-variant: small-caps;">` : "</span>";
   });
 }
 
@@ -24,6 +26,7 @@ export default function bsTextSmoother(text: number | string | null): null | str
         return null;
     let newText = replaceAlternatingBoldMarkers(text.toString());
     newText = replaceAlternatingItalicMarkers(newText);
+    newText = replaceAlternatingSmallcapsMarkers(newText);
     newText = makeBulletPointsBulletPoint(newText);
     return newText;
 }
