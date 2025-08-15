@@ -5,8 +5,8 @@ export class NameRosterImporter {
     canImport(text: string): boolean {
         return false;
     }
-    async import(text: string): Promise<RosterInterf | null> {
-        return null;
+    async import(text: string): Promise<RosterInterf | Error > {
+        return Error('The base importer cannot import anything.');
     }
     newNameRoster() {
         const nameRoster: NameRoster = {
@@ -54,16 +54,30 @@ export const ImportRoster = {
         }
         return false;
     },
-    async import(text: string): Promise<RosterInterf | null> {
-        const t = this.stripMatchingDelimiters(text);
-        let result: RosterInterf | null = null;
+    async import(text: string): Promise<RosterInterf | Error> {
+        // sanitize the crap out of the
+        const t = this.stripMatchingDelimiters(text).replace(/’/g, `'`)
+                                                    .replace(/–/g, '-');
+
+        // pick the importer than matches the import type
         for (let i = 0; i < this._importers.length; ++i ) {
             const importer = this._importers[i];
             if (importer.canImport(t)) {
-                result = await importer.import(t);
-                break;
+                return await importer.import(t);
             }
         };
-        return result;
+
+        // try to force an import, the cookie is missing
+        for (let i = 0; i < this._importers.length; ++i ) {
+            const importer = this._importers[i];
+            try {
+                return await importer.import(t);
+            } catch(e) {
+
+            }
+        };
+
+        // cant read this at all
+        return new Error('No importers can read this roster.');
     }
 }

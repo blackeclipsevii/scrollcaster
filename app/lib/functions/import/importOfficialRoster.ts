@@ -1,4 +1,5 @@
 import { NameRoster } from "../../../shared-lib/NameRoster.js";
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
 import { NameRosterImporter } from "./importRoster.js";
 import { nameRosterToRoster } from "./nameRosterToRoster.js";
 
@@ -18,20 +19,30 @@ export default class ImportOfficialRoster extends NameRosterImporter {
         }
         return false;
     }
+    safeSplit = (str: string, delim: string, expectedIndex: number): string => {
+        const split = str.split(delim);
+        if (split.length <= expectedIndex)
+            return '';
+        return split[expectedIndex].trim();
+    }
     parseRegiment(i: number, lines: string[], nameRoster: NameRoster, asAux=false) {
         ++ i;
-        let line = lines[i].trim();
         let regiment = [];
 
-        while (!this.isEmptyOrHyphens(line) && line.includes(' (')) {
+        while (i < lines.length && !this.isEmptyOrHyphens(lines[i]) && lines[i].includes(' (')) {
             let unit = this.newNameUnit();
-
+            let line = lines[i].trim();
+            
             // convert sog to bsdata formatting
             let addSoG = false;
             const sog = 'Scourge of Ghyran';
             if (line.includes(sog)) {
                 addSoG = true;
                 line = line.replace(/\(?Scourge of Ghyran\)?/g, "").trim();
+            }
+            else if (line.startsWith('SOG ')) {
+                addSoG = true;
+                line = line.substring(4).trim();
             }
             
             const parts = line.split(' (');
@@ -40,10 +51,10 @@ export default class ImportOfficialRoster extends NameRosterImporter {
                 // BSData formatting
                 unit.name = `${unit.name} (${sog})`;
             }
-            ++ i;
 
-            line = lines[i].trim();
-            while (line.length > 0 && line.includes('•')) {
+            ++ i;
+            while (lines.length > i && lines[i].length > 0 && lines[i].includes('•')) {
+                line = lines[i].trim();
                 let upgrade = line.split('•')[1].trim();
                 if (upgrade.toLowerCase() === 'reinforced') {
                     unit.isReinforced = true;
@@ -53,10 +64,8 @@ export default class ImportOfficialRoster extends NameRosterImporter {
                     unit.other.push(upgrade);
                 }
                 ++i;
-                line = lines[i].trim();
             }
             regiment.push(unit);
-            line = lines[i];
         }
         if (asAux) {
             nameRoster.auxUnits = regiment
@@ -65,13 +74,15 @@ export default class ImportOfficialRoster extends NameRosterImporter {
         }
         return i;
     }
-    async createNameRoster(lines: string[]): Promise<NameRoster|null> {
+    async createNameRoster(lines: string[]): Promise<NameRoster|Error> {
         const nameRoster = this.newNameRoster();
-
-        nameRoster.name = lines[0].split(' ').slice(0, -2).join(' ');
-
-        // move to the the next full line
-        let i = 1;
+        let foundName = false;
+        let i = 0;
+        if (/\d/.test(lines[i])) {
+            foundName = true;
+            nameRoster.name = lines[0].split(' ').slice(0, -2).join(' ');
+            ++ i;
+        }
         while (this.isEmptyOrHyphens(lines[i]))
             ++i
 
@@ -87,10 +98,15 @@ export default class ImportOfficialRoster extends NameRosterImporter {
             ++ i;
         }
 
+        if (!foundName) {
+            nameRoster.name = nameRoster.armyName;
+            foundName = true;
+        }
+
         for (;i < lines.length; ++i) {
             let line = lines[i].trim();
-            if (line.includes('Battle Tactics Cards')) {
-                let cards: string | string[] = line.split(':')[1];
+            if (line.includes('Battle Tactic')) {
+                let cards: string | string[] = this.safeSplit(line, ':', 1);
                 cards = cards.replace('cept and ', 'cept & ');
                 cards = cards.split(' and ');
                 for (let c = 0; c < cards.length; ++c) {
@@ -100,17 +116,17 @@ export default class ImportOfficialRoster extends NameRosterImporter {
                 nameRoster.battleTacticCards = cards;
             }
             else if (line.includes('Spell Lore')) {
-                nameRoster.lores.spell = line.split(' - ')[1].trim();
+                nameRoster.lores.spell = this.safeSplit(line, ' - ', 1);
             }
             else if (line.includes('Prayer Lore')) {
-                nameRoster.lores.prayer = line.split(' - ')[1].trim();
+                nameRoster.lores.prayer = this.safeSplit(line, ' - ', 1);
             }
             else if (line.includes('Manifestation Lore')) {
-                nameRoster.lores.manifestation = line.split(' - ')[1].trim();
+                nameRoster.lores.manifestation = this.safeSplit(line, ' - ', 1);
             }
             else if (line.includes('Regiments of Renown')) {
                 ++ i;
-                nameRoster.regimentOfRenown = lines[i].split(' (')[0].trim();
+                nameRoster.regimentOfRenown = this.safeSplit(lines[i], ' (', 0);
             }
             else if (line.includes(`General's Regiment`) || line.includes('Regiment ')) {
                 i = this.parseRegiment(i, lines, nameRoster);
@@ -120,25 +136,19 @@ export default class ImportOfficialRoster extends NameRosterImporter {
             }
             else if (line.includes ('Faction Terrain')) {
                 ++ i;
-                nameRoster.factionTerrain = lines[i].split(' (')[0].trim();
+                nameRoster.factionTerrain = this.safeSplit(lines[i], ' (', 0);
             }
         }
 
         return nameRoster;
     }
-    async import(listStr: string) {
+    async import(listStr: string): Promise<RosterInterf|Error> {
         const lines = listStr.split('\n');
-        if (!this.canImport(listStr)) {
-            console.log('Import roster failed canImport')
-            return null;
-        }
-
         const nameRoster = await this.createNameRoster(lines);
-        if (!nameRoster) {
-            return null;
+        if ((nameRoster as Error).message) {
+            return nameRoster as Error;
         }
 
-        const roster = await nameRosterToRoster(nameRoster);
-        return roster;
+        return await nameRosterToRoster(nameRoster as NameRoster);
     }
 }

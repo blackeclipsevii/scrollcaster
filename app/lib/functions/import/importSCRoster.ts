@@ -6,20 +6,23 @@ export default class ImportScrollcasterRoster extends ImportOfficialRoster {
     specialCookie() {
         return 'Created with Scrollcaster';
     }
-    async createNameRoster(lines: string[]): Promise<NameRoster|null>{
+    async createNameRoster(lines: string[]): Promise<NameRoster|Error>{
         const nameRoster = this.newNameRoster();
-        if (!lines[0].includes('(')) {
-            console.log('Import roster failed: Error parsing list');
-            return null;
+        let hasName = false;
+        let i = 0;
+        if (lines[0].includes('(')) {
+            hasName = true;
+            nameRoster.name = this.safeSplit(lines[0], '(', 0);
+            i = 1;
         }
 
-        nameRoster.name = lines[0].split('(')[0].trim();
-        
         // move to the the next full line
-        let i = 1;
         while (this.isEmptyOrHyphens(lines[i]))
             ++i
 
+        if (!hasName) {
+            nameRoster.name = lines[i];
+        }
         nameRoster.armyName = lines[i];
         if (!lines[i].startsWith('Auxiliaries')) {
             nameRoster.battleFormation = lines[3];
@@ -35,13 +38,13 @@ export default class ImportScrollcasterRoster extends ImportOfficialRoster {
 
         for (let i = 6; i < lines.length; ++i) {
             let line = lines[i].trim();
-            if (line.includes('Battle Tactic Cards')) {
+            if (line.includes('Battle Tactic')) {
                 ++ i;
                 if (lines[i].includes('•')) { // tactic 1
-                    nameRoster.battleTacticCards.push(lines[i].split('•')[1].trim());
+                    nameRoster.battleTacticCards.push(this.safeSplit(lines[i], '•', 1));
                     ++i;
                     if (lines[i].includes('•')) {
-                        nameRoster.battleTacticCards.push(lines[i].split('•')[1].trim());
+                        nameRoster.battleTacticCards.push(this.safeSplit(lines[i], '•', 1));
                     }
                 }
             }
@@ -59,7 +62,7 @@ export default class ImportScrollcasterRoster extends ImportOfficialRoster {
             }
             else if (line.includes('Regiment of Renown')) {
                 ++ i;
-                nameRoster.regimentOfRenown = lines[i].split(' (')[0].trim();
+                nameRoster.regimentOfRenown = this.safeSplit(lines[i], ' (', 0);
             }
             else if (line.includes(`General's Regiment`) || line.includes('Regiment ')) {
                 i = this.parseRegiment(i, lines, nameRoster);
@@ -75,5 +78,3 @@ export default class ImportScrollcasterRoster extends ImportOfficialRoster {
         return nameRoster;
     }
 }
-
-ImportRoster.registerImporter(new ImportScrollcasterRoster);

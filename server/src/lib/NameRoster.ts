@@ -2,7 +2,6 @@ import AgeOfSigmar from "../AgeOfSigmar.js";
 import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
 import Upgrade from "../Upgrade.js";
-import { toCamelCase } from '../lib/helperFunctions.js';
 
 import UpgradeInterf, { UpgradeLUT } from "../../shared-lib/UpgradeInterface.js";
 import { NameRoster, NameUnit } from "../../shared-lib/NameRoster.js";
@@ -106,7 +105,7 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
             let result: Upgrade | null = null;
             const upgrades = Object.values(upgradeLut);
             upgrades.every(ug => {
-                if (ug.name === name) {
+                if (namesEqual(ug.name, name)) {
                     result = ug;
                     return false;
                 }
@@ -146,7 +145,7 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
                 if (weaponName && quantity) {
                     clone.models.forEach(model => {
                         const selections = Object.values(model.weapons.selections);
-                        const selection = selections.find((value: WeaponSelectionInterf) => value.name === weaponName);
+                        const selection = selections.find((value: WeaponSelectionInterf) => namesEqual(value.name, weaponName));
                         if (selection) {
                             checkNext = false;
                             model.weapons.selected[weaponName] = quantity;
@@ -160,7 +159,7 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
                 checkNext = clone.optionSets.every(set => {
                     const options = Object.values(set.options);
                     return options.every(option => {
-                        if (option.name === otherName) {
+                        if (namesEqual(option.name, otherName)) {
                             set.selection = option;
                             return false;
                         }
@@ -174,7 +173,7 @@ export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRos
                     return model.optionSets.every(set => {
                         const options = Object.values(set.options);
                         return options.every(option => {
-                            if (option.name === otherName) {
+                            if (namesEqual(option.name, otherName)) {
                                 set.selection = option;
                                 return false;
                             }

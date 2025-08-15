@@ -444,16 +444,15 @@ const rosterPage = {
               copyButton.className = 'full-rectangle-button';
               copyButton.textContent = 'Import Roster';
               copyButton.onclick = async () => {
-                 // try {
-                    const roster = await ImportRoster.import(section.value);
-                    if (roster) {
-                      roster.description = 'Imported';
-                      await putRoster(roster);
-                      await viewRosters();
-                    }
-                 // } catch(e) {
-                 //   console.log(`Unable to import roster: ${e}`);
-                 // }
+                  const roster = await ImportRoster.import(section.value);
+                  if ((roster as Error).message) {
+                    // do error message stuff
+                    console.log((roster as Error).message);
+                  } else {
+                    (roster as RosterInterf).description = 'Imported';
+                    await putRoster(roster as RosterInterf);
+                    await viewRosters();
+                  }
                   Overlay.disable();
               };
 
