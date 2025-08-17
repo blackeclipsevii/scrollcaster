@@ -37,6 +37,7 @@
     --white-2: #c6cdd5;
     --white-3: #89929b;
 
+    --max-width: 1000px;
     --ab-offensive: flaticon/001-sword.png;
     --ab-rallying: flaticon/002-flag.png;
     --ab-control: flaticon/003-circle.png;
@@ -291,8 +292,11 @@ footer {
 }
 
 .main {
+    max-width: var(--max-width);
     margin-top: 3.5em;
     margin-bottom: 3.5em;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .main-extended { 
@@ -310,12 +314,12 @@ footer {
 }
 
 .section-container {
+    display: inline-block;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
   width: 100%;
 }
-
 
 .section-title {
     margin: .5em;
@@ -526,6 +530,8 @@ footer {
     background-color: var(--section-color);
     margin: 0px;
     border: 0px;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
     margin-top: .5em;
     padding-left: 1em;
     padding-right: 1em;
@@ -601,8 +607,15 @@ h4.melee-weapons-header {
 }
 
 .ability-container {
-  width: 100%;
+  display: inline-block;
+  vertical-align: top;
+  background-color: var(--background-color);
+  width: calc(100% - 2em);
+  max-width: 450px;
   padding: 0;
+  margin: 1em;
+  border: 1px solid var(--background-color);
+  border-radius: var(--border-radius);
 }
 
 .ability-icon,
@@ -621,6 +634,11 @@ h3.abilitytiming {
   width: 20px;
   height: 20px;
   margin-right: .5em;
+}
+
+.abilitykeywords {
+    padding-bottom: 0px;
+    margin-bottom: .5em;
 }
 
 h4.abilityname {
@@ -663,34 +681,33 @@ h4.abilityname {
   }
 
 .kofi-div {
-position: fixed;
-display: flex;
-justify-content: center;
-align-items: center;
-bottom: 2em;
-width: 2em;
-height: 2em;
-font-size: 2em;
-left: 1em;
-z-index: 20;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 2em;
+    width: 2em;
+    height: 2em;
+    font-size: 2em;
+    left: 1em;
+    z-index: 20;
 
-color: var(--label-font-color);
-background-color: none;
-cursor: pointer;
+    color: var(--label-font-color);
+    background-color: none;
+    cursor: pointer;
 }
 
 .kofi-div-nested {
-position: relative;
-display: 'inline-block';
+    position: relative;
+    display: 'inline-block';
 }
 
-
 .kofi-div-nested img {
-width: 100%;
-max-width: 30em;
-margin-bottom: 1em;
+    width: 100%;
+    max-width: 30em;
+    margin-bottom: 1em;
 }
 
 .kofi-div img {
-width: 1.5em;
+    width: 1.5em;
 }

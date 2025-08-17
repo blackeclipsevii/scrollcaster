@@ -11,15 +11,8 @@ export const AbilityWidget = {
         if (!abilitiesDiv)
             return;
         
-        let div = document.createElement('div');
-        div.className = 'ability-container';
-        div.id = ability.name + 'Div';
-        const radius = getVar('border-radius');
-
         let abilityBody = document.createElement('div');
         abilityBody.className = 'ability-body';
-        abilityBody.style.borderBottomLeftRadius = radius;
-        abilityBody.style.borderBottomRightRadius = radius;
 
         const addSection = (htmlType: string, name: string, prefix: string, parent?: HTMLElement) => {
             const lookableAbility = ability as unknown as {[name: string]: string};
@@ -38,46 +31,42 @@ export const AbilityWidget = {
             return null;
         }
 
-        let invertPng = true;
-        let headerFontColor = getVar('header-font-color');
-        let color = getVar('gray-ability');
-        let icon = `../../resources/${getVar('ab-special')}`;
         let cssColor = 'gray';
         if (ability.metadata && ability.metadata.color) {
             cssColor = ability.metadata.color.toLowerCase();
         }
 
         let theColor = getVar(`${cssColor}-ability`);
+        let color = getVar('gray-ability');
         if (theColor && theColor.length > 0)
             color = theColor;
         
         theColor = getVar(`${cssColor}-ability-header-font-color`);
+        let headerFontColor = getVar('header-font-color');
         if (theColor && theColor.length > 0)
             headerFontColor = theColor;
 
-        invertPng = getVar(`${cssColor}-invert-png`) ? false : true;
-
+        let icon = `../../resources/${getVar('ab-special')}`;
         if (ability.metadata && ability.metadata.type) {
             let type = ability.metadata.type;
             icon = `../../resources/${getVar(`ab-${type.toLowerCase()}`)}`
         }
 
-        div.style.borderRadius = radius;
-        div.style.backgroundColor = color;
-        div.style.border = `1px solid ${color}`;
-        let titleBar = document.createElement('div');
-        titleBar.className = 'ability-header';
         const img = document.createElement('img');
         img.src = icon;
         img.className = 'ability-icon';
         img.style.display = 'inline-block';
+        
+        const invertPng = getVar(`${cssColor}-invert-png`) ? false : true;
         if (invertPng) {
             img.classList.add('invert-img');
         }
+
+        const titleBar = document.createElement('div');
+        titleBar.className = 'ability-header';
         titleBar.appendChild(img);
         addSection('h3', 'timing', '', titleBar);//, color);
         titleBar.style.color = headerFontColor;
-        div.appendChild(titleBar);
 
         addSection('h4', 'name', '');
         const abilityName = abilityBody.querySelector('.abilityname') as HTMLElement;
@@ -92,16 +81,14 @@ export const AbilityWidget = {
         addSection('p', 'declare', '<b>Declare:</b> ');
         addSection('p', 'effect', '<b>Effect:</b> ');
         addSection('h5', 'keywords', 'Keywords: ');
-        const keywords = abilityBody.querySelector('.abilitykeywords') as HTMLElement;
-        if (keywords) {
-            keywords.style.paddingBottom = '0px';
-            keywords.style.marginBottom = '.5em';
-        }
+        
+        const div = document.createElement('div');
+        div.className = 'ability-container';
+        div.style.backgroundColor = color;
+        div.style.borderColor = color;
+        div.appendChild(titleBar);
         div.appendChild(abilityBody);
         abilitiesDiv.appendChild(div);
-        
-        const br = document.createElement('br');
-        abilitiesDiv.appendChild(br);
     },
     _initializeAbilitiesDiv(name: string | unknown | null =null) {
         const isString = (value: string | unknown): boolean => {

@@ -26,14 +26,19 @@ export const displayTacticsOverlay = Overlay.toggleFactory('block', (tc: unknown
 
     tacticCard.tactics.forEach(tactic => {
         const section2 = document.createElement('div');
-        section2.className = 'section';
+        section2.className = 'ability-container';
         ele = document.createElement('h3');
+        ele.className = 'ability-header';
         ele.innerHTML = tactic.type.name;
         section2.appendChild(ele);
-
+    
         ele = document.createElement('p');
         ele.innerHTML = tactic.text;
-        section2.appendChild(ele);
+
+        const body = document.createElement('div');
+        body.className = 'ability-body';
+        body.appendChild(ele);
+        section2.append(body);
         section.appendChild(section2);
     });
     modal.appendChild(section);
