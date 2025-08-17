@@ -88,6 +88,19 @@ export const AbilityWidget = {
         div.style.borderColor = color;
         div.appendChild(titleBar);
         div.appendChild(abilityBody);
+        const observer = new ResizeObserver(entries => {
+            const maxWidth = 450;
+            for (let entry of entries) {
+                const currentWidth = entry.contentRect.width;
+                if (currentWidth >= maxWidth) {
+                    div.style.margin = '.5em';
+                } else {
+                    div.style.margin = '';
+                }
+            }
+        });
+
+        observer.observe(div);
         abilitiesDiv.appendChild(div);
     },
     _initializeAbilitiesDiv(name: string | unknown | null =null) {
