@@ -3,6 +3,7 @@
   position: relative;
   display: inline-block;
   width: 33px;
+  min-width: 33px;
   height: 20px;
 }
 
@@ -14,10 +15,11 @@
 }
 
 .switch-wrapper {
-    display: flex;
-    align-items: center;
-    gap: .5em;
-    padding: .5em;
+  display: flex;
+  align-items: center;
+  gap: .5em;
+  padding: .5em;
+  width: 100%;
 }
 
 .slider-wapper {
@@ -42,9 +44,12 @@
 }
 
 .slider-text {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin: 0;
     padding: 0;
-    display: inline-block;
 }
 
 .slider:before {
