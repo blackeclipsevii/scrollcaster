@@ -106,8 +106,6 @@ button:disabled {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-top: .5em;
-    padding-bottom: .5em;
 }
 
 .upgrade-group-left,

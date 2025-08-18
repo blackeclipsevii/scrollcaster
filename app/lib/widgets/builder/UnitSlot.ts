@@ -102,19 +102,51 @@ export default class UnitSlot implements GenericSlot {
         selectableItem.addEventListener('click', slotOnClick);
     }
 
+    _makeLabel(sliderText: string, switchClass?: string, checkboxClass?: string, sliderColor?: string) {
+        const div = document.createElement('div');
+        div.classList.add('switch-wrapper');
+        div.innerHTML = `
+            <label class="switch upgrade-label">
+                <input type="checkbox" class="upgrade-checkbox ${sliderText.toLowerCase().replace(/ /g, '-')}-checkbox">
+                <span class="slider round"></span>
+            </label>
+            <p class="slider-text">${sliderText}</p>
+        `;
+
+        if (switchClass) {
+            const sw = div.querySelector('.switch') as HTMLElement;
+            sw.classList.add('switchClass');
+        }
+
+        if (checkboxClass) {
+            const cb = div.querySelector('.upgrade-checkbox') as HTMLElement;
+            cb.classList.add(checkboxClass);
+        }
+
+        if (sliderColor) {
+            const sd = div.querySelector('.slider') as HTMLElement;
+            sd.classList.add(sliderColor);
+        }
+
+        div.onclick = (event: Event) => {
+            event.stopPropagation();
+            const checkbox = div.querySelector('.upgrade-checkbox') as HTMLInputElement | null;
+            if (checkbox && !checkbox.disabled) {
+                checkbox.checked = !checkbox.checked;
+                if (checkbox.onchange)
+                    checkbox.onchange(event);
+            }
+        };
+
+        return div;
+    }
+
     _addDetails() {
         const details = document.createElement('div');
         details.innerHTML = `
-            <div style='display: none' class="section upgrade-section">
-                <label style='display: none' class="upgrade-label is-general">
-                    <input type="checkbox" class="upgrade-checkbox general-checkbox"> General
-                </label>
-                
-                <label style='display: none' class="upgrade-label is-reinforced">
-                    <input type="checkbox" class="upgrade-checkbox reinforced-checkbox"> Reinforced
-                </label>
+            <div style='display: none; background-color: ${getVar('slot-background-color')};' class="section upgrade-section">
             </div>
-        `
+        `;
         details.className = 'unit-details';
         this._unitSlot.appendChild(details);
         return details;
@@ -249,7 +281,10 @@ export default class UnitSlot implements GenericSlot {
     addGeneralLabel(roster: RosterInterf, unit: UnitInterf) {
         const upgrades = this._getUpgradeSection();
         upgrades.style.display = '';
-        const checkbox = upgrades.querySelector('.general-checkbox') as HTMLInputElement;
+
+        const label = this._makeLabel('General', 'is-general', 'general-checkbox', 'green');
+        upgrades.appendChild(label);
+        const checkbox = label.querySelector('.general-checkbox') as HTMLInputElement;
 
         if (unit.isGeneral) {
             const icon = this._unitSlot.querySelector('.general-label') as HTMLElement;
@@ -257,10 +292,8 @@ export default class UnitSlot implements GenericSlot {
             icon.style.display = 'inline';
         }
 
-        const isGeneral = upgrades.querySelector('.is-general') as HTMLInputElement;
-        isGeneral.style.display = '';
-
-        checkbox.onchange = () => {
+        checkbox.onchange = (event: Event) => {
+            event.stopPropagation();
             const generalLabel = this._unitSlot.querySelector('.general-label') as HTMLElement;
             generalLabel.style.display = checkbox.checked ? 'inline' : 'none';
 
@@ -283,17 +316,18 @@ export default class UnitSlot implements GenericSlot {
         const upgrades = this._getUpgradeSection();
         upgrades.style.display = '';
 
-        const checkbox = upgrades.querySelector('.reinforced-checkbox') as HTMLInputElement;
+        const label = this._makeLabel('Reinforced', 'is-reinforced', 'reinforced-checkbox');
+        upgrades.appendChild(label);
+        const checkbox = label.querySelector('.reinforced-checkbox') as HTMLInputElement;
+
         if (unit.isReinforced) {
             const icon = this._unitSlot.querySelector('.reinforced-label') as HTMLElement;
             checkbox.checked = true;
             icon.style.display = 'inline';
         }
 
-        const isReinforced = upgrades.querySelector('.is-reinforced') as HTMLInputElement;
-        isReinforced.style.display = '';
-
-        checkbox.onchange = () => {
+        checkbox.onchange = (event: Event) => {
+            event.stopPropagation();
             const reinLabel = this._unitSlot.querySelector('.reinforced-label') as HTMLElement;
             reinLabel.style.display = checkbox.checked ? 'inline' : 'none';
 
@@ -363,14 +397,11 @@ export default class UnitSlot implements GenericSlot {
         return div;
     }
 
-    makeUpgradeGroup = (obj: {name: string, points: number}) => {
+    makeUpgradeGroup = (obj: {name: string, points: number}, isEnhancement: boolean) => {
         const upgradeDiv = document.createElement('div');
         upgradeDiv.className = 'upgrade-group';
         upgradeDiv.innerHTML = `
         <div class='upgrade-group-left'>
-            <label class="upgrade-label">
-                <input type="checkbox" class="upgrade-checkbox">${obj.name}
-            </label>
         </div>
         <div class='upgrade-group-right'>
             <div style='display: inline-block' class='upgrade-points points-label'>${obj.points} PTS</div>
@@ -380,12 +411,16 @@ export default class UnitSlot implements GenericSlot {
                 </div>
             </div>
         </div>`;
+
+        
+        const label = this._makeLabel(obj.name, undefined, undefined, isEnhancement ? 'purple' : undefined);
+        const groupLeft = upgradeDiv.querySelector('.upgrade-group-left') as HTMLDivElement;
+        groupLeft.appendChild(label);
     
         if (obj.points === 0) {
             const pl = upgradeDiv.querySelector('.points-label') as HTMLElement;
             pl.style.display = 'none';
-            const groupLeft = upgradeDiv.querySelector('.upgrade-group-left') as HTMLDivElement;
-            groupLeft.style.maxWidth = '85%';
+            //groupLeft.style.maxWidth = '85%';
         }
 
         return upgradeDiv;
@@ -395,20 +430,37 @@ export default class UnitSlot implements GenericSlot {
         this._addWeaponSelections(roster, unit);
     }
 
+
+    _setSliders = (checkbox: HTMLInputElement, disabled: boolean) => {
+        const ugSection = checkbox.closest('.upgrade-section');
+        const checkboxes = ugSection?.querySelectorAll('.upgrade-checkbox') as NodeListOf<HTMLInputElement>;
+        checkboxes.forEach(cb => {
+            if (cb !== checkbox) {
+                cb.disabled = disabled;
+                const wrapper = cb.closest('.switch-wrapper');
+                const text = wrapper?.querySelector('.slider-text') as HTMLElement | null;
+                if (text && disabled) {
+                    text.classList.add('disabled');
+                } else if (text) {
+                    text.classList.remove('disabled');
+                }
+            }
+        });
+    }
+
     async displayEnhancements(roster: RosterInterf, unit: UnitInterf, type: string, enhancementGroup: EnhancementGroup) {
         const details =  this._addEnhancementUpgradeSection(unit.enhancements[type]);
 
         const values = Object.values(enhancementGroup.upgrades);
+        let checkboxSetSliders: HTMLInputElement | null = null;
         values.forEach(upgrade => {
-            const upgradeDiv = this.makeUpgradeGroup(upgrade);
+            const upgradeDiv = this.makeUpgradeGroup(upgrade, true);
 
             const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
             label.onclick = () => {
                 displayUpgradeOverlay(upgrade);
             };
 
-            const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
-            
             const updateEnhancedLabel = () => {
                 const label = this._unitSlot.querySelector('.enhanced-label') as HTMLElement | null;
                 if (label) {
@@ -418,14 +470,18 @@ export default class UnitSlot implements GenericSlot {
                 }
             };
 
+            const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
             if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
                 checkbox.checked = true;
                 updateEnhancedLabel();
+                checkboxSetSliders = checkbox;
             }
-
-            checkbox.onchange = () => {
+            
+            checkbox.onchange = (event: Event) => {
+                event.stopPropagation();
                 if (checkbox.checked) {
                     if (!unit.enhancements[type].slot) {
+                        this._setSliders(checkbox, true);
                         unit.enhancements[type].slot = upgrade;
                         if (upgrade.points > 0) {
                             const unitPoints = unitTotalPoints(unit);
@@ -440,6 +496,7 @@ export default class UnitSlot implements GenericSlot {
                     }
                 } else {
                     if (unit.enhancements[type].slot && unit.enhancements[type].slot.id === upgrade.id) {
+                        this._setSliders(checkbox, false);
                         unit.enhancements[type].slot = null;
                         if (upgrade.points > 0) {
                             const unitPoints = unitTotalPoints(unit);
@@ -455,8 +512,13 @@ export default class UnitSlot implements GenericSlot {
             };
             details.appendChild(upgradeDiv);
         });
+
+        if (checkboxSetSliders) {
+            this._setSliders(checkboxSetSliders, true);
+        }
     }
 
+    // this is almost 1:1 with displayEnhancements, get rid of the copy/paste
     displayWarscrollOption(roster: RosterInterf, unit: UnitInterf, optionSet: OptionSet) {
         const details = this.getDetails();
         const warOptDiv = document.createElement('div');
@@ -465,8 +527,9 @@ export default class UnitSlot implements GenericSlot {
             <h3 class="section-title">${optionSet.name}:</h3>
         `;
         const options = Object.values(optionSet.options);
+        let checkboxSetSliders: HTMLInputElement | null = null;
         options.forEach(option => {
-            const upgradeDiv = this.makeUpgradeGroup(option);
+            const upgradeDiv = this.makeUpgradeGroup(option, false);
 
             const label = upgradeDiv.querySelector(`.upgrade-button`) as HTMLElement;
             label.onclick = () => {
@@ -489,6 +552,7 @@ export default class UnitSlot implements GenericSlot {
             const checkbox = upgradeDiv.querySelector(`.upgrade-checkbox`) as HTMLInputElement;
             if (optionSet.selection && optionSet.selection.name === option.name) {
                 checkbox.checked = true;
+                checkboxSetSliders = checkbox;
             }
 
             const handlechange = (points: number, subtract=false) => {
@@ -502,9 +566,11 @@ export default class UnitSlot implements GenericSlot {
                 putRoster(roster);
             }
 
-            checkbox.onchange = () => {
+            checkbox.onchange = (event: Event) => {
+                event.stopPropagation();
                 if (checkbox.checked) {
                     if (!optionSet.selection) {
+                        this._setSliders(checkbox, true);
                         optionSet.selection = option;
                         handlechange(option.points, false);
                     }
@@ -513,6 +579,7 @@ export default class UnitSlot implements GenericSlot {
                     }
                 } else {
                     if (optionSet.selection && optionSet.selection.name === option.name) {
+                        this._setSliders(checkbox, false);
                         optionSet.selection = null;
                         handlechange(option.points, true);
                     }
@@ -520,6 +587,10 @@ export default class UnitSlot implements GenericSlot {
             };
             warOptDiv.appendChild(upgradeDiv);
         });
+
+        if (checkboxSetSliders)
+            this._setSliders(checkboxSetSliders, true);
+        
         details.appendChild(warOptDiv);
     }
 
