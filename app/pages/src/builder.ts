@@ -120,7 +120,7 @@ const builderPage = {
             unitSlot.setUnitIndex(idx);
             let displayDrawer = false;
             
-            const canBeGeneral = unit.type === UnitType.Hero && parent.className.includes('regiment');
+            const canBeGeneral = unit.type === UnitType.Hero && parent.className.includes('regiment') && idx === -1;
             if (canBeGeneral) {
                 displayDrawer = true;
                 unitSlot.addGeneralLabel(roster, unit as UnitInterf);
