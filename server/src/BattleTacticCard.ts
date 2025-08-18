@@ -15,7 +15,11 @@ export class BattleTactic implements BattleTacticInterf {
             name: name,
             index: index
         };
+        this.text = '';
+        this.addText(text);
+    }
 
+    addText(text: string) {
         this.text = bsTextSmoother(text) as string;
         this.text = `<b>${this.text.replace(':', ':</b>')}`;
     }
@@ -51,11 +55,11 @@ export default class BattleTacticCard implements BattleTacticCardInterf {
                 const text = phase['#text'];
                 this.text = text ? bsTextSmoother(text) as string : '';
             } else if (phase['@name'] === 'Affray') {
-                this.tactics[0].text = phase['#text'].toString();
+                this.tactics[0].addText(phase['#text'].toString());
             } else if (phase['@name'] === 'Strike') {
-                this.tactics[1].text = phase['#text'].toString();
+                this.tactics[1].addText(phase['#text'].toString());
             } else if (phase['@name'] === 'Domination') {
-                this.tactics[2].text = phase['#text'].toString();
+                this.tactics[2].addText(phase['#text'].toString());
             }
         })
     }
