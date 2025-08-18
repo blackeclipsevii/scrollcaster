@@ -60,7 +60,58 @@ export const validateRoster = async (roster: RosterInterf) => {
             uniqueUnits[uniqueName] = true;
         }
     }
-    
+
+    const checkUnit = (_unit: UnitInterf, isRegLeader: boolean) => {
+        if (_unit.isGeneral) {
+            if (!warmasterIsGeneral) {
+                warmasterIsGeneral = _unit.isWarmaster;
+            }
+            if (!isRegLeader) {
+                const errorMsg = `Your general must be a regiment leader.`;
+                errors.push(errorMsg);
+            }
+            numGenerals += 1;
+        }
+
+        if (_unit.isWarmaster) {
+            // keep track of the forced generals
+            warmasters.push(`<b>${_unit.name}</b>`);
+        }
+        
+        if (_unit.keywords.includes('UNIQUE')) {
+            validateUnique(_unit);
+        } else {
+            const enhancementNames = Object.getOwnPropertyNames(_unit.enhancements);
+            enhancementNames.forEach(eName => {
+                if (_unit.enhancements[eName].slot) {
+                    if (!enhanceCounts[_unit.enhancements[eName].name]) {
+                        enhanceCounts[_unit.enhancements[eName].name] = 1;
+                    } else {
+                        enhanceCounts[_unit.enhancements[eName].name] += 1;
+                    }
+                }
+            });
+
+            if (_unit.models) {
+                _unit.models.forEach(model => {
+                    const selections = Object.values(model.weapons.selections);
+                    selections.forEach(selection => {
+                        if (selection.per === WeaponSelectionPer.Unit && selection.max > -1) {
+                            const quantity = model.weapons.selected[selection.name];
+                            if (quantity !== null && quantity !== undefined) {
+                                const max = selection.max * (_unit.isReinforced ? 2 : 1);
+                                if (max < quantity) {
+                                    const errorMsg = `Invalid weapon selection option for <b>${_unit.name}</b>. You may only select ${max} instances of <i>${selection.name}</i>.`;
+                                    errors.push(errorMsg);
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+        }
+    }
+
     for(let idx = 0; idx < roster.regiments.length; ++idx)
     {
         const reg = roster.regiments[idx];
@@ -76,18 +127,6 @@ export const validateRoster = async (roster: RosterInterf) => {
             continue;
         }
         
-        if (reg.leader.isWarmaster) {
-            // keep track of the forced generals
-            warmasters.push(reg.leader.name);
-        }
-
-        if (reg.leader.isGeneral) {
-            if (!warmasterIsGeneral) {
-                warmasterIsGeneral = reg.leader.isWarmaster;
-            }
-            numGenerals += 1;
-        }
-
         if (nunits > 3 && !reg.leader.isGeneral) {
             let errorMsg = `Regiment ${idx+1} contains more than 3 units.`;
             errors.push(errorMsg);
@@ -98,52 +137,15 @@ export const validateRoster = async (roster: RosterInterf) => {
             errors.push(errorMsg);
         }
 
-        const checkUnit = (_unit: UnitInterf) => {
-            if (_unit.keywords.includes('UNIQUE')) {
-                validateUnique(_unit);
-            } else {
-                const enhancementNames = Object.getOwnPropertyNames(_unit.enhancements);
-                enhancementNames.forEach(eName => {
-                    if (_unit.enhancements[eName].slot) {
-                        if (!enhanceCounts[_unit.enhancements[eName].name]) {
-                            enhanceCounts[_unit.enhancements[eName].name] = 1;
-                        } else {
-                            enhanceCounts[_unit.enhancements[eName].name] += 1;
-                        }
-                    }
-                });
-
-                if (_unit.models) {
-                    _unit.models.forEach(model => {
-                        const selections = Object.values(model.weapons.selections);
-                        selections.forEach(selection => {
-                            if (selection.per === WeaponSelectionPer.Unit && selection.max > -1) {
-                                const quantity = model.weapons.selected[selection.name];
-                                if (quantity !== null && quantity !== undefined) {
-                                    const max = selection.max * (_unit.isReinforced ? 2 : 1);
-                                    if (max < quantity) {
-                                        const errorMsg = `Invalid weapon selection option for <b>${_unit.name}</b>. You may only select ${max} instances of <i>${selection.name}</i>.`;
-                                        errors.push(errorMsg);
-                                    }
-                                }
-                            }
-                        });
-                    });
-                }
-            }
-        }
-
-        checkUnit(reg.leader);
+        checkUnit(reg.leader, true);
         reg.units.forEach(unit => {
-            checkUnit(unit);
+            checkUnit(unit, false);
         });
     };
 
     for (let i = 0; i < roster.auxiliaryUnits.length; ++i) {
         const unit = roster.auxiliaryUnits[i];
-        if (unit.keywords.includes('UNIQUE')) {
-            validateUnique(unit);
-        } 
+        checkUnit(unit, false);
     }
     
     const enhancementNames = Object.getOwnPropertyNames(enhanceCounts);

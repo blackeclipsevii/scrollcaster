@@ -122,11 +122,6 @@ export default class Army implements ArmyInterf{
             return;
         }
 
-        //if (catalogue['@library'] === 'true') {
-          //  console.log('recieved library expected catalog');
-         //   throw 'foo';
-        //}
-
         console.log(catalogue['@id']);
         this.id = catalogue['@id'];
 
@@ -294,7 +289,13 @@ export default class Army implements ArmyInterf{
                 }
                 
                 if (unit.type as UnitType === UnitType.Hero) {
+                    
                     unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
+                    if (!unit.battleProfile && armySplit.length > 1 && armySplit[1].toLowerCase().includes('big waaagh')) {
+                        const otherArmy = baseArmyName === 'Kruleboyz' ? 'Ironjawz' : 'Kruleboyz';
+                        unit.battleProfile = ageOfSigmar.battleProfiles.get(otherArmy, unit.name);
+                    }
+
                     if (!unit.battleProfile) {
                         console.log(`profile not found for ${unit.name}`);
                         return;

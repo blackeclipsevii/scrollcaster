@@ -134,6 +134,7 @@ const builderPage = {
             const canBeGeneral = unit.type === UnitType.Hero && parent.className.includes('regiment') && idx === -1;
             if (canBeGeneral) {
                 displayDrawer = true;
+                unitSlot.displayLeaderLabel();
                 unitSlot.addGeneralLabel(roster, unit as UnitInterf);
             }
 

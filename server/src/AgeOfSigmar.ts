@@ -412,6 +412,7 @@ export default class AgeOfSigmar {
                 const data = parseCatalog(fullPath) as BsCatalog | null;
                 if (data) {
                     const isCatalog = data['@library'] !== "true";
+
                     if (isCatalog) {
                         if ((rorData === null) && data['@name'].includes('Regiments of Renown')) {
                             rorData = new RorData(data);
