@@ -410,7 +410,7 @@ footer {
     border: 2px solid var(--black-4);
     font-size: 1em;
     z-index: 25;
-    
+    background-color: var(--white-3);
 }
 #points-display-wrapper {
     display: block;
@@ -439,11 +439,11 @@ footer {
     height: 100%;
 }
 
-.points-overlay-invalid {
+#pointsOverlay.points-overlay-invalid {
     background-color: var(--red-color);
 }
 
-.points-overlay-valid {
+#pointsOverlay.points-overlay-valid {
     background-color: var(--green-color);
 }
 

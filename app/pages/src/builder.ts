@@ -799,8 +799,6 @@ const builderPage = {
                     const btn = document.getElementById('battle-traits-&-formation-add-button') as HTMLButtonElement;
                     btn.classList.add('disabled-button')
                 }
-                displayPointsOverlay();
-                refreshPointsOverlay(roster);
             }
 
             const upgrades = await thisPage.fetchUpgrades();
@@ -853,8 +851,7 @@ const builderPage = {
                 displayTactics();
             
             setHeaderTitle(roster.name);
-            refreshPointsOverlay(roster);
-            updateValidationDisplay(roster);
+            displayPointsOverlay(roster);
         }
 
         const armyLoadPage = async () => {
@@ -976,9 +973,8 @@ const builderPage = {
             await loadArmy(true);
             swapLayout();
             const ele = document.querySelector('.main');
-            if (ele) {
+            if (ele)
                 ele.classList.add('main-extended');
-            }
             initializeDraggable('builder');
         }
 

@@ -234,10 +234,7 @@ const unitPage = {
             
             const roster = thisPage.settings.roster as RosterInterf;
 
-            displayPointsOverlay();
-            refreshPointsOverlay(roster);
-            updateValidationDisplay(roster);
-
+            displayPointsOverlay(roster);
             let isNewRegiment = false;
             let isSelectingLeader = false;
             if (thisPage.settings.hasRegimentIndex()) {
@@ -399,6 +396,12 @@ const unitPage = {
             loadUnitsForCatalog();
         }
         swapLayout();
+        if (thisPage.settings.roster) {
+            // leave room for the overlay
+            const ele = document.querySelector('.main');
+            if (ele)
+                ele.classList.add('main-extended');
+        }
         initializeDraggable('units');
     }
 }

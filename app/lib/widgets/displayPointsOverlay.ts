@@ -7,12 +7,13 @@ import { rosterTotalPoints } from "../host.js";
 
 export var totalPoints: number = 0;
 
-export const displayPointsOverlay = () => {
-    let overlay = document.getElementById('pointsOverlay');
+export const displayPointsOverlay = async (roster: RosterInterf) => {
+    let overlay = document.getElementById('pointsOverlay') as HTMLDivElement | null;
     if (!overlay) {
         const main = document.querySelector('.persist');
         overlay = document.createElement('div');
         overlay.id = 'pointsOverlay';
+        overlay.style.display = 'none';
         overlay.innerHTML = `
             <div id='validation-icon-wrapper'>
                 <img id='validation-icon' src='../../resources/${getVar('check-icon')}'></img>
@@ -21,10 +22,16 @@ export const displayPointsOverlay = () => {
                 <div id='points-display'></div>
                 <div id='the-word-points'>points</div>
             </div>
-        `
+        `;
         if (main)
             main.appendChild(overlay);
+        
+        refreshPointsOverlay(roster);
+        await updateValidationDisplay(roster);
+
+        overlay.style.display = '';
     } else {
+        await updateValidationDisplay(roster);
         overlay.style.display = '';
     }
     const inset = new InsetEdges;
@@ -44,17 +51,17 @@ export async function updateValidationDisplay(roster: RosterInterf) {
     const errors = await validateRoster(roster);
     const hasErrors = errors.length > 0;
     const postfix = hasErrors ? 'invalid' : 'valid';
+
+    const pointsOverlay = document.getElementById('pointsOverlay') as HTMLElement | null;
+    if (!pointsOverlay)
+        return;
+    
     const validationIcon = document.getElementById('validation-icon') as HTMLImageElement;
     if (hasErrors) {
         validationIcon.src = `../../resources/${getVar('danger-icon')}`;
     } else {
         validationIcon.src = `../../resources/${getVar('check-icon')}`;
     }
-
-    const pointsOverlay = document.getElementById('pointsOverlay') as HTMLElement | null;
-    if (!pointsOverlay)
-        return;
-    
     pointsOverlay.className = `points-overlay-${postfix}`;
 
     pointsOverlay.onclick = Overlay.toggleFactory('flex', () =>{

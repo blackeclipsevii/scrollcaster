@@ -279,9 +279,8 @@ const upgradePage = {
                 setHeaderTitle(thisPage.settings.titleName);
             else
                 setHeaderTitle('Upgrades');
-            displayPointsOverlay();
-            refreshPointsOverlay(roster);
-            updateValidationDisplay(roster);
+
+            displayPointsOverlay(roster);
         
             const allUpgrades = await thisPage.fetchUpgrades(roster.army);
             if (!allUpgrades)
@@ -308,6 +307,12 @@ const upgradePage = {
             }
 
             swapLayout();
+            if (thisPage.settings.roster) {
+                // leave room for the overlay
+                const ele = document.querySelector('.main');
+                if (ele)
+                    ele.classList.add('main-extended');
+            }
             initializeDraggable('upgrades');
         }
         
