@@ -10,6 +10,7 @@ import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } f
 import { putRoster } from "../../lib/RestAPI/roster.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
+import { globalCache } from "../../lib/main.js";
 
 export class TacticsSettings implements Settings{
     [name: string]: unknown;
@@ -29,16 +30,6 @@ export class TacticsSettings implements Settings{
 
 const tacticsPage = {
     settings: null as TacticsSettings | null,
-    _cache: {
-        tactics: null as BattleTacticCardInterf[] | null
-    },
-    async fetchTactics(): Promise<BattleTacticCardInterf[]|null> {
-        if (this._cache.tactics)
-            return this._cache.tactics;
-        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/tactics`)) as BattleTacticCardInterf[] | null;
-        this._cache.tactics = result;
-        return result;
-    },
     async loadPage(settings: Settings) {
         if (!settings)
             settings = new TacticsSettings;
@@ -59,7 +50,7 @@ const tacticsPage = {
             const section = document.getElementById('battle-tactic-cards-section') as HTMLElement;
             section.style.display = 'block';
         
-            const tactics = await thisPage.fetchTactics();
+            const tactics = await globalCache?.getTactics();
             if (!tactics)
                 return;
 

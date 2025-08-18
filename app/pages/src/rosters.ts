@@ -22,12 +22,12 @@ import { ContextMenu } from "../../lib/widgets/contextMenu.js";
 import { generateId } from "../../lib/functions/uniqueIdentifier.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import { About } from "../../lib/widgets/About.js";
-import { fetchArmies } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import RosterStateConverter from "../../lib/functions/import/RosterStateConvertImpl.js";
 import { BuilderSettings } from "./builder.js";
 import { ImportRoster } from "../../lib/functions/import/importRoster.js";
 import { clearDraggableOrder } from "../../lib/widgets/draggable.js";
 import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
+import { globalCache } from "../../lib/main.js";
 
 export class RosterSettings implements Settings {
   [name: string]: unknown;
@@ -217,7 +217,8 @@ const rosterPage = {
     const toggleOverlay = Overlay.toggleFactory('flex', async () =>{
       setOverlayContents();
       if (thisPage._alliances.length === 0) {
-        await fetchArmies(_populateArmies, false);
+        const armies = await globalCache?.getArmies();
+        _populateArmies(armies);
       } else {
         _populateArmies(null);
       }

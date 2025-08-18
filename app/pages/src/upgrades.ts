@@ -3,8 +3,7 @@ import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UpgradeInterf, { UpgradeLUT, UpgradeType, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
 import { _inCatalog, displayPoints, dynamicPages } from "../../lib/host.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
-import { displayPointsOverlay, hidePointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
+import { displayPointsOverlay, hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
@@ -14,6 +13,7 @@ import { layoutDefaultFactory, makeLayout, swapLayout } from "../../lib/widgets/
 import { endpoint } from "../../lib/endpoint.js";
 import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
+import { globalCache } from "../../lib/main.js";
 
 export class UpgradeSettings implements Settings {
     [name: string]: unknown;
@@ -49,21 +49,6 @@ export class UpgradeSettings implements Settings {
 
 const upgradePage = {
     settings: new UpgradeSettings,
-    _cache: {
-        upgrades: null as ArmyUpgrades | null,
-        armyName: null as string | null
-    },
-    async fetchUpgrades(armyName: string) {
-        if (this._cache.upgrades && this._cache.armyName === armyName) {
-            return this._cache.upgrades;
-        }
-        const result = await fetchUpgrades(armyName) as ArmyUpgrades | null;
-        if (result){
-            this._cache.upgrades = result;
-            this._cache.armyName = armyName;
-        }
-        return result;
-    },
     loadPage(settings: Settings) {
         const thisPage = this;
         
@@ -286,7 +271,7 @@ const upgradePage = {
             else
                 setHeaderTitle('Upgrades');
             hidePointsOverlay();
-            const allUpgrades = await thisPage.fetchUpgrades(armyName);
+            const allUpgrades = await globalCache?.getUpgrades(armyName);
             if (!allUpgrades)
                 return;
 
@@ -302,7 +287,7 @@ const upgradePage = {
 
             displayPointsOverlay(roster);
         
-            const allUpgrades = await thisPage.fetchUpgrades(roster.army);
+            const allUpgrades = await globalCache?.getUpgrades(roster.army);
             if (!allUpgrades)
                 return;
 

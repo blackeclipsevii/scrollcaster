@@ -14,6 +14,7 @@ import { disableHeaderContextMenu, dynamicGoTo, setHeaderTitle, Settings } from 
 import { makeSelectableItem } from "../../lib/widgets/helpers.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { WarscrollSettings } from "./warscroll.js";
+import { globalCache } from "../../lib/main.js";
 
 export class BattleSettings implements Settings {
     [name: string]: unknown;
@@ -124,18 +125,15 @@ const battlePage = {
             makeSelectableItem((roster.lores as unknown as {[name:string]: LoreInterf})[lcName], false, loreContainer, onclick);
         }
 
-        async function getSpecificUnit(id: string, useArmy: boolean) {
-            let url = `${endpoint}/units?id=${id}`;
-            if (useArmy) {
-                url = `${url}&army=${roster.army}`;
-            }
-
+        async function getSpecificUnit(id: string, useArmy: boolean): Promise<UnitInterf | null> {
             try {
-                const result = await fetchWithLoadingDisplay(encodeURI(url));
-                return result;
+                const units = await globalCache?.getUnits(useArmy ? roster.army : null);
+                if (!units)
+                    return null;
+                return units[id];
             } catch (error) {
-                return null;
             }
+            return null;
         }
 
         async function getManifestationUnits() {

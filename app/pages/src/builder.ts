@@ -1,4 +1,3 @@
-import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
 import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf, { UnitSuperType } from "../../shared-lib/UnitInterface.js";
@@ -8,7 +7,6 @@ import { exportRoster } from "../../lib/functions/exportRoster.js";
 import { dynamicPages, unitTotalPoints } from "../../lib/host.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
 import { unitsApi } from "../../lib/RestAPI/units.js";
-import { fetchUpgrades } from "../../lib/RestAPI/upgrades.js";
 import { CallbackMap } from "../../lib/widgets/contextMenu.js";
 import { displayPointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
@@ -32,6 +30,7 @@ import { fetchLUT } from "../../lib/RestAPI/lut.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
 import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
+import { globalCache } from "../../lib/main.js";
 
 export class BuilderSettings implements Settings{
     [name: string]: unknown;
@@ -54,29 +53,6 @@ export class BuilderSettings implements Settings{
 
 const builderPage = {
     settings: null as BuilderSettings | null,
-    _cache: {
-        upgrades: {
-            upgrades: null as ArmyUpgrades | null,
-            armyName: null as string | null
-        },
-        units: {
-            units: null as UnitInterf | null,
-            armyName: null as string | null,
-            leaderId: null as string | null
-        }
-    },
-    async fetchUpgrades() {
-        const roster = this.settings!!.roster;
-
-        if(this._cache.upgrades.upgrades && this._cache.upgrades.armyName === roster.army)
-            return this._cache.upgrades.upgrades;
-        const result = await fetchUpgrades(roster.army) as ArmyUpgrades | null;
-        if (result){
-            this._cache.upgrades.upgrades = result;
-            this._cache.upgrades.armyName = roster.army;
-        }
-        return result;
-    },
     async loadPage(settings: Settings) {
         if (!settings) {
             throw 'builder requires settings';
@@ -160,7 +136,7 @@ const builderPage = {
             }
 
             if ((unit as UnitInterf).enhancements) {
-                const allUpgrades = await thisPage.fetchUpgrades();
+                const allUpgrades = await globalCache?.getUpgrades(roster.army);
                 if (allUpgrades) {
                     const _unit = unit as UnitInterf;
                     const enhancementNames = Object.getOwnPropertyNames(_unit.enhancements);
@@ -443,6 +419,17 @@ const builderPage = {
             }
         }
 
+        const getUnitById = async (id: string, army: string | null) => {
+            try {
+                const units = await globalCache?.getUnits(army);
+                if (!units)
+                    return null;
+                return units[id];
+            } catch (error) {
+            }
+            return null;
+        }
+
         async function getManifestationUnits() {
             if (!roster.lores.manifestation)
                 return null;
@@ -451,10 +438,10 @@ const builderPage = {
             let manifestations: UnitInterf[] = [];
             let armySpecific = false;
             for (let i = 0; i < ids.length; ++i) {
-                let unit = await unitsApi.getUnitById(ids[i], armySpecific ? roster.army : undefined);
+                let unit = await getUnitById(ids[i], armySpecific ? roster.army : null);
                 if (!unit) {
                     armySpecific = !armySpecific;
-                    unit = await unitsApi.getUnitById(ids[i], armySpecific ? roster.army : undefined);
+                    unit = await getUnitById(ids[i], armySpecific ? roster.army : null);
                 }
 
                 if (unit)
@@ -814,7 +801,6 @@ const builderPage = {
                 displayPointsOverlay(roster);
             }
 
-            const upgrades = await thisPage.fetchUpgrades();
             const sections = document.querySelectorAll('.section-container');
             sections.forEach(section => section.innerHTML = '');
 
@@ -835,7 +821,7 @@ const builderPage = {
             if (roster.terrainFeature) {
                 displayTerrain();
             } else {
-                const result = await unitsApi.get(roster.army);
+                const result = await globalCache?.getUnits(roster.army);
                 if (result) {
                     const units = Object.values(result);
                     const terrain = units.some(unit => unit.type === UnitType.Terrain);
