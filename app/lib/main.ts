@@ -42,6 +42,8 @@ export const isOnline = async (): Promise<boolean> => {
   return false;
 }
 
+export let onlineAtLaunch = false;
+
 (async () => {
   loadIcons();
   initializeHeader({name:'Units', leftButton: true, rightButton: false});
@@ -49,8 +51,8 @@ export const isOnline = async (): Promise<boolean> => {
   Overlay.initialize();
   registerAllImporters();
 
-  const online = await isOnline();
-  if (online) {
+  onlineAtLaunch = await isOnline();
+  if (onlineAtLaunch) {
     const bsDataVersion = version.getBsDataVersion();
     const serverVersion = version.getServerVersion();
     globalCache = new LocalCache(`${serverVersion}${bsDataVersion}`);

@@ -1,7 +1,7 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js"
 import { endpoint } from "../endpoint.js";
 import { _clientVersion } from "../../version.js";
-import { isOnline } from "../main.js";
+import { onlineAtLaunch } from "../main.js";
 
 interface VersionParts {
     major: string, minor: string, patch:string
@@ -57,7 +57,7 @@ export const version = (()=>{
         return this._profiles;
     },
     async stampVersion(roster: {meta: {[name: string]: string} | null}) {
-        if (!(await isOnline()))
+        if (!onlineAtLaunch)
             return;
 
         if (!roster.meta)
@@ -68,7 +68,7 @@ export const version = (()=>{
         roster.meta.profileVersion = await this.getBattleProfileVersion();
     },
     async isOutdated(roster: {meta: {[name: string]: string}}) {
-        if (!(await isOnline()))
+        if (!onlineAtLaunch)
             return false;
 
         if (!roster.meta)
