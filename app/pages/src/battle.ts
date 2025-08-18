@@ -18,6 +18,17 @@ import { WarscrollSettings } from "./warscroll.js";
 export class BattleSettings implements Settings {
     [name: string]: unknown;
     roster = null as RosterInterf | null;
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Battle';
+    }
+    toUrl() {
+        if (this.roster)
+            return `${window.location.origin}?page=${this.pageName}&roster=${this.roster.id}`;
+        return window.location.origin;
+    }
 };
 
 interface UnitSet {

@@ -31,6 +31,26 @@ export class UnitSettings implements Settings {
     hasRegimentIndex() {
         return this.regimentIndex !== null;
     }
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Unit';
+    }
+    toUrl() {
+        let url = `${window.location.origin}?page=${this.pageName}`;
+        if (this.type)
+            url += `&type=${this.type}`;
+        if (this.roster)
+            url += `&roster=${this.roster.id}`;
+        if (this.regimentIndex !== null)
+            url += `&regimentIndex=${this.regimentIndex.toString()}`;
+        if (this.auxiliary)
+            url += `&auxiliary=true`;
+        if (this.armyName)
+            url += `&armyName=${this.armyName}`;
+        return url;
+    }
 }
 
 const getUnitList = (unit: {type: number}) => {

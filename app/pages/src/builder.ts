@@ -39,6 +39,17 @@ export class BuilderSettings implements Settings{
     constructor(roster: RosterInterf) {
         this.roster = roster;
     }
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Builder';
+    }
+    toUrl() {
+        if (this.roster)
+            return `${window.location.origin}?page=${this.pageName}&roster=${this.roster.id}`;
+        return window.location.origin;
+    }
 };
 
 const builderPage = {

@@ -13,6 +13,17 @@ import { WarscrollSettings } from "./warscroll.js";
 export class RegimentOfRenownSettings implements Settings{
     [name: string] : unknown;
     ror = null as Force | null;
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'RegimentOfRenown';
+    }
+    toUrl() {
+        if (this.ror)
+            return `${window.location.origin}?page=${this.pageName}&ror=${this.ror.id}`;
+        return window.location.origin;
+    }
 };
 
 const rorPage = {
