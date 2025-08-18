@@ -799,6 +799,7 @@ const builderPage = {
                     const btn = document.getElementById('battle-traits-&-formation-add-button') as HTMLButtonElement;
                     btn.classList.add('disabled-button')
                 }
+                displayPointsOverlay(roster);
             }
 
             const upgrades = await thisPage.fetchUpgrades();
@@ -851,7 +852,6 @@ const builderPage = {
                 displayTactics();
             
             setHeaderTitle(roster.name);
-            displayPointsOverlay(roster);
         }
 
         const armyLoadPage = async () => {
