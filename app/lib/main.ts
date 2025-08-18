@@ -1,9 +1,13 @@
 import { RosterSettings } from "../pages/src/rosters.js";
 import { getVar } from "./functions/getVar.js";
 import { registerAllImporters } from "./functions/import/registerAllImporters.js";
+import LocalCache from "./RestAPI/LocalCache.js";
 import { initializeFooter } from "./widgets/footer.js";
 import { _linkStack, dynamicGoTo, initializeHeader } from "./widgets/header.js";
 import { Overlay } from "./widgets/overlay.js";
+import { version } from "./RestAPI/version.js";
+
+export let globalCache: LocalCache | null = null
 
 const loadIcons = async () => {
   const icons = [
@@ -26,15 +30,35 @@ const loadIcons = async () => {
   });
 }
 
-(() => {
+export const isOnline = async (): Promise<boolean> => {
+  if (navigator.onLine) {
+    try {
+      await fetch("https://www.google.com/favicon.ico", { method: "HEAD", mode: "no-cors" });
+      return true;
+    } catch (error: unknown) {
+    
+    }
+  }
+  return false;
+}
+
+(async () => {
   loadIcons();
   initializeHeader({name:'Units', leftButton: true, rightButton: false});
   initializeFooter('../..');
   Overlay.initialize();
   registerAllImporters();
 
+  const online = await isOnline();
+  if (online) {
+    const bsDataVersion = version.getBsDataVersion();
+    const serverVersion = version.getServerVersion();
+    globalCache = new LocalCache(`${serverVersion}${bsDataVersion}`);
+  } else {
+    globalCache = new LocalCache();
+  }
+  
   const settings = new RosterSettings;
   _linkStack['roster'].currentSettings = settings;
   dynamicGoTo(settings);
-
 })();

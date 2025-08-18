@@ -1,11 +1,7 @@
-import { Force } from "../../shared-lib/Force.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf, { UnitType } from "../../shared-lib/UnitInterface.js";
-import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
-import { endpoint } from "../../lib/endpoint.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { displayPoints, dynamicPages } from "../../lib/host.js";
-import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
 import { unitsApi } from "../../lib/RestAPI/units.js";
 import { displayPointsOverlay, hidePointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
@@ -17,6 +13,7 @@ import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
 import { WarscrollSettings } from "./warscroll.js";
 import { BasicObject } from "../../shared-lib/BasicObject.js";
+import { globalCache } from "../../lib/main.js";
 
 export class UnitSettings implements Settings {
     [name: string]: unknown;
@@ -103,24 +100,6 @@ class ArmyUnitCounts {
 
 const unitPage = {
     settings: new UnitSettings,
-    _cache: {
-        regimentsOfRenown: {
-            units: null as Force[] | null,
-            armyName: null as string | null
-        }
-    },
-    async fetchRor() {
-        if (this._cache.regimentsOfRenown.units && this._cache.regimentsOfRenown.armyName === this.settings.armyName) {
-            return this._cache.regimentsOfRenown.units;
-        }
-        const url = `${endpoint}/regimentsOfRenown?army=${this.settings.armyName}`;
-        const response = await fetchWithLoadingDisplay(encodeURI(url)) as Force[] | null;
-        if (response) {
-            this._cache.regimentsOfRenown.units = response;
-            this._cache.regimentsOfRenown.armyName = this.settings.armyName;
-        }
-        return response;
-    },
     loadPage (settings: Settings) {
         if (!settings)
             settings = new UnitSettings;
@@ -227,7 +206,7 @@ const unitPage = {
 
         const loadUnitsForCatalog = async () => {
             hidePointsOverlay();
-            const units = await unitsApi.get(this.settings.armyName);
+            const units = await globalCache?.getUnits(this.settings.armyName);
             if (!units)
                 return null;
 
@@ -264,7 +243,7 @@ const unitPage = {
             }
 
             const loadRor = async () => {
-                const units = await thisPage.fetchRor();
+                const units = await globalCache?.getRegimentsOfRenown(roster.army);
                 if (!units)
                     return;
                 

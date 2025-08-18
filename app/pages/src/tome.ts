@@ -1,6 +1,6 @@
 import { displayPoints, dynamicPages } from "../../lib/host.js";
 import { endpoint } from "../../lib/endpoint.js";
-import { fetchArmies, fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import { disableBackButton, dynamicGoTo, enableBackButton, enableSearchButton, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
 import { makeSelectableItemName } from "../../lib/widgets/helpers.js";
 import { UpgradeSettings } from "./upgrades.js";
@@ -14,6 +14,7 @@ import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
 import ArmyInterf from "../../shared-lib/ArmyInterface.js";
 import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
+import { globalCache } from "../../lib/main.js";
 
 export class CatalogSettings implements Settings{
     [name: string]: unknown;
@@ -210,8 +211,7 @@ const catalogPage = {
         
             if (thisPage.settings._doSub) {
                 const subfactions: string[] = [];
-
-                await fetchArmies(async (uk: unknown) => {
+                const faCallback = async (uk: unknown) => {
                     const armyAlliances = uk as {name: string, alliance: string}[];
                     armyAlliances.forEach(alliance => {
                         const army = alliance.name;
@@ -262,8 +262,12 @@ const catalogPage = {
                         else
                             console.log('expected army name');
                     }
-                });
+                };
 
+                const armies = await globalCache?.getArmies();
+                if (armies) {
+                    await faCallback(armies);
+                }
             } else {
                 if (thisPage.settings.armyName)
                     _loadFaction(thisPage.settings.armyName);
@@ -293,7 +297,7 @@ const catalogPage = {
                 loadRor();
             }, 'core-list');
 
-            await fetchArmies(async (uk: unknown) => {
+            const faCallback = async (uk: unknown) => {
                 const alliances = uk as {name: string, alliance: string}[];
                 alliances.forEach(alliance => {
                     const army = alliance.name;
@@ -308,7 +312,11 @@ const catalogPage = {
                         loadTome();
                     }, `${alliance.alliance.toLowerCase()}-list`);
                 });
-            });
+            };
+            const armies = await globalCache?.getArmies();
+            if (armies) {
+                await faCallback(armies);
+            }
 
             swapLayout();
         }

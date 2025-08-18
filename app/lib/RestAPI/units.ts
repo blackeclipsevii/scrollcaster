@@ -1,6 +1,7 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js"
 import { endpoint } from "../endpoint.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
+import { globalCache } from "../main.js";
 
 export const unitsApi = {
     _cache: {
@@ -29,18 +30,5 @@ export const unitsApi = {
             this._cache.leaderId = leaderId;
         }
         return result;
-    },
-    async getUnitById(id: string, useArmy?: string) {
-        let url = `${endpoint}/units?id=${id}`;
-        if (useArmy) {
-            url = `${url}&army=${useArmy}`;
-        }
-
-        try {
-            const result = await fetchWithLoadingDisplay(encodeURI(url));
-            return result;
-        } catch (error) {
-            return null;
-        }
     }
 };
