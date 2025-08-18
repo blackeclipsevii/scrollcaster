@@ -14,6 +14,17 @@ import RosterInterf from "../../shared-lib/RosterInterface.js";
 export class TacticsSettings implements Settings{
     [name: string]: unknown;
     roster = null as RosterInterf | null;
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Tactics';
+    }
+    toUrl() {
+        if (this.roster)
+            return `${window.location.origin}?page=${this.pageName}&ror=${this.roster.id}`;
+        return `${window.location.origin}?page=${this.pageName}`;
+    }
 };
 
 const tacticsPage = {

@@ -39,6 +39,17 @@ export class BuilderSettings implements Settings{
     constructor(roster: RosterInterf) {
         this.roster = roster;
     }
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Builder';
+    }
+    toUrl() {
+        if (this.roster)
+            return `${window.location.origin}?page=${this.pageName}&roster=${this.roster.id}`;
+        return window.location.origin;
+    }
 };
 
 const builderPage = {
@@ -120,9 +131,10 @@ const builderPage = {
             unitSlot.setUnitIndex(idx);
             let displayDrawer = false;
             
-            const canBeGeneral = unit.type === UnitType.Hero && parent.className.includes('regiment');
+            const canBeGeneral = unit.type === UnitType.Hero && parent.className.includes('regiment') && idx === -1;
             if (canBeGeneral) {
                 displayDrawer = true;
+                unitSlot.displayLeaderLabel();
                 unitSlot.addGeneralLabel(roster, unit as UnitInterf);
             }
 

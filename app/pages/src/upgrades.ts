@@ -25,6 +25,26 @@ export class UpgradeSettings implements Settings {
     isLore() {
         return this.type && this.type.toLowerCase().includes('lore')
     }
+    
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Upgrade';
+    }
+
+    toUrl() {
+        let url = `${window.location.origin}?page=${this.pageName}`;
+        if (this.titleName)
+            url += `&titleName=${this.titleName}`;
+        if (this.type)
+            url += `&type=${this.type}`;
+        if (this.roster)
+            url += `&roster=${this.roster.id}`;
+        if (this.armyName)
+            url += `&armyName=${this.armyName}`;
+        return url;
+    }
 }
 
 const upgradePage = {

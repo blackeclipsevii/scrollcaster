@@ -9,18 +9,28 @@
 
 .menu-btn,
 .menu-btn-disabled {
-  position: relative;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: none;
   border: none;
   height: 100%;
   width: 100%;
   padding: 0;
   margin: 0;
-  font-size: 1.5rem;
   cursor: pointer;
-  transform: rotate(-90deg);
   color: var(--section-font-color);
+}
+
+.menu-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.menu-btn-wrapper {
+  height: 2.5em;
+  width: 2.5em;
+  text-align: center;
 }
 
 .menu-btn-disabled {

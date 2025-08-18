@@ -20,6 +20,9 @@ class HistoryStack {
 
 export interface Settings {
     [name: string]: unknown;
+    isHistoric: () => boolean;
+    pageName: () => string;
+    toUrl: () => string;
 }
 
 interface LinkStack {
@@ -52,6 +55,10 @@ export async function dynamicGoTo(settings: Settings, updateHistory=true, doLoad
                     scrollY: window.scrollY || document.documentElement.scrollTop,
                     settings: linkStack.currentSettings
                 });
+
+                const currentSettings = linkStack.currentSettings;
+                if (currentSettings.isHistoric())
+                    history.pushState(null, currentSettings.pageName(), currentSettings.toUrl());
             }
             linkStack.currentSettings = settings;
             if (doLoadPage) {

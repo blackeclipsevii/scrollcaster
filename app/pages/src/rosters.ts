@@ -31,6 +31,15 @@ import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/Sl
 
 export class RosterSettings implements Settings {
   [name: string]: unknown;
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Roster';
+    }
+    toUrl() {
+        return window.location.origin;
+    }
 };
 
 interface Alliances {

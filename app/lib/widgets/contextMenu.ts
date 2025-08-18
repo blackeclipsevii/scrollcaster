@@ -1,3 +1,4 @@
+import { getVar } from "../functions/getVar.js";
 import { generateId } from "../functions/uniqueIdentifier.js";
 
 export interface CallbackMap {
@@ -43,7 +44,11 @@ export const ContextMenu = {
     create(callbackMap: CallbackMap, trackMenu=true) {
         const uniqueId = generateId();
         const ele = document.createElement('div');
-        ele.innerHTML = `<button class="menu-btn">⋯</button>`;
+        ele.innerHTML = `
+            <div class="menu-btn">
+                <img class='menu-icon invert-img' src='../../resources/${getVar('menu-icon')}'></img>
+            </div>
+        `;
         ele.className ='menu-btn-wrapper';
         ele.id = uniqueId;
 

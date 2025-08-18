@@ -60,6 +60,7 @@ export default class UnitSlot implements GenericSlot {
                 <div class='unit-slot-selectable-item-wrapper'>
                     <div class="selectable-item unit-slot-selectable-item">
                         <div class="selectable-item-left">
+                            <span class="leader-label" style="display: none;">Leader</span>
                             <span class="general-label" style="display: none;">General</span>
                             <span class="reinforced-label" style="display: none;">Reinforced</span>
                             <span class="enhanced-label" style="display: none;">Enhanced</span>
@@ -275,6 +276,11 @@ export default class UnitSlot implements GenericSlot {
         const section = details.querySelector('.upgrade-section') as HTMLDivElement;
         section.style.display = '';
         return section;
+    }
+
+    displayLeaderLabel()  {
+        const generalLabel = this._unitSlot.querySelector('.leader-label') as HTMLElement;
+        generalLabel.style.display = 'inline';
     }
 
     // Add the general label checkbox for this unit slot

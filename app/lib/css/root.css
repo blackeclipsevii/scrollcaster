@@ -55,6 +55,7 @@
     --minus-icon: flaticon/015-minus.png;
     --danger-icon: flaticon/016-danger.png;
     --check-icon: flaticon/017-check.png;
+    --menu-icon: flaticon/018-dots.png;
     
     --background-color: #000;
     --header-color: var(--black-3);
@@ -495,6 +496,7 @@ footer {
     background-color: var(--purple-ability);
 }
 
+.leader-label,
 .ability-label {
     color: var(--black-2);
     background-color: var(--white-3);
@@ -505,26 +507,6 @@ footer {
     background-color: var(--red-color);
     display: inline-block;
 }
-
-/*
-.general-label {
-    border: 1px solid var(--green-ability);
-    color: var(--green-ability);
-}
-.reinforced-label {
-    border: 1px solid var(--blue-ability);
-    color: var(--blue-ability);
-}
-.enhanced-label {
-    border: 1px solid var(--purple-ability);
-    color: var(--purple-ability);
-}
-.ability-label {
-    color: var(--white-3);
-    border: 1px solid var(--white-3);
-    display: inline-block;
-}
-*/
 
 .ability-body {
     background-color: var(--section-color);

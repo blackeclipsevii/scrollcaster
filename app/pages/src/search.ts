@@ -14,6 +14,15 @@ import { Typed } from "../../shared-lib/BasicObject.js";
 
 export class SearchSettings implements Settings{
     [name: string]: unknown;
+    isHistoric() {
+        return true;
+    }
+    pageName() {
+        return 'Search';
+    }
+    toUrl() {
+        return `${window.location.origin}?page=${this.pageName}`;
+    }
 };
 
 interface Result {
