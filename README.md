@@ -5,8 +5,9 @@ A streamlined, mobile-first army builder for Age of Sigmar 4, designed to help p
 **Features:**
 - Quick, intuitive, and easy to navigate interface
 - Up-to-date rules using the lastest BsData: https://github.com/BSData/age-of-sigmar-4th
-- Easily import army lists from other popular list-builders and websites
-- Ad-free
+- Import army lists from other list-builders and websites
+
+![import-roster-example](https://github.com/user-attachments/assets/7ad1889d-d447-41b5-b1e2-983ee95a5741)
 
 ## Using Scrollcaster
 
