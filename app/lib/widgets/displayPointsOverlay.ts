@@ -25,15 +25,11 @@ export const displayPointsOverlay = async (roster: RosterInterf) => {
         `;
         if (main)
             main.appendChild(overlay);
-        
-        refreshPointsOverlay(roster);
-        await updateValidationDisplay(roster);
-
-        overlay.style.display = '';
-    } else {
-        await updateValidationDisplay(roster);
-        overlay.style.display = '';
     }
+    
+    refreshPointsOverlay(roster);
+    await updateValidationDisplay(roster);
+    overlay.style.display = '';
     const inset = new InsetEdges;
     if (inset.bottom) {
         overlay.style.bottom = `${inset.bottom + 75}px`;
