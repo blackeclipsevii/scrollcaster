@@ -40,7 +40,7 @@ export const addPWAInstallPrompt = () => {
         return;
 
     let deferredPrompt: BeforeInstallPromptEvent | null;
-    const installBtn = document.getElementById('installBtn') as HTMLElement | null;
+    const installBtn = document.getElementById('install-btn') as HTMLElement | null;
     if (!installBtn)
         return;
 
