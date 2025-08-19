@@ -1,5 +1,4 @@
 import { _inCatalog } from "../host.js";
-import { InsetEdges } from "./InsetEdges.js";
 import { dynamicPages } from "../host.js";
 import { ContextMenu } from "./contextMenu.js";
 import { getVar } from "../functions/getVar.js";
@@ -7,6 +6,7 @@ import { CallbackMap } from "./contextMenu.js";
 
 import { SearchSettings } from "../../pages/src/search.js";
 import { Overlay } from "./overlay.js";
+import { insetsAtLaunch } from "../main.js";
 
 interface HistoryEle {
     scrollY: number;
@@ -149,7 +149,7 @@ export function initializeHeader(options: HeaderOptions) {
         `;
     }
     
-    const insetEdges = new InsetEdges;
+    const insetEdges = insetsAtLaunch;
     if (insetEdges.top) {
         header.style.paddingTop = `${insetEdges.top}px`;
         const left = header.querySelector('.header-left') as HTMLElement | null;
