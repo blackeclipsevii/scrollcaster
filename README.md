@@ -3,6 +3,12 @@
 A streamlined, mobile-first army builder for Age of Sigmar 4, designed to help players create battle-ready lists with speed and ease.
 Scrollcaster leverages BSData: https://github.com/BSData/age-of-sigmar-4th
 
+## Submit a bug report or feature request
+
+[Log a new issue](https://github.com/blackeclipsevii/scrollcaster/issues/new?template=bug_report.md)
+
+## Features
+
 ### Import army lists from other list-builders and websites
 
 ![import-roster-example](https://github.com/user-attachments/assets/7ad1889d-d447-41b5-b1e2-983ee95a5741)

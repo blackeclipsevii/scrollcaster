@@ -19,6 +19,7 @@ import { registerAllValidators } from './lib/validation/validators/registerValid
 
 import { UpgradeType } from '../shared-lib/UpgradeInterface.js';
 import { OtherSuperType, OtherTypes } from '../shared-lib/OtherTypes.js';
+import { safeName } from './lib/helperFunctions.js';
 
 // intermediate step
 interface MyConstraints {
@@ -203,6 +204,38 @@ export default class AgeOfSigmar {
 
         data.army = new Army(this, armyName);
         return data.army;
+    }
+
+    findArmy(armyName: string, formationOrAor: string | null): Army | null {
+        let army = this.getArmy(armyName);
+        if (army)
+            return army;
+
+        const safeArmyName = safeName(armyName);
+        const safeFormOrAorName = formationOrAor ? safeName(formationOrAor) : null;
+        const names = Object.getOwnPropertyNames(this._database.armies);
+        let match = null;
+        names.every(possibleName => {
+            const safePossibility = safeName(possibleName);
+            
+            if (safeFormOrAorName && safePossibility.includes(safeFormOrAorName)){
+                match = possibleName;
+                return false;
+            }
+            
+            if (safePossibility.includes(safeArmyName)){
+                match = possibleName;
+                return false;
+            }
+
+            return true;
+        });
+        
+        if (match) {
+            return this.getArmy(match);
+        }
+
+        return null;
     }
 
     _loadRegimentsOfRenown(rorData: RorData) {

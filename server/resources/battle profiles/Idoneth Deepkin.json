@@ -91,6 +91,15 @@
   },
   {
     "type": "Hero",
+    "name": "Mathaela, Oracle of the Abyss",
+    "unitSize": 1,
+    "points": 160,
+    "regimentOptions": "0-1 <Isharann Emissary>, Any <Idoneth Deepkin>",
+    "notes": null,
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
     "name": "Volturnos, High King of the Deep",
     "unitSize": 1,
     "points": 230,

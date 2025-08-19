@@ -76,6 +76,8 @@ const corsOptions = {
       callback(null, true);
     } else if (!origin || origin.startsWith('http://127.0.0.1') || allowedOriginRegex.test(origin)) {
       callback(null, true);
+    } else if (origin.includes('joe-deckers-projects.vercel.app')) {
+      callback(null, true);
     } else {
       callback(`Not allowed by CORS: ${origin}`, false);
     }
