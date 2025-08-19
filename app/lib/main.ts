@@ -64,7 +64,10 @@ export const insetsAtLaunch  = new InsetEdges;
   }
 
   if (isChrome()) {
+    console.log('is chrome');
     addPWAInstallPrompt();
+  } else {
+    console.log ('not chrome');
   }
   
   const settings = new RosterSettings;
