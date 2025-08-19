@@ -2,11 +2,11 @@ import { getVar } from "../functions/getVar.js";
 import { _inCatalog, setInCatalog } from "../host.js";
 import { dynamicGoTo } from "./header.js";
 import { _linkStack } from "./header.js";
-import { InsetEdges } from "./InsetEdges.js";
 import { Settings } from "./header.js";
 
 import { CatalogSettings } from "../../pages/src/tome.js";
 import { RosterSettings } from "../../pages/src/rosters.js";
+import { insetsAtLaunch } from "../main.js";
 
 export function initializeFooter(root: string) {
     const main = document.querySelector('.persist');
@@ -56,7 +56,7 @@ export function initializeFooter(root: string) {
       }
     };
 
-    const inset = new InsetEdges;
+    const inset = insetsAtLaunch;
     if (inset.bottom) {
         footer.style.paddingBottom = `${inset.bottom}px`;
         left.style.marginBottom = `${inset.bottom}px`;

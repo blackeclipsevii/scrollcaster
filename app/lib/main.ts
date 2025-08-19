@@ -6,6 +6,7 @@ import { initializeFooter } from "./widgets/footer.js";
 import { _linkStack, dynamicGoTo, initializeHeader } from "./widgets/header.js";
 import { Overlay } from "./widgets/overlay.js";
 import { version } from "./RestAPI/version.js";
+import { InsetEdges } from "./widgets/InsetEdges.js";
 import { addPWAInstallPrompt, isChrome } from "./widgets/PWAInstaller.js";
 
 export let globalCache: LocalCache | null = null
@@ -44,6 +45,7 @@ export const isOnline = async (): Promise<boolean> => {
 }
 
 export let onlineAtLaunch = false;
+export const insetsAtLaunch  = new InsetEdges;
 
 (async () => {
   loadIcons();

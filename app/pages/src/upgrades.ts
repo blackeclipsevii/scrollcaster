@@ -34,7 +34,7 @@ export class UpgradeSettings implements Settings {
     }
 
     toUrl() {
-        let url = `${window.location.origin}?page=${this.pageName}`;
+        let url = `${window.location.origin}?page=${this.pageName()}`;
         if (this.titleName)
             url += `&titleName=${this.titleName}`;
         if (this.type)
@@ -43,7 +43,7 @@ export class UpgradeSettings implements Settings {
             url += `&roster=${this.roster.id}`;
         if (this.armyName)
             url += `&armyName=${this.armyName}`;
-        return url;
+        return encodeURI(url);
     }
 }
 

@@ -35,7 +35,7 @@ export class UnitSettings implements Settings {
         return 'Unit';
     }
     toUrl() {
-        let url = `${window.location.origin}?page=${this.pageName}`;
+        let url = `${window.location.origin}?page=${this.pageName()}`;
         if (this.type)
             url += `&type=${this.type}`;
         if (this.roster)
@@ -46,7 +46,7 @@ export class UnitSettings implements Settings {
             url += `&auxiliary=true`;
         if (this.armyName)
             url += `&armyName=${this.armyName}`;
-        return url;
+        return encodeURI(url);
     }
 }
 

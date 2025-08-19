@@ -15,7 +15,6 @@ import { makeLayout } from "../../lib/widgets/layout.js";
 import { setHeaderTitle } from "../../lib/widgets/header.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { disableBackButton } from "../../lib/widgets/header.js";
-import { InsetEdges } from "../../lib/widgets/InsetEdges.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { getRoster, getRosters, putRoster, getNewRoster, deleteRoster, deleteRosters } from "../../lib/RestAPI/roster.js";
 import { ContextMenu } from "../../lib/widgets/contextMenu.js";
@@ -27,7 +26,7 @@ import { BuilderSettings } from "./builder.js";
 import { ImportRoster } from "../../lib/functions/import/importRoster.js";
 import { clearDraggableOrder } from "../../lib/widgets/draggable.js";
 import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
-import { globalCache } from "../../lib/main.js";
+import { globalCache, insetsAtLaunch } from "../../lib/main.js";
 
 export class RosterSettings implements Settings {
   [name: string]: unknown;
@@ -663,7 +662,7 @@ const rosterPage = {
         </div>
       `
       button.onclick = toggleOverlay;
-      const inset = new InsetEdges;
+      const inset = insetsAtLaunch;
       if (inset.bottom) {
           button.style.bottom = `${inset.bottom + 75}px`;
       }

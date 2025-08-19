@@ -30,16 +30,16 @@ export class CatalogSettings implements Settings{
     toUrl() {
         let url: string;
         if (this.armyName)
-            url = `${window.location.origin}?page=${this.pageName}&armyName=${this.armyName}`;
+            url = `${window.location.origin}?page=${this.pageName()}&armyName=${this.armyName}`;
         else
-            url = `${window.location.origin}?page=${this.pageName}`;
+            url = `${window.location.origin}?page=${this.pageName()}`;
 
         if (this.core)
             url += '&core=true';
         if (!this._doSub)
             url += '&_doSub=false';
 
-        return url;
+        return encodeURI(url);
     }
 };
 

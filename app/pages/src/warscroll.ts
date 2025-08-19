@@ -23,10 +23,10 @@ export class WarscrollSettings implements Settings {
     }
 
     toUrl() {
-        let url = `${window.location.origin}?page=${this.pageName}`;
+        let url = `${window.location.origin}?page=${this.pageName()}`;
         if (this.unit)
             url += `&uniti=${this.unit.id}`;
-        return url;
+        return encodeURI(url);
     }
 };
 

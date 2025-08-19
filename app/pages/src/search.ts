@@ -20,7 +20,7 @@ export class SearchSettings implements Settings{
         return 'Search';
     }
     toUrl() {
-        return `${window.location.origin}?page=${this.pageName}`;
+        return encodeURI(`${window.location.origin}?page=${this.pageName()}`);
     }
 };
 

@@ -21,7 +21,7 @@ export class RegimentOfRenownSettings implements Settings{
     }
     toUrl() {
         if (this.ror)
-            return `${window.location.origin}?page=${this.pageName}&ror=${this.ror.id}`;
+            return encodeURI(`${window.location.origin}?page=${this.pageName()}&ror=${this.ror.id}`);
         return window.location.origin;
     }
 };

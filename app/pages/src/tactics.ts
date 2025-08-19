@@ -1,10 +1,7 @@
 import { dynamicPages } from "../../lib/host.js";
-import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { endpoint } from "../../lib/endpoint.js";
 import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { _inCatalog } from "../../lib/host.js";
-import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
 import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
 import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
@@ -23,8 +20,8 @@ export class TacticsSettings implements Settings{
     }
     toUrl() {
         if (this.roster)
-            return `${window.location.origin}?page=${this.pageName}&ror=${this.roster.id}`;
-        return `${window.location.origin}?page=${this.pageName}`;
+            return encodeURI(`${window.location.origin}?page=${this.pageName()}&ror=${this.roster.id}`);
+        return encodeURI(`${window.location.origin}?page=${this.pageName()}`);
     }
 };
 
