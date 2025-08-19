@@ -20,8 +20,8 @@ export class TacticsSettings implements Settings{
     }
     toUrl() {
         if (this.roster)
-            return `${window.location.origin}?page=${this.pageName}&ror=${this.roster.id}`;
-        return `${window.location.origin}?page=${this.pageName}`;
+            return encodeURI(`${window.location.origin}?page=${this.pageName()}&ror=${this.roster.id}`);
+        return encodeURI(`${window.location.origin}?page=${this.pageName()}`);
     }
 };
 
