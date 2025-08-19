@@ -5,7 +5,7 @@ Scrollcaster leverages BSData: https://github.com/BSData/age-of-sigmar-4th
 
 ## Submit a bug report or feature request
 
-https://github.com/blackeclipsevii/scrollcaster/issues/new
+[Log a new issue](https://github.com/blackeclipsevii/scrollcaster/issues/new?template=bug_report.md)
 
 ## Features
 
