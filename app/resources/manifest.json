@@ -3,12 +3,12 @@
   "name": "Scrollcaster",
   "icons": [
     {
-      "src": "/scrollcaster-icon.png",
+      "src": "scrollcaster-icon.ico",
       "sizes": "256x256",
       "type": "image/icon"
     },
     {
-      "src": "/scrollcaster-icon.png",
+      "src": "scrollcaster-icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
