@@ -65,6 +65,7 @@ const build = (sourceList) => {
     if (fs.existsSync(outname))
         fs.rmSync(outname);
     fs.writeFileSync(outname, html, 'utf-8');
+    fs.copyFile('service-worker.js', `./${outDir}/service-worker.js`, () =>{});
 })();
 
 (() => {

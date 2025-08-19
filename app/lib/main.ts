@@ -67,7 +67,7 @@ export const insetsAtLaunch  = new InsetEdges;
     addPWAInstallPrompt();
     window.addEventListener('load', () => {
       navigator.serviceWorker
-        .register('./lib/widgets/service-worker.js')
+        .register('service-worker.js')
         .then((reg) => console.log('Service Worker registered:', reg))
         .catch((err) => console.error('Service Worker registration failed:', err));
     });
