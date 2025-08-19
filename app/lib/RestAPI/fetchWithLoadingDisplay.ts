@@ -24,6 +24,7 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
  // url = 'foo.bar'
   let done = false;
   let result = null;
+  let loadingOverlayIsShowing = false;
   const _internalFetch = async () => {
     await fetch(url).
     then(async resp => {
@@ -72,6 +73,7 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
 
     const timeoutDisplayOverlay = () => {
       if (!done && showLoadingDisplay) {
+        loadingOverlayIsShowing = true;
         loadingOverlay(null);
       }
     }
@@ -85,9 +87,9 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
     await new Promise(resolve => setTimeout(resolve, retryInterval));
     await _internalFetch();
   }
-  if (showLoadingDisplay)
+  if (showLoadingDisplay && loadingOverlayIsShowing) {
     Overlay.disable();
-
+  }
   return result;
 }
 
