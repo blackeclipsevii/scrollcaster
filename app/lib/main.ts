@@ -6,6 +6,7 @@ import { initializeFooter } from "./widgets/footer.js";
 import { _linkStack, dynamicGoTo, initializeHeader } from "./widgets/header.js";
 import { Overlay } from "./widgets/overlay.js";
 import { version } from "./RestAPI/version.js";
+import { addPWAInstallPrompt, isChrome } from "./widgets/PWAInstaller.js";
 
 export let globalCache: LocalCache | null = null
 
@@ -58,6 +59,10 @@ export let onlineAtLaunch = false;
     globalCache = new LocalCache(`${serverVersion}${bsDataVersion}`);
   } else {
     globalCache = new LocalCache();
+  }
+
+  if (isChrome()) {
+    addPWAInstallPrompt();
   }
   
   const settings = new RosterSettings;
