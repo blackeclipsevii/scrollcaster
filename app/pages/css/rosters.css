@@ -72,7 +72,7 @@ a {
 #install-btn {
   position: absolute;
   bottom: 15em;
-  right: 2.5em;
+  left: 10em;
   background-color: var(--green-ability);
   border: 1px solid var(--white-3);
   font-weight: bold;
