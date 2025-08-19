@@ -7,7 +7,7 @@ import { _linkStack, dynamicGoTo, initializeHeader } from "./widgets/header.js";
 import { Overlay } from "./widgets/overlay.js";
 import { version } from "./RestAPI/version.js";
 import { InsetEdges } from "./widgets/InsetEdges.js";
-import { addPWAInstallPrompt, isChrome } from "./widgets/PWAInstaller.js";
+import { addPWAInstallPrompt } from "./widgets/PWAInstaller.js";
 
 export let globalCache: LocalCache | null = null
 
@@ -67,7 +67,7 @@ export const insetsAtLaunch  = new InsetEdges;
     addPWAInstallPrompt();
     window.addEventListener('load', () => {
       navigator.serviceWorker
-        .register('./widgets/service-worker.js')
+        .register('./lib/widgets/service-worker.js')
         .then((reg) => console.log('Service Worker registered:', reg))
         .catch((err) => console.error('Service Worker registration failed:', err));
     });
