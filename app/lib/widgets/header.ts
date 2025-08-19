@@ -57,8 +57,9 @@ export async function dynamicGoTo(settings: Settings, updateHistory=true, doLoad
                 });
 
                 const currentSettings = linkStack.currentSettings;
-                if (currentSettings.isHistoric())
+                if (currentSettings.isHistoric()) {
                     history.pushState(null, currentSettings.pageName(), currentSettings.toUrl());
+                }
             }
             linkStack.currentSettings = settings;
             if (doLoadPage) {

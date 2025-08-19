@@ -16,17 +16,5 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  transition: top 0.2s ease-in-out;
   z-index: 49; /* below the footer*/
-}
-
-.slide-banner.active {
-  top: 2.5em;
-}
-
-@keyframes slideUpDown {
-  0%   { top: 0px; }
-  10%  { top: 2.5em; }         /* Slide up */
-  70%  { top: 2.5em; }         /* Stay visible */
-  100% { top: 0px; }     /* Slide back down */
 }

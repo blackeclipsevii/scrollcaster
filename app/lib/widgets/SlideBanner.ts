@@ -24,10 +24,16 @@ export const displaySlidebanner = (message: string, type: SlideBannerMessageType
         div.style.backgroundColor = getVar('blue-color');
     }
 
-    div.onclick = () => div.classList.remove('active');
-
-    div.classList.add('active');
-    setTimeout(() => {
-        div.classList.remove('active');
-    }, 2200); // 0.2s slide
+    const hdr = document.querySelector('header') as HTMLElement;
+    const start = hdr.offsetHeight - 60;
+    div.animate([
+        { top: `${start}px` },           // 0%
+        { top: `${hdr.offsetHeight}px`, offset: 0.03 }, // 10%
+        { top: `${hdr.offsetHeight}px`, offset: 0.97 }, // 70%
+        { top: `${start}px` }            // 100%
+    ], {
+        duration: 2500,           // Total duration in milliseconds
+        easing: 'ease-in-out',    // Optional: smooth transition
+        fill: 'forwards'          // Keeps final state after animation
+    });
 }
