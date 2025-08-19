@@ -68,3 +68,12 @@ a {
 .fab-icon {
   width: 20px;
 }
+
+#install-btn {
+  position: absolute;
+  bottom: 15em;
+  right: 2.5em;
+  background-color: var(--green-ability);
+  border: 1px solid var(--white-3);
+  font-weight: bold;
+}

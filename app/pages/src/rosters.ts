@@ -665,6 +665,11 @@ const rosterPage = {
       const inset = insetsAtLaunch;
       if (inset.bottom) {
           button.style.bottom = `${inset.bottom + 75}px`;
+
+          const installBtn = document.getElementById('install-btn') as HTMLElement | null;
+          if (installBtn) {
+            installBtn.style.bottom = `${inset.bottom + 75 + button.offsetHeight}px`;
+          }
       }
 
       div.appendChild(button);
