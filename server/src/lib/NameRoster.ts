@@ -8,22 +8,54 @@ import { NameRoster, NameUnit } from "../../shared-lib/NameRoster.js";
 import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
 import { UnitType } from "../../shared-lib/UnitInterface.js";
 import { WeaponSelectionInterf } from "../../shared-lib/WeaponInterf.js";
+import { namesEqual } from "./helperFunctions.js";
+
+// official app does orruks different
+const translateArmyName = (unknownName: string, battleFormation: string): {name: string, formation: string} | null => {
+    unknownName = unknownName.toLowerCase();
+    const lcBf = battleFormation.toLowerCase();
+    if (unknownName.includes('big waaagh')) {
+        return {
+            name: 'Ironjawz',
+            formation: 'Big Waaagh!'
+        }
+    }
+
+    if (unknownName.includes('orruk warclans')) {
+        if (lcBf.includes('krazogg') || lcBf.includes('zoggrok')) {
+            return {
+                name: 'Ironjawz',
+                formation: lcBf
+            }
+        }
+        if (lcBf.includes('murkvast')) {
+            return {
+                name: 'Kruleboyz',
+                formation: lcBf
+            }
+        }
+    }
+
+    return null;
+}
 
 export const nameRosterToRoster = (ageOfSigmar: AgeOfSigmar, nameRoster: NameRoster) => {
-    const army = ageOfSigmar.getArmy(nameRoster.armyName);
-    if (!army)
-        return null;
+    let army = ageOfSigmar.findArmy(nameRoster.armyName, nameRoster.battleFormation);
+    if (!army) {
+        const translation = translateArmyName(nameRoster.armyName,
+                                nameRoster.battleFormation ? nameRoster.battleFormation : '');
+        if (!translation)
+            return;
+
+        nameRoster.armyName = translation.name;
+        nameRoster.battleFormation = translation.formation;
+        army = ageOfSigmar.findArmy(nameRoster.armyName, nameRoster.battleFormation);
+        if (!army)
+            return;
+    }
     const roster = new Roster(army);
     roster.name = nameRoster.name;
     roster.points = 2000;
-
-    const namesEqual = (a:string | null, b:string | null) => {
-        if (a === null || b === null)
-            return false;
-        const left = a.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
-        const right = b.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
-        return left === right;
-    }
 
     const units = Object.values(army.units);
     const findUnit = (name: string) => {

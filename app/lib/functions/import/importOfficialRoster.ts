@@ -25,6 +25,18 @@ export default class ImportOfficialRoster extends NameRosterImporter {
             return '';
         return split[expectedIndex].trim();
     }
+    isBulletedItem = (line: string) => {
+        if (this.isEmptyOrHyphens(line))
+            return false;
+        
+        const trimmedLine = line.trim();
+        const bullets = ['•', '-', '*'];
+        for (let i = 0; i < bullets.length; ++i) {
+            if (trimmedLine.startsWith(bullets[i]))
+                return true;
+        }
+        return false;
+    }
     parseRegiment(i: number, lines: string[], nameRoster: NameRoster, asAux=false) {
         ++ i;
         let regiment = [];
@@ -53,9 +65,9 @@ export default class ImportOfficialRoster extends NameRosterImporter {
             }
 
             ++ i;
-            while (lines.length > i && lines[i].length > 0 && lines[i].includes('•')) {
+            while (lines.length > i && lines[i].length > 0 && this.isBulletedItem(lines[i])) {
                 line = lines[i].trim();
-                let upgrade = line.split('•')[1].trim();
+                let upgrade = line.substring(1).trim(); // remove the bullet
                 if (upgrade.toLowerCase() === 'reinforced') {
                     unit.isReinforced = true;
                 } else if (upgrade.toLowerCase() === 'general') {
@@ -117,9 +129,11 @@ export default class ImportOfficialRoster extends NameRosterImporter {
 
         if (lines[i].includes('|')) { // iOS
             const factionParts = lines[i].split('|');
-            nameRoster.armyName = factionParts[1].trim();
-            // official forces the battle formation pick
-            nameRoster.battleFormation = factionParts[2].trim();
+            let offset = 0;
+            if (factionParts.length === 3)
+                offset = 1;
+            nameRoster.armyName = factionParts[offset].trim();
+            nameRoster.battleFormation = factionParts[offset + 1].trim();
         } else {
             nameRoster.armyName = lines[i].trim();
             
