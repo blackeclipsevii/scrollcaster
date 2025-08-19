@@ -1,7 +1,7 @@
 [
   {
     "type": "Hero",
-    "name": "Celestant-Prime, Hammer of Sigmar",
+    "name": "Celestant Prime, Hammer of Sigmar",
     "unitSize": 1,
     "points": 290,
     "regimentOptions": "0-1 <Stormcast Exemplar>, Any <Stormcast Eternals>",

@@ -6,7 +6,6 @@ import { copyToClipboard } from "../../lib/functions/copyToClipboard.js";
 import { exportRoster } from "../../lib/functions/exportRoster.js";
 import { dynamicPages, unitTotalPoints } from "../../lib/host.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
-import { unitsApi } from "../../lib/RestAPI/units.js";
 import { CallbackMap } from "../../lib/widgets/contextMenu.js";
 import { displayPointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
