@@ -63,8 +63,14 @@ export const insetsAtLaunch  = new InsetEdges;
     globalCache = new LocalCache();
   }
 
-  if (isChrome()) {
+  if ('serviceWorker' in navigator) {
     addPWAInstallPrompt();
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('./widgets/service-worker.js')
+        .then((reg) => console.log('Service Worker registered:', reg))
+        .catch((err) => console.error('Service Worker registration failed:', err));
+    });
   }
   
   const settings = new RosterSettings;
