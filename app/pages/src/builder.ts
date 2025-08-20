@@ -216,7 +216,7 @@ const builderPage = {
                 callbackMap.Duplicate = async () => {
                     const _currentRegIdx = getRegIdx();
                     const clone = JSON.parse(JSON.stringify(unit));
-                    if (_currentRegIdx) {
+                    if (_currentRegIdx !== null) {
                         const reg = roster.regiments[Number(_currentRegIdx)];
                         reg.units.push(clone);
                         _toggleThisUnitAddButton();
