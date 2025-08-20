@@ -1,29 +1,13 @@
-import { dynamicPages } from "../../lib/host.js";
-import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { _inCatalog } from "../../lib/host.js";
 import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
 import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import { globalCache } from "../../lib/main.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
-export class TacticsSettings implements Settings{
-    [name: string]: unknown;
-    roster = null as RosterInterf | null;
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Tactics';
-    }
-    toUrl() {
-        if (this.roster)
-            return encodeURI(`${window.location.origin}?page=${this.pageName()}&ror=${this.roster.id}`);
-        return encodeURI(`${window.location.origin}?page=${this.pageName()}`);
-    }
-};
+import Settings from "./settings/Settings.js";
+import TacticsSettings from "./settings/TacticsSettings.js";
 
 const tacticsPage = {
     settings: null as TacticsSettings | null,
@@ -47,7 +31,7 @@ const tacticsPage = {
             const section = document.getElementById('battle-tactic-cards-section') as HTMLElement;
             section.style.display = 'block';
         
-            const tactics = await globalCache?.getTactics();
+            const tactics = await getGlobalCache()?.getTactics();
             if (!tactics)
                 return;
 
@@ -62,7 +46,7 @@ const tacticsPage = {
     
                 const item = document.createElement('div');
                 item.classList.add('selectable-item');
-                if (!_inCatalog)
+                if (!getPageRouter()?.inCatalog())
                     item.classList.add('not-added');
     
                 const left = document.createElement('div');
@@ -182,4 +166,6 @@ const tacticsPage = {
     }
 }
 
-dynamicPages['tactics'] = tacticsPage;
+export const registerTacticsPage = () => {
+    getPageRouter()?.registerPage('tactics', tacticsPage);
+}

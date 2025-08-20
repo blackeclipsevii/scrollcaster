@@ -18,5 +18,20 @@ export class InsetEdges {
             if (value)
                 this[edge] = Number(value) / 2;
         });
+
+        if (this.bottom === null) {
+            this.bottom = 32;
+        }
     }
+}
+
+let insetsAtLaunch: InsetEdges | null = null;
+export const initializeLaunchInsets = () => {
+    insetsAtLaunch = new InsetEdges;
+}
+
+export const getLaunchInsets = (): InsetEdges => {
+  if (insetsAtLaunch !== null)
+    return insetsAtLaunch
+  return new InsetEdges();
 }

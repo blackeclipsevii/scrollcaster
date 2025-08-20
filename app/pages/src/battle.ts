@@ -1,34 +1,19 @@
 import { Force } from "../../shared-lib/Force.js";
 import LoreInterf from "../../shared-lib/LoreInterface.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
 import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
-import { dynamicPages } from "../../lib/host.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
 import { displayRorOverlay, displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { disableHeaderContextMenu, dynamicGoTo, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
 import { makeSelectableItem } from "../../lib/widgets/helpers.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { WarscrollSettings } from "./warscroll.js";
-import { globalCache } from "../../lib/main.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
-export class BattleSettings implements Settings {
-    [name: string]: unknown;
-    roster = null as RosterInterf | null;
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Battle';
-    }
-    toUrl() {
-        if (this.roster)
-            return encodeURI(`${window.location.origin}?page=${this.pageName()}&roster=${this.roster.id}`);
-        return window.location.origin;
-    }
-};
+import Settings from "./settings/Settings.js";
+import BattleSettings from "./settings/BattleSettings.js";
+import WarscrollSettings from "./settings/WarscrollSettings.js";
 
 interface UnitSet {
     [name: string]: UnitInterf;
@@ -125,7 +110,7 @@ const battlePage = {
 
         async function getSpecificUnit(id: string, useArmy: boolean): Promise<UnitInterf | null> {
             try {
-                const units = await globalCache?.getUnits(useArmy ? roster.army : null);
+                const units = await getGlobalCache()?.getUnits(useArmy ? roster.army : null);
                 if (!units)
                     return null;
                 return units[id];
@@ -171,7 +156,7 @@ const battlePage = {
                     makeSelectableItem(unit, true, warscrollContainer, () => {
                         const settings = new WarscrollSettings;
                         settings.unit = unit;
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     });
                 }
             }
@@ -245,9 +230,9 @@ const battlePage = {
                 units.sort((a, b) => a.type - b.type);
             units.forEach(unit => {
                 makeSelectableItem(unit, true, warscrollContainer, () => {
-                    const wss = new WarscrollSettings;
-                    wss.unit = unit;
-                    dynamicGoTo(wss);
+                    const settings = new WarscrollSettings;
+                    settings.unit = unit;
+                    getPageRouter()?.goTo(settings);
                 });
             })
 
@@ -310,4 +295,6 @@ const battlePage = {
     }
 };
 
-dynamicPages['battle'] = battlePage;
+export const registerBattlePage = () => {
+    getPageRouter()?.registerPage('battle', battlePage);
+}

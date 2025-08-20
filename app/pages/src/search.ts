@@ -1,28 +1,18 @@
-import { dynamicPages } from "../../lib/host.js";
-import { dynamicGoTo, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+
+import { getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
 import { endpoint } from "../../lib/endpoint.js";
 
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import { SearchableObject } from "../../shared-lib/SearchableObject.js";
-import { WarscrollSettings } from "./warscroll.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { fetchSearch } from "../../lib/RestAPI/search.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
 
-export class SearchSettings implements Settings{
-    [name: string]: unknown;
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Search';
-    }
-    toUrl() {
-        return encodeURI(`${window.location.origin}?page=${this.pageName()}`);
-    }
-};
+import Settings from "./settings/Settings.js";
+import SearchSettings from "./settings/SearchSettings.js";
+import WarscrollSettings from "./settings/WarscrollSettings.js";
 
 interface Result {
     item: SearchableObject
@@ -97,8 +87,8 @@ const searchPage = {
 
                     const unit = await getSpecificUnit(result.item.id, armyName);
                     const settings = new WarscrollSettings;
-                    (settings as unknown as Settings).unit = unit;
-                    dynamicGoTo(settings as unknown as Settings);
+                    settings.unit = unit;
+                    getPageRouter()?.goTo(settings);
                 });
             });
         }
@@ -180,4 +170,6 @@ const searchPage = {
     }
 }
 
-dynamicPages['search'] = searchPage;
+export const registerSearchPage = () => {
+    getPageRouter()?.registerPage('search', searchPage);
+}

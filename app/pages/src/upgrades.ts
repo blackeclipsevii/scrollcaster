@@ -1,51 +1,22 @@
 import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UpgradeInterf, { UpgradeLUT, UpgradeType, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
-import { _inCatalog, displayPoints, dynamicPages } from "../../lib/host.js";
+import { displayPoints } from "../../lib/host.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 import { displayPointsOverlay, hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
-import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import { layoutDefaultFactory, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { endpoint } from "../../lib/endpoint.js";
 import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
-import { globalCache } from "../../lib/main.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
-export class UpgradeSettings implements Settings {
-    [name: string]: unknown;
-    titleName = null as string | null;
-    type = null as string | null;
-    roster = null as RosterInterf | null;
-    armyName = null as string | null;
-
-    isLore() {
-        return this.type && this.type.toLowerCase().includes('lore')
-    }
-    
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Upgrade';
-    }
-
-    toUrl() {
-        let url = `${window.location.origin}?page=${this.pageName()}`;
-        if (this.titleName)
-            url += `&titleName=${this.titleName}`;
-        if (this.type)
-            url += `&type=${this.type}`;
-        if (this.roster)
-            url += `&roster=${this.roster.id}`;
-        if (this.armyName)
-            url += `&armyName=${this.armyName}`;
-        return encodeURI(url);
-    }
-}
+import Settings from "./settings/Settings.js";
+import UpgradeSettings from "./settings/UpgradeSettings.js";
 
 const upgradePage = {
     settings: new UpgradeSettings,
@@ -86,7 +57,7 @@ const upgradePage = {
                 displayUpgradeOverlay(upgrade);
             });
             
-            if (roster && !_inCatalog) {
+            if (roster && !getPageRouter()?.inCatalog()) {
                 item.classList.add('not-added');
             }
         
@@ -271,7 +242,7 @@ const upgradePage = {
             else
                 setHeaderTitle('Upgrades');
             hidePointsOverlay();
-            const allUpgrades = await globalCache?.getUpgrades(armyName);
+            const allUpgrades = await getGlobalCache()?.getUpgrades(armyName);
             if (!allUpgrades)
                 return;
 
@@ -287,7 +258,7 @@ const upgradePage = {
 
             displayPointsOverlay(roster);
         
-            const allUpgrades = await globalCache?.getUpgrades(roster.army);
+            const allUpgrades = await getGlobalCache()?.getUpgrades(roster.army);
             if (!allUpgrades)
                 return;
 
@@ -325,4 +296,6 @@ const upgradePage = {
     }
 }
 
-dynamicPages['upgrades'] = upgradePage;
+export const registerUpgradesPage = () => {
+    getPageRouter()?.registerPage('upgrades', upgradePage);
+}

@@ -1,54 +1,22 @@
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf, { UnitType } from "../../shared-lib/UnitInterface.js";
 import { getVar } from "../../lib/functions/getVar.js";
-import { displayPoints, dynamicPages } from "../../lib/host.js";
+import { displayPoints } from "../../lib/host.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
 import { unitsApi } from "../../lib/RestAPI/units.js";
 import { displayPointsOverlay, hidePointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
-import { disableHeaderContextMenu, dynamicGoTo, goBack, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { disableHeaderContextMenu, getPageRouter, goBack, setHeaderTitle } from "../../lib/widgets/header.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
-import { WarscrollSettings } from "./warscroll.js";
 import { BasicObject } from "../../shared-lib/BasicObject.js";
-import { globalCache } from "../../lib/main.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
-export class UnitSettings implements Settings {
-    [name: string]: unknown;
-    type = null as string | null;
-    roster = null as  RosterInterf | null;
-    regimentIndex = null as number | null;
-    auxiliary = false;
-
-    displayLegends = false;
-    armyName = null as string | null;
-
-    hasRegimentIndex() {
-        return this.regimentIndex !== null;
-    }
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Unit';
-    }
-    toUrl() {
-        let url = `${window.location.origin}?page=${this.pageName()}`;
-        if (this.type)
-            url += `&type=${this.type}`;
-        if (this.roster)
-            url += `&roster=${this.roster.id}`;
-        if (this.regimentIndex !== null)
-            url += `&regimentIndex=${this.regimentIndex.toString()}`;
-        if (this.auxiliary)
-            url += `&auxiliary=true`;
-        if (this.armyName)
-            url += `&armyName=${this.armyName}`;
-        return encodeURI(url);
-    }
-}
+import Settings from "./settings/Settings.js";
+import UnitSettings from "./settings/UnitsSettings.js";
+import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings.js";
+import WarscrollSettings from "./settings/WarscrollSettings.js";
 
 const getUnitList = (unit: {type: number}) => {
     let unitList = null;
@@ -206,7 +174,7 @@ const unitPage = {
 
         const loadUnitsForCatalog = async () => {
             hidePointsOverlay();
-            const units = await globalCache?.getUnits(this.settings.armyName);
+            const units = await getGlobalCache()?.getUnits(this.settings.armyName);
             if (!units)
                 return null;
 
@@ -219,7 +187,7 @@ const unitPage = {
                 const displayOnClick = () => {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 };
                 const selectable = _makeSelectableItem(unit, unitList, displayOnClick);
             });
@@ -243,7 +211,7 @@ const unitPage = {
             }
 
             const loadRor = async () => {
-                const units = await globalCache?.getRegimentsOfRenown(roster.army);
+                const units = await getGlobalCache()?.getRegimentsOfRenown(roster.army);
                 if (!units)
                     return;
                 
@@ -257,7 +225,7 @@ const unitPage = {
                     const displayInfoOnClick = () => {
                         const settings = new RegimentOfRenownSettings;
                         settings.ror = regimentOfRenown;
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     }
 
                     const addButtonOnClick = async (event: Event) => {
@@ -322,7 +290,7 @@ const unitPage = {
                 const displayInfoOnClick = () => {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 };
                 const addButtonOnClick = async (event: Event) => {
                     event.stopPropagation(); // Prevents click from triggering page change
@@ -405,4 +373,6 @@ const unitPage = {
     }
 }
 
-dynamicPages['units'] = unitPage;
+export const registerUnitsPage = () => {
+    getPageRouter()?.registerPage('units', unitPage);
+}

@@ -1,104 +1,30 @@
-import { _inCatalog } from "../host.js";
-import { dynamicPages } from "../host.js";
 import { ContextMenu } from "./contextMenu.js";
 import { getVar } from "../functions/getVar.js";
 import { CallbackMap } from "./contextMenu.js";
+import { getLaunchInsets } from "./InsetEdges.js";
 
-import { SearchSettings } from "../../pages/src/search.js";
-import { Overlay } from "./overlay.js";
-import { insetsAtLaunch } from "../main.js";
+import Settings from "../../pages/src/settings/Settings.js";
+import SearchSettings from "../../pages/src/settings/SearchSettings.js";
+import PageRouter from "./PageRouter.js";
 
-interface HistoryEle {
-    scrollY: number;
-    settings: Settings;
-}
-
-class HistoryStack {
-    currentSettings: Settings | null = null;
-    history: HistoryEle[] = [];
-}
-
-export interface Settings {
-    [name: string]: unknown;
-    isHistoric: () => boolean;
-    pageName: () => string;
-    toUrl: () => string;
-}
-
-interface LinkStack {
-    catalog: HistoryStack,
-    roster: HistoryStack
-}
-
-export var _linkStack: LinkStack = {catalog: new HistoryStack, roster: new HistoryStack};
 var _headerMenuId = '';
+var _pageRouter: PageRouter | null;
 
 export const absoluteUrl = (relativePath: string) => {
     const rootUrl = window.location.origin;
     return new URL(relativePath, rootUrl).href;
 }
 
-const _getHistoryKey = () => {
-    return _inCatalog ? 'catalog' : 'roster';
-}
-
-export async function dynamicGoTo(settings: Settings, updateHistory=true, doLoadPage=true) {
-    const key = _getHistoryKey();
-    const name = settings.constructor.name.toLowerCase();
-    const types = Object.getOwnPropertyNames(dynamicPages);
-    for (let i = 0; i < types.length; ++i) {
-        const type = types[i];
-        const linkStack = _linkStack[key];
-        if (name.includes(type)) {
-            if (updateHistory && linkStack.currentSettings) {
-                linkStack.history.push({
-                    scrollY: window.scrollY || document.documentElement.scrollTop,
-                    settings: linkStack.currentSettings
-                });
-
-                const currentSettings = linkStack.currentSettings;
-                if (currentSettings.isHistoric()) {
-                    history.pushState(null, currentSettings.pageName(), currentSettings.toUrl());
-                }
-            }
-            linkStack.currentSettings = settings;
-            if (doLoadPage) {
-                enableBackButton();
-                ContextMenu.clear();
-                await dynamicPages[type].loadPage(settings);
-                window.scrollTo(0, 0);
-            }
-            return;
-        }
-    }
+export const getPageRouter = () => {
+    return _pageRouter;
 }
 
 export const goBack = async () => {
-    if (Overlay.isDisplayed()) {
-        // not a blocking overlay, disable it as the 'back' call
-        if (Overlay.canDisable()) {
-            Overlay.disable();
-            return;
-        }
-        
-        // blocking overlay, disable it AND go back a page
-        Overlay.disable();
-    }
-    const key = _getHistoryKey();
-    const linkStack = _linkStack[key];
-    if (linkStack.history.length > 0) {
-        const previous = linkStack.history.pop()!!;
-        await dynamicGoTo(previous.settings, false);
-        window.scrollTo(0, previous.scrollY);
-    }
-    else
-        console.log('ERROR previous is bad');
+    await _pageRouter?.goBack();
 }
 
-export const canGoBack = () => {
-    const key = _getHistoryKey();
-    const linkStack = _linkStack[key];
-    return linkStack.history.length > 0;
+export const canGoBack = (): boolean => {
+    return _pageRouter ? _pageRouter.canGoBack() : false;
 }
 
 export interface HeaderOptions {
@@ -108,11 +34,7 @@ export interface HeaderOptions {
 }
 
 export function initializeHeader(options: HeaderOptions) {
-    _linkStack = {
-        catalog: new HistoryStack,
-        roster: new HistoryStack
-    };
-
+    _pageRouter = new PageRouter();
     (globalThis as unknown as {goBack: unknown}).goBack = goBack as unknown;
     (globalThis as unknown as {canGoBack: unknown}).canGoBack = canGoBack as unknown;
 
@@ -150,7 +72,7 @@ export function initializeHeader(options: HeaderOptions) {
         `;
     }
     
-    const insetEdges = insetsAtLaunch;
+    const insetEdges = getLaunchInsets();
     if (insetEdges.top) {
         header.style.paddingTop = `${insetEdges.top}px`;
         const left = header.querySelector('.header-left') as HTMLElement | null;
@@ -227,7 +149,7 @@ export function enableSearchButton() {
         `;
         searchButton.onclick = () => {
             const settings = new SearchSettings;
-            dynamicGoTo(settings as unknown as Settings);
+            _pageRouter?.goTo(settings as unknown as Settings);
         };
         right.appendChild(searchButton);
     }

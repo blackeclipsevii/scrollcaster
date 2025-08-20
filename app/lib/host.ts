@@ -1,7 +1,6 @@
 
 import RosterInterf from "../shared-lib/RosterInterface.js";
 import UnitInterf from "../shared-lib/UnitInterface.js";
-import { Settings } from "./widgets/header.js";
 
 export const isDOMAvailable = () => {
   return (
@@ -12,19 +11,6 @@ export const isDOMAvailable = () => {
 }
 
 export const DYNAMIC_WARSCROLL = false;
-
-export interface Page {
-  settings: Settings | null;
-  loadPage: ((settings: Settings) => void);
-}
-
-export var dynamicPages: {[name: string]: Page} = {};
-
-export let _inCatalog = localStorage.getItem('inCatalog') ? localStorage.getItem('inCatalog') === 'true' : false;
-
-export const setInCatalog = (value: boolean) => {
-  _inCatalog = value
-}
 
 export function unitTotalPoints(unit: UnitInterf) {
   let pts = unit.points;

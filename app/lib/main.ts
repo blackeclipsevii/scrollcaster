@@ -1,14 +1,16 @@
-import { RosterSettings } from "../pages/src/rosters.js";
 import { getVar } from "./functions/getVar.js";
 import { registerAllImporters } from "./functions/import/registerAllImporters.js";
-import LocalCache from "./RestAPI/LocalCache.js";
 import { initializeFooter } from "./widgets/footer.js";
-import { _linkStack, dynamicGoTo, initializeHeader } from "./widgets/header.js";
+import { initializeHeader } from "./widgets/header.js";
 import { Overlay } from "./widgets/overlay.js";
-import { version } from "./RestAPI/version.js";
-import { InsetEdges } from "./widgets/InsetEdges.js";
+import { initializeLaunchInsets } from "./widgets/InsetEdges.js";
+import { initializeGlobalCache, isOnline } from "./RestAPI/LocalCache.js";
 
-export let globalCache: LocalCache | null = null
+import RostersSettings from "../pages/src/settings/RostersSettings.js";
+import { version } from "./RestAPI/version.js";
+// import { addPWAInstallPrompt } from "./widgets/PWAInstaller.js";
+
+import { registerAllPages } from "../pages/src/registerAllPages.js";
 
 const loadIcons = async () => {
   const icons = [
@@ -20,49 +22,50 @@ const loadIcons = async () => {
     'danger-icon', 'check-icon'
   ];
 
+  const newDiv = document.createElement('div');
+  newDiv.id = 'icon-loader';
+  const body = document.querySelector('body') as HTMLBodyElement;
+  body.appendChild(newDiv);
+
   icons.forEach(iconName => {
     const img = document.createElement('img');
-    const body = document.querySelector('body') as HTMLBodyElement;
     img.src = `../../resources/${getVar(iconName)}`;
     img.style.position = 'absolute';
     img.style.top = "-1000";
     img.style.left = "-1000";
-    body.appendChild(img);
+    newDiv.appendChild(img);
   });
-}
 
-export const isOnline = async (): Promise<boolean> => {
-  if (navigator.onLine) {
-    try {
-      await fetch("https://www.google.com/favicon.ico", { method: "HEAD", mode: "no-cors" });
-      return true;
-    } catch (error: unknown) {
-    
-    }
-  }
-  return false;
+  newDiv.style.display = 'none';
 }
-
-export let onlineAtLaunch = false;
-export const insetsAtLaunch  = new InsetEdges;
 
 (async () => {
+  // don't wait for this
   loadIcons();
-  initializeHeader({name:'Units', leftButton: true, rightButton: false});
+
+  if (await isOnline()) {
+    const bsDataVersion = version.getBsDataVersion();
+    const serverVersion = version.getServerVersion();
+    await initializeGlobalCache(`${bsDataVersion}${serverVersion}`);
+  } else {
+    await initializeGlobalCache('');
+  }
+
+  initializeLaunchInsets();
+  initializeHeader({name:'Scrollcaster', leftButton: true, rightButton: false});
   initializeFooter('../..');
   Overlay.initialize();
   registerAllImporters();
 
-  onlineAtLaunch = await isOnline();
-  if (onlineAtLaunch) {
-    const bsDataVersion = version.getBsDataVersion();
-    const serverVersion = version.getServerVersion();
-    globalCache = new LocalCache(`${serverVersion}${bsDataVersion}`);
-  } else {
-    globalCache = new LocalCache();
+  if ('serviceWorker' in navigator) {
+    //addPWAInstallPrompt();
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('service-worker.js')
+        .then((reg) => console.log('Service Worker registered:', reg))
+        .catch((err) => console.error('Service Worker registration failed:', err));
+    });
   }
-  
-  const settings = new RosterSettings;
-  _linkStack['roster'].currentSettings = settings;
-  dynamicGoTo(settings);
+
+  registerAllPages(new RostersSettings);
 })();

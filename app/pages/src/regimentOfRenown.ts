@@ -1,30 +1,17 @@
-import { Force } from "../../shared-lib/Force.js";
-import { displayPoints, dynamicPages } from "../../lib/host.js";
+
+import { displayPoints } from "../../lib/host.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
 import { makeLayout } from "../../lib/widgets/layout.js";
-import { setHeaderTitle, disableHeaderContextMenu, Settings, dynamicGoTo } from "../../lib/widgets/header.js";
+import { setHeaderTitle, disableHeaderContextMenu, getPageRouter } from "../../lib/widgets/header.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { swapLayout } from "../../lib/widgets/layout.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
-import { WarscrollSettings } from "./warscroll.js";
 
-export class RegimentOfRenownSettings implements Settings{
-    [name: string] : unknown;
-    ror = null as Force | null;
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'RegimentOfRenown';
-    }
-    toUrl() {
-        if (this.ror)
-            return encodeURI(`${window.location.origin}?page=${this.pageName()}&ror=${this.ror.id}`);
-        return window.location.origin;
-    }
-};
+import Settings from "./settings/Settings.js";
+import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings.js";
+import WarscrollSettings from "./settings/WarscrollSettings.js";
 
 const rorPage = {
     settings: null as RegimentOfRenownSettings | null,
@@ -76,8 +63,8 @@ const rorPage = {
                     const unitContainer = containers[i];
                     makeItem(unitContainer.unit, () => {
                         const settings = new WarscrollSettings;
-                        (settings as unknown as Settings).unit = unitContainer.unit;
-                        dynamicGoTo(settings as unknown as Settings);
+                        settings.unit = unitContainer.unit;
+                        getPageRouter()?.goTo(settings);
                     }, 'warscrolls-list');
                 }   
             }
@@ -169,4 +156,6 @@ const rorPage = {
     }
 };
 
-dynamicPages['regimentofrenown'] = rorPage;
+export const registerRegimentOfRenownPage = () => {
+    getPageRouter()?.registerPage('regimentofrenown', rorPage);
+}
