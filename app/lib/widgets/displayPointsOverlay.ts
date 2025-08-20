@@ -3,7 +3,7 @@ import { getVar } from "../functions/getVar.js";
 import { validateRoster } from "../functions/validateRoster.js";
 import { Overlay } from "./overlay.js";
 import { rosterTotalPoints } from "../host.js";
-import { insetsAtLaunch } from "../main.js";
+import { getLaunchInsets } from "./InsetEdges.js";
 
 export var totalPoints: number = 0;
 
@@ -30,7 +30,7 @@ export const displayPointsOverlay = async (roster: RosterInterf) => {
     refreshPointsOverlay(roster);
     await updateValidationDisplay(roster);
     overlay.style.display = '';
-    const inset = insetsAtLaunch;
+    const inset = getLaunchInsets();
     if (inset.bottom) {
         overlay.style.bottom = `${inset.bottom + 75}px`;
     }

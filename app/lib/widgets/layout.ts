@@ -1,5 +1,5 @@
 // make html page layout
-import { insetsAtLaunch } from "../main.js";
+import { getLaunchInsets } from "./InsetEdges.js";
 
 export const layoutDefaultFactory = (main: HTMLElement, name: string, show=true) => {
     const adjustedName = name.toLowerCase().replace(/ /g, '-');
@@ -64,7 +64,7 @@ export const swapLayout = () => {
     if (!newView)
         return;
     newView.className = 'main';
-    const inset = insetsAtLaunch;
+    const inset = getLaunchInsets();
     if (inset.top) {
         const header = document.querySelector('header');
         if (header) {

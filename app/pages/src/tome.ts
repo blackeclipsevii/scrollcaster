@@ -1,47 +1,23 @@
-import { displayPoints, dynamicPages } from "../../lib/host.js";
+import { displayPoints } from "../../lib/host.js";
 import { endpoint } from "../../lib/endpoint.js";
 import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { disableBackButton, dynamicGoTo, enableBackButton, enableSearchButton, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { disableBackButton, enableBackButton, enableSearchButton, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
 import { makeSelectableItemName } from "../../lib/widgets/helpers.js";
-import { UpgradeSettings } from "./upgrades.js";
-import { TacticsSettings } from "./tactics.js";
-import { UnitSettings } from "./units.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { ForceLUT } from "../../shared-lib/Force.js";
-import { RegimentOfRenownSettings } from "./regimentOfRenown.js";
 import ArmyInterf from "../../shared-lib/ArmyInterface.js";
 import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
 import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
-import { globalCache } from "../../lib/main.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
-export class CatalogSettings implements Settings{
-    [name: string]: unknown;
-    armyName = null as string | null;
-    core = false;
-    _doSub = true; // this is not intended for external use, just tracking history
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Catalog';
-    }
-    toUrl() {
-        let url: string;
-        if (this.armyName)
-            url = `${window.location.origin}?page=${this.pageName()}&armyName=${this.armyName}`;
-        else
-            url = `${window.location.origin}?page=${this.pageName()}`;
-
-        if (this.core)
-            url += '&core=true';
-        if (!this._doSub)
-            url += '&_doSub=false';
-
-        return encodeURI(url);
-    }
-};
+import Settings from "./settings/Settings.js";
+import CatalogSettings from "./settings/CatalogSettings.js";
+import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings.js";
+import TacticsSettings from "./settings/TacticsSettings.js";
+import UnitSettings from "./settings/UnitsSettings.js";
+import UpgradeSettings from "./settings/UpgradeSettings.js";
 
 const catalogPage = {
     settings: new CatalogSettings,
@@ -99,18 +75,18 @@ const catalogPage = {
             makeLayout(['Age of Sigmar'], null, null, true);
             
             makeItem('Warscrolls', () => {
-                dynamicGoTo((new UnitSettings) as unknown as Settings);
+                getPageRouter()?.goTo(new UnitSettings);
             }, 'age-of-sigmar-list');
             
             makeItem('Battle Tactic Cards', () => {
-                dynamicGoTo(new TacticsSettings);
+                getPageRouter()?.goTo(new TacticsSettings);
             }, 'age-of-sigmar-list');          
         
             makeItem('Lores', () => {
                 const settings = new UpgradeSettings;
-                (settings as unknown as Settings).type = 'lores';
-                (settings as unknown as Settings).titleName = 'Lores';
-                dynamicGoTo(settings as unknown as Settings);
+                settings.type = 'lores';
+                settings.titleName = 'Lores';
+                getPageRouter()?.goTo(settings);
             }, 'age-of-sigmar-list');
 
             enableBackButton(); 
@@ -129,7 +105,7 @@ const catalogPage = {
                 makeItem(regimentOfRenown.name, () => {
                     const settings = new RegimentOfRenownSettings;
                     settings.ror = regimentOfRenown;
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 }, 'regiments-of-renown-list', regimentOfRenown.points);
             });
 
@@ -154,7 +130,7 @@ const catalogPage = {
                         makeItem('Warscrolls', () => {
                             const settings = new UnitSettings;
                             settings.armyName = subFactionName;
-                            dynamicGoTo(settings);
+                            getPageRouter()?.goTo(settings);
                         }, listName);
                     }
         
@@ -175,7 +151,7 @@ const catalogPage = {
                             settings.titleName = 'Battle Formation';
                             settings.type = 'battleFormations';
                             settings.armyName = subFactionName;
-                            dynamicGoTo(settings);
+                            getPageRouter()?.goTo(settings);
                         }, listName);          
                     }
         
@@ -187,7 +163,7 @@ const catalogPage = {
                                 settings.titleName = army.upgrades.enhancements[eName]!!.name;
                                 settings.type = eName;
                                 settings.armyName = subFactionName;
-                                dynamicGoTo(settings);
+                                getPageRouter()?.goTo(settings);
                             }, listName);   
                         });
                     }
@@ -200,7 +176,7 @@ const catalogPage = {
                             settings.titleName = 'Lores';
                             settings.type = 'lores';
                             settings.armyName = subFactionName;
-                            dynamicGoTo(settings);
+                            getPageRouter()?.goTo(settings);
                         }, listName);          
                     }
 
@@ -232,7 +208,7 @@ const catalogPage = {
                                     const settings = new CatalogSettings;
                                     settings.armyName = army;
                                     settings._doSub = false;
-                                    dynamicGoTo(settings, true, false); // update history but dont go
+                                    getPageRouter()?.goTo(settings, true, false); // update history but dont go
                                     thisPage.settings = settings;
                                     _loadFaction(army);
                                 }, listName);
@@ -247,7 +223,7 @@ const catalogPage = {
                                     const settings = new CatalogSettings;
                                     settings.armyName = army;
                                     settings._doSub = false;
-                                    dynamicGoTo(settings, true, false); // update history but dont go
+                                    getPageRouter()?.goTo(settings, true, false); // update history but dont go
                                     thisPage.settings = settings;
                                     _loadFaction(army);
                                 }, listName);
@@ -264,7 +240,7 @@ const catalogPage = {
                     }
                 };
 
-                const armies = await globalCache?.getArmies();
+                const armies = await getGlobalCache()?.getArmies();
                 if (armies) {
                     await faCallback(armies);
                 }
@@ -284,7 +260,7 @@ const catalogPage = {
             let item = makeItem('Age of Sigmar', async () => {
                 const settings = new CatalogSettings;
                 settings.core = true;
-                dynamicGoTo(settings, true, false); // update history but dont go
+                getPageRouter()?.goTo(settings, true, false); // update history but dont go
                 thisPage.settings = settings;
                 await loadCore();
             }, 'core-list');
@@ -292,7 +268,7 @@ const catalogPage = {
             item = makeItem('Regiments of Renown', () => {
                 const settings = new CatalogSettings;
                 settings.armyName = 'ror';
-                dynamicGoTo(settings, true, false); // update history but dont go
+                getPageRouter()?.goTo(settings, true, false); // update history but dont go
                 thisPage.settings = settings;
                 loadRor();
             }, 'core-list');
@@ -307,13 +283,13 @@ const catalogPage = {
                     item = makeItem(army, () => {
                         const settings = new CatalogSettings;
                         settings.armyName = army;
-                        dynamicGoTo(settings, true, false); // update history but dont go
+                        getPageRouter()?.goTo(settings, true, false); // update history but dont go
                         thisPage.settings = settings;
                         loadTome();
                     }, `${alliance.alliance.toLowerCase()}-list`);
                 });
             };
-            const armies = await globalCache?.getArmies();
+            const armies = await getGlobalCache()?.getArmies();
             if (armies) {
                 await faCallback(armies);
             }
@@ -339,4 +315,6 @@ const catalogPage = {
     }
 };
 
-dynamicPages['catalog'] = catalogPage;
+export const registerCatalogPage = () => {
+    getPageRouter()?.registerPage('catalog', catalogPage);
+}

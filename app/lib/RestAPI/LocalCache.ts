@@ -148,3 +148,33 @@ export default class LocalCache {
         }
     }
 }
+const isOnlineSet = false;
+export let onlineAtLaunch: boolean = false;
+let globalCache: LocalCache | null = null
+
+export const isOnline = async (): Promise<boolean> => {
+  if (isOnlineSet)
+    return onlineAtLaunch;
+
+  if (navigator.onLine) {
+    try {
+      await fetch("https://www.google.com/favicon.ico", { method: "HEAD", mode: "no-cors" });
+      return true;
+    } catch (error: unknown) {
+    
+    }
+  }
+  return false;
+}
+
+export const getGlobalCache = (): LocalCache | null => {
+    return globalCache;
+}
+
+export const initializeGlobalCache = async (version: string) => {
+  if (onlineAtLaunch) {
+    globalCache = new LocalCache(version);
+  } else {
+    globalCache = new LocalCache();
+  }
+}

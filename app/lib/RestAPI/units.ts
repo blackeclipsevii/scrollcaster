@@ -1,7 +1,6 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js"
 import { endpoint } from "../endpoint.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
-import { globalCache } from "../main.js";
 
 export const unitsApi = {
     _cache: {

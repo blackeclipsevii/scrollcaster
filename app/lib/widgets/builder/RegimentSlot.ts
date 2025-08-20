@@ -1,9 +1,11 @@
-import { UnitSettings } from "../../../pages/src/units.js";
+
 import { Costed } from "../../../shared-lib/BasicObject.js";
 import RosterInterf from "../../../shared-lib/RosterInterface.js";
 import { displayPoints } from "../../host.js";
 import { CallbackMap, ContextMenu } from "../contextMenu.js";
-import { dynamicGoTo } from "../header.js";
+
+import UnitSettings from "../../../pages/src/settings/UnitsSettings.js";
+import { getPageRouter } from "../header.js";
 
 export const setRegimentIdx = (regSlot: HTMLDivElement, index: number) => {
     const hiddenIdx = regSlot.querySelector('.regiment-idx') as HTMLElement;
@@ -48,7 +50,7 @@ export default class RegimentSlot {
             if (count === 0)
                 settings.type = 'hero';
 
-            dynamicGoTo(settings);
+            getPageRouter()?.goTo(settings);
         };
         this._regimentSlot = div;
         if (id) {

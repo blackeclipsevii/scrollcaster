@@ -1,12 +1,7 @@
 import { getVar } from "../functions/getVar.js";
-import { _inCatalog, setInCatalog } from "../host.js";
-import { dynamicGoTo } from "./header.js";
-import { _linkStack } from "./header.js";
-import { Settings } from "./header.js";
-
-import { CatalogSettings } from "../../pages/src/tome.js";
-import { RosterSettings } from "../../pages/src/rosters.js";
-import { insetsAtLaunch } from "../main.js";
+import { getLaunchInsets } from "./InsetEdges.js";
+import { getPageRouter } from "./header.js";
+import { ViewType } from "./PageRouter.js";
 
 export function initializeFooter(root: string) {
     const main = document.querySelector('.persist');
@@ -29,34 +24,15 @@ export function initializeFooter(root: string) {
 
     const left = document.getElementById('footer-left') as HTMLElement;
     left.onclick = () => {
-      if (_inCatalog) {
-        dynamicGoTo((new CatalogSettings) as unknown as Settings);
-        _linkStack['catalog'].history = [];
-      } else {
-        localStorage.setItem('inCatalog', 'true');
-        setInCatalog(true);
-        if (_linkStack['catalog'].currentSettings)
-          dynamicGoTo(_linkStack['catalog'].currentSettings, false);
-        else
-          dynamicGoTo((new CatalogSettings) as unknown as Settings);
-      }
-    };
-    const right = document.getElementById('footer-right') as HTMLElement;
-    right.onclick = () => {
-      if (!_inCatalog) {
-        dynamicGoTo((new RosterSettings) as unknown as Settings);
-        _linkStack['roster'].history = [];
-      } else {
-        localStorage.setItem('inCatalog', 'false');
-        setInCatalog(false);
-        if (_linkStack['roster'].currentSettings)
-          dynamicGoTo(_linkStack['roster'].currentSettings, false);
-        else
-          dynamicGoTo((new RosterSettings) as unknown as Settings);
-      }
+      getPageRouter()?.displayView(ViewType.Catalog);
     };
 
-    const inset = insetsAtLaunch;
+    const right = document.getElementById('footer-right') as HTMLElement;
+    right.onclick = () => {
+      getPageRouter()?.displayView(ViewType.Roster);
+    };
+
+    const inset = getLaunchInsets();
     if (inset.bottom) {
         footer.style.paddingBottom = `${inset.bottom}px`;
         left.style.marginBottom = `${inset.bottom}px`;

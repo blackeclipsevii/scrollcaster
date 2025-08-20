@@ -1,13 +1,10 @@
-import { dynamicPages } from "../../lib/host.js";
-import { _linkStack, Settings } from "../../lib/widgets/header.js";
-import { dynamicGoTo } from "../../lib/widgets/header.js";
 import { version } from "../../lib/RestAPI/version.js";
 import { Overlay } from "../../lib/widgets/overlay.js";
 import { getLoadingMessage } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
 
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
 import { swapLayout } from "../../lib/widgets/layout.js";
-import { updateHeaderContextMenu } from "../../lib/widgets/header.js";
+import { getPageRouter, updateHeaderContextMenu } from "../../lib/widgets/header.js";
 import { clearFavorites } from "../../lib/widgets/favorites.js";
 import { rosterTotalPoints } from "../../lib/host.js";
 
@@ -22,24 +19,15 @@ import { generateId } from "../../lib/functions/uniqueIdentifier.js";
 import RosterInterf from "../../shared-lib/RosterInterface.js";
 import { About } from "../../lib/widgets/About.js";
 import RosterStateConverter from "../../lib/functions/import/RosterStateConvertImpl.js";
-import { BuilderSettings } from "./builder.js";
 import { ImportRoster } from "../../lib/functions/import/importRoster.js";
 import { clearDraggableOrder } from "../../lib/widgets/draggable.js";
 import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
-import { globalCache, insetsAtLaunch } from "../../lib/main.js";
+import { getLaunchInsets } from "../../lib/widgets/InsetEdges.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
-export class RosterSettings implements Settings {
-  [name: string]: unknown;
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Roster';
-    }
-    toUrl() {
-        return window.location.origin;
-    }
-};
+import Settings from "./settings/Settings.js";
+import RosterSettings from "./settings/RostersSettings.js";
+import BuilderSettings from "./settings/BuilderSettings.js";
 
 interface Alliances {
   name: string;
@@ -216,7 +204,7 @@ const rosterPage = {
     const toggleOverlay = Overlay.toggleFactory('flex', async () =>{
       setOverlayContents();
       if (thisPage._alliances.length === 0) {
-        const armies = await globalCache?.getArmies();
+        const armies = await getGlobalCache()?.getArmies();
         _populateArmies(armies);
       } else {
         _populateArmies(null);
@@ -225,7 +213,7 @@ const rosterPage = {
 
     function goToRoster(roster: RosterInterf) {
       const settings = new BuilderSettings(roster);
-      dynamicGoTo(settings);
+      getPageRouter()?.goTo(settings);
     }
 
     function displayRoster(roster: RosterInterf) {
@@ -662,7 +650,7 @@ const rosterPage = {
         </div>
       `
       button.onclick = toggleOverlay;
-      const inset = insetsAtLaunch;
+      const inset = getLaunchInsets();
       if (inset.bottom) {
           button.style.bottom = `${inset.bottom + 75}px`;
       }
@@ -689,4 +677,6 @@ const rosterPage = {
   }
 };
 
-dynamicPages['rosters'] = rosterPage;
+export const registerRostersPage = () => {
+    getPageRouter()?.registerPage('rosters', rosterPage);
+}

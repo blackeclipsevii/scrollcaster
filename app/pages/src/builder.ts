@@ -1,24 +1,18 @@
 import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
 import UnitInterf, { UnitSuperType } from "../../shared-lib/UnitInterface.js";
 import UpgradeInterf, { UpgradeSuperType } from "../../shared-lib/UpgradeInterface.js";
 import { copyToClipboard } from "../../lib/functions/copyToClipboard.js";
 import { exportRoster } from "../../lib/functions/exportRoster.js";
-import { dynamicPages, unitTotalPoints } from "../../lib/host.js";
+import { unitTotalPoints } from "../../lib/host.js";
 import { putRoster } from "../../lib/RestAPI/roster.js";
 import { CallbackMap } from "../../lib/widgets/contextMenu.js";
 import { displayPointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
 import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
 import { displayRorOverlay, displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { dynamicGoTo, setHeaderTitle, Settings, updateHeaderContextMenu } from "../../lib/widgets/header.js";
+import { getPageRouter, setHeaderTitle, updateHeaderContextMenu } from "../../lib/widgets/header.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { Overlay } from "../../lib/widgets/overlay.js";
-import { BattleSettings } from "./battle.js";
-import { TacticsSettings } from "./tactics.js";
-import { UnitSettings } from "./units.js";
-import { UpgradeSettings } from "./upgrades.js";
-import { WarscrollSettings } from "./warscroll.js";
 import LoreInterf from "../../shared-lib/LoreInterface.js";
 import { UnitType } from "../../shared-lib/UnitInterface.js";
 import { BasicObject, Typed } from "../../shared-lib/BasicObject.js";
@@ -29,26 +23,15 @@ import { fetchLUT } from "../../lib/RestAPI/lut.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
 import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
-import { globalCache } from "../../lib/main.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
-export class BuilderSettings implements Settings{
-    [name: string]: unknown;
-    roster: RosterInterf;
-    constructor(roster: RosterInterf) {
-        this.roster = roster;
-    }
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Builder';
-    }
-    toUrl() {
-        if (this.roster)
-            return encodeURI(`${window.location.origin}?page=${this.pageName()}&roster=${this.roster.id}`);
-        return window.location.origin;
-    }
-};
+import Settings from "./settings/Settings.js";
+import BuilderSettings from "./settings/BuilderSettings.js";
+import UnitSettings from "./settings/UnitsSettings.js";
+import UpgradeSettings from "./settings/UpgradeSettings.js";
+import BattleSettings from "./settings/BattleSettings.js";
+import TacticsSettings from "./settings/TacticsSettings.js";
+import WarscrollSettings from "./settings/WarscrollSettings.js";
 
 const builderPage = {
     settings: null as BuilderSettings | null,
@@ -135,7 +118,7 @@ const builderPage = {
             }
 
             if ((unit as UnitInterf).enhancements) {
-                const allUpgrades = await globalCache?.getUpgrades(roster.army);
+                const allUpgrades = await getGlobalCache()?.getUpgrades(roster.army);
                 if (allUpgrades) {
                     const _unit = unit as UnitInterf;
                     const enhancementNames = Object.getOwnPropertyNames(_unit.enhancements);
@@ -162,7 +145,7 @@ const builderPage = {
                                         createUnitSlot(unitSlot.getDetails(), unitResult, 0, {}, () => {
                                             const settings = new WarscrollSettings;
                                             settings.unit = unitResult;
-                                            dynamicGoTo(settings);
+                                            getPageRouter()?.goTo(settings);
                                         });
                                     }
                                     else if (typedResult.superType === UpgradeSuperType) {
@@ -306,7 +289,7 @@ const builderPage = {
                 unitSlot.setOnClick(() => {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 });
             }
 
@@ -350,7 +333,7 @@ const builderPage = {
                 await createUnitSlot(content, regiment.leader, -1, 'defaults', () => {
                     const settings = new WarscrollSettings;
                     settings.unit = regiment.leader;
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 });
                 points += unitTotalPoints(regiment.leader);
             } else {
@@ -364,7 +347,7 @@ const builderPage = {
                 await createUnitSlot(content, unit, i, 'defaults', () => {
                     const settings = new WarscrollSettings;
                     settings.unit = unit;
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 });
                 points += unitTotalPoints(unit);
             };
@@ -420,7 +403,7 @@ const builderPage = {
 
         const getUnitById = async (id: string, army: string | null) => {
             try {
-                const units = await globalCache?.getUnits(army);
+                const units = await getGlobalCache()?.getUnits(army);
                 if (!units)
                     return null;
                 return units[id];
@@ -467,7 +450,7 @@ const builderPage = {
             const onclick = () => {
                 const settings = new WarscrollSettings;
                 settings.unit = unit;
-                dynamicGoTo(settings);
+                getPageRouter()?.goTo(settings);
             };
             
             const callbackMap = {
@@ -508,7 +491,7 @@ const builderPage = {
             const onclick = () => {
                 const settings = new WarscrollSettings;
                 settings.unit = roster.terrainFeature;
-                dynamicGoTo(settings);
+                getPageRouter()?.goTo(settings);
             };
 
             const callbackMap = {
@@ -518,7 +501,7 @@ const builderPage = {
                     const settings = new UnitSettings;
                     settings.roster = roster;
                     settings.type = 'faction terrain';
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 },
 
                 Delete: async () => {
@@ -583,7 +566,7 @@ const builderPage = {
                     settings.titleName = 'Battle Formation';
                     settings.roster = roster;
                     settings.type = 'battleFormations';
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 }
             };
 
@@ -628,7 +611,7 @@ const builderPage = {
                     settings.titleName = 'Lores';
                     settings.roster = roster;
                     settings.type = 'spellLore';
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 },
 
                 Delete: async () => {
@@ -664,7 +647,7 @@ const builderPage = {
                     settings.titleName = 'Lores';
                     settings.roster = roster;
                     settings.type = 'prayerLore';
-                    dynamicGoTo(settings);
+                    getPageRouter()?.goTo(settings);
                 },
 
                 Delete: async () => {
@@ -716,7 +699,7 @@ const builderPage = {
                     await createManifestSlot(unit, () => {
                         const settings = new WarscrollSettings;
                         settings.unit = unit;
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     });
                 }
             }
@@ -763,7 +746,7 @@ const builderPage = {
                         putRoster(roster);
                         const settings = new TacticsSettings;
                         settings.roster = roster;
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     },
 
                     Delete: async () => {
@@ -820,7 +803,7 @@ const builderPage = {
             if (roster.terrainFeature) {
                 displayTerrain();
             } else {
-                const result = await globalCache?.getUnits(roster.army);
+                const result = await getGlobalCache()?.getUnits(roster.army);
                 if (result) {
                     const units = Object.values(result);
                     const terrain = units.some(unit => unit.type === UnitType.Terrain);
@@ -894,41 +877,41 @@ const builderPage = {
                             settings.roster = roster;
                             settings.regimentIndex = idx;
                             settings.type = 'hero';
-                            dynamicGoTo(settings);
+                            getPageRouter()?.goTo(settings);
                         }
                     } 
                     else if (adjustedName.includes('auxiliary')) {
                         const settings = new UnitSettings;
                         settings.roster = roster;
                         settings.auxiliary = true;
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     }
                     else if (adjustedName.includes('lores')) {
                         const settings = new UpgradeSettings;
                         settings.titleName = 'Lores';
                         settings.roster = roster;
                         settings.type = 'lore';
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     }
                     else if (adjustedName.includes('formation')) {
                         const settings = new UpgradeSettings;
                         settings.titleName = 'Battle Formation';
                         settings.type = 'battleFormations';
                         settings.roster = roster;
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     }
                     else if (adjustedName.includes('terrain')) {
                         if (!roster.terrainFeature) {
                             const settings = new UnitSettings;
                             settings.roster = roster;
                             settings.type = 'faction terrain';
-                            dynamicGoTo(settings);
+                            getPageRouter()?.goTo(settings);
                         }
                     }
                     else if (adjustedName.includes('tactic')) {
                         const settings = new TacticsSettings;
                         settings.roster = roster
-                        dynamicGoTo(settings);
+                        getPageRouter()?.goTo(settings);
                     }
                     else {
                         alert(`Add new item to ${section}`);
@@ -948,9 +931,9 @@ const builderPage = {
 
             updateHeaderContextMenu({
                 'Battle View': () => {
-                    const bvs = new BattleSettings;
-                    bvs.roster = roster;
-                    dynamicGoTo(bvs);
+                    const settings = new BattleSettings;
+                    settings.roster = roster;
+                    getPageRouter()?.goTo(settings);
                 },
                 'Export List': exportListAndDisplay 
             });
@@ -979,4 +962,6 @@ const builderPage = {
     }
 };
 
-dynamicPages['builder'] = builderPage;
+export const registerBuilderPage = () => {
+    getPageRouter()?.registerPage('builder', builderPage);
+}

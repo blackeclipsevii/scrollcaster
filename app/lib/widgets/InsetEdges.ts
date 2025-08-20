@@ -20,3 +20,14 @@ export class InsetEdges {
         });
     }
 }
+
+let insetsAtLaunch: InsetEdges | null = null;
+export const initializeLaunchInsets = () => {
+    insetsAtLaunch = new InsetEdges;
+}
+
+export const getLaunchInsets = (): InsetEdges => {
+  if (insetsAtLaunch !== null)
+    return insetsAtLaunch
+  return new InsetEdges();
+}

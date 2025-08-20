@@ -3,32 +3,17 @@ import ModelInterf from "../../shared-lib/ModelInterface.js";
 import OptionSet from "../../shared-lib/Options.js";
 import UnitInterf from "../../shared-lib/UnitInterface.js";
 import WeaponInterf, { WeaponSelectionPer, WeaponType } from "../../shared-lib/WeaponInterf.js";
-import { DYNAMIC_WARSCROLL, dynamicPages } from "../../lib/host.js";
+import { DYNAMIC_WARSCROLL } from "../../lib/host.js";
 import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
 import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
 import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { disableHeaderContextMenu, setHeaderTitle, Settings } from "../../lib/widgets/header.js";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
 import { whClearDiv } from "../../lib/widgets/helpers.js";
 import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { WeaponWidget } from "../../lib/widgets/WeaponWidget.js";
 
-export class WarscrollSettings implements Settings {
-    [name: string]: unknown;
-    unit = null as UnitInterf | null;
-    isHistoric() {
-        return true;
-    }
-    pageName() {
-        return 'Warscroll';
-    }
-
-    toUrl() {
-        let url = `${window.location.origin}?page=${this.pageName()}`;
-        if (this.unit)
-            url += `&uniti=${this.unit.id}`;
-        return encodeURI(url);
-    }
-};
+import Settings from "./settings/Settings.js";
+import WarscrollSettings from "./settings/WarscrollSettings.js";
 
 const warscrollPage = {
     settings: new WarscrollSettings,
@@ -329,4 +314,6 @@ const warscrollPage = {
     }
 };
 
-dynamicPages['warscroll'] = warscrollPage;
+export const registerWarscrollPage = () => {
+    getPageRouter()?.registerPage('warscroll', warscrollPage);
+}
