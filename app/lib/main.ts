@@ -8,7 +8,7 @@ import { initializeGlobalCache, isOnline } from "./RestAPI/LocalCache.js";
 
 import RostersSettings from "../pages/src/settings/RostersSettings.js";
 import { version } from "./RestAPI/version.js";
-import { addPWAInstallPrompt } from "./widgets/PWAInstaller.js";
+// import { addPWAInstallPrompt } from "./widgets/PWAInstaller.js";
 
 import { registerAllPages } from "../pages/src/registerAllPages.js";
 
@@ -66,6 +66,6 @@ const loadIcons = async () => {
         .catch((err) => console.error('Service Worker registration failed:', err));
     });
   }
-  
+
   registerAllPages(new RostersSettings);
 })();
