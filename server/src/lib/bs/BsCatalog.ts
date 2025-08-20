@@ -16,8 +16,6 @@ export interface BsLink extends BsNamed, BsIdentifiable, BsTyped {
     '@targetId': string;
 }
 
-//
-
 export interface BsConditionInterf extends BsTyped {
     '@value': string;
     '@field': string;
