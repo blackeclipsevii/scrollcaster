@@ -13,7 +13,7 @@
       "type": "image/png"
     }
   ],
-  "start_url": "https://www.scrollcaster.app?inset-bottom=64",
+  "start_url": "https://www.scrollcaster.app",
   "display": "standalone",
   "theme_color": "black",
   "background_color": "black"

@@ -212,6 +212,11 @@ const rosterPage = {
     });
 
     function goToRoster(roster: RosterInterf) {
+      const installBtn = document.getElementById('install-btn') as HTMLElement | null;
+      if (installBtn) {
+        installBtn.style.display = `none`;
+      }
+      
       const settings = new BuilderSettings(roster);
       getPageRouter()?.goTo(settings);
     }
@@ -653,6 +658,11 @@ const rosterPage = {
       const inset = getLaunchInsets();
       if (inset.bottom) {
           button.style.bottom = `${inset.bottom + 75}px`;
+
+          const installBtn = document.getElementById('install-btn') as HTMLElement | null;
+          if (installBtn) {
+            installBtn.style.bottom = `${inset.bottom + 75}px`;
+          }
       }
 
       div.appendChild(button);
