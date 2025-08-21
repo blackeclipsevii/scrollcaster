@@ -1,3 +1,5 @@
+
+import Settings from "./settings/Settings";
 import { registerCatalogPage } from "./tome";
 import { registerRostersPage } from "./rosters";
 import { registerSearchPage } from "./search";
@@ -8,8 +10,8 @@ import { registerWarscrollPage } from "./warscroll";
 import { registerBuilderPage } from "./builder";
 import { registerBattlePage } from "./BattlePage/battle";
 import { registerRegimentOfRenownPage } from "./regimentOfRenown";
-import Settings from "./settings/Settings";
 import { getPageRouter } from "@/lib/widgets/header";
+import { registerSettingsPage } from "./SettingsPage/SettingsPageWrapper";
 
 export const registerAllPages = (initialSettings ?: Settings) => {
     registerRostersPage();
@@ -22,6 +24,7 @@ export const registerAllPages = (initialSettings ?: Settings) => {
     registerBuilderPage();
     registerBattlePage();
     registerRegimentOfRenownPage();
+    registerSettingsPage();
     if (initialSettings) {
         getPageRouter()?.goTo(initialSettings);
     }

@@ -3,7 +3,7 @@ import RostersSettings from "@/pages/src/settings/RostersSettings";
 import Settings from "@/pages/src/settings/Settings";
 import { ContextMenu } from "./contextMenu";
 import { Overlay } from "./overlay";
-import { hideVueComponent, vueIsShowing } from "@/pages/src/VueApp";
+import { hideVueComponent, vueIsShowing } from "@/lib/widgets/VueApp";
 
 interface HistoryEle {
     scrollY: number;

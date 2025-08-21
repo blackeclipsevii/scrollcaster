@@ -5,7 +5,6 @@ import { getLoadingMessage } from "@/lib/RestAPI/fetchWithLoadingDisplay";
 import { initializeDraggable } from "@/lib/widgets/draggable";
 import { swapLayout } from "@/lib/widgets/layout";
 import { getPageRouter, updateHeaderContextMenu } from "@/lib/widgets/header";
-import { clearFavorites } from "@/lib/widgets/favorites";
 import { rosterTotalPoints } from "@/lib/host";
 
 import { makeLayout } from "@/lib/widgets/layout";
@@ -27,11 +26,9 @@ import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 import Settings from "./settings/Settings";
 import RosterSettings from "./settings/RostersSettings";
 import BuilderSettings from "./settings/BuilderSettings";
-import { kofiCup, plusIcon } from "@/lib/widgets/images.js";
+import SettingsSettings from "./settings/SettingsSettings";
 
-import { createApp } from 'vue'
-import SettingsPage from './SettingsPage/SettingsPage.vue'
-import { showVueComponent } from "./VueApp";
+import { kofiCup, plusIcon } from "@/lib/widgets/images.js";
 
 interface Alliances {
   name: string;
@@ -289,19 +286,7 @@ const rosterPage = {
       item.onclick = () => {
         goToRoster(roster);
       }
-  
-/*
-      const currentPts = rosterTotalPoints(roster);
-      const entry = document.createElement("div");
-      entry.innerHTML = `
-      <strong>${roster.name}</strong>
-      <span style='margin-left: 1.5em; margin-bottom: 0; background-color: gray;' class='points-label'>${currentPts} points</span> 
-      <br/>
-      ${armyName}${roster.battleFormation ? ' | ' + roster.battleFormation.name: ''}<br/>
-      ${roster.description.length ? roster.description + '<br/>' : ''}
-      <div style="display: hidden" class="roster-id" id="${roster.id}"></div>
-      `;
-*/
+
       const callbackMap = {
         'Update Details': async () => {
             const toggle = Overlay.toggleFactory('flex', () => {
@@ -432,7 +417,7 @@ const rosterPage = {
           toggle();
         },
         'Settings': () => {
-          showVueComponent();
+          getPageRouter()?.goTo(new SettingsSettings);
         },
         'Import Roster': async () => {
             const toggle  = Overlay.toggleFactory('block', async () =>{
@@ -445,13 +430,6 @@ const rosterPage = {
               section.style.width = '95%';
               section.style.fontSize = '14px';
               
-              //try {
-              //  const txt = await navigator.clipboard.readText();
-              //  if (ImportRoster.canImport(txt))
-              //    section.value = ImportRoster.stripMatchingDelimiters(txt);
-              //} catch (err) {
-              //}
-
               const copyButton = document.createElement('button');
               copyButton.className = 'full-rectangle-button';
               copyButton.textContent = 'Import Roster';
