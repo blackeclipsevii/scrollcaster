@@ -515,6 +515,30 @@ const rosterPage = {
           });
           toggle();
         },
+        'Clear Data Cache': () => {
+            const toggle = Overlay.toggleFactory('flex', () => {
+              const modal = document.querySelector(".modal") as HTMLElement;
+              modal.innerHTML = '';
+
+              const section = document.createElement('p');
+              section.innerHTML = 'Do you want to delete all data cached from the server?<br/><br/><strong>This cannot be undone.</strong>';
+
+              const button = document.createElement('button');
+              button.className = 'full-rectangle-button';
+              button.textContent = 'Clear Data Cache';
+              button.style.backgroundColor = 'red';
+              button.style.color = getVar('white-1');
+              button.style.fontWeight = 'bold';
+              button.onclick = async () => {
+                getGlobalCache()?.clear();
+                Overlay.disable();
+              };
+
+              modal.appendChild(section);
+              modal.appendChild(button);
+          });
+          toggle();
+        },
         'Delete All Rosters': () => {
             const toggle = Overlay.toggleFactory('flex', () => {
               const modal = document.querySelector(".modal") as HTMLElement;

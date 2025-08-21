@@ -235,7 +235,8 @@ server.get('/regimentsOfRenown', (req, res) =>{
     return;
   }
 
-  res.end(JSON.stringify(aos.regimentsOfRenown));
+  // i would really prefer the lookup table but the 'army' side of the api returns a list
+  res.end(JSON.stringify(Object.values(aos.regimentsOfRenown)));
   res.status(200);
   return;
 });

@@ -21,18 +21,6 @@ import UpgradeSettings from "./settings/UpgradeSettings.js";
 
 const catalogPage = {
     settings: new CatalogSettings,
-    _cache: {
-        armies: null,
-        regimentsOfRenown: null as ForceLUT | null
-    },
-    async fetchRegimentsOfRenown() {
-        if (this._cache.regimentsOfRenown) {
-            //return this._cache.regimentsOfRenown;
-        }
-        let result = await fetchWithLoadingDisplay(encodeURI(`${endpoint}/regimentsOfRenown`)) as ForceLUT | null;
-        this._cache.regimentsOfRenown = result;
-        return result;
-    },
     async loadPage(settings: Settings) {
         if (!settings)
             settings = new CatalogSettings;
@@ -94,7 +82,7 @@ const catalogPage = {
         }
         
         async function loadRor() {
-            const unitsLUT = await thisPage.fetchRegimentsOfRenown();
+            const unitsLUT = await getGlobalCache()?.getRegimentsOfRenown();
             if (!unitsLUT)
                 return;
             

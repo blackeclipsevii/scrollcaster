@@ -392,13 +392,14 @@ export default class AgeOfSigmar {
                             if (mod.conditions) {
                                 mod.conditions.forEach(condition => {
                                     if (condition['@field'] === 'selections' &&
-                                        condition['@scope'] === 'roster') {
+                                        condition['@scope'] === 'force') {
                                         const childId = condition['@childId'];
                                         const force = parsedForces[childId];
                                         if (!force) {
-                                        // console.log(`upgrade missing its force? ${upgrade.id} ${upgrade.name}`);
+                                            console.log(`upgrade missing its force? ${upgrade.id} ${upgrade.name}`);
                                             return;
                                         }
+                                        console.log (`found upgrades for: ${force.name}`)
                                         force.upgrades.push(upgrade);
                                     }
                                 });
