@@ -6,7 +6,7 @@ import Settings from "@/pages/src/settings/Settings";
 import BattleSettings from "@/pages/src/settings/BattleSettings"
 
 import BattlePage from "./BattlePage.vue";
-import { showVueComponent } from "../VueApp";
+import { showVueComponent } from "../../../lib/widgets/VueApp";
 import RosterInterf from "@/shared-lib/RosterInterface";
 import UnitInterf from "@/shared-lib/UnitInterface";
 import UpgradeInterf from "@/shared-lib/UpgradeInterface";
