@@ -81,7 +81,6 @@ export default class LocalCache {
         }
         return upgrades;
     }
-    async getRegimentsOfRenown(army: string): Promise<Force[] | null> {
     async getRegimentsOfRenown(army?: string): Promise<Force[] | null> {
         const data = this.getData(army ? army : 'core');
         if (data.regimentsOfRenown)
