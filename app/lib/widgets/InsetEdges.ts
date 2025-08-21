@@ -18,10 +18,6 @@ export class InsetEdges {
             if (value)
                 this[edge] = Number(value) / 2;
         });
-
-        if (this.bottom === null) {
-            this.bottom = 32;
-        }
     }
 }
 
