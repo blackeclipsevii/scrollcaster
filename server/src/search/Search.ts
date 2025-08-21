@@ -17,6 +17,7 @@ export default class Search {
                 this.dataset.push({
                     name: unit.name,
                     id: unit.id,
+                    superType: unit.superType,
                     type: unit.type,
                     armyName: armyName,
                     keywords: unit.keywords.concat(unit._tags)
@@ -38,6 +39,25 @@ export default class Search {
 
         // universal manifestations
         addUnits(ageOfSigmar.units, 'Core');
+
+        const rors = Object.values(ageOfSigmar.regimentsOfRenown);
+        rors.forEach(ror => {
+            const keywordSet: {[keyword: string]: boolean} = {'Regiment of Renown': true};
+            ror.unitContainers.forEach(container => {
+                container.unit.keywords.forEach(keyword => {
+                    keywordSet[keyword] = true;
+                });
+            })
+
+            this.dataset.push({
+                name: ror.name,
+                id: ror.id,
+                superType: ror.superType,
+                type: ror.type,
+                armyName: 'Core',
+                keywords: Object.getOwnPropertyNames(keywordSet)
+            });
+        });
 
         const fuseOptions = {
             // isCaseSensitive: false,

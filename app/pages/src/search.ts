@@ -8,11 +8,14 @@ import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
 import { getVar } from "../../lib/functions/getVar.js";
 import { fetchSearch } from "../../lib/RestAPI/search.js";
 import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
+import UnitInterf, { UnitSuperType } from "../../shared-lib/UnitInterface.js";
 
 import Settings from "./settings/Settings.js";
 import SearchSettings from "./settings/SearchSettings.js";
 import WarscrollSettings from "./settings/WarscrollSettings.js";
+import { OtherSuperType, OtherTypes } from "../../shared-lib/OtherTypes.js";
+import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings.js";
+import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
 
 interface Result {
     item: SearchableObject
@@ -41,7 +44,7 @@ const searchPage = {
             }
         }
         
-        const makeSelectableItem = (searchResult: SearchableObject, isUnit: boolean, parentList: HTMLElement, onclick: ()=>void) => {
+        const makeSelectableItem = (searchResult: SearchableObject, parentList: HTMLElement, onclick: ()=>void) => {
             const section = parentList.closest('.section') as HTMLElement;
             section.style.display = 'block';
 
@@ -57,7 +60,7 @@ const searchPage = {
 
             const roleEle = makeSelectableItemType({
                 type: searchResult.type,
-                superType: 'Unit'
+                superType: searchResult.superType
             });
             left.appendChild(roleEle);
 
@@ -80,15 +83,32 @@ const searchPage = {
             itemList.innerHTML = '';
 
             results.forEach(result => {
-                makeSelectableItem(result.item, true, itemList, async () =>{
+                makeSelectableItem(result.item, itemList, async () =>{
                     let armyName: string | null = result.item.armyName;
                     if (armyName.toLowerCase() === 'core')
                         armyName = null;
 
-                    const unit = await getSpecificUnit(result.item.id, armyName);
-                    const settings = new WarscrollSettings;
-                    settings.unit = unit;
-                    getPageRouter()?.goTo(settings);
+                    if (result.item.superType === UnitSuperType) {
+                        const unit = await getSpecificUnit(result.item.id, armyName);
+                        const settings = new WarscrollSettings;
+                        settings.unit = unit;
+                        getPageRouter()?.goTo(settings);
+                    }
+                    else if (result.item.superType === OtherSuperType &&
+                             result.item.type === OtherTypes.RegimentOfRenown
+                    ) {
+                        const allRor = await getGlobalCache()?.getRegimentsOfRenown()
+                         if (allRor) {
+                            for (let i = 0; i < allRor.length; ++i) {
+                                if (allRor[i].id === result.item.id) {
+                                    const settings = new RegimentOfRenownSettings;
+                                    settings.ror = allRor[i];
+                                    getPageRouter()?.goTo(settings);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 });
             });
         }
@@ -115,7 +135,7 @@ const searchPage = {
             itemList.style.display = '';
             const emptySearchDisplay = `
                 <p style='color: ${getVar('white-3')};'>
-                    <i>Search is currently limited to units.</i>
+                    <i>Search is currently limited to Units and Regiments of Renown.</i>
                 </p>
             `;
 
@@ -147,12 +167,12 @@ const searchPage = {
                     else {
                         itemList.innerHTML = `
                             <p style='color: ${getVar('white-3')};'>
-                                <i>Search is currently limited to units... and 3 or more letters</i>
+                                <i>Search is currently limited to Units, Regiments of Renown... and 3 or more letters</i>
                             </p>
                         `;
                     }
                     // You can trigger a search or update UI here
-                }, 1000) as unknown; // 1000 ms = 1 second
+                }, 800) as unknown; // 1000 ms = 1 second
             });
 
             if (thisPage._cache.results && thisPage._cache.query) {
