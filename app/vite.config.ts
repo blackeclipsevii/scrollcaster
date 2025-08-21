@@ -1,6 +1,8 @@
 // vite.config.ts
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import { VitePWA } from 'vite-plugin-pwa';
+
 import path from 'path';
 import fs from 'fs';
 
@@ -31,9 +33,60 @@ function getEntries() {
 }
 
 export default defineConfig({
-  plugins: [vue()],
-  publicDir: 'public',  //Declare the public folder relative to root
-  assetsInclude: ['resources/**/*.png', 'resources/**/*.ico', 'resources/**/*.webp'],
+  plugins: [
+    vue(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets:[
+        "dropped-scrolls.jpg", 
+        "kofi_symbol-edited.png",
+        "manifest.json",
+        "scrollcaster-icon.ico",
+        "scrollcaster-icon.png",
+        "support_me_on_kofi_beige.webp",
+        "flaticon/001-sword.png",
+        "flaticon/002-flag.png",
+        "flaticon/003-circle.png",
+        "flaticon/004-cursor.png",
+        "flaticon/005-star.png",
+        "flaticon/006-archery.png",
+        "flaticon/007-shield.png",
+        "flaticon/008-skull.png",
+        "flaticon/009-right-arrow.png",
+        "flaticon/010-loupe.png",
+        "flaticon/011-open-book.png",
+        "flaticon/012-left-arrow.png",
+        "flaticon/013-gear.png",
+        "flaticon/014-plus-symbol-button.png",
+        "flaticon/015-minus.png",
+        "flaticon/016-danger.png",
+        "flaticon/017-check.png",
+        "flaticon/018-dots.png",
+      ],
+      manifest: {
+        name: 'Scrollcaster',
+        short_name: 'Scrollcaster',
+        start_url: '/',
+        display: 'standalone',
+        background_color: '#000000',
+        theme_color: '#000000',
+        icons: [
+          {
+            "src": "scrollcaster-icon.ico",
+            "sizes": "256x256",
+            "type": "image/icon"
+          },
+          {
+            "src": "scrollcaster-icon.png",
+            "sizes": "512x512",
+            "type": "image/png"
+          }
+        ]
+      }
+    })
+  ],
+  publicDir: 'resources',  //Declare the public folder relative to root
+  assetsInclude: ['**/*.png', '**/*.ico', '**/*.webp'],
   build: {
     minify: false,
 
