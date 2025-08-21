@@ -12,9 +12,9 @@
   width: 95%;
 }
 
-.army-card:hover {
+/* .army-card:hover {
   background: #eef;
-}
+} */
 
 .army-card:active:not(:focus-within) {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
