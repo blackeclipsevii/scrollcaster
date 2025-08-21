@@ -9,7 +9,6 @@ import fs from 'fs';
 function getEntries() {
   const entries: Record<string, string> = {
     index: 'index.html',
-    'service-worker': 'service-worker.js',
     'version': 'version.ts'
   };
 
@@ -37,6 +36,7 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
+      strategies: 'generateSW',
       includeAssets:[
         "dropped-scrolls.jpg", 
         "kofi_symbol-edited.png",
