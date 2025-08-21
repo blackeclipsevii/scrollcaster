@@ -1,7 +1,7 @@
 <!-- src/pages/MyPage.vue -->
 <template>
     <Section :title="title">
-        <SettingsItem name="Display Legends" description="Allow legends units to display in the catalog.">
+        <SettingsItem name="Display Legends" description="Allow legends units to display in the catalog. This does not currently enable legends listbuilding.">
             <SettingsSwitch v-model="displayLegends"></SettingsSwitch>
         </SettingsItem>
         <SettingsItem name="Reset Page Layout" description="Return draggables to their default position">
