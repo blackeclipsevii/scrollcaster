@@ -30,6 +30,9 @@ import RosterSettings from "./settings/RostersSettings";
 import BuilderSettings from "./settings/BuilderSettings";
 import { kofiCup, plusIcon } from "@/lib/widgets/images.js";
 
+import { createApp } from 'vue'
+import SettingsPage from './SettingsPage.vue'
+
 interface Alliances {
   name: string;
   alliance: string;
@@ -468,77 +471,8 @@ const rosterPage = {
           });
           toggle();
         },
-        'Clear Favorites': () => {
-          const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal") as HTMLElement;
-              modal.innerHTML = '';
-
-              const section = document.createElement('p');
-              section.innerHTML = 'Do you want to clear favorites history?<br/><br/><strong>This cannot be undone.</strong>';
-
-              const button = document.createElement('button');
-              button.className = 'full-rectangle-button';
-              button.textContent = 'Clear Favorites';
-              button.style.backgroundColor = 'red';
-              button.style.color = getVar('white-1');
-              button.style.fontWeight = 'bold';
-              button.onclick = () => {
-                clearFavorites();
-                Overlay.disable();
-              };
-
-              modal.appendChild(section);
-              modal.appendChild(button);
-          });
-          toggle();
-        },
-        'Reset Page Layout': () => {
-          const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal") as HTMLElement;
-              modal.innerHTML = '';
-
-              const section = document.createElement('p');
-              section.innerHTML = 'Reset page page layouts to their default settings?<br/><br/><strong>This cannot be undone.</strong>';
-
-              const button = document.createElement('button');
-              button.className = 'full-rectangle-button';
-              button.textContent = 'Reset Layouts';
-              button.style.backgroundColor = 'red';
-              button.style.color = getVar('white-1');
-              button.style.fontWeight = 'bold';
-              button.onclick = () => {
-                clearDraggableOrder();
-                Overlay.disable();
-              };
-
-              modal.appendChild(section);
-              modal.appendChild(button);
-          });
-          toggle();
-        },
-        'Clear Data Cache': () => {
-            const toggle = Overlay.toggleFactory('flex', () => {
-              const modal = document.querySelector(".modal") as HTMLElement;
-              modal.innerHTML = '';
-
-              const section = document.createElement('p');
-              section.innerHTML = 'Do you want to delete all data cached from the server?<br/><br/><strong>This cannot be undone.</strong>';
-
-              const button = document.createElement('button');
-              button.className = 'full-rectangle-button';
-              button.textContent = 'Clear Data Cache';
-              button.style.backgroundColor = 'red';
-              button.style.color = getVar('white-1');
-              button.style.fontWeight = 'bold';
-              button.onclick = async () => {
-                getGlobalCache()?.clear();
-                Overlay.disable();
-              };
-
-              modal.appendChild(section);
-              modal.appendChild(button);
-          });
-          toggle();
+        'Settings': () => {
+          createApp(SettingsPage).mount('#visible-content')
         },
         'Delete All Rosters': () => {
             const toggle = Overlay.toggleFactory('flex', () => {
