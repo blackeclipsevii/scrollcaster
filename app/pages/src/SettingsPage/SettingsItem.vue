@@ -7,23 +7,16 @@
             <!-- selectable item type ? -->
         </div>
         <div class="settings-item-right">
-            <div v-if="buttonText" class="rectangle-button" :class="buttonType" @click="buttonClick">{{ buttonText }}</div>
-            <Switch v-else v-model="onOff" ></Switch>
+            <slot></slot>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    import { ref } from 'vue';
-    import Switch from './Switch.vue'
     defineProps<{
         name: string,
-        description: string,
-        buttonText: string | undefined,
-        buttonType: string | undefined,
-        buttonClick: (() => void) | undefined
+        description: string
     }>();
-    const onOff = ref(false);
 </script>
 
 <style scoped>
@@ -46,10 +39,5 @@
     }
     .settings-item-description {
         color: var(--white-2);
-    }
-    .delete {
-        background-color: var(--red-ability);
-        font-weight: bold;
-        border: 1px solid var(--black-color);
     }
 </style>

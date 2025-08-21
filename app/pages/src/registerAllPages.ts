@@ -6,7 +6,7 @@ import { registerUpgradesPage } from "./upgrades";
 import { registerUnitsPage } from "./units";
 import { registerWarscrollPage } from "./warscroll";
 import { registerBuilderPage } from "./builder";
-import { registerBattlePage } from "./battle";
+import { registerBattlePage } from "./BattlePage/battle";
 import { registerRegimentOfRenownPage } from "./regimentOfRenown";
 import Settings from "./settings/Settings";
 import { getPageRouter } from "@/lib/widgets/header";

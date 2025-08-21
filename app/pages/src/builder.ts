@@ -20,7 +20,6 @@ import { BasicObject, Typed } from "@/shared-lib/BasicObject";
 import UnitSlot, {GenericSlot, toggleUnitAddButton} from "@/lib/widgets/builder/UnitSlot";
 import RegimentSlot, { setRegimentIdx } from "@/lib/widgets/builder/RegimentSlot";
 import { fetchLUT } from "@/lib/RestAPI/lut";
-import { getVar } from "@/lib/functions/getVar";
 import { WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
 import { displaySlidebanner, SlideBannerMessageType } from "@/lib/widgets/SlideBanner";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";

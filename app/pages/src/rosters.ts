@@ -20,7 +20,6 @@ import RosterInterf from "@/shared-lib/RosterInterface";
 import { About } from "@/lib/widgets/About";
 import RosterStateConverter from "@/lib/functions/import/RosterStateConvertImpl";
 import { ImportRoster } from "@/lib/functions/import/importRoster";
-import { clearDraggableOrder } from "@/lib/widgets/draggable";
 import { displaySlidebanner, SlideBannerMessageType } from "@/lib/widgets/SlideBanner";
 import { getLaunchInsets } from "@/lib/widgets/InsetEdges";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
@@ -31,7 +30,8 @@ import BuilderSettings from "./settings/BuilderSettings";
 import { kofiCup, plusIcon } from "@/lib/widgets/images.js";
 
 import { createApp } from 'vue'
-import SettingsPage from './SettingsPage.vue'
+import SettingsPage from './SettingsPage/SettingsPage.vue'
+import { showVueComponent } from "./VueApp";
 
 interface Alliances {
   name: string;
@@ -39,6 +39,7 @@ interface Alliances {
 }
 
 const rosterPage = {
+  _settingsPage: null as unknown,
   settings: null as RosterSettings | null,
   _ror: {} as {[name: string]: string[]},
   _alliances: [] as Alliances[],
@@ -430,6 +431,9 @@ const rosterPage = {
           });
           toggle();
         },
+        'Settings': () => {
+          showVueComponent();
+        },
         'Import Roster': async () => {
             const toggle  = Overlay.toggleFactory('block', async () =>{
               const modal = document.querySelector(".modal") as HTMLElement;
@@ -470,9 +474,6 @@ const rosterPage = {
               modal.appendChild(copyButton);
           });
           toggle();
-        },
-        'Settings': () => {
-          createApp(SettingsPage).mount('#visible-content')
         },
         'Delete All Rosters': () => {
             const toggle = Overlay.toggleFactory('flex', () => {

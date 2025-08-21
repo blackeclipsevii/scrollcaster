@@ -1,35 +1,47 @@
 <!-- src/pages/MyPage.vue -->
 <template>
-    <div class="section draggable">
-        <div class="draggable-grip">
-            <span class="grip-icon">⋮⋮⋮</span>
-            <h3 class="section-title">{{ title }}</h3>
-        </div>
-        <div class="item-list" id="settings-list">
-            <SettingsItem name="Legends" description="Allow legends units to display in the catalog."></SettingsItem>
-            <SettingsItem name="Reset Page Layout" description="Return draggables to their default position" 
-                          buttonText="Reset" buttonType="delete"
-                          :buttonClick="resetPageLayout"></SettingsItem>
-            <SettingsItem name="Clear Favorites" description="Remove all favorites" 
-                          buttonText="Clear" buttonType="delete"
-                          :buttonClick="clearAllFavorites"></SettingsItem>
-            <SettingsItem name="Clear Cache" description="Delete local data cached from the server" 
-                          button-Text="Clear" buttonType="delete"
-                          :buttonClick="clearDataCache"></SettingsItem>
-        </div>
-    </div>
+    <Section :title="title">
+        <SettingsItem name="Display Legends" description="Allow legends units to display in the catalog.">
+            <SettingsSwitch v-model="displayLegends"></SettingsSwitch>
+        </SettingsItem>
+        <SettingsItem name="Reset Page Layout" description="Return draggables to their default position">
+            <SettingsButton buttonText="Reset" buttonType="delete" :buttonClick="resetPageLayout"></SettingsButton>            
+        </SettingsItem>
+        <SettingsItem name="Clear Favorites" description="Remove all favorites">
+            <SettingsButton buttonText="Clear" buttonType="delete" :buttonClick="clearAllFavorites"></SettingsButton> 
+        </SettingsItem>
+        <SettingsItem name="Clear Cache" description="Delete local data cached from the server" >
+            <SettingsButton buttonText="Clear" buttonType="delete" :buttonClick="clearDataCache"></SettingsButton>        
+        </SettingsItem>
+    </Section>
 </template>
 
 <script setup lang="ts">
+    import Section from '@/lib/widgets/vue/Section.vue';
     import { initializeDraggable } from '@/lib/widgets/draggable';
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import SettingsItem from './SettingsItem.vue';
+    import SettingsSwitch from './SettingsSwitch.vue';
+    import SettingsButton from './SettingsButton.vue';
+
     import { Overlay } from '@/lib/widgets/overlay';
     import { getVar } from '@/lib/functions/getVar';
     import { clearDraggableOrder } from '@/lib/widgets/draggable';
     import { getGlobalCache } from '@/lib/RestAPI/LocalCache';
-import { clearFavorites } from '@/lib/widgets/favorites';
+    import { clearFavorites } from '@/lib/widgets/favorites';
+    import AppSettings from '@/lib/AppSettings';
     
+    const appSettings = new AppSettings;
+    // view the current value
+    const displayLegends = ref(appSettings.settings()['display-legends']);
+
+    watch(displayLegends, (newValue) => {
+        // update to the new value
+        appSettings.settings()['display-legends'] = newValue;
+        // save for reuse
+        appSettings.save();
+    });
+
     const title = ref('Settings')
     initializeDraggable('Settings');
 

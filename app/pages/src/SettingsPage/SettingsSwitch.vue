@@ -2,7 +2,7 @@
 <template>
     <label>
         <label class="switch upgrade-label">
-            <input type="checkbox" class="upgrade-checkbox">
+            <input type="checkbox" class="upgrade-checkbox" :checked="modelValue" @click="toggle">
             <span class="slider round"></span>
         </label>
     </label>
@@ -16,8 +16,8 @@
     }>()
 
     function toggle(event: Event) {
-        const checked = (event.target as HTMLInputElement).checked
-        emit('update:modelValue', checked)
+        const isChecked = (event.target as HTMLInputElement).checked;
+        emit('update:modelValue', isChecked)
     }
 </script>
 
