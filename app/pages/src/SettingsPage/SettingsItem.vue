@@ -3,7 +3,7 @@
     <div class="selectable-item settings-item">
         <div class="settings-item-left">
             <h4 class="settings-item-name">{{ name }}</h4>
-            <p class="settings-item-description">{{ description }}</p>
+            <p class="settings-item-description" v-html="description"></p>
             <!-- selectable item type ? -->
         </div>
         <div class="settings-item-right">
@@ -34,8 +34,12 @@
         justify-content: center;
         align-items: center;
     }
+    .settings-item-left {
+        max-width: 85%;
+    }
     .settings-item-right {
         margin-left: auto;
+        max-width: 15%;
     }
     .settings-item-description {
         color: var(--white-2);
