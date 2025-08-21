@@ -1,23 +1,22 @@
-import { displayPoints } from "../../lib/host.js";
-import { endpoint } from "../../lib/endpoint.js";
-import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { disableBackButton, enableBackButton, enableSearchButton, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
-import { makeSelectableItemName } from "../../lib/widgets/helpers.js";
-import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { ForceLUT } from "../../shared-lib/Force.js";
-import ArmyInterf from "../../shared-lib/ArmyInterface.js";
-import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
-import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
-import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
+import { displayPoints } from "@/lib/host";
+import { endpoint } from "@/lib/endpoint";
+import { fetchWithLoadingDisplay } from "@/lib/RestAPI/fetchWithLoadingDisplay";
+import { disableBackButton, enableBackButton, enableSearchButton, getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
+import { makeSelectableItemName } from "@/lib/widgets/helpers";
+import { makeLayout, swapLayout } from "@/lib/widgets/layout";
+import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import ArmyInterf from "@/shared-lib/ArmyInterface";
+import UpgradeInterf from "@/shared-lib/UpgradeInterface";
+import { displayUpgradeOverlay } from "@/lib/widgets/displayUpgradeOverlay";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
-import Settings from "./settings/Settings.js";
-import CatalogSettings from "./settings/CatalogSettings.js";
-import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings.js";
-import TacticsSettings from "./settings/TacticsSettings.js";
-import UnitSettings from "./settings/UnitsSettings.js";
-import UpgradeSettings from "./settings/UpgradeSettings.js";
+import Settings from "./settings/Settings";
+import CatalogSettings from "./settings/CatalogSettings";
+import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings";
+import TacticsSettings from "./settings/TacticsSettings";
+import UnitSettings from "./settings/UnitsSettings";
+import UpgradeSettings from "./settings/UpgradeSettings";
 
 const catalogPage = {
     settings: new CatalogSettings,

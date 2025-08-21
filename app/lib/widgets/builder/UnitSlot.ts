@@ -1,18 +1,19 @@
-import { EnhancementGroup } from "../../../shared-lib/ArmyUpgrades.js";
-import { Costed, BasicObject, Identifiable, Typed } from "../../../shared-lib/BasicObject.js";
-import ModelInterf from "../../../shared-lib/ModelInterface.js";
-import OptionSet from "../../../shared-lib/Options.js";
-import RosterInterf, { RegimentInterf } from "../../../shared-lib/RosterInterface.js";
-import UnitInterf, { EnhancementSlotInterf } from "../../../shared-lib/UnitInterface.js";
-import { WeaponSelectionInterf, WeaponSelectionPer } from "../../../shared-lib/WeaponInterf.js";
-import { getVar } from "../../functions/getVar.js";
-import { displayPoints, unitTotalPoints } from "../../host.js";
-import { putRoster } from "../../RestAPI/roster.js";
-import { CallbackMap, ContextMenu } from "../contextMenu.js";
-import { refreshPointsOverlay, updateValidationDisplay } from "../displayPointsOverlay.js";
-import { displayUpgradeOverlay } from "../displayUpgradeOverlay.js";
-import { displayWeaponOverlay } from "../displayWeaponOverlay.js";
-import { makeSelectableItemName, makeSelectableItemType } from "../helpers.js";
+import { EnhancementGroup } from "@/shared-lib/ArmyUpgrades";
+import { Costed, BasicObject, Identifiable, Typed } from "@/shared-lib/BasicObject";
+import ModelInterf from "@/shared-lib/ModelInterface";
+import OptionSet from "@/shared-lib/Options";
+import RosterInterf, { RegimentInterf } from "@/shared-lib/RosterInterface";
+import UnitInterf, { EnhancementSlotInterf } from "@/shared-lib/UnitInterface";
+import { WeaponSelectionInterf, WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
+import { getVar } from "@/lib/functions/getVar";
+import { displayPoints, unitTotalPoints } from "@/lib/host";
+import { putRoster } from "@/lib/RestAPI/roster";
+import { CallbackMap, ContextMenu } from "@/lib/widgets/contextMenu";
+import { refreshPointsOverlay, updateValidationDisplay } from "../displayPointsOverlay";
+import { displayUpgradeOverlay } from "@/lib/widgets/displayUpgradeOverlay";
+import { displayWeaponOverlay } from "@/lib/widgets/displayWeaponOverlay";
+import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
+import { abControl, minusIcon, plusIcon, rightArrow, searchIcon } from "../images.js";
 
 export const toggleUnitAddButton = (regItem: HTMLElement, _regiment: RegimentInterf) => {
     const btn = regItem.querySelector('.add-unit-button') as HTMLButtonElement;
@@ -53,7 +54,7 @@ export default class UnitSlot implements GenericSlot {
             <div class='unit-slot-display-wrapper'>
                 <div class='arrow-wrapper'>
                     <div class='arrow'>
-                        <img class='invert-img' src='../resources/${getVar('right-arrow')}'></img>
+                        <img class='invert-img' src='${rightArrow}'></img>
                     </div>
                 </div>
 
@@ -203,13 +204,13 @@ export default class UnitSlot implements GenericSlot {
                     <div class='weapon-selection-controls'>
                         <div class='rectangle-button-small weapon-selection-button weapon-selection-decrement'>
                             <div class='plus-wrapper'>
-                                <img class='navigation-img weapon-selection-increment-icon' src='../../resources/${getVar('minus-icon')}'></img>
+                                <img class='navigation-img weapon-selection-increment-icon' src='${minusIcon}'></img>
                             </div>
                         </div>
                         <div class="weapon-selection-quantity">${quantity}</div>
                         <div class='rectangle-button-small weapon-selection-button weapon-selection-increment'>
                             <div class='plus-wrapper'>
-                                <img class='navigation-img weapon-selection-increment-icon' src='../../resources/${getVar('plus-icon')}'></img>
+                                <img class='navigation-img weapon-selection-increment-icon' src='${plusIcon}'></img>
                             </div>
                         </div>
                     </div>
@@ -413,7 +414,7 @@ export default class UnitSlot implements GenericSlot {
             <div style='display: inline-block' class='upgrade-points points-label'>${obj.points} PTS</div>
             <div class="upgrade-button">
                 <div class='tiny-magnifier-wrapper'>
-                    <img class='tiny-magnifier invert-img' src='../../resources/${getVar('search-icon')}'></img>
+                    <img class='tiny-magnifier invert-img' src='${searchIcon}'></img>
                 </div>
             </div>
         </div>`;
@@ -672,7 +673,7 @@ export default class UnitSlot implements GenericSlot {
 
         // dot instead of arrow
         const img = arrow.querySelector('img') as HTMLImageElement;
-        img.src = `../resources/${getVar('ab-control')}`
+        img.src = abControl;
         img.style.height = '.5em';
         img.style.width = '.5em';
         img.style.margin = '.75em';

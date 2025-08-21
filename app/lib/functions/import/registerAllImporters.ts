@@ -1,5 +1,5 @@
-import { ImportRoster } from "./importRoster.js";
-import ImportOfficialRoster from "./importOfficialRoster.js";
+import { ImportRoster } from "./importRoster";
+import ImportOfficialRoster from "./importOfficialRoster";
 
 export const registerAllImporters = () => {
     ImportRoster.registerImporter(new ImportOfficialRoster);

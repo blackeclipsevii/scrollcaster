@@ -1,15 +1,15 @@
-import { registerCatalogPage } from "./tome.js";
-import { registerRostersPage } from "./rosters.js";
-import { registerSearchPage } from "./search.js";
-import { registerTacticsPage } from "./tactics.js";
-import { registerUpgradesPage } from "./upgrades.js";
-import { registerUnitsPage } from "./units.js";
-import { registerWarscrollPage } from "./warscroll.js";
-import { registerBuilderPage } from "./builder.js";
-import { registerBattlePage } from "./battle.js";
-import { registerRegimentOfRenownPage } from "./regimentOfRenown.js";
-import Settings from "./settings/Settings.js";
-import { getPageRouter } from "../../lib/widgets/header.js";
+import { registerCatalogPage } from "./tome";
+import { registerRostersPage } from "./rosters";
+import { registerSearchPage } from "./search";
+import { registerTacticsPage } from "./tactics";
+import { registerUpgradesPage } from "./upgrades";
+import { registerUnitsPage } from "./units";
+import { registerWarscrollPage } from "./warscroll";
+import { registerBuilderPage } from "./builder";
+import { registerBattlePage } from "./battle";
+import { registerRegimentOfRenownPage } from "./regimentOfRenown";
+import Settings from "./settings/Settings";
+import { getPageRouter } from "@/lib/widgets/header";
 
 export const registerAllPages = (initialSettings ?: Settings) => {
     registerRostersPage();

@@ -1,4 +1,4 @@
-import { getVar } from "../functions/getVar.js";
+import { getVar } from "@/lib/functions/getVar";
 
 export enum SlideBannerMessageType {
     Bad = 0,

@@ -1,5 +1,5 @@
-import Settings from "./Settings.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
+import Settings from "./Settings";
+import RosterInterf from "@/shared-lib/RosterInterface";
 
 export default class TacticsSettings implements Settings{
     [name: string]: unknown;

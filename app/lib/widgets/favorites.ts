@@ -1,4 +1,4 @@
-import { generateId } from "../functions/uniqueIdentifier.js";
+import { generateId } from "@/lib/functions/uniqueIdentifier";
 
 const favoritesKey = 'my-favorites';
 

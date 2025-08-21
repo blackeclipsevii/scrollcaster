@@ -1,5 +1,5 @@
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import Settings from "./Settings.js";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import Settings from "./Settings";
 
 export default class BattleSettings implements Settings {
     [name: string]: unknown;

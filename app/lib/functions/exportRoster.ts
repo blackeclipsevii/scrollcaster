@@ -1,8 +1,8 @@
-import LoreInterf from "../../shared-lib/LoreInterface.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import { rosterTotalPoints, unitTotalPoints } from "../host.js";
-import { version } from "../RestAPI/version.js";
+import LoreInterf from "@/shared-lib/LoreInterface";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import UnitInterf from "@/shared-lib/UnitInterface";
+import { rosterTotalPoints, unitTotalPoints } from "@/lib/host";
+import { version } from "@/lib/RestAPI/version";
 
 export async function exportRoster(roster: RosterInterf) {
     const totalPoints = rosterTotalPoints(roster);

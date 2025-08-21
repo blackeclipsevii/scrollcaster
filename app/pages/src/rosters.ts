@@ -1,33 +1,34 @@
-import { version } from "../../lib/RestAPI/version.js";
-import { Overlay } from "../../lib/widgets/overlay.js";
-import { getLoadingMessage } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
+import { version } from "@/lib/RestAPI/version";
+import { Overlay } from "@/lib/widgets/overlay";
+import { getLoadingMessage } from "@/lib/RestAPI/fetchWithLoadingDisplay";
 
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { swapLayout } from "../../lib/widgets/layout.js";
-import { getPageRouter, updateHeaderContextMenu } from "../../lib/widgets/header.js";
-import { clearFavorites } from "../../lib/widgets/favorites.js";
-import { rosterTotalPoints } from "../../lib/host.js";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import { swapLayout } from "@/lib/widgets/layout";
+import { getPageRouter, updateHeaderContextMenu } from "@/lib/widgets/header";
+import { clearFavorites } from "@/lib/widgets/favorites";
+import { rosterTotalPoints } from "@/lib/host";
 
-import { makeLayout } from "../../lib/widgets/layout.js";
-import { setHeaderTitle } from "../../lib/widgets/header.js";
-import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
-import { disableBackButton } from "../../lib/widgets/header.js";
-import { getVar } from "../../lib/functions/getVar.js";
-import { getRoster, getRosters, putRoster, getNewRoster, deleteRoster, deleteRosters } from "../../lib/RestAPI/roster.js";
-import { ContextMenu } from "../../lib/widgets/contextMenu.js";
-import { generateId } from "../../lib/functions/uniqueIdentifier.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import { About } from "../../lib/widgets/About.js";
-import RosterStateConverter from "../../lib/functions/import/RosterStateConvertImpl.js";
-import { ImportRoster } from "../../lib/functions/import/importRoster.js";
-import { clearDraggableOrder } from "../../lib/widgets/draggable.js";
-import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
-import { getLaunchInsets } from "../../lib/widgets/InsetEdges.js";
-import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
+import { makeLayout } from "@/lib/widgets/layout";
+import { setHeaderTitle } from "@/lib/widgets/header";
+import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
+import { disableBackButton } from "@/lib/widgets/header";
+import { getVar } from "@/lib/functions/getVar";
+import { getRoster, getRosters, putRoster, getNewRoster, deleteRoster, deleteRosters } from "@/lib/RestAPI/roster";
+import { ContextMenu } from "@/lib/widgets/contextMenu";
+import { generateId } from "@/lib/functions/uniqueIdentifier";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import { About } from "@/lib/widgets/About";
+import RosterStateConverter from "@/lib/functions/import/RosterStateConvertImpl";
+import { ImportRoster } from "@/lib/functions/import/importRoster";
+import { clearDraggableOrder } from "@/lib/widgets/draggable";
+import { displaySlidebanner, SlideBannerMessageType } from "@/lib/widgets/SlideBanner";
+import { getLaunchInsets } from "@/lib/widgets/InsetEdges";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
-import Settings from "./settings/Settings.js";
-import RosterSettings from "./settings/RostersSettings.js";
-import BuilderSettings from "./settings/BuilderSettings.js";
+import Settings from "./settings/Settings";
+import RosterSettings from "./settings/RostersSettings";
+import BuilderSettings from "./settings/BuilderSettings";
+import { kofiCup, plusIcon } from "@/lib/widgets/images.js";
 
 interface Alliances {
   name: string;
@@ -675,7 +676,7 @@ const rosterPage = {
       button.className = 'clickable-style fab';
       button.innerHTML = `
         <div class='plus-wrapper'>
-          <img class="navigation-img" src="resources/${getVar('plus-icon')}"></img>
+          <img class="navigation-img" src="${plusIcon}"></img>
         </div>
       `
       button.onclick = toggleOverlay;
@@ -695,7 +696,7 @@ const rosterPage = {
       coffee.className = 'kofi-div';
       coffee.innerHTML = `
         <a target="_blank" href="https://ko-fi.com/scrollcaster">
-          <img src="resources/kofi_symbol-edited.png"></img>
+          <img src="${kofiCup}"></img>
         </a>
       `;
       if (inset.bottom) {

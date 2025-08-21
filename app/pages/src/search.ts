@@ -1,21 +1,22 @@
 
-import { getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
-import { endpoint } from "../../lib/endpoint.js";
+import { getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
+import { endpoint } from "@/lib/endpoint";
 
-import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { SearchableObject } from "../../shared-lib/SearchableObject.js";
-import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { getVar } from "../../lib/functions/getVar.js";
-import { fetchSearch } from "../../lib/RestAPI/search.js";
-import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
-import UnitInterf, { UnitSuperType } from "../../shared-lib/UnitInterface.js";
+import { fetchWithLoadingDisplay } from "@/lib/RestAPI/fetchWithLoadingDisplay";
+import { SearchableObject } from "@/shared-lib/SearchableObject";
+import { makeLayout, swapLayout } from "@/lib/widgets/layout";
+import { getVar } from "@/lib/functions/getVar";
+import { fetchSearch } from "@/lib/RestAPI/search";
+import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
+import UnitInterf, { UnitSuperType } from "@/shared-lib/UnitInterface";
 
-import Settings from "./settings/Settings.js";
-import SearchSettings from "./settings/SearchSettings.js";
-import WarscrollSettings from "./settings/WarscrollSettings.js";
-import { OtherSuperType, OtherTypes } from "../../shared-lib/OtherTypes.js";
-import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings.js";
-import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
+import Settings from "./settings/Settings";
+import SearchSettings from "./settings/SearchSettings";
+import WarscrollSettings from "./settings/WarscrollSettings";
+import { OtherSuperType, OtherTypes } from "@/shared-lib/OtherTypes";
+import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
+import { searchIcon } from "@/lib/widgets/images.js";
 
 interface Result {
     item: SearchableObject
@@ -123,7 +124,7 @@ const searchPage = {
             div.id = 'search-bar-wrapper';
             div.innerHTML = `
                 <div class='search-bar'>
-                    <img class='search-bar-icon invert-img' src='../../resources/${getVar('search-icon')}'></img>
+                    <img class='search-bar-icon invert-img' src='${searchIcon}'></img>
                     <input class='search-bar-input' type='search'></input>
                 </div>
             `;

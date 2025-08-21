@@ -1,19 +1,19 @@
 
-import ModelInterf from "../../shared-lib/ModelInterface.js";
-import OptionSet from "../../shared-lib/Options.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import WeaponInterf, { WeaponSelectionPer, WeaponType } from "../../shared-lib/WeaponInterf.js";
-import { DYNAMIC_WARSCROLL } from "../../lib/host.js";
-import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
-import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
-import { whClearDiv } from "../../lib/widgets/helpers.js";
-import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { WeaponWidget } from "../../lib/widgets/WeaponWidget.js";
+import ModelInterf from "@/shared-lib/ModelInterface";
+import OptionSet from "@/shared-lib/Options";
+import UnitInterf from "@/shared-lib/UnitInterface";
+import WeaponInterf, { WeaponSelectionPer, WeaponType } from "@/shared-lib/WeaponInterf";
+import { DYNAMIC_WARSCROLL } from "@/lib/host";
+import { AbilityWidget } from "@/lib/widgets/AbilityWidget";
+import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
+import { whClearDiv } from "@/lib/widgets/helpers";
+import { makeLayout, swapLayout } from "@/lib/widgets/layout";
+import { WeaponWidget } from "@/lib/widgets/WeaponWidget";
 
-import Settings from "./settings/Settings.js";
-import WarscrollSettings from "./settings/WarscrollSettings.js";
+import Settings from "./settings/Settings";
+import WarscrollSettings from "./settings/WarscrollSettings";
 
 const warscrollPage = {
     settings: new WarscrollSettings,

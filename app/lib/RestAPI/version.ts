@@ -1,7 +1,7 @@
-import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js"
-import { endpoint } from "../endpoint.js";
-import { _clientVersion } from "../../version.js";
-import { isOnline } from "./LocalCache.js";
+import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay"
+import { endpoint } from "@/lib/endpoint";
+//import { _clientVersion } from "@/version";
+import { isOnline } from "./LocalCache";
 
 interface VersionParts {
     major: string, minor: string, patch:string
@@ -23,7 +23,7 @@ export const version = (()=>{
     _server: null as string | null,
     _bsdata: null as string | null,
     _profiles: null as string | null,
-    _client: _clientVersion as string,
+    _client: '0.14.1beta',
     async getClientVersion() {
         return this._client;
     },

@@ -1,6 +1,6 @@
 
-import { Force } from "../../../shared-lib/Force.js";
-import Settings from "./Settings.js";
+import { Force } from "@/shared-lib/Force";
+import Settings from "./Settings";
 
 export default class RegimentOfRenownSettings implements Settings{
     [name: string] : unknown;

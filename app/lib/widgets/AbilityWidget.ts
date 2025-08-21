@@ -1,12 +1,33 @@
-import { getVar } from "../functions/getVar.js";
-import { whClearDiv } from "./helpers.js";
-import { DYNAMIC_WARSCROLL } from "../host.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import AbilityInterf from "../../shared-lib/AbilityInterface.js";
-import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
+import { getVar } from "@/lib/functions/getVar";
+import { whClearDiv } from "./helpers";
+import { DYNAMIC_WARSCROLL } from "../host";
+import UnitInterf from "@/shared-lib/UnitInterface";
+import AbilityInterf from "@/shared-lib/AbilityInterface";
+import UpgradeInterf from "@/shared-lib/UpgradeInterface";
+
+import { abOffensive } from "./images.js";
+import { abRallying } from "./images.js";
+import { abControl } from "./images.js";
+import { abMovement } from "./images.js";
+import { abSpecial } from "./images.js";
+import { abShooting } from "./images.js";
+import { abDefensive } from "./images.js";
+import { abDamage } from "./images.js";
 
 export const AbilityWidget = {
     _newAbilityDiv(ability: AbilityInterf) {
+                
+        const abilityIconLut: {[name: string]: string} = {
+            'ab-offensive': abOffensive,
+            'ab-rallying': abRallying,
+            'ab-control': abControl,
+            'ab-movement': abMovement,
+            'ab-special': abSpecial,
+            'ab-shooting': abShooting,
+            'ab-defensive': abDefensive,
+            'ab-damage': abDamage,
+        }
+
         const abilitiesDiv = document.getElementById('abilities-section') as HTMLElement | null;
         if (!abilitiesDiv)
             return;
@@ -46,10 +67,10 @@ export const AbilityWidget = {
         if (theColor && theColor.length > 0)
             headerFontColor = theColor;
 
-        let icon = `../../resources/${getVar('ab-special')}`;
+        let icon = abilityIconLut['ab-special'];
         if (ability.metadata && ability.metadata.type) {
             let type = ability.metadata.type;
-            icon = `../../resources/${getVar(`ab-${type.toLowerCase()}`)}`
+            icon = abilityIconLut[`ab-${type.toLowerCase()}`];
         }
 
         const img = document.createElement('img');

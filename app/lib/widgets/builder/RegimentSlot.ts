@@ -1,11 +1,11 @@
 
-import { Costed } from "../../../shared-lib/BasicObject.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import { displayPoints } from "../../host.js";
-import { CallbackMap, ContextMenu } from "../contextMenu.js";
+import { Costed } from "@/shared-lib/BasicObject";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import { displayPoints } from "@/lib/host";
+import { CallbackMap, ContextMenu } from "@/lib/widgets/contextMenu";
 
-import UnitSettings from "../../../pages/src/settings/UnitsSettings.js";
-import { getPageRouter } from "../header.js";
+import UnitSettings from "@/pages/src/settings/UnitsSettings";
+import { getPageRouter } from "@/lib/widgets/header";
 
 export const setRegimentIdx = (regSlot: HTMLDivElement, index: number) => {
     const hiddenIdx = regSlot.querySelector('.regiment-idx') as HTMLElement;

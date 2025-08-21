@@ -1,9 +1,9 @@
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
-import { endpoint } from "../endpoint.js";
-import { rosterTotalPoints } from "../host.js";
-import RosterStateConverter from "./import/RosterStateConvertImpl.js";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import UnitInterf from "@/shared-lib/UnitInterface";
+import { WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
+import { endpoint } from "@/lib/endpoint";
+import { rosterTotalPoints } from "@/lib/host";
+import RosterStateConverter from "./import/RosterStateConvertImpl";
 
 const validateRosterPOST = async (roster: RosterInterf) => {
     const rsc = new RosterStateConverter();

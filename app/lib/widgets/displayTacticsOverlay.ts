@@ -1,6 +1,6 @@
-import { Overlay } from "./overlay.js";
-import { getVar } from "../functions/getVar.js";
-import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
+import { Overlay } from "./overlay";
+import { getVar } from "@/lib/functions/getVar";
+import BattleTacticCardInterf from "@/shared-lib/BattleTacticCardInterf";
 
 export const displayTacticsOverlay = Overlay.toggleFactory('block', (tc: unknown) =>{
     const tacticCard = tc as BattleTacticCardInterf;

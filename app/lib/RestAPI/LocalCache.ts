@@ -1,12 +1,12 @@
-import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
-import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
-import { Force } from "../../shared-lib/Force.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import { fetchArmies } from "./fetchWithLoadingDisplay.js";
-import { fetchRegimentsOfRenown } from "./regimentsOfRenown.js";
-import { fetchTactics } from "./tactics.js";
-import { unitsApi } from "./units.js";
-import { fetchUpgrades } from "./upgrades.js";
+import { ArmyUpgrades } from "@/shared-lib/ArmyUpgrades";
+import BattleTacticCardInterf from "@/shared-lib/BattleTacticCardInterf";
+import { Force } from "@/shared-lib/Force";
+import UnitInterf from "@/shared-lib/UnitInterface";
+import { fetchArmies } from "./fetchWithLoadingDisplay";
+import { fetchRegimentsOfRenown } from "./regimentsOfRenown";
+import { fetchTactics } from "./tactics";
+import { unitsApi } from "./units";
+import { fetchUpgrades } from "./upgrades";
 
 interface UnitLUT {
     [id: string]: UnitInterf

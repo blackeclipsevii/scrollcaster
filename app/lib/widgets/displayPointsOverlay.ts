@@ -1,9 +1,10 @@
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import { getVar } from "../functions/getVar.js";
-import { validateRoster } from "../functions/validateRoster.js";
-import { Overlay } from "./overlay.js";
-import { rosterTotalPoints } from "../host.js";
-import { getLaunchInsets } from "./InsetEdges.js";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import { getVar } from "@/lib/functions/getVar";
+import { validateRoster } from "@/lib/functions/validateRoster";
+import { Overlay } from "./overlay";
+import { rosterTotalPoints } from "@/lib/host";
+import { getLaunchInsets } from "./InsetEdges";
+import { checkIcon, dangerIcon } from "./images.js";
 
 export var totalPoints: number = 0;
 
@@ -16,7 +17,7 @@ export const displayPointsOverlay = async (roster: RosterInterf) => {
         overlay.style.display = 'none';
         overlay.innerHTML = `
             <div id='validation-icon-wrapper'>
-                <img id='validation-icon' src='../../resources/${getVar('check-icon')}'></img>
+                <img id='validation-icon' src='${checkIcon}'></img>
             </div>
             <div id='points-display-wrapper'>
                 <div id='points-display'></div>
@@ -54,9 +55,9 @@ export async function updateValidationDisplay(roster: RosterInterf) {
     
     const validationIcon = document.getElementById('validation-icon') as HTMLImageElement;
     if (hasErrors) {
-        validationIcon.src = `../../resources/${getVar('danger-icon')}`;
+        validationIcon.src = dangerIcon;
     } else {
-        validationIcon.src = `../../resources/${getVar('check-icon')}`;
+        validationIcon.src = checkIcon;
     }
     pointsOverlay.className = `points-overlay-${postfix}`;
 

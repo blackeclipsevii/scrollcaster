@@ -1,8 +1,8 @@
-import { Typed } from "../../shared-lib/BasicObject.js";
-import { LoreSuperType, loreTypeToString } from "../../shared-lib/LoreInterface.js";
-import { otherTypesToString } from "../../shared-lib/OtherTypes.js";
-import UnitInterf, { UnitSuperType, unitTypeToString } from "../../shared-lib/UnitInterface.js";
-import { UpgradeSuperType, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
+import { Typed } from "@/shared-lib/BasicObject";
+import { LoreSuperType, loreTypeToString } from "@/shared-lib/LoreInterface";
+import { otherTypesToString } from "@/shared-lib/OtherTypes";
+import UnitInterf, { UnitSuperType, unitTypeToString } from "@/shared-lib/UnitInterface";
+import { UpgradeSuperType, upgradeTypeToString } from "@/shared-lib/UpgradeInterface";
 
 export const whClearDiv = (qualifier: string, parent?: HTMLElement | Document) => {
     let div = null;
