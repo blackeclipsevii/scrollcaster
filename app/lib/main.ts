@@ -1,3 +1,5 @@
+/// <reference lib="WebWorker" />
+
 import { registerAllImporters } from "./functions/import/registerAllImporters";
 import { initializeFooter } from "./widgets/footer";
 import { initializeHeader } from "./widgets/header";
@@ -10,6 +12,7 @@ import { version } from "./RestAPI/version";
 // import { addPWAInstallPrompt } from "./widgets/PWAInstaller";
 
 import { registerAllPages } from "@/pages/src/registerAllPages";
+import { registerSW } from 'virtual:pwa-register'
 
 (async () => {
   if (await isOnline()) {
@@ -19,22 +22,21 @@ import { registerAllPages } from "@/pages/src/registerAllPages";
   } else {
     await initializeGlobalCache('');
   }
-
+  
   initializeLaunchInsets();
   initializeHeader({name:'Scrollcaster', leftButton: true, rightButton: false});
   initializeFooter('../..');
   Overlay.initialize();
   registerAllImporters();
 
-  if ('serviceWorker' in navigator) {
-    //addPWAInstallPrompt();
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('service-worker.js')
-        .then((reg) => console.log('Service Worker registered:', reg))
-        .catch((err) => console.error('Service Worker registration failed:', err));
-    });
-  }
+  const updateSW = registerSW({
+    onNeedRefresh() {
+      // Show a prompt to the user to refresh
+    },
+    onOfflineReady() {
+      // Notify the user that the app is ready to work offline
+    },
+  });
 
   registerAllPages(new RostersSettings);
 })();
