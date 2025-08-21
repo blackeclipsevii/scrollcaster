@@ -59,7 +59,7 @@ export default class UnitSlot implements GenericSlot {
                 </div>
 
                 <div class='unit-slot-selectable-item-wrapper'>
-                    <div class="selectable-item unit-slot-selectable-item">
+                    <div class="selectable-item unit-slot-selectable-item" style='border: none;'>
                         <div class="selectable-item-left">
                             <span class="leader-label" style="display: none;">Leader</span>
                             <span class="general-label" style="display: none;">General</span>

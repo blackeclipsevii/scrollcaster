@@ -43,10 +43,10 @@
     border: none;
     padding: .5em;
 }
-/* 
+
 .unit-slot-selectable-item:hover {
     border: none;
-} */
+}
 
 .unit-details {
   max-height: 0;
