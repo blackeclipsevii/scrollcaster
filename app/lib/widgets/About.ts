@@ -1,5 +1,6 @@
-import { version } from "../RestAPI/version.js";
-import { getVar } from "../functions/getVar.js";
+import { version } from "@/lib/RestAPI/version";
+import { getVar } from "@/lib/functions/getVar";
+import { largeKofi } from "./images.js";
 
 export const About = {
     license: () => {
@@ -63,7 +64,7 @@ If not, see <a href=https://www.gnu.org/licenses/>https://www.gnu.org/licenses/<
             <div style='display: flex; justify-content: left; align-content: center;'>
             <div class='kofi-div-nested'>
                 <a target="_blank" href="https://ko-fi.com/scrollcaster">
-                <img src="resources/support_me_on_kofi_beige.webp"></img>
+                <img src="${largeKofi}"></img>
                 </a>
             </div>
             </div>

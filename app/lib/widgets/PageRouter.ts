@@ -1,8 +1,8 @@
-import CatalogSettings from "../../pages/src/settings/CatalogSettings.js";
-import RostersSettings from "../../pages/src/settings/RostersSettings.js";
-import Settings from "../../pages/src/settings/Settings.js";
-import { ContextMenu } from "./contextMenu.js";
-import { Overlay } from "./overlay.js";
+import CatalogSettings from "@/pages/src/settings/CatalogSettings";
+import RostersSettings from "@/pages/src/settings/RostersSettings";
+import Settings from "@/pages/src/settings/Settings";
+import { ContextMenu } from "./contextMenu";
+import { Overlay } from "./overlay";
 
 interface HistoryEle {
     scrollY: number;

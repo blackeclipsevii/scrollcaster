@@ -1,7 +1,7 @@
-import { NameRoster } from "../../../shared-lib/NameRoster.js";
-import { endpoint } from "../../endpoint.js";
-import { generateId } from "../uniqueIdentifier.js";
-import RosterStateConverter from "./RosterStateConvertImpl.js";
+import { NameRoster } from "@/shared-lib/NameRoster";
+import { endpoint } from "@/lib/endpoint";
+import { generateId } from "@/lib/functions/uniqueIdentifier";
+import RosterStateConverter from "./RosterStateConvertImpl";
 
 export const nameRosterToRoster = async (nameRoster: NameRoster) => {
     const regArg = encodeURI(`${endpoint}/import`);

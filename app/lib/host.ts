@@ -1,6 +1,6 @@
 
-import RosterInterf from "../shared-lib/RosterInterface.js";
-import UnitInterf from "../shared-lib/UnitInterface.js";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import UnitInterf from "@/shared-lib/UnitInterface";
 
 export const isDOMAvailable = () => {
   return (

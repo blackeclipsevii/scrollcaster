@@ -1,22 +1,22 @@
-import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import UpgradeInterf, { UpgradeLUT, UpgradeType, upgradeTypeToString } from "../../shared-lib/UpgradeInterface.js";
-import { displayPoints } from "../../lib/host.js";
-import { fetchWithLoadingDisplay } from "../../lib/RestAPI/fetchWithLoadingDisplay.js";
-import { displayPointsOverlay, hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
-import { displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
-import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
-import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
-import { layoutDefaultFactory, makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { endpoint } from "../../lib/endpoint.js";
-import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
-import { putRoster } from "../../lib/RestAPI/roster.js";
-import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
+import { ArmyUpgrades } from "@/shared-lib/ArmyUpgrades";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import UpgradeInterf, { UpgradeLUT, UpgradeType, upgradeTypeToString } from "@/shared-lib/UpgradeInterface";
+import { displayPoints } from "@/lib/host";
+import { fetchWithLoadingDisplay } from "@/lib/RestAPI/fetchWithLoadingDisplay";
+import { displayPointsOverlay, hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
+import { displayUpgradeOverlay } from "@/lib/widgets/displayUpgradeOverlay";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "@/lib/widgets/favorites";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
+import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
+import { layoutDefaultFactory, makeLayout, swapLayout } from "@/lib/widgets/layout";
+import { endpoint } from "@/lib/endpoint";
+import LoreInterf, { LoreLUTInterf } from "@/shared-lib/LoreInterface";
+import { putRoster } from "@/lib/RestAPI/roster";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
-import Settings from "./settings/Settings.js";
-import UpgradeSettings from "./settings/UpgradeSettings.js";
+import Settings from "./settings/Settings";
+import UpgradeSettings from "./settings/UpgradeSettings";
 
 const upgradePage = {
     settings: new UpgradeSettings,

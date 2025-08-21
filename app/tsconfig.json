@@ -6,9 +6,13 @@
     "target": "es2020",
     "strict": true,
     "module": "nodenext",
-    "lib": ["dom", "es2020"]
+    "lib": ["dom", "es2020"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
 
-  "include": ["version.ts", "pages/**/*", "lib/**/*", "shared-lib/**/*"],
+  "include": ["lib/version.ts", "pages/**/*", "lib/**/*", "shared-lib/**/*"],
   "exclude": ["node_modules"]
 }

@@ -1,7 +1,9 @@
-import { getVar } from "../functions/getVar.js";
-import { getLaunchInsets } from "./InsetEdges.js";
-import { getPageRouter } from "./header.js";
-import { ViewType } from "./PageRouter.js";
+import { getLaunchInsets } from "./InsetEdges";
+import { getPageRouter } from "./header";
+import { ViewType } from "./PageRouter";
+
+import { abOffensive } from "./images";
+import { bookIcon } from "./images.js";
 
 export function initializeFooter(root: string) {
     const main = document.querySelector('.persist');
@@ -12,11 +14,11 @@ export function initializeFooter(root: string) {
     const footer = document.createElement('footer');
     footer.innerHTML = `
       <div id='footer-left' class='footer-button footer-left'>
-        <img class='navigation-img invert-img' src='${root}/resources/${getVar('book-icon')}'></img>
+        <img class='navigation-img invert-img' src='${bookIcon}'></img>
         <div id='catalog-button'>Catalog</div>
       </div>
       <div id='footer-right' class='footer-button footer-right'>
-        <img class='navigation-img invert-img' src='${root}/resources/${getVar('ab-offensive')}'></img>
+        <img class='navigation-img invert-img' src='${abOffensive}'></img>
         <div id='army-button'>Rosters</div>
       </div>
     `;

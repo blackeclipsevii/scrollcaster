@@ -1,13 +1,13 @@
-import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
-import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
-import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "../../lib/widgets/favorites.js";
-import { putRoster } from "../../lib/RestAPI/roster.js";
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
+import { makeLayout, swapLayout } from "@/lib/widgets/layout";
+import { displayTacticsOverlay } from "@/lib/widgets/displayTacticsOverlay";
+import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } from "@/lib/widgets/favorites";
+import { putRoster } from "@/lib/RestAPI/roster";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
-import Settings from "./settings/Settings.js";
-import TacticsSettings from "./settings/TacticsSettings.js";
+import Settings from "./settings/Settings";
+import TacticsSettings from "./settings/TacticsSettings";
 
 const tacticsPage = {
     settings: null as TacticsSettings | null,

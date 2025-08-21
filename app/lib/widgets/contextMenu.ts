@@ -1,5 +1,5 @@
-import { getVar } from "../functions/getVar.js";
-import { generateId } from "../functions/uniqueIdentifier.js";
+import { generateId } from "@/lib/functions/uniqueIdentifier";
+import { dotsIcon } from "./images.js";
 
 export interface CallbackMap {
     [name: string]: unknown;
@@ -46,7 +46,7 @@ export const ContextMenu = {
         const ele = document.createElement('div');
         ele.innerHTML = `
             <div class="menu-btn">
-                <img class='menu-icon invert-img' src='../../resources/${getVar('menu-icon')}'></img>
+                <img class='menu-icon invert-img' src='${dotsIcon}'></img>
             </div>
         `;
         ele.className ='menu-btn-wrapper';

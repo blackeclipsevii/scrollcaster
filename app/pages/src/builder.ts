@@ -1,37 +1,38 @@
-import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
-import UnitInterf, { UnitSuperType } from "../../shared-lib/UnitInterface.js";
-import UpgradeInterf, { UpgradeSuperType } from "../../shared-lib/UpgradeInterface.js";
-import { copyToClipboard } from "../../lib/functions/copyToClipboard.js";
-import { exportRoster } from "../../lib/functions/exportRoster.js";
-import { unitTotalPoints } from "../../lib/host.js";
-import { putRoster } from "../../lib/RestAPI/roster.js";
-import { CallbackMap } from "../../lib/widgets/contextMenu.js";
-import { displayPointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "../../lib/widgets/displayPointsOverlay.js";
-import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
-import { displayRorOverlay, displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { getPageRouter, setHeaderTitle, updateHeaderContextMenu } from "../../lib/widgets/header.js";
-import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { Overlay } from "../../lib/widgets/overlay.js";
-import LoreInterf from "../../shared-lib/LoreInterface.js";
-import { UnitType } from "../../shared-lib/UnitInterface.js";
-import { BasicObject, Typed } from "../../shared-lib/BasicObject.js";
+import BattleTacticCardInterf from "@/shared-lib/BattleTacticCardInterf";
+import UnitInterf, { UnitSuperType } from "@/shared-lib/UnitInterface";
+import UpgradeInterf, { UpgradeSuperType } from "@/shared-lib/UpgradeInterface";
+import { copyToClipboard } from "@/lib/functions/copyToClipboard";
+import { exportRoster } from "@/lib/functions/exportRoster";
+import { unitTotalPoints } from "@/lib/host";
+import { putRoster } from "@/lib/RestAPI/roster";
+import { CallbackMap } from "@/lib/widgets/contextMenu";
+import { displayPointsOverlay, refreshPointsOverlay, updateValidationDisplay } from "@/lib/widgets/displayPointsOverlay";
+import { displayTacticsOverlay } from "@/lib/widgets/displayTacticsOverlay";
+import { displayRorOverlay, displayUpgradeOverlay } from "@/lib/widgets/displayUpgradeOverlay";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import { getPageRouter, setHeaderTitle, updateHeaderContextMenu } from "@/lib/widgets/header";
+import { makeLayout, swapLayout } from "@/lib/widgets/layout";
+import { Overlay } from "@/lib/widgets/overlay";
+import LoreInterf from "@/shared-lib/LoreInterface";
+import { UnitType } from "@/shared-lib/UnitInterface";
+import { BasicObject, Typed } from "@/shared-lib/BasicObject";
 
-import UnitSlot, {GenericSlot, toggleUnitAddButton} from "../../lib/widgets/builder/UnitSlot.js";
-import RegimentSlot, { setRegimentIdx } from "../../lib/widgets/builder/RegimentSlot.js";
-import { fetchLUT } from "../../lib/RestAPI/lut.js";
-import { getVar } from "../../lib/functions/getVar.js";
-import { WeaponSelectionPer } from "../../shared-lib/WeaponInterf.js";
-import { displaySlidebanner, SlideBannerMessageType } from "../../lib/widgets/SlideBanner.js";
-import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
+import UnitSlot, {GenericSlot, toggleUnitAddButton} from "@/lib/widgets/builder/UnitSlot";
+import RegimentSlot, { setRegimentIdx } from "@/lib/widgets/builder/RegimentSlot";
+import { fetchLUT } from "@/lib/RestAPI/lut";
+import { getVar } from "@/lib/functions/getVar";
+import { WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
+import { displaySlidebanner, SlideBannerMessageType } from "@/lib/widgets/SlideBanner";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
-import Settings from "./settings/Settings.js";
-import BuilderSettings from "./settings/BuilderSettings.js";
-import UnitSettings from "./settings/UnitsSettings.js";
-import UpgradeSettings from "./settings/UpgradeSettings.js";
-import BattleSettings from "./settings/BattleSettings.js";
-import TacticsSettings from "./settings/TacticsSettings.js";
-import WarscrollSettings from "./settings/WarscrollSettings.js";
+import Settings from "./settings/Settings";
+import BuilderSettings from "./settings/BuilderSettings";
+import UnitSettings from "./settings/UnitsSettings";
+import UpgradeSettings from "./settings/UpgradeSettings";
+import BattleSettings from "./settings/BattleSettings";
+import TacticsSettings from "./settings/TacticsSettings";
+import WarscrollSettings from "./settings/WarscrollSettings";
+import { gearIcon, plusIcon } from "@/lib/widgets/images.js";
 
 const builderPage = {
     settings: null as BuilderSettings | null,
@@ -849,7 +850,7 @@ const builderPage = {
                         </div>
                         <div id="${adjustedName}-add-button" class="rectangle-button">
                             <div class='plus-wrapper'>
-                                <img class='navigation-img add-unit-icon' src='../resources/${getVar('plus-icon')}'></img>
+                                <img class='navigation-img add-unit-icon' src='${plusIcon}'></img>
                             </div>
                         </div>
                     </div>
@@ -947,7 +948,7 @@ const builderPage = {
                 let btn = document.getElementById(`${sectionName}-add-button`) as HTMLElement;
                 const img = btn.querySelector('img');
                 if (img)
-                    img.src = `../resources/${getVar('gear-icon')}`;
+                    img.src = gearIcon;
             })
 
             await loadArmy(true);

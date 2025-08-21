@@ -1,4 +1,4 @@
-import Settings from "./Settings.js";
+import Settings from "./Settings";
 export default class RostersSettings implements Settings {
   [name: string]: unknown;
     isHistoric() {

@@ -1,11 +1,12 @@
-import { ContextMenu } from "./contextMenu.js";
-import { getVar } from "../functions/getVar.js";
-import { CallbackMap } from "./contextMenu.js";
-import { getLaunchInsets } from "./InsetEdges.js";
+import { ContextMenu } from "./contextMenu";
+import { getVar } from "@/lib/functions/getVar";
+import { CallbackMap } from "./contextMenu";
+import { getLaunchInsets } from "./InsetEdges";
 
-import Settings from "../../pages/src/settings/Settings.js";
-import SearchSettings from "../../pages/src/settings/SearchSettings.js";
-import PageRouter from "./PageRouter.js";
+import Settings from "@/pages/src/settings/Settings";
+import SearchSettings from "@/pages/src/settings/SearchSettings";
+import PageRouter from "./PageRouter";
+import { leftArrow, searchIcon } from "./images.js";
 
 var _headerMenuId = '';
 var _pageRouter: PageRouter | null;
@@ -58,7 +59,7 @@ export function initializeHeader(options: HeaderOptions) {
         const left = header.querySelector('.header-left') as HTMLElement;
         left.innerHTML = `
         <div class="back-btn"">
-            <img class='navigation-img invert-img' src='../../resources/${getVar('left-arrow')}'></img>
+            <img class='navigation-img invert-img' src='${leftArrow}'></img>
         </div>
         `;
         const button = left.querySelector('.back-btn') as HTMLButtonElement;
@@ -145,7 +146,7 @@ export function enableSearchButton() {
         searchButton = document.createElement('div');
         searchButton.className = 'search-button';
         searchButton.innerHTML = `
-            <img class='invert-img' src='../../resources/${getVar('search-icon')}'></img>
+            <img class='invert-img' src='${searchIcon}'></img>
         `;
         searchButton.onclick = () => {
             const settings = new SearchSettings;

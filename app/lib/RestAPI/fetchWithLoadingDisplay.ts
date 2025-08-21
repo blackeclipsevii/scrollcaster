@@ -1,7 +1,8 @@
-import { Overlay } from "../widgets/overlay.js";
-import { absoluteUrl } from "../widgets/header.js";
-import { endpoint } from "../endpoint.js";
-import { isDOMAvailable } from "../host.js";
+import { Overlay } from "@/lib/widgets/overlay";
+import { absoluteUrl } from "@/lib/widgets/header";
+import { endpoint } from "@/lib/endpoint";
+import { isDOMAvailable } from "@/lib/host";
+import { droppedScrolls } from "../widgets/images.js";
 
 export const getLoadingMessage = () => {
     const msgs = [
@@ -63,7 +64,7 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
       modal.style.flexDirection = 'column';
       modal.style.height ='20em';
       modal.style.width ='20em';
-      modal.style.backgroundImage = `URL(${absoluteUrl('resources/dropped-scrolls.jpg')})`
+      modal.style.backgroundImage = `URL(${droppedScrolls})`
       modal.style.backgroundSize = 'cover';
       modal.style.backgroundPosition = 'center';
       const overlay = modal.closest('.overlay');

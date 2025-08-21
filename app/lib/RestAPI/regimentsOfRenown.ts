@@ -1,6 +1,6 @@
-import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay.js";
-import { endpoint } from "../endpoint.js";
-import { Force } from "../../shared-lib/Force.js";
+import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay";
+import { endpoint } from "@/lib/endpoint";
+import { Force } from "@/shared-lib/Force";
 
 export const fetchRegimentsOfRenown = async (armyName ?: string): Promise<Force[] | null> => {
     let url = `${endpoint}/regimentsOfRenown`;

@@ -1,10 +1,10 @@
-import RosterStateConverter, { UnitPool } from "../../../shared-lib/RosterStateConverter.js";
-import { ArmyUpgrades } from "../../../shared-lib/ArmyUpgrades.js";
-import BattleTacticCardInterf from "../../../shared-lib/BattleTacticCardInterf.js";
-import { Force } from "../../../shared-lib/Force.js";
-import { getNewRoster } from "../../RestAPI/roster.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import { getGlobalCache } from "../../RestAPI/LocalCache.js";
+import RosterStateConverter, { UnitPool } from "@/shared-lib/RosterStateConverter";
+import { ArmyUpgrades } from "@/shared-lib/ArmyUpgrades";
+import BattleTacticCardInterf from "@/shared-lib/BattleTacticCardInterf";
+import { Force } from "@/shared-lib/Force";
+import { getNewRoster } from "@/lib/RestAPI/roster";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
 export default class RosterStateConverterImpl extends RosterStateConverter {
     constructor() {

@@ -1,5 +1,5 @@
 // make html page layout
-import { getLaunchInsets } from "./InsetEdges.js";
+import { getLaunchInsets } from "./InsetEdges";
 
 export const layoutDefaultFactory = (main: HTMLElement, name: string, show=true) => {
     const adjustedName = name.toLowerCase().replace(/ /g, '-');

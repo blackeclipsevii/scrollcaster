@@ -1,6 +1,6 @@
 
-import Settings from "./Settings.js";
-import UnitInterf from "../../../shared-lib/UnitInterface.js";
+import Settings from "./Settings";
+import UnitInterf from "@/shared-lib/UnitInterface";
 
 export default class WarscrollSettings implements Settings {
     [name: string]: unknown;

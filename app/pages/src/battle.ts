@@ -1,19 +1,19 @@
-import { Force } from "../../shared-lib/Force.js";
-import LoreInterf from "../../shared-lib/LoreInterface.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
-import UpgradeInterf from "../../shared-lib/UpgradeInterface.js";
-import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
-import { displayTacticsOverlay } from "../../lib/widgets/displayTacticsOverlay.js";
-import { displayRorOverlay, displayUpgradeOverlay } from "../../lib/widgets/displayUpgradeOverlay.js";
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "../../lib/widgets/header.js";
-import { makeSelectableItem } from "../../lib/widgets/helpers.js";
-import { makeLayout, swapLayout } from "../../lib/widgets/layout.js";
-import { getGlobalCache } from "../../lib/RestAPI/LocalCache.js";
+import { Force } from "@/shared-lib/Force";
+import LoreInterf from "@/shared-lib/LoreInterface";
+import UnitInterf from "@/shared-lib/UnitInterface";
+import UpgradeInterf from "@/shared-lib/UpgradeInterface";
+import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
+import { displayTacticsOverlay } from "@/lib/widgets/displayTacticsOverlay";
+import { displayRorOverlay, displayUpgradeOverlay } from "@/lib/widgets/displayUpgradeOverlay";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
+import { makeSelectableItem } from "@/lib/widgets/helpers";
+import { makeLayout, swapLayout } from "@/lib/widgets/layout";
+import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
-import Settings from "./settings/Settings.js";
-import BattleSettings from "./settings/BattleSettings.js";
-import WarscrollSettings from "./settings/WarscrollSettings.js";
+import Settings from "./settings/Settings";
+import BattleSettings from "./settings/BattleSettings";
+import WarscrollSettings from "./settings/WarscrollSettings";
 
 interface UnitSet {
     [name: string]: UnitInterf;

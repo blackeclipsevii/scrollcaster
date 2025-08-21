@@ -1,17 +1,17 @@
 
-import { displayPoints } from "../../lib/host.js";
-import { makeSelectableItemName, makeSelectableItemType } from "../../lib/widgets/helpers.js";
-import { makeLayout } from "../../lib/widgets/layout.js";
-import { setHeaderTitle, disableHeaderContextMenu, getPageRouter } from "../../lib/widgets/header.js";
-import { hidePointsOverlay } from "../../lib/widgets/displayPointsOverlay.js";
-import { swapLayout } from "../../lib/widgets/layout.js";
-import { initializeDraggable } from "../../lib/widgets/draggable.js";
-import { AbilityWidget } from "../../lib/widgets/AbilityWidget.js";
-import UnitInterf from "../../shared-lib/UnitInterface.js";
+import { displayPoints } from "@/lib/host";
+import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
+import { makeLayout } from "@/lib/widgets/layout";
+import { setHeaderTitle, disableHeaderContextMenu, getPageRouter } from "@/lib/widgets/header";
+import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
+import { swapLayout } from "@/lib/widgets/layout";
+import { initializeDraggable } from "@/lib/widgets/draggable";
+import { AbilityWidget } from "@/lib/widgets/AbilityWidget";
+import UnitInterf from "@/shared-lib/UnitInterface";
 
-import Settings from "./settings/Settings.js";
-import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings.js";
-import WarscrollSettings from "./settings/WarscrollSettings.js";
+import Settings from "./settings/Settings";
+import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings";
+import WarscrollSettings from "./settings/WarscrollSettings";
 
 const rorPage = {
     settings: null as RegimentOfRenownSettings | null,

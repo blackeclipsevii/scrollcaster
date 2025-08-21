@@ -1,6 +1,6 @@
-import { getUniqueIdentifier } from "../functions/uniqueIdentifier.js";
-import { endpoint } from "../endpoint.js";
-import { version } from "./version.js";
+import { getUniqueIdentifier } from "@/lib/functions/uniqueIdentifier";
+import { endpoint } from "@/lib/endpoint";
+import { version } from "./version";
 
 var _storageName = 'rosters';
 

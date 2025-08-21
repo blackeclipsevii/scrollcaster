@@ -1,0 +1,22 @@
+export { default as abOffensive } from "@ico/001-sword.png";
+export { default as abRallying } from "@ico/002-flag.png";
+export { default as abControl } from "@ico/003-circle.png";
+export { default as abMovement } from "@ico/004-cursor.png";
+export { default as abSpecial } from "@ico/005-star.png";
+export { default as abShooting } from "@ico/006-archery.png";
+export { default as abDefensive } from "@ico/007-shield.png";
+export { default as abDamage } from "@ico/008-skull.png";
+export { default as rightArrow } from "@ico/009-right-arrow.png";
+export { default as searchIcon } from "@ico/010-loupe.png";
+export { default as bookIcon } from "@ico/011-open-book.png";
+export { default as leftArrow } from "@ico/012-left-arrow.png";
+export { default as gearIcon } from "@ico/013-gear.png";
+export { default as plusIcon } from "@ico/014-plus-symbol-button.png";
+export { default as minusIcon } from "@ico/015-minus.png";
+export { default as dangerIcon } from "@ico/016-danger.png";
+export { default as checkIcon } from "@ico/017-check.png";
+export { default as dotsIcon } from "@ico/018-dots.png";
+
+export { default as largeKofi } from '@res/support_me_on_kofi_beige.webp'
+export { default as kofiCup } from '@res/kofi_symbol-edited.png'
+export { default as droppedScrolls } from '@res/dropped-scrolls.jpg'

@@ -87,10 +87,10 @@ button:disabled {
     justify-content: center;
 }
 
-.unit-slot:active:not(:focus-within) {
+/* .unit-slot:active:not(:focus-within) {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
   transform: translateY(2px);
-}
+} */
 
 .upgrade-group {
     display: flex;

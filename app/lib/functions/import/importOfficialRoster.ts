@@ -1,7 +1,7 @@
-import { NameRoster } from "../../../shared-lib/NameRoster.js";
-import RosterInterf from "../../../shared-lib/RosterInterface.js";
-import { NameRosterImporter } from "./importRoster.js";
-import { nameRosterToRoster } from "./nameRosterToRoster.js";
+import { NameRoster } from "@/shared-lib/NameRoster";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import { NameRosterImporter } from "./importRoster";
+import { nameRosterToRoster } from "./nameRosterToRoster";
 
 export default class ImportOfficialRoster extends NameRosterImporter {
     specialCookie() {

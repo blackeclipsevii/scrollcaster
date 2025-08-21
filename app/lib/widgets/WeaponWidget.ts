@@ -1,6 +1,7 @@
-import WeaponInterf, { WeaponType } from "../../shared-lib/WeaponInterf.js";
-import { whClearDiv } from "./helpers.js";
-import { getVar } from "../functions/getVar.js";
+import WeaponInterf, { WeaponType } from "@/shared-lib/WeaponInterf";
+import { whClearDiv } from "./helpers";
+import { getVar } from "@/lib/functions/getVar";
+import { abOffensive, abShooting } from "./images.js";
 
 export const WeaponWidget = {
     _displayWeapons: (qualifier: string, weaponList: WeaponInterf[]) => {
@@ -85,9 +86,9 @@ export const WeaponWidget = {
         icon.classList.add('invert-img');
         icon.classList.add('ability-icon');
         if (qualifier === 'ranged')
-            icon.src = `../../resources/${getVar('ab-shooting')}`;
+            icon.src = abShooting;
         else
-            icon.src = `../../resources/${getVar('ab-offensive')}`;
+            icon.src = abOffensive;
         grip.insertBefore(icon, title);
 
         let headers;
