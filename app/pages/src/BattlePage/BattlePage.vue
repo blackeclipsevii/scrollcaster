@@ -37,7 +37,7 @@ import WarscrollSettings from "@/pages/src/settings/WarscrollSettings";
 import LoreInterf from "@/shared-lib/LoreInterface";
 import RosterInterf from "@/shared-lib/RosterInterface";
 
-const props = defineProps<{
+defineProps<{
     units: UnitInterf[],
     enhancements: UpgradeInterf[],
     battleTrait: UpgradeInterf,
