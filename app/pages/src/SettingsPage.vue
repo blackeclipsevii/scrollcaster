@@ -8,14 +8,14 @@
         <div class="item-list" id="settings-list">
             <SettingsItem name="Legends" description="Allow legends units to display in the catalog."></SettingsItem>
             <SettingsItem name="Reset Page Layout" description="Return draggables to their default position" 
-                          button-text="Reset" button-type="delete"
-                          :button-click="resetPageLayout"></SettingsItem>
+                          buttonText="Reset" buttonType="delete"
+                          :buttonClick="resetPageLayout"></SettingsItem>
             <SettingsItem name="Clear Favorites" description="Remove all favorites" 
-                          button-text="Clear" button-type="delete"
-                          :button-click="clearFavorites"></SettingsItem>
+                          buttonText="Clear" buttonType="delete"
+                          :buttonClick="clearAllFavorites"></SettingsItem>
             <SettingsItem name="Clear Cache" description="Delete local data cached from the server" 
-                          button-text="Clear" button-type="delete"
-                          :button-click="clearDataCache"></SettingsItem>
+                          button-Text="Clear" buttonType="delete"
+                          :buttonClick="clearDataCache"></SettingsItem>
         </div>
     </div>
 </template>
@@ -28,11 +28,12 @@
     import { getVar } from '@/lib/functions/getVar';
     import { clearDraggableOrder } from '@/lib/widgets/draggable';
     import { getGlobalCache } from '@/lib/RestAPI/LocalCache';
+import { clearFavorites } from '@/lib/widgets/favorites';
     
     const title = ref('Settings')
     initializeDraggable('Settings');
 
-    const clearFavorites = () => {
+    const clearAllFavorites = () => {
         const toggle = Overlay.toggleFactory('flex', () => {
             const modal = document.querySelector(".modal") as HTMLElement;
             modal.innerHTML = '';
@@ -43,8 +44,8 @@
             const button = document.createElement('button');
             button.className = 'full-rectangle-button';
             button.textContent = 'Clear Favorites';
-            button.style.backgroundColor = 'red';
-            button.style.color = getVar('white-1');
+            button.style.backgroundColor = getVar('red-ability');
+            button.style.color = getVar('black-1');
             button.style.fontWeight = 'bold';
             button.onclick = () => {
                 clearFavorites();
@@ -67,12 +68,12 @@
             const button = document.createElement('button');
             button.className = 'full-rectangle-button';
             button.textContent = 'Reset Layouts';
-            button.style.backgroundColor = 'red';
-            button.style.color = getVar('white-1');
+            button.style.backgroundColor = getVar('red-ability');
+            button.style.color = getVar('black-1');
             button.style.fontWeight = 'bold';
             button.onclick = () => {
-            clearDraggableOrder();
-            Overlay.disable();
+                clearDraggableOrder();
+                Overlay.disable();
             };
 
             modal.appendChild(section);
@@ -91,12 +92,12 @@
             const button = document.createElement('button');
             button.className = 'full-rectangle-button';
             button.textContent = 'Clear Data Cache';
-            button.style.backgroundColor = 'red';
-            button.style.color = getVar('white-1');
+            button.style.backgroundColor = getVar('red-ability');
+            button.style.color = getVar('black-1');
             button.style.fontWeight = 'bold';
             button.onclick = async () => {
-            getGlobalCache()?.clear();
-            Overlay.disable();
+                getGlobalCache()?.clear();
+                Overlay.disable();
             };
 
             modal.appendChild(section);
