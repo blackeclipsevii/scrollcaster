@@ -20,28 +20,33 @@ export const whClearDiv = (qualifier: string, parent?: HTMLElement | Document) =
     return div;
 }
 
+export const getSelectableItemType = (typedObj: string | {typeName?:string} | Typed): string => {
+    if (typeof typedObj === 'string')
+        return typedObj;
+    else if ((typedObj as {typeName:string}).typeName)
+        return (typedObj as {typeName:string}).typeName
+    else if ((typedObj as Typed).superType) {
+        const to = typedObj as Typed;
+        if (to.superType === UnitSuperType) {
+            return unitTypeToString(typedObj as unknown as UnitInterf);
+        } else if (to.superType === UpgradeSuperType) {
+            return upgradeTypeToString(to.type);
+        }  else if (to.superType === LoreSuperType) {
+            return loreTypeToString(to.type);
+        }
+        else {
+            return otherTypesToString(to.type);
+        }
+    }
+
+    return 'Unknown';
+}
+
 export const makeSelectableItemType = (typedObj: string | {typeName?:string} | Typed) => {
     const roleEle = document.createElement('span');
     roleEle.className = 'selectable-item-type ability-label';
     roleEle.style.display = 'inline-block';
-    if (typeof typedObj === 'string')
-        roleEle.textContent = typedObj;
-    else if ((typedObj as {typeName:string}).typeName)
-        roleEle.textContent = (typedObj as {typeName:string}).typeName
-    else if ((typedObj as Typed).superType) {
-        const to = typedObj as Typed;
-        if (to.superType === UnitSuperType) {
-            roleEle.textContent = unitTypeToString(typedObj as unknown as UnitInterf);
-        } else if (to.superType === UpgradeSuperType) {
-            roleEle.textContent = upgradeTypeToString(to.type);
-        }  else if (to.superType === LoreSuperType) {
-            roleEle.textContent = loreTypeToString(to.type);
-        }
-        else {
-            roleEle.textContent = otherTypesToString(to.type);
-        }
-    }
-        
+    roleEle.textContent = getSelectableItemType(typedObj);
     return roleEle;
 }
 

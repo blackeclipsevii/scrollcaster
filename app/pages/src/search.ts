@@ -17,6 +17,7 @@ import { OtherSuperType, OtherTypes } from "@/shared-lib/OtherTypes";
 import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 import { searchIcon } from "@/lib/widgets/images.js";
+import AppSettings from "@/lib/AppSettings";
 
 interface Result {
     item: SearchableObject
@@ -83,7 +84,14 @@ const searchPage = {
             section.style.display = '';
             itemList.innerHTML = '';
 
+            const appSettings = new AppSettings;
+
             results.forEach(result => {
+                if (!appSettings.settings()["display-legends"]) {
+                    if (result.item.keywords.includes('Legends')) {
+                        return;
+                    }
+                }
                 makeSelectableItem(result.item, itemList, async () =>{
                     let armyName: string | null = result.item.armyName;
                     if (armyName.toLowerCase() === 'core')

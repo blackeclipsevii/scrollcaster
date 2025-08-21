@@ -3,6 +3,7 @@ import RostersSettings from "@/pages/src/settings/RostersSettings";
 import Settings from "@/pages/src/settings/Settings";
 import { ContextMenu } from "./contextMenu";
 import { Overlay } from "./overlay";
+import { hideVueComponent, vueIsShowing } from "@/pages/src/VueApp";
 
 interface HistoryEle {
     scrollY: number;
@@ -144,6 +145,9 @@ export default class PageRouter {
                 if (doLoadPage) {
                     enableHeaderBackButton();
                     ContextMenu.clear();
+                    if (vueIsShowing()) {
+                        hideVueComponent();
+                    }
                     await this._dynamicPages[type].loadPage(settings);
                     window.scrollTo(0, 0);
                 }

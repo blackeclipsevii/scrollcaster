@@ -7,6 +7,7 @@ import { fetchRegimentsOfRenown } from "./regimentsOfRenown";
 import { fetchTactics } from "./tactics";
 import { unitsApi } from "./units";
 import { fetchUpgrades } from "./upgrades";
+import AppSettings from "../AppSettings";
 
 interface UnitLUT {
     [id: string]: UnitInterf
@@ -67,6 +68,17 @@ export default class LocalCache {
         if (units) {
             data.units = units;
             this.save();
+        }
+
+        const appSettings = new AppSettings;
+        if (units && !appSettings.settings()["display-legends"]) {
+            const keys = Object.getOwnPropertyNames(units);
+            keys.forEach(key => {
+                const unit = units[key];
+                if (unit.keywords.includes('Legends')) {
+                    delete units[key];
+                }
+            });
         }
         return units;
     }
