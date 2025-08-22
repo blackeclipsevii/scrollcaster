@@ -1,85 +1,85 @@
 {
-    "Draconith Skywing": {},
-    "Heroes of the First-Forged": {
-        "ForcedGeneral": {
-            "general": "Lord-Commander Bastian Carthalos",
-            "mustInclude": true
-        }
-    },
-    "Ruination Brotherhood": {
-        "ForcedGeneral": {
-            "general": "Iridan the Witness",
-            "mustInclude": true
-        }
-    },
-    "Barrow Legion": {},
-    "Knights of the Crimson Keep": {
-        "ForcedGeneral": {
-            "general": "Prince Vhordrai",
-            "mustInclude": false
-        },
-        "NoTerrain": {}
-    },
-    "Scions of Nulahmia": {
-        "ForcedGeneral": {
-            "general": "Sekhar, Fang of Nulahmia",
-            "mustInclude": true
-        }
-    },
-    "The First Phalanx of Ionrach": {
-        "ForcedGeneral": {
-            "general": "Volturnos, High King of the Deep",
-            "mustInclude": true
-        }
-    },
-    "The Evergreen Hunt": {
-        "ForcedGeneral": {
-            "general": "Belthanos, First Thorn of Kurnoth",
-            "mustInclude": true
-        }
-    },
-    "Lofnir Drothkeepers": {
-        "NoTerrain": {}
-    },
-    "Grundstok Expeditionary Force": {},
-    "Gorechosen Champions": {
-        "ForcedGeneral": {
-            "general": "Mighty Lord of Khorne",
-            "mustInclude": false
-        }
-    },
-    "The Swords of Chaos": {},
-    "Tribes of the Snow Peaks": {},
-    "Great-grand Gnawhorde": {
-        "NoTerrain": {}
-    },
-    "Thanquol's Mutated Menagerie": {
-        "NoTerrain": {}
-    },
-    "Droggz's Gitmob": {
-        "ForcedGeneral": {
-            "general": "Droggz da Sunchompa",
-            "mustInclude": true
-        }
-    },
-    "Trugg's Troggherd": {
-        "ForcedGeneral": {
-            "general": "Trugg the Troggoth King",
-            "mustInclude": true
-        },
-        "NoTerrain": {}
-    },
-    "Krazogg's Grunta Stampede": {},
-    "Zoggrok's Ironmongerz": {
-        "ForcedGeneral": {
-            "general": "Zoggrok Anvilsmasha",
-            "mustInclude": true
-        }
-    },
-    "King Brodd's Stomp": {
-        "ForcedGeneral": {
-            "general": "King Brodd",
-            "mustInclude": true
-        }
+  "Barrow Legion": {},
+  "Draconith Skywing": {},
+  "Droggz's Gitmob": {
+    "ForcedGeneral": {
+      "general": "Droggz da Sunchompa",
+      "mustInclude": true
     }
+  },
+  "Gorechosen Champions": {
+    "ForcedGeneral": {
+      "general": "Mighty Lord of Khorne",
+      "mustInclude": false
+    }
+  },
+  "Great-grand Gnawhorde": {
+    "NoTerrain": {}
+  },
+  "Grundstok Expeditionary Force": {},
+  "Heroes of the First-Forged": {
+    "ForcedGeneral": {
+      "general": "Lord-Commander Bastian Carthalos",
+      "mustInclude": true
+    }
+  },
+  "King Brodd's Stomp": {
+    "ForcedGeneral": {
+      "general": "King Brodd",
+      "mustInclude": true
+    }
+  },
+  "Knights of the Crimson Keep": {
+    "ForcedGeneral": {
+      "general": "Prince Vhordrai",
+      "mustInclude": false
+    },
+    "NoTerrain": {}
+  },
+  "Krazogg's Grunta Stampede": {},
+  "Lofnir Drothkeepers": {
+    "NoTerrain": {}
+  },
+  "Ruination Brotherhood": {
+    "ForcedGeneral": {
+      "general": "Iridan the Witness",
+      "mustInclude": true
+    }
+  },
+  "Scions of Nulahmia": {
+    "ForcedGeneral": {
+      "general": "Sekhar, Fang of Nulahmia",
+      "mustInclude": true
+    }
+  },
+  "Thanquol's Mutated Menagerie": {
+    "NoTerrain": {}
+  },
+  "The Evergreen Hunt": {
+    "ForcedGeneral": {
+      "general": "Belthanos, First Thorn of Kurnoth",
+      "mustInclude": true
+    }
+  },
+  "The First Phalanx of Ionrach": {
+    "ForcedGeneral": {
+      "general": "Volturnos, High King of the Deep",
+      "mustInclude": true
+    }
+  },
+  "The Swords of Chaos": {},
+  "Tribes of the Snow Peaks": {},
+  "Trugg's Troggherd": {
+    "ForcedGeneral": {
+      "general": "Trugg the Troggoth King",
+      "mustInclude": true
+    },
+    "NoTerrain": {}
+  },
+  "Zoggrok's Ironmongerz": {
+    "ForcedGeneral": {
+      "general": "Zoggrok Anvilsmasha",
+      "mustInclude": true
+    }
+  }
 }

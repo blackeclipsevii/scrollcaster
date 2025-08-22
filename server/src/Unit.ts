@@ -12,6 +12,7 @@ import { parseOptions } from "./parseOptions.js";
 
 import UnitInterf, { EnhancementSlotInterf, UnitSuperType } from "../shared-lib/UnitInterface.js";
 
+// Hack to check if the unit is undersized
 export const isUndersizedUnit = (entry: BsEntryLink) => {
     let undersized = false;
     if (entry.categoryLinks) {

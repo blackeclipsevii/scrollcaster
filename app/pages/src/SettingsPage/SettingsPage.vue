@@ -18,6 +18,9 @@
         <SettingsItem name="Clear Favorites" description="Remove all favorites">
             <SettingsButton buttonText="Clear" buttonType="delete" :buttonClick="clearAllFavorites"></SettingsButton> 
         </SettingsItem>
+        <SettingsItem name="Force Roster Upgrade" description="Upgrade all rosters to the latest data" >
+            <SettingsButton buttonText="Force" buttonType="delete" :buttonClick="forceUpgradeLists"></SettingsButton>        
+        </SettingsItem>
         <SettingsItem name="Clear Cache" description="Delete local data cached from the server" >
             <SettingsButton buttonText="Clear" buttonType="delete" :buttonClick="clearDataCache"></SettingsButton>        
         </SettingsItem>
@@ -39,6 +42,9 @@
     import { clearFavorites } from '@/lib/widgets/favorites';
     import AppSettings from '@/lib/AppSettings';
 import { displaySlidebanner, SlideBannerMessageType } from '@/lib/widgets/SlideBanner';
+import { getRoster, getRosters, putRoster } from '@/lib/RestAPI/roster';
+import RosterStateConverter from '@/shared-lib/RosterStateConverter';
+import RosterInterf from '@/shared-lib/RosterInterface';
     
     // hook up the toggles to the global settings
     const appSettings = new AppSettings;
@@ -70,6 +76,42 @@ import { displaySlidebanner, SlideBannerMessageType } from '@/lib/widgets/SlideB
         battleViewDrawers.value = appSettings.settings()[battleViewDrawersKey];
         displayLegends.value = appSettings.settings()[displayLegendsKey];
         displaySlidebanner('Default settings restored', SlideBannerMessageType.Neutral);
+    }
+
+    const forceUpgradeLists = async () => {
+      const rosters = await getRosters();
+      let nUpgrades = 0;
+      const failures: string[] = [];
+      for (let i = 0; i < rosters.length; ++i) {
+        let roster = await getRoster(rosters[i]) as RosterInterf;
+        // update the roster with the latest server data
+        try {
+            const rsc = new RosterStateConverter();
+            const state = rsc.serialize(roster);
+            const newRoster = await rsc.deserialize(state, roster.id);
+            if (newRoster) {
+                ++ nUpgrades;
+                roster = newRoster;
+                putRoster(roster);
+            } else {
+                console.log(`Failed to process ${roster.name}`);
+                failures.push(roster.name);
+            }
+        } catch(e: unknown) {
+            console.log(`Failed to process ${roster.name}}`);
+            failures.push(roster.name);
+            if (e) {
+                console.log(e.toString());
+            }
+        }
+      }
+
+      if (failures.length > 0) {
+        console.log()
+        displaySlidebanner(`${failures.length} rosters failed.`, SlideBannerMessageType.Bad);
+      } else {
+        displaySlidebanner(`${nUpgrades} processed succesfully`, SlideBannerMessageType.Good);
+      }
     }
 
     const clearAllFavorites = () => {

@@ -1,4 +1,3 @@
-
 export interface BsNamed {
     '@name': string;
 }
@@ -10,7 +9,6 @@ export interface BsIdentifiable {
 export interface BsTyped {
     '@type': string;
 }
-
 
 export interface BsLink extends BsNamed, BsIdentifiable, BsTyped {
     '@targetId': string;

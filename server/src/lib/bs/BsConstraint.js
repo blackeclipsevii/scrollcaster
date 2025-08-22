@@ -1,3 +1,5 @@
+// old hack from the start of scrollcaster
+// originally going towards actually "undertanding" bsdata
 
 import BsAttrObj from "./BsAttribObj.js";
 

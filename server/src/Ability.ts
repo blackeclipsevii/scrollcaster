@@ -1,36 +1,56 @@
 import { BsProfile } from "./lib/bs/BsCatalog.js";
 import bsTextSmoother from "./lib/bs/BsSmoother.js"
-import { AbilityType } from "../shared-lib/AbilityInterface.js";
+import AbilityInterf, { AbilitySuperType, AbilityType } from "../shared-lib/AbilityInterface.js";
 
 import { bsCharacteristicArrToMetadata, Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 
-export default class Ability {
+export default class Ability implements AbilityInterf {
+    [name: string]: string | number;
     name: string;
     id: string;
-    metadata: Metadata;
-    type: number;
+    type: AbilityType;
+    superType: string;
+    abilityType: string;
     timing: string;
-    cost: number | null;
+    color: string;
+    effect: string;
+    declare: string;
+    cost: number;
+    keywords: string;
     constructor(profile: BsProfile) {
         this.name = profile['@name'];
         this.id = profile['@id'];
-        this.metadata = {};
         this.type = AbilityType.Passive;
-        this.cost = null;
+        this.superType = AbilitySuperType;
+        this.cost = 0;
         this.timing = 'Passive';
+        this.color = 'gray';
+        this.effect = '';
+        this.declare = '';
+        this.abilityType = '';
+        this.keywords = '';
+
         profile.characteristics.forEach((char) => {
             const lcName = char['@name'].toLowerCase();
             if (lcName !== 'used by' && char['#text']) {
                 const value = bsTextSmoother(char['#text']);
                 if (value)
-                    (this as unknown as Metadata)[lcName] = value;
+                    this[lcName] = value;
             }
         });
 
         if (profile.attributes) {
             profile.attributes.forEach((attrib) => {
-                if (attrib['#text'])
-                    this.metadata[attrib['@name'].toLowerCase()] = attrib['#text'];
+                //if (attrib['#text'])
+                //    this.metadata[attrib['@name'].toLowerCase()] = attrib['#text'];
+                if (attrib['#text']) {
+                    const lcName = attrib['@name'].toLowerCase();
+                    if (lcName === 'color') {
+                        this.color = attrib['#text'];
+                    } else if (lcName === 'type') {
+                        this.abilityType = attrib['#text'];
+                    }
+                }
             });
         }
         

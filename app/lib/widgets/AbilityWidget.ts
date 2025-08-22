@@ -36,11 +36,10 @@ export const AbilityWidget = {
         abilityBody.className = 'ability-body';
 
         const addSection = (htmlType: string, name: string, prefix: string, parent?: HTMLElement) => {
-            const lookableAbility = ability as unknown as {[name: string]: string};
-            if (lookableAbility[name]) {
+            if (ability[name]) {
                 let element = document.createElement(htmlType);
                 element.className = 'ability' + name;
-                element.innerHTML = prefix + lookableAbility[name];
+                element.innerHTML = prefix + ability[name];
 
                 if (parent) {
                     parent.appendChild(element);
@@ -51,34 +50,27 @@ export const AbilityWidget = {
             }
             return null;
         }
-
-        let cssColor = 'gray';
-        if (ability.metadata && ability.metadata.color) {
-            cssColor = ability.metadata.color.toLowerCase();
-        }
-
-        let theColor = getVar(`${cssColor}-ability`);
+        
+        const abilityColor = ability.color.toLowerCase();
+        let theColor = getVar(`${abilityColor}-ability`);
         let color = getVar('gray-ability');
         if (theColor && theColor.length > 0)
             color = theColor;
         
-        theColor = getVar(`${cssColor}-ability-header-font-color`);
+        theColor = getVar(`${abilityColor}-ability-header-font-color`);
         let headerFontColor = getVar('header-font-color');
         if (theColor && theColor.length > 0)
             headerFontColor = theColor;
 
-        let icon = abilityIconLut['ab-special'];
-        if (ability.metadata && ability.metadata.type) {
-            let type = ability.metadata.type;
-            icon = abilityIconLut[`ab-${type.toLowerCase()}`];
-        }
+        const type = ability.abilityType;
+        const icon = abilityIconLut[`ab-${type.toLowerCase()}`];
 
         const img = document.createElement('img');
         img.src = icon;
         img.className = 'ability-icon';
         img.style.display = 'inline-block';
         
-        const invertPng = getVar(`${cssColor}-invert-png`) ? false : true;
+        const invertPng = getVar(`${abilityColor}-invert-png`) ? false : true;
         if (invertPng) {
             img.classList.add('invert-img');
         }
