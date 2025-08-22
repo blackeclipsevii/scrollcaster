@@ -287,38 +287,37 @@ export default class Army implements ArmyInterf{
                 if (!ageOfSigmar.battleProfiles.hasProfilesFor(baseArmyName)) {
                     throw new Error(`Missing battle profiles for ${baseArmyName}`);
                 }
-                
-                if (unit.type as UnitType === UnitType.Hero) {
-                    
-                    unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
-                    if (!unit.battleProfile && armySplit.length > 1 && armySplit[1].toLowerCase().includes('big waaagh')) {
-                        const otherArmy = baseArmyName === 'Kruleboyz' ? 'Ironjawz' : 'Kruleboyz';
-                        unit.battleProfile = ageOfSigmar.battleProfiles.get(otherArmy, unit.name);
-                    }
+            
+                unit.battleProfile = ageOfSigmar.battleProfiles.get(baseArmyName, unit.name);
+                if (!unit.battleProfile && armySplit.length > 1 && armySplit[1].toLowerCase().includes('big waaagh')) {
+                    const otherArmy = baseArmyName === 'Kruleboyz' ? 'Ironjawz' : 'Kruleboyz';
+                    unit.battleProfile = ageOfSigmar.battleProfiles.get(otherArmy, unit.name);
+                }
 
-                    if (!unit.battleProfile) {
+                if (!unit.battleProfile) {
+                    if (unit.type as UnitType === UnitType.Hero) {
                         console.log(`profile not found for ${unit.name}`);
                         return;
                     }
+                }
 
-                    if (supplimentalArmyName) {
-                        const aorProfile = ageOfSigmar.battleProfiles.getPartial(supplimentalArmyName, unit.name);
-                        if (aorProfile) {
-                            // make a copy before we edit it
-                            unit.battleProfile = JSON.parse(JSON.stringify(unit.battleProfile)) as BattleProfile;
-                            if (aorProfile.replace) {
-                                unit.battleProfile.notes = aorProfile.notes ? aorProfile.notes : null;
-                                unit.battleProfile.regimentOptions = aorProfile.regimentOptions ? aorProfile.regimentOptions : '';
-                            } else {
-                                const addPart = (unitStr: string | null, aorStr: string | null | undefined, joinStr: string) => {
-                                    if (aorStr)
-                                        return (unitStr && unitStr.length > 0) ? `${unitStr}${joinStr}${aorStr}` : aorStr;
-                                    return unitStr;
-                                }
-                                unit.battleProfile.notes = addPart(unit.battleProfile.notes, aorProfile.notes, '. ');
-                                unit.battleProfile.regimentOptions = addPart(unit.battleProfile.regimentOptions, aorProfile.regimentOptions, ', ') || '';
-                                console.log(`update profile for ${unit.name}`);
+                if (supplimentalArmyName) {
+                    const aorProfile = ageOfSigmar.battleProfiles.getPartial(supplimentalArmyName, unit.name);
+                    if (aorProfile) {
+                        // make a copy before we edit it
+                        unit.battleProfile = JSON.parse(JSON.stringify(unit.battleProfile)) as BattleProfile;
+                        if (aorProfile.replace) {
+                            unit.battleProfile.notes = aorProfile.notes ? aorProfile.notes : null;
+                            unit.battleProfile.regimentOptions = aorProfile.regimentOptions ? aorProfile.regimentOptions : '';
+                        } else {
+                            const addPart = (unitStr: string | null, aorStr: string | null | undefined, joinStr: string) => {
+                                if (aorStr)
+                                    return (unitStr && unitStr.length > 0) ? `${unitStr}${joinStr}${aorStr}` : aorStr;
+                                return unitStr;
                             }
+                            unit.battleProfile.notes = addPart(unit.battleProfile.notes, aorProfile.notes, '. ');
+                            unit.battleProfile.regimentOptions = addPart(unit.battleProfile.regimentOptions, aorProfile.regimentOptions, ', ') || '';
+                            console.log(`update profile for ${unit.name}`);
                         }
                     }
                 }

@@ -277,5 +277,13 @@
     "regimentOptions": "Any <Stormcast Eternals>, 0-1 <Stormcast Exemplar>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "120 × 92mm"
+  },
+  {
+    "type": "Infantry",
+    "name": "Neave's Companions",
+    "unitSize": 3,
+    "points": 0,
+    "notes": "This unit can only be taken in <Neave Blacktalon>'s regiment.",
+    "baseSize": "40mm"
   }
 ]
