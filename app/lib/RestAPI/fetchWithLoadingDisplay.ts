@@ -20,7 +20,7 @@ export const getLoadingMessage = () => {
 
 export const fetchWithLoadingDisplay = async (url: string, callback: null | ((result: unknown) => any) = null, showLoadingDisplay=true) => { 
   const retryInterval = 500;
-  const maxRetryTime = 10000;
+  const maxRetryTime = 2500;
   let retry = maxRetryTime / retryInterval;
  // url = 'foo.bar'
   let done = false;
@@ -68,8 +68,8 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
       modal.style.backgroundSize = 'cover';
       modal.style.backgroundPosition = 'center';
       const overlay = modal.closest('.overlay');
-      if (overlay)
-          overlay.classList.add('block-close');
+      //if (overlay)
+      //    overlay.classList.add('block-close');
     });
 
     const timeoutDisplayOverlay = () => {
