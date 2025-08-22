@@ -1,5 +1,5 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay"
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import { _clientVersion } from "@/version";
 import { isOnline } from "./LocalCache";
 
@@ -11,7 +11,7 @@ interface VersionWhole {
 }
 
 async function getVersion (of: string | null = null): Promise<VersionParts | VersionWhole | null> {
-    let url = `${endpoint}/version`;
+    let url = `${getEndpoint()}/version`;
     if (of !== null) 
         url =`${url}?of=${of}`;
 

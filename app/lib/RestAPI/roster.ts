@@ -1,12 +1,12 @@
 import { getUniqueIdentifier } from "@/lib/functions/uniqueIdentifier";
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import { version } from "./version";
 
 var _storageName = 'rosters';
 
 function rosterEndpoint(): string {
     const user = getUniqueIdentifier();
-    return `${endpoint}/roster?uuid=${user}`;
+    return `${getEndpoint()}/roster?uuid=${user}`;
 }
 
 function _getRosters() {
@@ -36,7 +36,7 @@ export async function getRosters() {
 
 export async function getNewRoster(army: string) {
     const endpoint = rosterEndpoint();
-    const roster = await fetch(encodeURI(`${endpoint}&army=${army}`), {
+    const roster = await fetch(encodeURI(`${getEndpoint()}&army=${army}`), {
         method: "GET" // default, so we can ignore
     }).then(response => response.json());
 
@@ -53,7 +53,7 @@ export async function getRoster(id: string) {
 /*
     const endpoint = rosterEndpoint();
     let roster = null;
-    await fetch(`${endpoint}&id=${id}`, {
+    await fetch(`${getEndpoint()}&id=${id}`, {
         method: "GET" // default, so we can ignore
     }).then(response => { 
         console.log(response);
@@ -69,7 +69,7 @@ export async function putRoster(roster: {id: string}) {
     _storeRosters(rosters);
     /*
     const endpoint = rosterEndpoint();
-    await fetch(`${endpoint}&id=${roster.id}`, {
+    await fetch(`${getEndpoint()}&id=${roster.id}`, {
         method: "PUT",
         body: json,
         headers: { 'Content-Type': 'application/json' }
@@ -89,7 +89,7 @@ export async function deleteRoster(id: string) {
     /*
     const endpoint = rosterEndpoint();
     localStorage.removeItem(id);
-  await fetch(`${endpoint}&id=${id}`,{
+  await fetch(`${getEndpoint()}&id=${id}`,{
       method: "DELETE"
   });
   */

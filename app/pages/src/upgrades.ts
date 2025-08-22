@@ -10,7 +10,7 @@ import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } f
 import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
 import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
 import { layoutDefaultFactory, makeLayout, swapLayout } from "@/lib/widgets/layout";
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import LoreInterf, { LoreLUTInterf } from "@/shared-lib/LoreInterface";
 import { putRoster } from "@/lib/RestAPI/roster";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
@@ -196,7 +196,7 @@ const upgradePage = {
         async function loadUniversalLores() {
             setHeaderTitle('Universal Manifestation Lores');
             hidePointsOverlay();
-            await fetchWithLoadingDisplay(encodeURI(`${endpoint}/lores`),
+            await fetchWithLoadingDisplay(encodeURI(`${getEndpoint()}/lores`),
             uk => {
                 const loreObject = uk as {
                     lores: {manifestation: LoreLUTInterf},

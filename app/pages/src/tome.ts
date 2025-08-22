@@ -1,5 +1,5 @@
 import { displayPoints } from "@/lib/host";
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import { fetchWithLoadingDisplay } from "@/lib/RestAPI/fetchWithLoadingDisplay";
 import { disableBackButton, enableBackButton, enableSearchButton, getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
 import { makeSelectableItemName } from "@/lib/widgets/helpers";
@@ -109,7 +109,7 @@ const catalogPage = {
                 makeLayout([name], null, null, true);
                 const listName = name.toLowerCase().trim().replace(/ /g, '-') + '-list';
                 
-                const url = `${endpoint}/armies?army=${subFactionName}`;
+                const url = `${getEndpoint()}/armies?army=${subFactionName}`;
                 await fetchWithLoadingDisplay(encodeURI(url), (uk: unknown) => {
                     const army = uk as ArmyInterf;
         

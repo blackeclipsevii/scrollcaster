@@ -1,5 +1,5 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay"
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import UnitInterf from "@/shared-lib/UnitInterface";
 
 export const unitsApi = {
@@ -14,7 +14,7 @@ export const unitsApi = {
            this._cache.leaderId === leaderId) {
             return this._cache.units as {[name: string]: UnitInterf};
         }
-        let url = `${endpoint}/units`;
+        let url = `${getEndpoint()}/units`;
         if (armyName) {
             url = `${url}?army=${armyName}`
             if (leaderId) {
