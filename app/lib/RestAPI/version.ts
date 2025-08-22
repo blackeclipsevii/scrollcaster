@@ -1,6 +1,6 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay"
 import { endpoint } from "@/lib/endpoint";
-//import { _clientVersion } from "@/version";
+import { _clientVersion } from "@/version";
 import { isOnline } from "./LocalCache";
 
 interface VersionParts {
@@ -23,7 +23,7 @@ export const version = (()=>{
     _server: null as string | null,
     _bsdata: null as string | null,
     _profiles: null as string | null,
-    _client: '0.14.1beta',
+    _client: _clientVersion,
     async getClientVersion() {
         return this._client;
     },
