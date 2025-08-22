@@ -107,7 +107,6 @@ export class NoTerrainValidator {
     }
 }
 
-// combine multiple validators into one
 export class MultiStepValidator {
     _validators: ArmyValidator[];
     constructor (validators: ArmyValidator[]) {

@@ -1,5 +1,3 @@
-import { Identifiable, Typed } from "./BasicObject.js";
-
 export const AbilitySuperType = 'Ability';
 
 export enum AbilityType {
@@ -10,13 +8,11 @@ export enum AbilityType {
     Prayer = 4
 }
 
-export default interface AbilityInterf extends Identifiable, Typed {
-  [name: string]: string | number;
-  abilityType: string;
-  timing: string;
-  color: string;
-  effect: string;
-  declare: string;
-  cost: number;
-  keywords: string;
+export default interface AbilityInterf {
+    name: string;
+    id: string;
+    metadata: {[key: string]: string};
+    type: number;
+    cost: number | null;
+    timing: string;
 }

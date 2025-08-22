@@ -8,10 +8,10 @@
         </div>
         <div class="ability-body">
             <h3 class="abilityname" v-html="ability.name"></h3>
-            <p v-if="ability.cost > 0" class="abilitycost" v-html="costText"></p>
-            <p v-if="ability.declare.length > 0" class="abilitydeclare" v-html="declareText"></p>
-            <p v-if="ability.effect.length > 0" class="abilityeffect" v-html="effectText"></p>
-            <h5 v-if="ability.keywords.length > 0" class="abilitykeywords" v-html="keywordsText"></h5>
+            <p v-if="cost" class="abilitycost" v-html="costText"></p>
+            <p v-if="lookableAbility['declare']" class="abilitydeclare" v-html="declareText"></p>
+            <p v-if="lookableAbility['effect']" class="abilityeffect" v-html="effectText"></p>
+            <h5 v-if="lookableAbility['keywords']" class="abilitykeywords" v-html="keywordsText"></h5>
         </div>
     </div>
 </template>
@@ -26,7 +26,7 @@ import { abSpecial } from "@/lib/widgets/images";
 import { abShooting } from "@/lib/widgets/images";
 import { abDefensive } from "@/lib/widgets/images";
 import { abDamage } from "@/lib/widgets/images";
-import AbilityInterf, { AbilityType } from "@/shared-lib/AbilityInterface";
+import AbilityInterf from "@/shared-lib/AbilityInterface";
 
 const abilityIconLut: {[name: string]: string} = {
     'ab-offensive': abOffensive,
@@ -43,33 +43,47 @@ const props = defineProps<{
     ability: AbilityInterf
 }>(); 
 
-const abilityColor = props.ability.color.toLowerCase();
-let theColor = getVar(`${abilityColor}-ability`);
+let cssColor = 'gray';
+if (props.ability.metadata && props.ability.metadata.color) {
+    cssColor = props.ability.metadata.color.toLowerCase();
+}
+
+let theColor = getVar(`${cssColor}-ability`);
 let color = getVar('gray-ability');
 if (theColor && theColor.length > 0)
     color = theColor;
 
-theColor = getVar(`${abilityColor}-ability-header-font-color`);
+theColor = getVar(`${cssColor}-ability-header-font-color`);
 let headerFontColor = getVar('header-font-color');
 if (theColor && theColor.length > 0)
     headerFontColor = theColor;
 
-let type = props.ability.abilityType;
-let abIcon = abilityIconLut[`ab-${type.toLowerCase()}`];
-
-const invertClass = getVar(`${abilityColor}-invert-png`) ? '' : 'invert-img';
-
-let costText = '<b>Cost:</b>'
-if (props.ability.type === AbilityType.Spell) {
-    costText = '<b>Casting Value:</b>';
-} else if (props.ability.type === AbilityType.Prayer) {
-    costText = '<b>Chanting Value:</b>';
+let abIcon = abilityIconLut['ab-special'];
+if (props.ability.metadata && props.ability.metadata.type) {
+    let type = props.ability.metadata.type;
+    abIcon = abilityIconLut[`ab-${type.toLowerCase()}`];
 }
-costText = `${costText} ${props.ability.cost.toString()}`
 
-const declareText = `<b>Declare: </b>${props.ability.declare}`;
-const effectText = `<b>Effect: </b>${props.ability.effect}`;
-const keywordsText = `<b>Keywords: </b>${props.ability.keywords}`;
+const invertClass = getVar(`${cssColor}-invert-png`) ? '' : 'invert-img';
+
+const lookableAbility = props.ability as unknown as {[name: string]: string};
+let cost: string | undefined;
+let costText = '<b>Cost:</b>'
+if (lookableAbility['casting value']) {
+    costText = '<b>Casting Value:</b>';
+    cost = lookableAbility['casting value'];
+} else if (lookableAbility['chanting value']) {
+    costText = '<b>Chanting Value:</b>';
+    cost = lookableAbility['chanting value'];
+} else {
+    cost = lookableAbility['cost'];
+}
+if (cost !== undefined && cost !== null)
+    costText = `${costText} ${cost.toString()}`
+
+const declareText = `<b>Declare: </b>${lookableAbility['declare']}`;
+const effectText = `<b>Effect: </b>${lookableAbility['effect']}`;
+const keywordsText = `<b>Keywords: </b>${lookableAbility['keywords']}`;
 </script>
 
 <style scoped>

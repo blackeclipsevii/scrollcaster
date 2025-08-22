@@ -1,4 +1,3 @@
-// this is an old hack from the start of scrollcaster
 
 export const copyAttribsNoPrefix = (xml, destObj) => {
     const names = Object.getOwnPropertyNames(xml);
