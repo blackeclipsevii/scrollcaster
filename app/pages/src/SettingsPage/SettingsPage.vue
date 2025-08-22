@@ -4,7 +4,7 @@
         <SettingsItem name="Battle View Drawers" description="Open all the drawers in Battle View by default">
             <SettingsSwitch v-model="battleViewDrawers"></SettingsSwitch>
         </SettingsItem>
-        <SettingsItem name="Display Legends" description="Allow legends units to display in the catalog. This does not currently enable legends listbuilding.">
+        <SettingsItem name="Display Legends" description="Allow legends units to display in the catalog (<i>This does not currently enable legends listbuilding</i>)">
             <SettingsSwitch v-model="displayLegends"></SettingsSwitch>
         </SettingsItem>
     </Section>

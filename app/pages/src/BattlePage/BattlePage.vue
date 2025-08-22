@@ -3,6 +3,12 @@
         <BattleSelectableItem v-for="(unit) in units" :displayable="unit" :selectableClick="displayUnit">
         </BattleSelectableItem>
     </Section>
+
+    <Section v-if="roster.battleTacticCards.length > 0" title="Battle Tactic Cards">
+        <BattleSelectableItem v-for="(btc) in roster.battleTacticCards" :displayable="btc" :type='"Battle Tactic Card"' :selectableClick="displayTacticsOverlay">
+        </BattleSelectableItem>
+    </Section>
+
     <Section v-for="phase in phases" :title="phase">
         <DrawerSelectableItem v-for="data in Object.values(abilities[phase])" :displayable="data" :startOpen="startOpen">
             <div v-for="(ability, abIdx) in data.abilities" class="ability-section">
@@ -49,10 +55,10 @@ import LoreInterf from "@/shared-lib/LoreInterface";
 import RosterInterf from "@/shared-lib/RosterInterface";
 import {PhasedAbilitiesInterf} from "./PhasedAbilities";
 import AppSettings from "@/lib/AppSettings";
+import AbilityInterf from "@/shared-lib/AbilityInterface";
 
 const props = defineProps<{
     units: UnitInterf[],
-    enhancements: UpgradeInterf[],
     battleTrait: UpgradeInterf,
     lores: LoreInterf[],
     abilities: PhasedAbilitiesInterf,
@@ -64,9 +70,24 @@ const startOpen = appSettings.settings()["Battle View Drawers"];
 
 const phases = Object.getOwnPropertyNames(props.abilities).filter(name => Object.values(props.abilities[name]).length > 0);
 
-const displayUnit = (unit: unknown) => {
+const displayUnit = (displayedUnit: unknown) => {
     const settings = new WarscrollSettings;
-    settings.unit = unit as UnitInterf;
+    const copyObject = (obj: unknown) => JSON.parse(JSON.stringify(obj));
+    const unit = copyObject(displayedUnit) as UnitInterf;
+
+    // display enhancements on the warrscroll
+    const enhancements = Object.values(unit.enhancements);
+    enhancements.forEach(enhancement => {
+        if (enhancement.slot) {
+            enhancement.slot.abilities.forEach(ability => {
+                // copy the ability to modify it
+                const abilityCopy = copyObject(ability) as AbilityInterf;
+                abilityCopy.name = `${abilityCopy.name} (${enhancement.name})`;
+                unit.abilities.push(abilityCopy);
+            });
+        }
+    });
+    settings.unit = unit;
     getPageRouter()?.goTo(settings);
 }
 </script>

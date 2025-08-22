@@ -9,7 +9,6 @@ import BattlePage from "./BattlePage.vue";
 import { showVueComponent } from "../../../lib/widgets/VueApp";
 import RosterInterf from "@/shared-lib/RosterInterface";
 import UnitInterf from "@/shared-lib/UnitInterface";
-import UpgradeInterf from "@/shared-lib/UpgradeInterface";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 import PhasedAbilities from "./PhasedAbilities";
 
@@ -21,7 +20,6 @@ const battlePage = {
         const lores = [roster.lores.spell, roster.lores.prayer, roster.lores.manifestation].filter(lore => lore ? lore : null);
         const abilities = new PhasedAbilities;
         let units: UnitInterf[] = [];
-        let enhancements: UpgradeInterf[] = [];
         lores.forEach(lore => {
             if (lore) {
                 lore.abilities.forEach(upgrade => {
@@ -46,10 +44,6 @@ const battlePage = {
         async function loadArmy() {  
             interface UnitSet {
                 [name: string]: UnitInterf;
-            }
-
-            interface UpgradeSet {
-                [name: string]: UpgradeInterf;
             }
 
             async function getManifestationUnits() {
@@ -84,32 +78,42 @@ const battlePage = {
             }
         
             const unitSet: UnitSet = {};
-            const enhancementSet: UpgradeSet = {};
-
-            const addEnhancements = (unit: UnitInterf) => {
+            const addEnhancements = (unit: UnitInterf): void => {
+                const enhancementNames: string[] = [];
                 const enhancements = Object.values(unit.enhancements);
                 enhancements.forEach(enhance => {
                     if (enhance.slot !== null) {
-                        const slot = enhance.slot;
-                        enhancementSet[enhance.id] = slot;
-                        enhance.slot.abilities.forEach(ability =>{
-                            abilities.addAbility(unit, ability);
-                        });
+                        enhancementNames.push(enhance.name);
                     }
                 });
+                
+                if (enhancementNames.length > 0) {
+                    unit.name = `${unit.name} (${enhancementNames.join(', ')})`;
+                    enhancements.forEach(enhance => {
+                        if (enhance.slot !== null) {
+                            enhance.slot.abilities.forEach(
+                                ability => abilities.addAbility(unit, ability));
+                        }
+                    });
+                }
             }
 
-            const addUnit = (unit: UnitInterf) => {
-                if (!unit)
+            const addUnit = (inUnit: UnitInterf) => {
+                if (!inUnit)
                     return;
 
-                if (!unitSet[unit.id])
-                    unitSet[unit.id] = unit;
+                const copyObject = (obj: unknown) => JSON.parse(JSON.stringify(obj));
+                const unit = copyObject(inUnit) as UnitInterf;
+
+                let name = unit.name;
                 unit.abilities.forEach(ability => {
                     abilities.addAbility(unit, ability);
                 });
 
                 addEnhancements(unit);
+
+                if (!unitSet[unit.name])
+                    unitSet[unit.name] = unit;
             }
 
             // units
@@ -157,15 +161,11 @@ const battlePage = {
             units = Object.values(unitSet);
             if (units.length > 1)
                 units = units.sort((a, b) => a.type - b.type);
-
-            // enhancements
-            enhancements = Object.values(enhancementSet);
         }
         await loadArmy();
 
         return {
             units: units,
-            enhancements: enhancements,
             battleTrait: battleTrait,
             lores: lores,
             roster: roster,
