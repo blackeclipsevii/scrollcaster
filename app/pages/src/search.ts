@@ -1,6 +1,6 @@
 
 import { getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 
 import { fetchWithLoadingDisplay } from "@/lib/RestAPI/fetchWithLoadingDisplay";
 import { SearchableObject } from "@/shared-lib/SearchableObject";
@@ -33,7 +33,7 @@ const searchPage = {
         this.settings = settings as SearchSettings;
         const thisPage = this;
         async function getSpecificUnit(id: string, useArmy: string | null) {
-            let url = `${endpoint}/units?id=${id}`;
+            let url = `${getEndpoint()}/units?id=${id}`;
             if (useArmy) {
                 url = `${url}&army=${useArmy}`;
             }

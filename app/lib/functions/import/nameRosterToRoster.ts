@@ -1,10 +1,10 @@
 import { NameRoster } from "@/shared-lib/NameRoster";
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import { generateId } from "@/lib/functions/uniqueIdentifier";
 import RosterStateConverter from "./RosterStateConvertImpl";
 
 export const nameRosterToRoster = async (nameRoster: NameRoster) => {
-    const regArg = encodeURI(`${endpoint}/import`);
+    const regArg = encodeURI(`${getEndpoint()}/import`);
     let result = await fetch(regArg, {
         method: "POST",
         headers: {

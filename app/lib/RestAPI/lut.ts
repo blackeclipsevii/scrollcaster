@@ -1,6 +1,6 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay"
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 
 export const fetchLUT = async (armyName: string, id: string): Promise<unknown> => {
-    return await fetchWithLoadingDisplay(encodeURI(`${endpoint}/lut?army=${armyName}&id=${id}`));
+    return await fetchWithLoadingDisplay(encodeURI(`${getEndpoint()}/lut?army=${armyName}&id=${id}`));
 };

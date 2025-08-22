@@ -1,13 +1,13 @@
 import RosterInterf from "@/shared-lib/RosterInterface";
 import UnitInterf from "@/shared-lib/UnitInterface";
 import { WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import { rosterTotalPoints } from "@/lib/host";
 import RosterStateConverter from "./import/RosterStateConvertImpl";
 
 const validateRosterPOST = async (roster: RosterInterf) => {
     const rsc = new RosterStateConverter();
-    const regArg = encodeURI(`${endpoint}/validate`);
+    const regArg = encodeURI(`${getEndpoint()}/validate`);
     let errors: string[] = []
     let result = await fetch(regArg, {
         method: "POST",

@@ -1,6 +1,5 @@
 import { Overlay } from "@/lib/widgets/overlay";
-import { absoluteUrl } from "@/lib/widgets/header";
-import { endpoint } from "@/lib/endpoint";
+import { getEndpoint } from "@/lib/endpoint";
 import { isDOMAvailable } from "@/lib/host";
 import { droppedScrolls } from "../widgets/images.js";
 
@@ -95,5 +94,5 @@ export const fetchWithLoadingDisplay = async (url: string, callback: null | ((re
 }
 
 export const fetchArmies = async (callback: ((result: unknown) => void), displayModalLoad=true) => {
-  return await fetchWithLoadingDisplay(`${endpoint}/armies`, callback, displayModalLoad);
+  return await fetchWithLoadingDisplay(`${getEndpoint()}/armies`, callback, displayModalLoad);
 }

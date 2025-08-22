@@ -9,12 +9,15 @@ import { initializeGlobalCache, isOnline } from "./RestAPI/LocalCache";
 
 import RostersSettings from "@/pages/src/settings/RostersSettings";
 import { version } from "./RestAPI/version";
-// import { addPWAInstallPrompt } from "./widgets/PWAInstaller";
 
 import { registerAllPages } from "@/pages/src/registerAllPages";
 import { registerSW } from 'virtual:pwa-register'
+import { getEndpoint } from "./endpoint";
 
 (async () => {
+  // detect dev right away
+  const endpoint = getEndpoint();
+
   if (await isOnline()) {
     const bsDataVersion = version.getBsDataVersion();
     const serverVersion = version.getServerVersion();
