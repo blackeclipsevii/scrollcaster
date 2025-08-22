@@ -9,9 +9,8 @@ import BattlePage from "./BattlePage.vue";
 import { showVueComponent } from "../../../lib/widgets/VueApp";
 import RosterInterf from "@/shared-lib/RosterInterface";
 import UnitInterf from "@/shared-lib/UnitInterface";
-import UpgradeInterf from "@/shared-lib/UpgradeInterface";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
-import { Force } from "@/shared-lib/Force";
+import PhasedAbilities from "./PhasedAbilities";
 
 const battlePage = {
     settings: new BattleSettings,
@@ -19,23 +18,39 @@ const battlePage = {
         const traitNames = Object.getOwnPropertyNames(roster.battleTraits);
         const battleTrait = roster.battleTraits[traitNames[0]];
         const lores = [roster.lores.spell, roster.lores.prayer, roster.lores.manifestation].filter(lore => lore ? lore : null);
-
+        const abilities = new PhasedAbilities;
         let units: UnitInterf[] = [];
-        let enhancements: UpgradeInterf[] = [];
+        lores.forEach(lore => {
+            if (lore) {
+                lore.abilities.forEach(upgrade => {
+                    upgrade.abilities.forEach(ability => {
+                        abilities.addAbility(lore, ability); 
+                    });
+                });
+            }
+        });
+
+        battleTrait.abilities.forEach(ability => {
+            abilities.addAbility(battleTrait, ability);
+        });
+
+        if (roster.battleFormation) {
+            const formation = roster.battleFormation;
+            formation.abilities.forEach(ability => {
+                abilities.addAbility(formation, ability);
+            })
+        }
 
         async function loadArmy() {  
             interface UnitSet {
                 [name: string]: UnitInterf;
             }
 
-            interface UpgradeSet {
-                [name: string]: UpgradeInterf;
-            }
-
             async function getManifestationUnits() {
                 if (!roster.lores.manifestation) {
                     return null;
                 }
+
                 async function getSpecificUnit(id: string, useArmy: boolean): Promise<UnitInterf | null> {
                     try {
                         const units = await getGlobalCache()?.getUnits(useArmy ? roster.army : null);
@@ -63,23 +78,42 @@ const battlePage = {
             }
         
             const unitSet: UnitSet = {};
-            const enhancementSet: UpgradeSet = {};
-
-            const addEnhancements = (unit: UnitInterf) => {
+            const addEnhancements = (unit: UnitInterf): void => {
+                const enhancementNames: string[] = [];
                 const enhancements = Object.values(unit.enhancements);
                 enhancements.forEach(enhance => {
-                    if (enhance.slot !== null)
-                        enhancementSet[enhance.id] = enhance.slot;
+                    if (enhance.slot !== null) {
+                        enhancementNames.push(enhance.name);
+                    }
                 });
+                
+                if (enhancementNames.length > 0) {
+                    unit.name = `${unit.name} (${enhancementNames.join(', ')})`;
+                    enhancements.forEach(enhance => {
+                        if (enhance.slot !== null) {
+                            enhance.slot.abilities.forEach(
+                                ability => abilities.addAbility(unit, ability));
+                        }
+                    });
+                }
             }
 
-            const addUnit = (unit: UnitInterf) => {
-                if (!unit)
+            const addUnit = (inUnit: UnitInterf) => {
+                if (!inUnit)
                     return;
 
-                if (!unitSet[unit.id])
-                    unitSet[unit.id] = unit;
+                const copyObject = (obj: unknown) => JSON.parse(JSON.stringify(obj));
+                const unit = copyObject(inUnit) as UnitInterf;
+
+                let name = unit.name;
+                unit.abilities.forEach(ability => {
+                    abilities.addAbility(unit, ability);
+                });
+
                 addEnhancements(unit);
+
+                if (!unitSet[unit.name])
+                    unitSet[unit.name] = unit;
             }
 
             // units
@@ -97,44 +131,45 @@ const battlePage = {
             });
 
             if (roster.terrainFeature) {
+                roster.terrainFeature.abilities.forEach(ability => {
+                    abilities.addAbility(roster.terrainFeature!!, ability);
+                });
                 unitSet[roster.terrainFeature.id] = roster.terrainFeature;
             }
 
             const result = await getManifestationUnits();
             if (result) {
                 for(let i = 0; i < result.units.length; ++i) {
-                    const unit = result.units[i];
-                    unitSet[unit.id] = unit;
+                    addUnit(result.units[i])
                 }
             }
 
-            function gatherRorUnits(regiment: Force) {
+            if (roster.regimentOfRenown) {
+                const regiment = roster.regimentOfRenown;
+                regiment.upgrades.forEach(upgrade => {
+                    upgrade.abilities.forEach(ability => {
+                        abilities.addAbility(regiment, ability);
+                    });
+                });
+
                 for (let i = 0; i < regiment.unitContainers.length; ++i) {
                     const unitContainer = regiment.unitContainers[i];
-                    if (!unitSet[unitContainer.unit.id]) {
-                        unitSet[unitContainer.unit.id] = unitContainer.unit;
-                    }
+                    addUnit(unitContainer.unit)
                 }
             }
-
-            if (roster.regimentOfRenown)
-                gatherRorUnits(roster.regimentOfRenown);
 
             units = Object.values(unitSet);
             if (units.length > 1)
                 units = units.sort((a, b) => a.type - b.type);
-
-            // enhancements
-            enhancements = Object.values(enhancementSet);
         }
         await loadArmy();
 
         return {
             units: units,
-            enhancements: enhancements,
             battleTrait: battleTrait,
             lores: lores,
-            roster: roster
+            roster: roster,
+            abilities: abilities.abilities
         };
     },
     async loadPage(settings: Settings) {
@@ -149,6 +184,21 @@ const battlePage = {
         disableHeaderContextMenu();
         setHeaderTitle(`Battle View`);
         showVueComponent(BattlePage, properties);
+        document.querySelectorAll('.unit-slot').forEach(wrapper => {
+            const arrow = wrapper.querySelector('.arrow') as HTMLElement;
+            const details = wrapper.querySelector('.unit-details') as HTMLElement;
+
+            const isOpen = details.classList.contains('open');
+
+            if (isOpen) {
+                details.style.maxHeight = details.scrollHeight + "px";
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                details.style.maxHeight = '';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        });
+
         initializeDraggable('battle');
     }
 };

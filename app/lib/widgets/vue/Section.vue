@@ -18,4 +18,7 @@
 
 <style scoped>
     @import "@/pages/css/pages.css";
+    .item-list {
+        gap: 0;
+    }
 </style>

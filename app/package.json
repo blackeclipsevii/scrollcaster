@@ -32,6 +32,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "preview": "vite preview",
     "install-shared-lib": "rm -rf shared-lib && cp -R ../shared-lib shared-lib",
     "build": "npm run install-shared-lib && vite build",
     "lint": "npx eslint .",

@@ -6,8 +6,6 @@
             <span class='selectable-item-type ability-label'>{{ type }}</span>
             <span v-if='displayable.armyName' class='selectable-item-type ability-label'>{{ displayable.armyName }}</span>
         </template>
-        <template #right>
-        </template>
     </SelectableItem>
 </template>
 
@@ -19,11 +17,12 @@
     const props = defineProps<{
         displayable: {name: string, type?: number, armyName?: string},
         type ?: string,
-        selectableClick: (displayedObject: unknown) => void
+        selectableClick ?: (displayedObject: unknown) => void
     }>();  
 
     const doClick = () =>{
-        props.selectableClick(props.displayable);
+        if (props.selectableClick)
+            props.selectableClick(props.displayable);
     }
 
     // this is a hack that should be removed
