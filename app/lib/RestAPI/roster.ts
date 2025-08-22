@@ -36,7 +36,7 @@ export async function getRosters() {
 
 export async function getNewRoster(army: string) {
     const endpoint = rosterEndpoint();
-    const roster = await fetch(encodeURI(`${getEndpoint()}&army=${army}`), {
+    const roster = await fetch(encodeURI(`${endpoint}&army=${army}`), {
         method: "GET" // default, so we can ignore
     }).then(response => response.json());
 
