@@ -17,7 +17,6 @@ import { ContextMenu } from "@/lib/widgets/contextMenu";
 import { generateId } from "@/lib/functions/uniqueIdentifier";
 import RosterInterf from "@/shared-lib/RosterInterface";
 import { About } from "@/lib/widgets/About";
-import RosterStateConverter from "@/lib/functions/import/RosterStateConvertImpl";
 import { ImportRoster } from "@/lib/functions/import/importRoster";
 import { displaySlidebanner, SlideBannerMessageType } from "@/lib/widgets/SlideBanner";
 import { getLaunchInsets } from "@/lib/widgets/InsetEdges";
@@ -29,6 +28,7 @@ import BuilderSettings from "./settings/BuilderSettings";
 import SettingsSettings from "./settings/SettingsSettings";
 
 import { kofiCup, plusIcon } from "@/lib/widgets/images.js";
+import { upgradeList } from "@/lib/functions/upgradeLists";
 
 interface Alliances {
   name: string;
@@ -494,26 +494,10 @@ const rosterPage = {
 
       const rosters = await getRosters();
       for (let i = 0; i < rosters.length; ++i) {
-          let isValid = true;
-          let roster = await getRoster(rosters[i]);
-          if (await version.isOutdated(roster)) {
-            isValid = false;
-            // update the roster with the latest server data
-            try {
-              const rsc = new RosterStateConverter();
-              const state = rsc.serialize(roster);
-              const newRoster = await rsc.deserialize(state, roster.id);
-              if (newRoster) {
-                isValid = true;
-                roster = newRoster;
-                putRoster(roster);
-              }
-            } catch(e) {
-              console.log(`Exception occured while trying to migrate roster to lastest version: ${e}`);
-            }
-          }
-          if (isValid)
-            displayRoster(roster);
+        // put/get does keeps things current
+        let roster = await getRoster(rosters[i]);
+        if (roster)
+          displayRoster(roster);
       }
 
       if (rosters.length === 0) {
