@@ -35,11 +35,10 @@
         align-items: center;
     }
     .settings-item-left {
-        max-width: 85%;
+        max-width: 80%;
     }
     .settings-item-right {
         margin-left: auto;
-        max-width: 15%;
     }
     .settings-item-description {
         color: var(--white-2);
