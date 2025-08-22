@@ -1,8 +1,16 @@
 <!-- src/pages/MyPage.vue -->
 <template>
     <Section :title="title">
+        <SettingsItem name="Battle View Drawers" description="Open all the drawers in Battle View by default">
+            <SettingsSwitch v-model="battleViewDrawers"></SettingsSwitch>
+        </SettingsItem>
         <SettingsItem name="Display Legends" description="Allow legends units to display in the catalog. This does not currently enable legends listbuilding.">
             <SettingsSwitch v-model="displayLegends"></SettingsSwitch>
+        </SettingsItem>
+    </Section>
+    <Section title="The Red Buttons">
+        <SettingsItem name="Reset Settings" description="Return to the default settings">
+            <SettingsButton buttonText="Reset" buttonType="delete" :buttonClick="resetSettings"></SettingsButton>        
         </SettingsItem>
         <SettingsItem name="Reset Page Layout" description="Return draggables to their default position">
             <SettingsButton buttonText="Reset" buttonType="delete" :buttonClick="resetPageLayout"></SettingsButton>            
@@ -30,20 +38,39 @@
     import { getGlobalCache } from '@/lib/RestAPI/LocalCache';
     import { clearFavorites } from '@/lib/widgets/favorites';
     import AppSettings from '@/lib/AppSettings';
+import { displaySlidebanner, SlideBannerMessageType } from '@/lib/widgets/SlideBanner';
     
+    // hook up the toggles to the global settings
     const appSettings = new AppSettings;
-    // view the current value
-    const displayLegends = ref(appSettings.settings()['display-legends']);
 
+    // when i make this completely generic, vue seems unable to deduce that i made refs
+    const battleViewDrawersKey = 'Battle View Drawers';
+    const battleViewDrawers = ref(appSettings.settings()[battleViewDrawersKey]);
+    watch(battleViewDrawers, (newValue) => {
+        // update to the new value
+        appSettings.settings()[battleViewDrawersKey] = newValue;
+        // save for reuse
+        appSettings.save();
+    });
+
+    const displayLegendsKey = 'Display Legends';
+    const displayLegends = ref(appSettings.settings()[displayLegendsKey]);
     watch(displayLegends, (newValue) => {
         // update to the new value
-        appSettings.settings()['display-legends'] = newValue;
+        appSettings.settings()[displayLegendsKey] = newValue;
         // save for reuse
         appSettings.save();
     });
 
     const title = ref('Settings')
     initializeDraggable('Settings');
+
+    const resetSettings = () => {
+        appSettings.clear();
+        battleViewDrawers.value = appSettings.settings()[battleViewDrawersKey];
+        displayLegends.value = appSettings.settings()[displayLegendsKey];
+        displaySlidebanner('Default settings restored', SlideBannerMessageType.Neutral);
+    }
 
     const clearAllFavorites = () => {
         const toggle = Overlay.toggleFactory('flex', () => {
@@ -62,6 +89,7 @@
             button.onclick = () => {
                 clearFavorites();
                 Overlay.disable();
+                displaySlidebanner('Favorites reset.', SlideBannerMessageType.Neutral);
             };
 
             modal.appendChild(section);
@@ -86,6 +114,7 @@
             button.onclick = () => {
                 clearDraggableOrder();
                 Overlay.disable();
+                displaySlidebanner('Page layouts reset.', SlideBannerMessageType.Neutral);
             };
 
             modal.appendChild(section);
@@ -110,6 +139,7 @@
             button.onclick = async () => {
                 getGlobalCache()?.clear();
                 Overlay.disable();
+                displaySlidebanner('Local data cache cleared.', SlideBannerMessageType.Neutral);
             };
 
             modal.appendChild(section);

@@ -4,7 +4,7 @@
         </BattleSelectableItem>
     </Section>
     <Section v-for="phase in phases" :title="phase">
-        <DrawerSelectableItem v-for="data in Object.values(abilities[phase])" :displayable="data" :startOpen="true">
+        <DrawerSelectableItem v-for="data in Object.values(abilities[phase])" :displayable="data" :startOpen="startOpen">
             <div v-for="(ability, abIdx) in data.abilities" class="ability-section">
                 <AbilityWidget  :ability="ability"></AbilityWidget>
             </div>
@@ -48,6 +48,7 @@ import WarscrollSettings from "@/pages/src/settings/WarscrollSettings";
 import LoreInterf from "@/shared-lib/LoreInterface";
 import RosterInterf from "@/shared-lib/RosterInterface";
 import {PhasedAbilitiesInterf} from "./PhasedAbilities";
+import AppSettings from "@/lib/AppSettings";
 
 const props = defineProps<{
     units: UnitInterf[],
@@ -57,6 +58,9 @@ const props = defineProps<{
     abilities: PhasedAbilitiesInterf,
     roster: RosterInterf,
 }>();
+
+const appSettings = new AppSettings;
+const startOpen = appSettings.settings()["Battle View Drawers"];
 
 const phases = Object.getOwnPropertyNames(props.abilities).filter(name => Object.values(props.abilities[name]).length > 0);
 

@@ -1,9 +1,11 @@
 
 class AppSettingsInternal {
     [name: string]: boolean;
-    'display-legends': boolean;
+    'Battle View Drawers': boolean;
+    'Display Legends': boolean;
     constructor() {
-        this['display-legends'] = false
+        this['Battle View Drawers'] = true;
+        this['Display Legends'] = false;
     }
 }
 

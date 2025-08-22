@@ -71,7 +71,7 @@ export default class LocalCache {
         }
 
         const appSettings = new AppSettings;
-        if (units && !appSettings.settings()["display-legends"]) {
+        if (units && !appSettings.settings()["Display Legends"]) {
             const keys = Object.getOwnPropertyNames(units);
             keys.forEach(key => {
                 const unit = units[key];
