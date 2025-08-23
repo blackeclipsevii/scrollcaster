@@ -57,7 +57,7 @@ defineProps<{
     .info-block {
         height: 6em;
     }
-    h2 {
+    h1 {
         margin: 0;
     }
     h3 {
