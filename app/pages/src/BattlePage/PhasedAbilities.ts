@@ -59,7 +59,8 @@ export default class PhasedAbilities {
         }
     }
     addAbility(object: Typed & Identifiable, ability: AbilityInterf) {
-        const lcColor = ability.metadata['color'].toLowerCase();
+        const color = ability.metadata['color'] || 'gray';
+        const lcColor = color.toLowerCase();
         let phase = this.colorToPhase(lcColor);
         const phaseCollection = this.abilities[phase];
         let objectStore = phaseCollection[object.id];
