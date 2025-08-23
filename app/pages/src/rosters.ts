@@ -603,6 +603,7 @@ const rosterPage = {
           localStorage.setItem(clientVersion, clientVersion);
           const toggle = Overlay.toggleFactory('flex', () => {
             const modal = document.querySelector(".modal") as HTMLElement;
+            modal.style.padding = '.5em';
             const stuff = [
               'Added per-phase abilities to the Battle View. Access it via the header menu in the list editor.',
               'Added settings page to the header menu.',

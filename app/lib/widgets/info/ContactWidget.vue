@@ -22,12 +22,13 @@ defineProps<{
 }>();
 </script>
 
-<style>
+<style scoped>
     .contact {
         display: flex;
-        gap: 1em;
         justify-content: center;
         align-items: center;
+        gap: .5em;
+        min-height: 5em;
     }
     .my-icon {
         border-radius: var(--border-radius);

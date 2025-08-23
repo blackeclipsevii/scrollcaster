@@ -1,10 +1,10 @@
 <template>
-    <div class="section">
+    <div class="section iw-section">
     <div class="title">
         <img class='scrollcaster-icon' :src=scrollcasterIcon></img>
         <div class="info-block">
             <h1>Scrollcaster</h1>
-            <h3 class="release-notes-title">{{ version }} Release Notes</h3>
+            <h3 class="release-notes-title">{{ version }}</h3>
             <h5 class="release-notes-description">{{ description }}</h5>
         </div>
     </div>
@@ -14,9 +14,9 @@
             {{ item }}
         </li>
     </ul>
-    <div class='section contact-section'>
-    <h3 style="margin-top: 0; margin-bottom: .5em;">Have ideas or need support?</h3>
-    <div class="contact">
+    <div class='section iw-section'>
+    <h4 style="margin: 0;">Have ideas or need support?</h4>
+    <div class="contact-section">
         <ContactWidget :icon="redditIcon" href="https://www.reddit.com/user/joe-scrollcaster"
                        largeText="Reddit" smallText="u/joe-scrollcaster">
         </ContactWidget>
@@ -37,40 +37,28 @@ defineProps<{
 }>();
 </script>
 
-<style>
-    .contact,
+<style scoped>
+    .contact-section,
     .title {
         display: flex;
-        gap: 1em;
+        gap: .5em;
         justify-content: center;
         align-items: center;
     }
-    .reddit-icon,
     .scrollcaster-icon {
         border-radius: var(--border-radius);
         width: 6em;
         height: 6em;
         border: 4px solid var(--black-3);
     }
-    .reddit-icon {
-        width: 3em;
-        height: 3em;
-        border-radius: 50%;
-        border: 4px solid var(--black-3);
+    .contact-section {
+        height: fit-content;
     }
     .info-block {
         height: 6em;
     }
-    .reddit-bits {
-        height: 3em;
-    }
-    h1 {
+    h2 {
         margin: 0;
-    }
-    a {
-        height:fit-content;
-        text-decoration: none;
-        color: inherit;
     }
     h3 {
         padding: 0px;
@@ -81,8 +69,9 @@ defineProps<{
         margin: 0;
         color: var(--white-3);
     }
-    .section {
+    .iw-section {
         background-color: var(--black-1);
-        padding: 1em;
+        padding: .5em;
+        margin: 0;
     }
 </style>
