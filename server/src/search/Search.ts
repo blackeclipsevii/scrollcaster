@@ -29,7 +29,7 @@ export default class Search {
             if (alliance.name.includes(' - '))
                 return; // the aor should have the same scrolls?
 
-            console.log(`Populating ${alliance.name}...`);
+           // console.log(`Populating ${alliance.name}...`);
             const army = ageOfSigmar.getArmy(alliance.name);
             if (!army)
                 return;

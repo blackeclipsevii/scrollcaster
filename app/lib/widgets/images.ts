@@ -16,7 +16,11 @@ export { default as minusIcon } from "@ico/015-minus.png";
 export { default as dangerIcon } from "@ico/016-danger.png";
 export { default as checkIcon } from "@ico/017-check.png";
 export { default as dotsIcon } from "@ico/018-dots.png";
+export { default as infoIcon } from "@ico/019-comment-info.png";
 
+export { default as githubIcon } from '@res/github-icon.png'
+export { default as redditIcon } from '@res/reddit-icon.png'
+export { default as scrollcasterIcon } from '@res/scrollcaster-icon.png'
 export { default as largeKofi } from '@res/support_me_on_kofi_beige.webp'
 export { default as kofiCup } from '@res/kofi_symbol-edited.png'
 export { default as droppedScrolls } from '@res/dropped-scrolls.jpg'

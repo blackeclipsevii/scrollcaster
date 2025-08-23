@@ -178,5 +178,14 @@
     "regimentOptions": "0-1 <Ruinous Champion>, Any <Slaves to Darkness>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "100mm"
+  },
+  {
+    "type": "Infantry",
+    "name": "The Oathsworn Kin",
+    "unitSize": 3,
+    "points": 0,
+    "regimentOptions": "None",
+    "notes": "This unit can only be taken in <Gunnar Brand>’s regiment.",
+    "baseSize": "32mm"
   }
 ]

@@ -99,7 +99,13 @@ export class BattleProfileCollection {
     }
 }
 
+interface INotableIds {
+    allowLegends: string;
+    legendsPub: string;
+}
+
 export default class AgeOfSigmar {
+    _path: string;
     _database: AosDatabase;
     regimentsOfRenown: {[name:string]: Force};
     battleTacticCards: BattleTacticCard[];
@@ -109,7 +115,15 @@ export default class AgeOfSigmar {
     gameSystem: BsGameSystem;
     battleProfiles: BattleProfileCollection;
 
+    // this needs to be handled somewhere else;
+    notableIds: INotableIds;
+
     constructor(path: string) {
+        this._path = path;
+        this.notableIds = {
+            allowLegends: '',
+            legendsPub: ''
+        };
         this._database = {
             path: path,
             armyLUT: {},
@@ -120,6 +134,7 @@ export default class AgeOfSigmar {
         this.keywordLUT = {};
         this.units = {};
         this.lores = new Lores(path);
+        this.battleProfiles = new BattleProfileCollection;
 
         const gs = parseGameSystem(`${path}/Age of Sigmar 4.0.gst`);
         if (!gs) {
@@ -128,16 +143,6 @@ export default class AgeOfSigmar {
 
         this.gameSystem = gs;
         this._parseGameSystem();
-        this._populateLibraries(path);
-        this.battleProfiles = new BattleProfileCollection;
-
-        const battleProfilesDir = './server/resources/battle profiles';
-        this._parseBattleProfiles(battleProfilesDir);
-
-        // armies of renown supplimental profiles
-        this._parseBattleProfiles(`${battleProfilesDir}/armies of renown`)
-        
-        registerAllValidators();
     }
 
     // combine army and aos keywords, all uppercase
@@ -191,6 +196,36 @@ export default class AgeOfSigmar {
             return result;
         });
         return result
+    }
+
+    async loadArmyAsync(armyName: string) {
+        try {
+            console.log(`Loading ${armyName}...`);
+            const army = this.getArmy(armyName);
+            if (!army) {
+                console.log(`!!WARNING: failed to load ${armyName}`)
+            }
+        } catch(e: unknown) {
+            console.log(`!!ERROR: failed to load ${armyName}: ${e ? e.toString() : 'Unknown error'}`);
+        }
+    }
+
+    async loadAllArmies() {
+        console.time('Populate Libraries');
+        await this._populateLibraries(this._path);
+        console.timeEnd('Populate Libraries');
+
+        const battleProfilesDir = './server/resources/battle profiles';
+        this._parseBattleProfiles(battleProfilesDir);
+
+        // armies of renown supplimental profiles
+        this._parseBattleProfiles(`${battleProfilesDir}/armies of renown`)
+        
+        registerAllValidators();
+
+        const armyNames = Object.getOwnPropertyNames(this._database.armies)
+                                .filter(name => !name.includes('[LEGENDS]'));
+        await Promise.all(armyNames.map(armyName => this.loadArmyAsync(armyName)));
     }
 
     getArmy(armyName: string) {
@@ -252,12 +287,15 @@ export default class AgeOfSigmar {
                 });
             }
 
-            rorData.libraries[name].sharedSelectionEntries.forEach(entry => {
-                if (entry['@type'] === 'unit') {
-                    const unit = new Unit(this, entry);
-                    motherloadOfUnits[unit.id] = unit;
-                }
-            });
+            const library = rorData.libraries[name];
+            if (library.sharedSelectionEntries) {
+                library.sharedSelectionEntries.forEach(entry => {
+                    if (entry['@type'] === 'unit') {
+                        const unit = new Unit(this, entry);
+                        motherloadOfUnits[unit.id] = unit;
+                    }
+                });
+            }
         });
 
         // the forces
@@ -320,6 +358,10 @@ export default class AgeOfSigmar {
 
         });
         
+        if (!rorData.catalog.entryLinks) {
+            throw new Error('Data organization has changed, entry links missing for Regiments of Renown catalog');
+        }
+
         rorData.catalog.entryLinks.forEach(entryLink => {
             const targetId = entryLink['@targetId'];
 
@@ -399,7 +441,6 @@ export default class AgeOfSigmar {
                                             console.log(`upgrade missing its force? ${upgrade.id} ${upgrade.name}`);
                                             return;
                                         }
-                                        console.log (`found upgrades for: ${force.name}`)
                                         force.upgrades.push(upgrade);
                                     }
                                 });
@@ -432,37 +473,33 @@ export default class AgeOfSigmar {
         });
     }
 
-    _populateLibraries(dir: string) {
-        const catFiles = fs.readdirSync(dir);
+    async _populateLibraries(dir: string) {
         const libraries: {[name:string]: BsLibrary | null} = {}
         let rorData: RorData | null = null;
-        // populate the armies and seperate the libraries
-        catFiles.forEach(file => {
-            const lc = file.toLowerCase();
+        
+        const allFiles = fs.readdirSync(dir);
+        const catFiles = allFiles.filter(file => (path.extname(file.toLowerCase()) === '.cat') && !file.includes('[LEGENDS]'));
+        const asyncParseCat = async (name: string) => parseCatalog(name);
+        const datasets = await Promise.all(catFiles.map(cat => asyncParseCat(`${dir}/${cat}`))) as (BsCatalog | null)[];
 
-            if (path.extname(lc) === '.cat') {
-                // console.log(lc);
-                const fullPath = `${dir}/${file}`;
-                const data = parseCatalog(fullPath) as BsCatalog | null;
-                if (data) {
-                    const isCatalog = data['@library'] !== "true";
-
-                    if (isCatalog) {
-                        if ((rorData === null) && data['@name'].includes('Regiments of Renown')) {
-                            rorData = new RorData(data);
-                        } else {
-                            this._database.armyLUT[data['@id']] = data['@name'];
-                            this._database.armies[data['@name']] = new ArmyData(data);
-                        }
-                    } 
-                    else  {
-                        libraries[data['@id']] = data as BsLibrary;
+        datasets.forEach(data => {
+            if (data) {
+                const isCatalog = data['@library'] !== "true";
+                if (isCatalog) {
+                    if ((rorData === null) && data['@name'].includes('Regiments of Renown')) {
+                        rorData = new RorData(data);
+                    } else {
+                        this._database.armyLUT[data['@id']] = data['@name'];
+                        this._database.armies[data['@name']] = new ArmyData(data);
                     }
+                } 
+                else  {
+                    libraries[data['@id']] = data as BsLibrary;
                 }
             }
         });
 
-        const attachLibraries = (data: RorData | ArmyData) => {
+        const attachLibraries = async (data: RorData | ArmyData) => {
             const _attachLibrary = (cat: BsCatalog | BsLibrary) => { 
                 if (cat.catalogueLinks) {
                     cat.catalogueLinks.forEach(link => {
@@ -476,7 +513,9 @@ export default class AgeOfSigmar {
                             if (library) {
                                 data.libraries[link['@name']] = library;
                                 data.librariesLUT[targetId] = link['@name'];
-                                if (data instanceof ArmyData && data.alliance === GrandAlliance.UNKNOWN) {
+                                if (data instanceof ArmyData && data.alliance === GrandAlliance.UNKNOWN &&
+                                    library.sharedSelectionEntries // nothing to check
+                                ) {
                                     // determine the alliance
                                     library.sharedSelectionEntries.every(entry => {
                                         let cont = true;
@@ -520,12 +559,10 @@ export default class AgeOfSigmar {
 
         // now attach the libraries to their armies
         const armies = Object.values(this._database.armies);
-        armies.forEach(army => {
-            attachLibraries(army as ArmyData);
-        });
+        await Promise.all(armies.map(army => attachLibraries(army as ArmyData)));
 
         if (rorData) {
-            attachLibraries(rorData);
+            await attachLibraries(rorData);
             this._loadRegimentsOfRenown(rorData);
         }
     }
@@ -556,13 +593,22 @@ export default class AgeOfSigmar {
                 const unit = new Unit(this, entry);
                 this.units[unit.id] = unit;
             }
+            
+            if (entry['@name'] === 'Allow Legends') {
+                this.notableIds.allowLegends = entry['@id'];
+            }
         });
 
-        
+        this.gameSystem.publications.forEach(pub => {
+            if (pub['@name'] === 'Warhammer Legends') {
+                this.notableIds.legendsPub = pub['@id'];
+            }
+        });
+
         this.gameSystem.sharedSelectionEntries.forEach(entry => {
             if (entry['@type'] === 'unit') {
                 const unit = new Unit(this, entry);
-             //   console.log(`${unit.name} ${unit.id}`);
+             // console.log(`${unit.name} ${unit.id}`);
                 this.units[unit.id] = unit;
             }
         });

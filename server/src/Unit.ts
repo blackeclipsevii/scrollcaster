@@ -30,6 +30,8 @@ export default class Unit implements UnitInterf {
     name: string;
     id: string;
 
+    legends: boolean;
+
     Move: string;
     Health: string;
     Control: string;
@@ -60,7 +62,8 @@ export default class Unit implements UnitInterf {
         this.name = selectionEntry['@name'];
         this.id = selectionEntry['@id'];
         this.superType = UnitSuperType;
-
+        
+        this.legends = false;
         this.Move = '';
         this.Health = '';
         this.Control = '';
@@ -100,6 +103,9 @@ export default class Unit implements UnitInterf {
             const keyword = link['@name'];
             if (keyword === 'WARMASTER') {
                 this.isWarmaster = true;
+            }
+            if (keyword === 'Legends') {
+                this.legends = true;
             }
             this.keywords.push(keyword);
         }
@@ -145,6 +151,21 @@ export default class Unit implements UnitInterf {
         // the options can be on the unit level not the model level
         if (selectionEntry.selectionEntryGroups) {
             parseOptions(this.optionSets, ageOfSigmar, selectionEntry.selectionEntryGroups);
+        }
+
+        // look for legends flag
+        if (selectionEntry.modifiers) {
+            selectionEntry.modifiers.forEach(modifier => {
+                if (modifier["@type"] === 'set' && modifier["@field"] === 'hidden') {
+                    if (modifier.conditions) {
+                        modifier.conditions.forEach(condition => {
+                            if (condition["@childId"] === ageOfSigmar.notableIds.allowLegends) {
+                                this.legends = true;
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 }

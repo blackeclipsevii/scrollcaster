@@ -3,6 +3,10 @@ import RosterInterf from "@/shared-lib/RosterInterface";
 import { NameRosterImporter } from "./importRoster";
 import { nameRosterToRoster } from "./nameRosterToRoster";
 
+const removeLeadingNumberX = (str: string) => {
+    return str.replace(/^\d+x/, '');
+}
+
 export default class ImportOfficialRoster extends NameRosterImporter {
     specialCookie() {
         return 'Created with Warhammer Age of Sigmar: The App';
@@ -43,7 +47,7 @@ export default class ImportOfficialRoster extends NameRosterImporter {
 
         while (i < lines.length && !this.isEmptyOrHyphens(lines[i]) && lines[i].includes(' (')) {
             let unit = this.newNameUnit();
-            let line = lines[i].trim();
+            let line = removeLeadingNumberX(lines[i].trim());
             
             // convert sog to bsdata formatting
             let addSoG = false;
@@ -52,10 +56,11 @@ export default class ImportOfficialRoster extends NameRosterImporter {
                 addSoG = true;
                 line = line.replace(/\(?Scourge of Ghyran\)?/g, "").trim();
             }
-            else if (line.startsWith('SOG ')) {
+            else if (line.toUpperCase().startsWith('SOG ')) {
                 addSoG = true;
                 line = line.substring(4).trim();
             }
+            
             
             const parts = line.split(' (');
             unit.name = parts[0].trim();
@@ -96,6 +101,9 @@ export default class ImportOfficialRoster extends NameRosterImporter {
 
         if (cardsStr.includes(',')) {
             return cardsStr.split(', ');
+        }
+        else if (cardsStr.includes('/')) {
+            return cardsStr.split('/');
         }
 
         // the delimiter might be an and

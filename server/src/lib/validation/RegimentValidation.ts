@@ -1,10 +1,12 @@
 import Army from "../../Army.js";
 import { Regiment } from "../../Roster.js";
 import Unit from "../../Unit.js";
-import { UnitType } from "../../../shared-lib/UnitInterface.js";
+import UnitInterf, { UnitType } from "../../../shared-lib/UnitInterface.js";
+import { namesEqual } from "../helperFunctions.js";
 
 interface KeyOpt {
     keyword: string;
+    raw: string;
     index: number;
 }
 
@@ -23,10 +25,26 @@ const getKeywordsFromOption = (option: string): KeyOpt[] => {
     for (const match of option.matchAll(regex)) {
         optionKeywords.push({
             keyword: match[1].toUpperCase(),
+            raw: match[1],
             index: match.index
         });
     }
     return optionKeywords;
+}
+
+const validateCanOnlyBeTakenIn = (leader: UnitInterf, unit: UnitInterf) => {
+    if (unit.battleProfile) {
+        const notes = unit.battleProfile.notes;
+        if (notes) {
+            if (notes.toLowerCase().replace(/ /g, '').includes('thisunitcanonlybetakenin')) {
+                const keyOpts = getKeywordsFromOption(notes);
+                if (keyOpts.length > 0 && !namesEqual(leader.name, keyOpts[0].keyword)) {
+                    return `<${unit.name}> can only be taken in <${keyOpts[0].raw}>'s regiment`;
+                }
+            }
+        }
+    }
+    return null;
 }
 
 const meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], availableKeywords: string[]) => {
@@ -178,6 +196,12 @@ export const RegimentValidator = {
             ) {// it literally shouldn't be possible to hit this error
                 return genericError;
             }
+
+            // some units only go in a specific regiment
+            const canOnlyBeTakenInError = validateCanOnlyBeTakenIn(leader, unit);
+            if (canOnlyBeTakenInError) {
+                return canOnlyBeTakenInError;
+            }
             
             let lastError: string | null = genericError;
             for (let i = 0; i < slots.length; ++i) {
@@ -233,6 +257,12 @@ export const RegimentValidator = {
                 unit.type as UnitType === UnitType.Terrain ||
                 unit.type as UnitType === UnitType.Unknown
             ) { // these don't go in a regiment
+                return false;
+            }
+
+            // some units only go in a specific regiment
+            const canOnlyBeTakenInError = validateCanOnlyBeTakenIn(leader, unit);
+            if (canOnlyBeTakenInError) {
                 return false;
             }
 

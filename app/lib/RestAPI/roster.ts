@@ -1,6 +1,9 @@
 import { getUniqueIdentifier } from "@/lib/functions/uniqueIdentifier";
 import { getEndpoint } from "@/lib/endpoint";
 import { version } from "./version";
+import { exportRoster } from "../functions/exportRoster";
+import RosterInterf from "@/shared-lib/RosterInterface";
+import { ImportRoster } from "../functions/import/importRoster";
 
 var _storageName = 'rosters';
 
@@ -22,14 +25,6 @@ function _storeRosters(rosters: unknown) {
 }
 
 export async function getRosters() {
-    /*
-    let rosters = null;
-    const endpoint = rosterEndpoint();
-    await fetch(encodeURI(endpoint),{
-        method: "GET" // default, so we can ignore
-    }).then(response => { rosters = response.json() });
-    return rosters;
-    */
     const rosters = _getRosters();
     return Object.getOwnPropertyNames(rosters);
 }
@@ -47,34 +42,40 @@ export async function getNewRoster(army: string) {
     return roster;
 }
 
-export async function getRoster(id: string) {
-    const rosters = _getRosters();
-    return rosters[id];
-/*
-    const endpoint = rosterEndpoint();
-    let roster = null;
-    await fetch(`${getEndpoint()}&id=${id}`, {
-        method: "GET" // default, so we can ignore
-    }).then(response => { 
-        console.log(response);
-        roster = response.json() 
-    });
+export async function getRoster(id: string): Promise<RosterInterf | null> {
+    let rosters = _getRosters();
+    let listOrRoster = rosters[id];
+    if (listOrRoster.id !== undefined) {
+        // this is an old RosterInterf and should be converted
+        try {
+            // this will serialize the roster into a list
+            await putRoster(listOrRoster);
+            rosters = _getRosters()
+            listOrRoster = rosters[id];
+        } catch (e) {
+            // too old?
+            return null;
+        }
+    }
+
+    if (typeof listOrRoster !== 'string')
+        return null;
+    
+    const result = await ImportRoster.import(listOrRoster);
+    if ((result as Error).message) {
+        console.log((result as Error).message);
+        return null;
+    }
+
+    const roster = result as RosterInterf;
+    roster.id = id;
     return roster;
-    */
 }
 
-export async function putRoster(roster: {id: string}) {
+export async function putRoster(roster: RosterInterf) {
     const rosters = _getRosters();
-    rosters[roster.id] = roster;
+    rosters[roster.id] = await exportRoster(roster);
     _storeRosters(rosters);
-    /*
-    const endpoint = rosterEndpoint();
-    await fetch(`${getEndpoint()}&id=${roster.id}`, {
-        method: "PUT",
-        body: json,
-        headers: { 'Content-Type': 'application/json' }
-    });
-    */
 }
 
 export async function deleteRosters() {
@@ -86,12 +87,5 @@ export async function deleteRoster(id: string) {
     if (rosters[id])
         delete rosters[id];
     _storeRosters(rosters);
-    /*
-    const endpoint = rosterEndpoint();
-    localStorage.removeItem(id);
-  await fetch(`${getEndpoint()}&id=${id}`,{
-      method: "DELETE"
-  });
-  */
 }
 

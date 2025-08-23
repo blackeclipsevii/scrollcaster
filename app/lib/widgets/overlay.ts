@@ -1,6 +1,6 @@
-
 export const Overlay = {
     _isDisplayed: false,
+    _ondisable: null as ((()=>void) | null),
     //private
     _getScrollbarWidth: () => {
         // Create a temporary container with forced scrollbars
@@ -49,14 +49,21 @@ export const Overlay = {
         });
     },
     disable() {
+        if (this._ondisable) {
+            this._ondisable();
+            this._ondisable = null;
+        }
         const overlay = document.getElementById('overlay');
         if (overlay) {
             this._isDisplayed = false;
             overlay.style.display = 'none';
         }
     },
-    toggleFactory(visibleStyle: string, ondisplay: ((data?: unknown) => unknown)) {
+    toggleFactory(visibleStyle: string, ondisplay: ((data?: unknown) => unknown), ondisable ?: ()=>void) {
         const _enableOverlay = (style: string) => {
+            if (ondisable) {
+                this._ondisable = ondisable;
+            }
             const overlay = document.getElementById("overlay");
             if (!overlay)
                 return;

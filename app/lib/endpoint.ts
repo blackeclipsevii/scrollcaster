@@ -4,10 +4,9 @@ export const getEndpoint = (): string => {
     if (endpoint)
         return endpoint;
 
-    const params = new URLSearchParams(window.location.search);
     let hostname = "https://army-thing.fly.dev";
     let port = null;
-    if (params.get('localdev')) {
+    if (window.location.href.includes('localhost')) {
         hostname = 'http://localhost';
         port = 3000;
     }

@@ -62,11 +62,12 @@ export default defineConfig({
         "flaticon/016-danger.png",
         "flaticon/017-check.png",
         "flaticon/018-dots.png",
+        "flaticon/019-comment-info.png"
       ],
       manifest: {
         name: 'Scrollcaster',
         short_name: 'Scrollcaster',
-        start_url: '/',
+        start_url: '/index.html?inset-bottom=64',
         display: 'standalone',
         background_color: '#000000',
         theme_color: '#000000',

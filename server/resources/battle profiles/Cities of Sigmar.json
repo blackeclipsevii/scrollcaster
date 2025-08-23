@@ -214,5 +214,13 @@
     "regimentOptions": "0-1 <Freeguild Veteran>, Any <Human>",
     "notes": "This unit is legal for Matched Play for battles fought using the General’s Handbook 2025-26 battlepack.",
     "baseSize": "90 × 52mm"
+  },
+  {
+    "type": "Infantry",
+    "name": "Toll's Companions",
+    "unitSize": 4,
+    "points": 0,
+    "notes": "This unit can only be taken in <Callis and Toll>'s regiment.",
+    "baseSize": "40mm [1], 28.5mm [3]"
   }
 ]
