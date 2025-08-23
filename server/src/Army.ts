@@ -14,9 +14,6 @@ import { ArmyUpgrades } from '../shared-lib/ArmyUpgrades.js';
 import ArmyInterf from '../shared-lib/ArmyInterface.js';
 import LoreInterf from '../shared-lib/LoreInterface.js';
 
-// id designation the legends publication
-const LegendsPub = "9dee-a6b2-4b42-bfee";
-
 interface UpgradeLUTEntry {
     alias: string;
     type: number;
@@ -122,7 +119,7 @@ export default class Army implements ArmyInterf{
             return;
         }
 
-        console.log(catalogue['@id']);
+      //  console.log(catalogue['@id']);
         this.id = catalogue['@id'];
 
         const _libraryUnits: {[name: string]: Unit} = {};
@@ -130,15 +127,18 @@ export default class Army implements ArmyInterf{
         // read all the units out of the libraries
         const names = Object.getOwnPropertyNames(data.libraries);
         names.forEach(name => {
-            data.libraries[name].sharedSelectionEntries.forEach(entry => {                
-                if (entry['@type'] === 'unit' &&
-                    entry['@publicationId'] !== LegendsPub
-                ) {
-                    const unit = new Unit(ageOfSigmar, entry);
-                    _libraryUnits[unit.id] = unit;
-                    this.lut[unit.id] = unit;
-                }
-            });
+            const library = data.libraries[name];
+            if (library.sharedSelectionEntries) {
+                library.sharedSelectionEntries.forEach(entry => {                
+                    if (entry['@type'] === 'unit' &&
+                        entry['@publicationId'] !== ageOfSigmar.notableIds.legendsPub
+                    ) {
+                        const unit = new Unit(ageOfSigmar, entry);
+                        _libraryUnits[unit.id] = unit;
+                        this.lut[unit.id] = unit;
+                    }
+                });
+            }
         })
         
         if (catalogue.categoryEntries) {
@@ -272,6 +272,10 @@ export default class Army implements ArmyInterf{
             });
         });
 
+        if (!catalogue.entryLinks) {
+            throw new Error(`Data organization has changed, entry links missing for catalog: ${catalogue['@name']}`);
+        }
+
         // update the capabilities of each unit
         catalogue.entryLinks.forEach(link => {
             // this is the global library for the faction
@@ -296,8 +300,9 @@ export default class Army implements ArmyInterf{
 
                 if (!unit.battleProfile) {
                     if (unit.type as UnitType === UnitType.Hero) {
-                        console.log(`profile not found for ${unit.name}`);
-                        return;
+                        if (!(unit.legends || unit.name.includes('Apotheosis'))) {
+                            console.log(`!!WARNING: profile not found for ${unit.name}`);
+                        }
                     }
                 }
 

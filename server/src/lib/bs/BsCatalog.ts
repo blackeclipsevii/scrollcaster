@@ -159,7 +159,7 @@ export interface BsCatalog extends BsIdentifiable, BsNamed {
     '@library': string;
     sharedSelectionEntryGroups: BsSelectionEntryGroup[];
     sharedSelectionEntries: BsSelectionEntry[] | undefined;
-    entryLinks: BsEntryLink[];
+    entryLinks: BsEntryLink[] | undefined;
     catalogueLinks: BsCatalogueLink[];
     categoryEntries: BsCategoryEntry[];
     selectionEntries: BsSelectionEntry[];
@@ -168,7 +168,7 @@ export interface BsCatalog extends BsIdentifiable, BsNamed {
 export interface BsLibrary extends BsIdentifiable, BsNamed {
     '@library': string;
     sharedSelectionEntryGroups: BsSelectionEntryGroup[];
-    sharedSelectionEntries: BsSelectionEntry[];
+    sharedSelectionEntries: BsSelectionEntry[] | undefined;
     catalogueLinks: BsCatalogueLink[] | undefined;
 }
 

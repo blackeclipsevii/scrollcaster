@@ -28,6 +28,15 @@
   },
   {
     "type": "Hero",
+    "name": "Dexcessa, Talon of Slaanesh",
+    "unitSize": 1,
+    "points": 180,
+    "regimentOptions": "0-1 <Synessa> or <Slaaneshi Beguiler>, Any <Hedonites of Slaanesh>",
+    "notes": "This Hero can join <Synessa>’s regiment.",
+    "baseSize": "105 × 70mm"
+  },
+  {
+    "type": "Hero",
     "name": "Glutos Orscollion, Lord of Gluttony",
     "unitSize": 1,
     "points": 470,

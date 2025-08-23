@@ -11,15 +11,19 @@ import RosterStateConverter from './server/dist/src/lib/RosterStateConverterImpl
 import { validateRoster } from './server/dist/src/lib/validation/RosterValidation.js'
 import { nameRosterToRoster } from './server/dist/src/lib/NameRoster.js'
 
-import installCatalog, { getCommitIdUsed } from './server/dist/src/lib/installCatalog.js'
+import installCatalog from './server/dist/src/lib/installCatalog.js'
 
 import Search from './server/dist/src/search/Search.js'
+
+// don't allow requests while the server is starting
+// it can really muck things up unexpectedly
+var serverStarted = false;
+var commitIdUsed;
 
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
 const port = process.env.SCROLLCASTER_PORT || 3000;
-const directoryPath = path.resolve("./data/age-of-sigmar-4th-main");
-// const saveData = "./saveData.json";
+let directoryPath = '';
 
 var search = null;
 var ageOfSigmar = null;
@@ -33,27 +37,6 @@ var version = (() => {
   }
 })();
 
-/*
-var rosters = {};
-
-async function saveRosters() {
-  const content = JSON.stringify(rosters);
-  fs.writeFile(saveData, content, err => {
-    if (err) {
-      console.error(err);
-    } else {
-      // file written successfully
-    }
-  });
-}
-
-function loadRosters() {
-  if (fs.existsSync(saveData)) {
-    const data = fs.readFileSync(saveData);
-    rosters = JSON.parse(data);
-  }
-}
-*/
 function getAgeOfSigmar() {
   if (!ageOfSigmar) {
     ageOfSigmar = new AgeOfSigmar(directoryPath);
@@ -91,12 +74,24 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
 server.get('/tactics', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   res.end(JSON.stringify(aos.battleTacticCards));
   res.status(200);
 });
 
 server.get('/lores', (_, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const lores = aos.lores;
   const foo = {
@@ -108,6 +103,12 @@ server.get('/lores', (_, res) => {
 });
 
 server.get('/search', async (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const parsedUrl = url.parse(req.url, true);
   let query = '';
   if (parsedUrl.query.query) {
@@ -120,6 +121,12 @@ server.get('/search', async (req, res) => {
 });
 
 server.get('/armies', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); 
   if (parsedUrl.query.army) {
@@ -138,18 +145,29 @@ server.get('/armies', (req, res) => {
 });
 
 server.get('/libraries', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const result = aos.getLibraryNames();
   res.end(JSON.stringify(result));
 });
 
 server.get('/version', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const parsedUrl = url.parse(req.url, true);
   if (parsedUrl.query.of) {
     if (parsedUrl.query.of.toLowerCase() === 'bsdata') {
-      const commit = getCommitIdUsed();
-      console.log (`BSData Commit Used: ${commit}`);
-      res.end(JSON.stringify({version: commit}));
+      console.log (`BSData Commit Used: ${commitIdUsed}`);
+      res.end(JSON.stringify({version: commitIdUsed}));
       return;
     }
 
@@ -174,6 +192,12 @@ server.get('/version', (req, res) => {
 });
 
 server.get('/upgrades', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true);
   const armyValue = decodeURI(parsedUrl.query.army);
@@ -183,6 +207,12 @@ server.get('/upgrades', (req, res) => {
 });
 
 server.get('/lut', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true);
   if (!parsedUrl.query.id || !parsedUrl.query.army) {
@@ -204,6 +234,12 @@ server.get('/lut', (req, res) => {
 });
 
 server.get('/regimentsOfRenown', (req, res) =>{
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
   if (parsedUrl.query.army) {
@@ -242,6 +278,12 @@ server.get('/regimentsOfRenown', (req, res) =>{
 });
 
 server.post('/import', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   if (!req.body) {
       console.log ('PUT import error: body is undefined');
       res.status(400);
@@ -265,6 +307,12 @@ server.post('/import', (req, res) => {
 });
 
 server.post('/validate', async (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   if (!req.body) {
       console.log ('error: body is undefined');
       res.status(400);
@@ -296,6 +344,12 @@ server.post('/validate', async (req, res) => {
 })
 
 server.get('/units', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
   let units = null;
@@ -352,6 +406,12 @@ server.get('/units', (req, res) => {
 });
 
 server.get('/roster', (req, res) => {
+  if (!serverStarted) {
+    res.status(503);
+    res.end();
+    return;
+  }
+
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true);
 
@@ -375,131 +435,43 @@ server.get('/roster', (req, res) => {
   res.status(404);
 });
 
-/*
-server.get('/roster', (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  const userId = parsedUrl.query.uuid;
-  const user = rosters[userId];
 
-  if (parsedUrl.query.id) {
-    if (!user) {
-      res.status(404);
-      res.end();
-      return;
-    }
-
-    const id = decodeURI(parsedUrl.query.id);
-    const roster = user[id];
-    if (!roster) {
-      res.status(404);
-      res.end();
-      return;
-    }
-
-    const json = JSON.stringify(roster);
-    console.log(`GET roster: ${roster.id}`);
-    res.end(json);
-    return;
-  } 
-  
-  if (parsedUrl.query.army) {
-    const armyValue = decodeURI(parsedUrl.query.army);
-    console.log(`army value: ${armyValue}`)
-    const army = getArmy(armyValue);
-    if (!army) {
-      res.status(404);
-      res.end();
-      return;
-    }
-    const roster = new Roster(army);
-    const json = JSON.stringify(roster);
-    console.log(`GET new roster: ${json}`);
-    res.end(json);
-    return;
+function getFirstFolderPath(dirPath) {
+  try {
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+    const firstFolder = entries.find(entry => entry.isDirectory());
+    return firstFolder ? path.join(dirPath, firstFolder.name) : null;
+  } catch (err) {
+    console.error('Error reading directory:', err);
+    return null;
   }
-
-  if (!user) {
-    res.status(404);
-    res.end();
-    return;
-  }
-  const names = Object.getOwnPropertyNames(user);
-  let result = [];
-  for (let i = 0; i < names.length; ++i) {
-    if (user[names[i]].hidden)
-      continue;
-    result.push(names[i]);
-  }
-  const json = JSON.stringify(result);
-  console.log('GET roster list: ' + json);
-  res.end(json);
-  res.status(200);
-});
-
-server.post('/roster', (req, res) => {
-  console.log("POST roster")
-  const parsedUrl = url.parse(req.url, true);
-  const userId = parsedUrl.query.uuid;
-  const user = rosters[userId];
-  if (!user) {
-    // should be a put
-    res.status(404);
-    res.end();
-    return;
-  }
-
-  let current = user[req.body.id];
-  let updated = req.body;
-  if (current) {
-    let names = Object.getOwnPropertyNames(req.body);
-    for (let i = 0; i < names.length; ++i) {
-      current[names[i]] = updated[names[i]];
-    }
-    user[req.body.id] = current;
-  } else {
-    user[req.body.id] = req.body;
-  }
-  res.status(200);
-  res.end();
-  saveRosters();
-});
-
-server.put('/roster', (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  console.log(`PUT roster ${parsedUrl.query.uuid} ${req.body.id}`)
-  const userId = parsedUrl.query.uuid;
-  const userStorage = rosters[userId];
-  if (!userStorage) {
-    rosters[userId] = {};
-  }
-  rosters[userId][req.body.id] = req.body;
-  res.end();
-  saveRosters();
-});
-
-server.delete('/roster', (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  const userId = parsedUrl.query.uuid;
-  const id = parsedUrl.query.id;
-  console.log(`DELETE roster ${userId} ${id}`)
-  const user = rosters[userId];
-  if (user) {
-    delete user[id];
-  }
-  res.end();
-  saveRosters();
-  return res.status(200);
-});
-*/
+}
 
 async function start() {
+  console.time('Total Startup Time')
   console.log(`Downloading catalog...`);
-  await installCatalog();
+
+  // to-do have this setting configurable
+  commitIdUsed = await installCatalog('battletome.bok/battletome.ko_02/07/25');
+  directoryPath = getFirstFolderPath('data');
+  
   console.log(`Loading libraries...`);
+  console.time('Load AOS Time')
   const aos = getAgeOfSigmar();
+  console.timeEnd('Load AOS Time')
+  
+  console.time('Load Armies Time')
+  await aos.loadAllArmies();
+  console.timeEnd('Load Armies Time')
+  
+  console.time('Initialize Search Time')
   console.log(`Initializing search...`);
   getSearch(aos);
+  console.timeEnd('Initialize Search Time')
+  
   console.log(`Scrollcaster server ${version.major}.${version.minor}.${version.patch} running at http://${hostname}:${port}/`);
+  serverStarted = true;
+  console.timeEnd('Total Startup Time')
 }
 
 server.listen(port, hostname, () => {
