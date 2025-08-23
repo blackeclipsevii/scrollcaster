@@ -665,6 +665,7 @@ h4.abilityname {
     font-size: 12px;
   }
 
+.info-div,
 .kofi-div {
     position: fixed;
     display: flex;
@@ -680,6 +681,25 @@ h4.abilityname {
     color: var(--label-font-color);
     background-color: none;
     cursor: pointer;
+}
+
+.info-div {
+    bottom: 2.5em;
+    background-color: var(--black-4);
+    border-radius: 50%;
+    width: 2em;
+    height: 2em;
+}
+
+.info-div.alert {
+    background-color: var(--green-ability);
+    border: 2px solid var(--white-1);
+    width: calc(2em - 4px);
+    height: calc(2em - 4px);
+}
+
+.info-div.alert img {
+    filter: invert(1);
 }
 
 .kofi-div-nested {

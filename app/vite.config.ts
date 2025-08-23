@@ -62,6 +62,7 @@ export default defineConfig({
         "flaticon/016-danger.png",
         "flaticon/017-check.png",
         "flaticon/018-dots.png",
+        "flaticon/019-comment-info.png"
       ],
       manifest: {
         name: 'Scrollcaster',

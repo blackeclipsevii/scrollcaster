@@ -27,8 +27,10 @@ import RosterSettings from "./settings/RostersSettings";
 import BuilderSettings from "./settings/BuilderSettings";
 import SettingsSettings from "./settings/SettingsSettings";
 
-import { kofiCup, plusIcon } from "@/lib/widgets/images.js";
+import { infoIcon, kofiCup, plusIcon, scrollcasterIcon } from "@/lib/widgets/images.js";
 import { upgradeList } from "@/lib/functions/upgradeLists";
+import { hideVueComponent, showVueComponent } from "@/lib/widgets/VueApp";
+import InfoWidget from "@/lib/widgets/info/InfoWidget.vue";
 
 interface Alliances {
   name: string;
@@ -555,7 +557,7 @@ const rosterPage = {
       goToRoster(roster);
     }
 
-    const _makePage = () => {
+    const _makePage = async () => {
       let rl = document.getElementById('rosters-list');
       if (rl && rl.parentElement) {
         rl.parentElement.removeChild(rl);
@@ -580,27 +582,46 @@ const rosterPage = {
       const inset = getLaunchInsets();
       if (inset.bottom) {
           button.style.bottom = `${inset.bottom + 75}px`;
-
-          const installBtn = document.getElementById('install-btn') as HTMLElement | null;
-          if (installBtn) {
-            installBtn.style.bottom = `${inset.bottom + 75}px`;
-          }
       }
 
       div.appendChild(button);
       
-      const coffee = document.createElement('div');
-      coffee.className = 'kofi-div';
-      coffee.innerHTML = `
-        <a target="_blank" href="https://ko-fi.com/scrollcaster">
-          <img src="${kofiCup}"></img>
-        </a>
+      const info = document.createElement('div');
+      info.className = 'info-div';
+      info.innerHTML = `
+        <img class='info-img' src="${infoIcon}"></img>
       `;
       if (inset.bottom) {
-          coffee.style.bottom = `${inset.bottom + 75}px`;
+          info.style.bottom = `${inset.bottom + 75}px`;
       }
-      div.appendChild(coffee);
+      const clientVersion = await version.getClientVersion();
+      if (!localStorage.getItem(clientVersion)){
+        info.classList.add('alert');
+      }
+      info.onclick = () => {
+          info.classList.remove('alert');
+          localStorage.setItem(clientVersion, clientVersion);
+          const toggle = Overlay.toggleFactory('flex', () => {
+            const modal = document.querySelector(".modal") as HTMLElement;
+            const stuff = [
+              'Added per-phase abilities to the Battle View. Access it via the header menu in the list editor.',
+              'Added settings page to the header menu.',
+              'Added more list formats to the importer.',
+              'Added PWA support: you can install this web app to your phone!',
+              'Added this awesome widget.',
+              'Added validation checks for companion units.',
+              'Bugfixes & more'
+            ]
+            showVueComponent(InfoWidget, {
+              version: clientVersion,
+              description: 'Phase Reminders 1.0',
+              bulletPoints: stuff
+            }, modal);
+        }, hideVueComponent);
+        toggle();
+      };
 
+      div.appendChild(info);
     }
     _makePage();
     await viewRosters(true);
