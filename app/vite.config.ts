@@ -67,7 +67,7 @@ export default defineConfig({
       manifest: {
         name: 'Scrollcaster',
         short_name: 'Scrollcaster',
-        start_url: '/',
+        start_url: '/index.html?inset-bottom=64',
         display: 'standalone',
         background_color: '#000000',
         theme_color: '#000000',
