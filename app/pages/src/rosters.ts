@@ -604,6 +604,7 @@ const rosterPage = {
           const toggle = Overlay.toggleFactory('flex', () => {
             const modal = document.querySelector(".modal") as HTMLElement;
             modal.style.padding = '.5em';
+            modal.style.border = `2px solid ${getVar('black-4')}`
             const stuff = [
               'Added per-phase abilities to the Battle View. Access it via the header menu in the list editor.',
               'Added settings page to the header menu.',
