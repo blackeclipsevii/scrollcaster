@@ -452,9 +452,11 @@ async function start() {
   console.log(`Downloading catalog...`);
 
   // to-do have this setting configurable
-  commitIdUsed = await installCatalog('battletome.bok/battletome.ko_02/07/25');
+  const tag = process.env.SCROLLCASTER_BSDATA_TAG;
+  const commitId = process.env.SCROLLCASTER_BSDATA_COMMIT;
+  commitIdUsed = await installCatalog(tag, commitId);
   directoryPath = getFirstFolderPath('data');
-  
+
   console.log(`Loading libraries...`);
   console.time('Load AOS Time')
   const aos = getAgeOfSigmar();

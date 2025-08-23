@@ -17,7 +17,7 @@ export const deleteDataFolder = () => {
 };
 const getLatestCommitId = async () => {
     let commitId = 'unknown';
-    await fetch(`${repoUrl}/commits`)
+    await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/commits`)
         .then(response => {
         if (!response.ok) {
             throw new Error(`GitHub API error: ${response.status}`);
@@ -25,12 +25,12 @@ const getLatestCommitId = async () => {
         return response.json();
     })
         .then(commits => {
-        result = commits[0]?.sha;
+        commitId = commits[0]?.sha;
     })
         .catch(error => {
         console.error("Error fetching commit data:", error);
     });
-    return result;
+    return commitId;
 };
 const getCommitIdFromTag = async (tag) => {
     let commitId = 'unknown';
