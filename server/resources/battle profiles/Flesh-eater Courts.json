@@ -127,6 +127,15 @@
   },
   {
     "type": "Hero",
+    "name": "High Falconer Felgryn",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "Any <Knights>, Any <Serfs>",
+    "notes": "This Hero can join an eligible regiment as a <Flesh-eater Noble>.",
+    "baseSize": "32mm"
+  },
+  {
+    "type": "Hero",
     "name": "Abhorrant Ghoul King (Scourge of Ghyran)",
     "unitSize": 1,
     "points": 120,
