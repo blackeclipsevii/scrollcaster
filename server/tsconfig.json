@@ -4,6 +4,6 @@
     "allowJs": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*", "shared-lib/**/*"],
+  "include": ["server.ts", "src/**/*", "shared-lib/**/*", "cors.d.ts"],
   "exclude": ["node_modules"]
 }

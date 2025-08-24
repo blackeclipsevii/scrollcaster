@@ -25,15 +25,15 @@
     "typescript-eslint": "^8.38.0"
   },
   "scripts": {
-    "install-shared-lib": "rm -rf server/shared-lib && cp -R shared-lib server/shared-lib",
-    "build": "npm run install-shared-lib && npx tsc -p ./server",
-    "server": "npm run build && node ./server.js",
+    "install-shared-lib": "rm -rf shared-lib && cp -R ../shared-lib shared-lib",
+    "build": "npm run install-shared-lib && npx tsc -p .",
+    "server": "npm run build && node ./dist/server.js",
     "lint": "npx eslint ./server",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "jest": {
     "testMatch": [
-      "**/server/**/*.test.js"
+      "/**/*.test.js"
     ]
   }
 }

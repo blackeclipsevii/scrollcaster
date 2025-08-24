@@ -215,7 +215,7 @@ export default class AgeOfSigmar {
         await this._populateLibraries(this._path);
         console.timeEnd('Populate Libraries');
 
-        const battleProfilesDir = './server/resources/battle profiles';
+        const battleProfilesDir = './resources/battle profiles';
         this._parseBattleProfiles(battleProfilesDir);
 
         // armies of renown supplimental profiles

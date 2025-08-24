@@ -3,30 +3,32 @@ import url from 'url';
 import path from 'path'
 import fs from 'fs'
 import express from 'express'
-import  cors from 'cors'
+import cors from 'cors'
 
-import AgeOfSigmar from './server/dist/src/AgeOfSigmar.js';
-import Roster from './server/dist/src/Roster.js';
-import RosterStateConverter from './server/dist/src/lib/RosterStateConverterImpl.js'
-import { validateRoster } from './server/dist/src/lib/validation/RosterValidation.js'
-import { nameRosterToRoster } from './server/dist/src/lib/NameRoster.js'
+import AgeOfSigmar from './src/AgeOfSigmar.js';
+import Roster from './src/Roster.js';
+import RosterStateConverter from './src/lib/RosterStateConverterImpl.js'
+import { validateRoster } from './src/lib/validation/RosterValidation.js'
+import { nameRosterToRoster } from './src/lib/NameRoster.js'
 
-import installCatalog from './server/dist/src/lib/installCatalog.js'
+import installCatalog from './src/lib/installCatalog.js'
 
-import Search from './server/dist/src/search/Search.js'
+import Search from './src/search/Search.js'
+
+import UnitInterf from './shared-lib/UnitInterface.js';
 
 // don't allow requests while the server is starting
 // it can really muck things up unexpectedly
 var serverStarted = false;
-var commitIdUsed;
+var commitIdUsed: string | null = null;
 
 const server = express();
 const hostname = process.env.SCROLLCASTER_HOSTNAME || 'localhost';
 const port = process.env.SCROLLCASTER_PORT || 3000;
 let directoryPath = '';
 
-var search = null;
-var ageOfSigmar = null;
+var search: Search | null = null;
+var ageOfSigmar: AgeOfSigmar | null = null;
 var version = (() => {
   const txt = fs.readFileSync('VERSION.txt');
   const verSplit = txt.toString().split('.');
@@ -37,14 +39,14 @@ var version = (() => {
   }
 })();
 
-function getAgeOfSigmar() {
+function getAgeOfSigmar(): AgeOfSigmar {
   if (!ageOfSigmar) {
     ageOfSigmar = new AgeOfSigmar(directoryPath);
   }
   return ageOfSigmar;
 }
 
-function getSearch(aos) {
+function getSearch(aos: AgeOfSigmar): Search {
   if (!search) {
     search = new Search(aos);
   }
@@ -54,7 +56,7 @@ function getSearch(aos) {
 // Matches http(s)://scrollcaster.dev, http(s)://www.scrollcaster.io, etc.
 const allowedOriginRegex = /^https?:\/\/(www\.)?scrollcaster\.(dev|io|app)$/;
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin: function (origin: string, callback: (a: string | null, b: boolean)=>void) {
     if (hostname === 'localhost') {
       callback(null, true);
     } else if (!origin || origin.startsWith('http://127.0.0.1') || allowedOriginRegex.test(origin)) {
@@ -112,7 +114,7 @@ server.get('/search', async (req, res) => {
   const parsedUrl = url.parse(req.url, true);
   let query = '';
   if (parsedUrl.query.query) {
-    query = parsedUrl.query.query;
+    query = parsedUrl.query.query as string;
   }
   const aos = getAgeOfSigmar();
   const search = getSearch(aos);
@@ -130,7 +132,7 @@ server.get('/armies', (req, res) => {
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); 
   if (parsedUrl.query.army) {
-    const armyName = decodeURI(parsedUrl.query.army);
+    const armyName = parsedUrl.query.army.toString();
     const army = aos.getArmy(armyName);
     
     // don't stringify lut, because thats just everything...again
@@ -144,18 +146,6 @@ server.get('/armies', (req, res) => {
   res.end(JSON.stringify(result));
 });
 
-server.get('/libraries', (req, res) => {
-  if (!serverStarted) {
-    res.status(503);
-    res.end();
-    return;
-  }
-
-  const aos = getAgeOfSigmar();
-  const result = aos.getLibraryNames();
-  res.end(JSON.stringify(result));
-});
-
 server.get('/version', (req, res) => {
   if (!serverStarted) {
     res.status(503);
@@ -165,14 +155,15 @@ server.get('/version', (req, res) => {
 
   const parsedUrl = url.parse(req.url, true);
   if (parsedUrl.query.of) {
-    if (parsedUrl.query.of.toLowerCase() === 'bsdata') {
+    const of: string = parsedUrl.toString();
+    if (of.toLowerCase() === 'bsdata') {
       console.log (`BSData Commit Used: ${commitIdUsed}`);
       res.end(JSON.stringify({version: commitIdUsed}));
       return;
     }
 
-    if (parsedUrl.query.of.toLowerCase() === 'battle profiles') {
-      const filename = './server/resources/battle profiles/version.txt';
+    if (of.toLowerCase() === 'battle profiles') {
+      const filename = './resources/battle profiles/version.txt';
       if (!fs.existsSync(filename)) {
         res.status(404);
         res.end();
@@ -197,11 +188,23 @@ server.get('/upgrades', (req, res) => {
     res.end();
     return;
   }
-
+  
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true);
-  const armyValue = decodeURI(parsedUrl.query.army);
-  const army = aos.getArmy(armyValue);
+  if (!parsedUrl.query.armyName) {
+    res.status(400);
+    res.end();
+    return;
+  }
+
+  const armyName = parsedUrl.query.armyName.toString();
+  const army = aos.getArmy(armyName);
+  if (!army) {
+    res.status(404);
+    res.end();
+    return;
+  }
+
   res.end(JSON.stringify(army.upgrades));
   res.status(200);
 });
@@ -221,15 +224,22 @@ server.get('/lut', (req, res) => {
     return;
   }
 
-  const id = parsedUrl.query.id;
-  const armyValue = decodeURI(parsedUrl.query.army);
+  const id = parsedUrl.query.id.toString();
+  const armyValue = parsedUrl.query.army.toString();
   const army = aos.getArmy(armyValue);
+  if (!army) {
+    res.status(404);
+    res.end();
+    return;
+  }
+
   const result = army.lut[id];
   if (result) {
     res.end(JSON.stringify(result));
     res.status(200);
     return;
   }
+  
   res.status(404);
 });
 
@@ -243,7 +253,7 @@ server.get('/regimentsOfRenown', (req, res) =>{
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
   if (parsedUrl.query.army) {
-    const armyValue = decodeURI(parsedUrl.query.army);
+    const armyValue = parsedUrl.query.army.toString();
     console.log(`Army requested: ${armyValue}`);
 
     const army = aos.getArmy(armyValue);
@@ -259,7 +269,8 @@ server.get('/regimentsOfRenown', (req, res) =>{
   }
 
   if (parsedUrl.query.id) {
-    const regiment = aos.regimentsOfRenown[parsedUrl.query.id];
+    const id = parsedUrl.query.id.toString();
+    const regiment = aos.regimentsOfRenown[id];
     if (!regiment) {
       res.status(404);
       res.end();
@@ -337,7 +348,7 @@ server.post('/validate', async (req, res) => {
   }
 
   const keywords = aos._getAvailableKeywords(army);
-  let errs = validateRoster(army, roster, keywords);
+  let errs = validateRoster(army, roster as Roster, keywords);
   res.end(JSON.stringify(errs));
   res.status(200);
   return;
@@ -352,9 +363,9 @@ server.get('/units', (req, res) => {
 
   const aos = getAgeOfSigmar();
   const parsedUrl = url.parse(req.url, true); // 'true' parses the query string
-  let units = null;
+  let units: {[name: string]: UnitInterf} | undefined;
   if (parsedUrl.query.army) {
-    const armyValue = decodeURI(parsedUrl.query.army);
+    const armyValue = parsedUrl.query.army.toString();
     console.log(`Army requested: ${armyValue}`);
 
     const army = aos.getArmy(armyValue);
@@ -365,7 +376,14 @@ server.get('/units', (req, res) => {
     }
     
     if (parsedUrl.query.leaderId) {
-      units = aos.getRegimentOptions(army, parsedUrl.query.leaderId);
+      const leaderId = parsedUrl.query.leaderId.toString();
+      const unitsArr: UnitInterf[] | undefined = aos.getRegimentOptions(army, leaderId);
+      if (!unitsArr) {
+        res.status(404);
+        res.end();
+        return;
+      }
+
       res.end(JSON.stringify(units));
       return;
     }
@@ -376,7 +394,7 @@ server.get('/units', (req, res) => {
   }
   
   if (parsedUrl.query.name) {
-    const unitName = decodeURI(parsedUrl.query.name);
+    const unitName = parsedUrl.query.name.toString();
     console.log(`Unit requested: ${unitName}`);
     const unitIds = Object.getOwnPropertyNames(units);
     for (let i = 0; i < unitIds.length; ++i) {
@@ -389,8 +407,9 @@ server.get('/units', (req, res) => {
   } 
   
   if (parsedUrl.query.id) {
-    console.log(`Unit requested: ${parsedUrl.query.id}`);
-    const unit = units[parsedUrl.query.id];
+    const id = parsedUrl.query.id.toString();
+    console.log(`Unit requested: ${id}`);
+    const unit = units[id];
     if (unit) {
       console.log(`Unit found.`);
       res.end(JSON.stringify(unit));
@@ -416,7 +435,7 @@ server.get('/roster', (req, res) => {
   const parsedUrl = url.parse(req.url, true);
 
   if (parsedUrl.query.army) {
-    const armyValue = decodeURI(parsedUrl.query.army);
+    const armyValue = parsedUrl.query.army.toString();
     console.log(`army value: ${armyValue}`)
     const army = aos.getArmy(armyValue);
     if (!army) {
@@ -436,7 +455,7 @@ server.get('/roster', (req, res) => {
 });
 
 
-function getFirstFolderPath(dirPath) {
+function getFirstFolderPath(dirPath: string) {
   try {
     const entries = fs.readdirSync(dirPath, { withFileTypes: true });
     const firstFolder = entries.find(entry => entry.isDirectory());
@@ -455,7 +474,12 @@ async function start() {
   const tag = process.env.SCROLLCASTER_BSDATA_TAG;
   const commitId = process.env.SCROLLCASTER_BSDATA_COMMIT;
   commitIdUsed = await installCatalog(tag, commitId);
-  directoryPath = getFirstFolderPath('data');
+  const dirPath = getFirstFolderPath('data');
+  if (!dirPath) {
+    throw new Error(`Somehow, ${dirPath} was not found.`);
+  }
+  
+  directoryPath = dirPath;
 
   console.log(`Loading libraries...`);
   console.time('Load AOS Time')
@@ -476,6 +500,6 @@ async function start() {
   console.timeEnd('Total Startup Time')
 }
 
-server.listen(port, hostname, () => {
+server.listen(Number(port), hostname, () => {
   start();
 });

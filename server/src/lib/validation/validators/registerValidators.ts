@@ -7,7 +7,7 @@ import { registerPyrofaneCult } from "./PyrofaneCult.js";
 import { registerWardensOfTheChorrileum } from "./WardensOfTheChorrileum.js";
 
 export const registerAllValidators = () => {
-    registerJsonValidators('./server/resources/validators.json');
+    registerJsonValidators('./resources/validators.json');
 
     // more involved validators
     registerCroneseersPariahs();
