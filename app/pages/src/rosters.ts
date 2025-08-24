@@ -83,7 +83,7 @@ const rosterPage = {
           option.textContent = army;
           armySelect.appendChild(option);
         } else {
-          const parts = army.split('-');
+          const parts = army.split(' - ');
           const faction = parts[0].trim();
           const subfaction = parts[1].trim();
           if (thisPage._ror[faction]) {
