@@ -27,8 +27,7 @@ import RosterSettings from "./settings/RostersSettings";
 import BuilderSettings from "./settings/BuilderSettings";
 import SettingsSettings from "./settings/SettingsSettings";
 
-import { infoIcon, kofiCup, plusIcon, scrollcasterIcon } from "@/lib/widgets/images.js";
-import { upgradeList } from "@/lib/functions/upgradeLists";
+import { infoIcon, plusIcon } from "@/lib/widgets/images.js";
 import { hideVueComponent, showVueComponent } from "@/lib/widgets/VueApp";
 import InfoWidget from "@/lib/widgets/info/InfoWidget.vue";
 
@@ -605,7 +604,10 @@ const rosterPage = {
             const modal = document.querySelector(".modal") as HTMLElement;
             modal.style.padding = '.5em';
             modal.style.border = `2px solid ${getVar('black-4')}`
-            const stuff = [
+            
+            const vueDisplay = document.createElement('div');
+            const title = 'Phase Reminders 1.0';
+            const changelist = [
               'Added per-phase abilities to the Battle View. Access it via the header menu in the list editor.',
               'Added settings page to the header menu.',
               'Added more list formats to the importer.',
@@ -616,9 +618,11 @@ const rosterPage = {
             ]
             showVueComponent(InfoWidget, {
               version: clientVersion,
-              description: 'Phase Reminders 1.0',
-              bulletPoints: stuff
-            }, modal);
+              description: title,
+              bulletPoints: changelist
+            }, vueDisplay);
+            
+            modal.appendChild(vueDisplay);
         }, hideVueComponent);
         toggle();
       };
