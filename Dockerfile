@@ -21,6 +21,7 @@ RUN apt-get update -qq && \
 
 # Copy application code
 COPY . .
+RUN npm install -g pnpm
 RUN npm install
 RUN npm run build
 
