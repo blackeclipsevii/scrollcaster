@@ -550,9 +550,6 @@ const rosterPage = {
       await putRoster(roster);
 
       Overlay.disable();
-
-      await viewRosters();
-
       goToRoster(roster);
     }
 
