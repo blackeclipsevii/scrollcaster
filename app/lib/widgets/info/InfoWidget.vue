@@ -20,6 +20,11 @@
         <ContactWidget :icon="redditIcon" href="https://www.reddit.com/user/joe-scrollcaster"
                        largeText="Reddit" smallText="u/joe-scrollcaster">
         </ContactWidget>
+        <ContactWidget :icon="kofiCircle" href="https://ko-fi.com/scrollcaster"
+                       largeText="ko-fi" smallText="scrollcaster">
+        </ContactWidget>
+    </div>
+    <div class="contact-section">
         <ContactWidget :icon="githubIcon" href="https://github.com/blackeclipsevii/scrollcaster"
                        largeText="GitHub" smallText="scrollcaster">
         </ContactWidget>
@@ -27,8 +32,12 @@
     </div>
 </template>
 
+<!--
+
+-->
+
 <script setup lang="ts">
-import { githubIcon, redditIcon, scrollcasterIcon } from '../images';
+import { githubIcon, kofiCircle, redditIcon, scrollcasterIcon } from '../images';
 import ContactWidget from './ContactWidget.vue';
 defineProps<{
     version: string,
