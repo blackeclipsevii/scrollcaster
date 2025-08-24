@@ -112,7 +112,8 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname),
       '@res': path.resolve(__dirname, 'resources'),
-      '@ico': path.resolve(__dirname, 'resources/flaticon')
+      '@ico': path.resolve(__dirname, 'resources/flaticon'),
+      '@scrollcaster/shared-lib': path.resolve(__dirname, '../packages/shared-lib/src'),
     }
   }
 });

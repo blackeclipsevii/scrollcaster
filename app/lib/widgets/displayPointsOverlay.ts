@@ -1,4 +1,4 @@
-import RosterInterf from "@/shared-lib/RosterInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 import { getVar } from "@/lib/functions/getVar";
 import { validateRoster } from "@/lib/functions/validateRoster";
 import { Overlay } from "./overlay";

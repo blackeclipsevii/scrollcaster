@@ -2,7 +2,7 @@ import { getUniqueIdentifier } from "@/lib/functions/uniqueIdentifier";
 import { getEndpoint } from "@/lib/endpoint";
 import { version } from "./version";
 import { exportRoster } from "../functions/exportRoster";
-import RosterInterf from "@/shared-lib/RosterInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 import { ImportRoster } from "../functions/import/importRoster";
 
 var _storageName = 'rosters';

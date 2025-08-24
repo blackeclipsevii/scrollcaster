@@ -1,10 +1,10 @@
-import { EnhancementGroup } from "@/shared-lib/ArmyUpgrades";
-import { Costed, BasicObject, Identifiable, Typed } from "@/shared-lib/BasicObject";
-import ModelInterf from "@/shared-lib/ModelInterface";
-import OptionSet from "@/shared-lib/Options";
-import RosterInterf, { RegimentInterf } from "@/shared-lib/RosterInterface";
-import UnitInterf, { EnhancementSlotInterf } from "@/shared-lib/UnitInterface";
-import { WeaponSelectionInterf, WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
+import { EnhancementGroup } from "@scrollcaster/shared-lib/ArmyUpgrades";
+import { Costed, BasicObject, Identifiable, Typed } from "@scrollcaster/shared-lib/BasicObject";
+import ModelInterf from "@scrollcaster/shared-lib/ModelInterface";
+import OptionSet from "@scrollcaster/shared-lib/Options";
+import RosterInterf, { RegimentInterf } from "@scrollcaster/shared-lib/RosterInterface";
+import UnitInterf, { EnhancementSlotInterf } from "@scrollcaster/shared-lib/UnitInterface";
+import { WeaponSelectionInterf, WeaponSelectionPer } from "@scrollcaster/shared-lib/WeaponInterf";
 import { getVar } from "@/lib/functions/getVar";
 import { displayPoints, unitTotalPoints } from "@/lib/host";
 import { putRoster } from "@/lib/RestAPI/roster";

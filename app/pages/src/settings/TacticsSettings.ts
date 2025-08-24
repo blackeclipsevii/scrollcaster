@@ -1,5 +1,5 @@
 import Settings from "./Settings";
-import RosterInterf from "@/shared-lib/RosterInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 
 export default class TacticsSettings implements Settings{
     [name: string]: unknown;

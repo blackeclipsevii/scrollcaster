@@ -1,4 +1,4 @@
-import { NameRoster } from "@/shared-lib/NameRoster";
+import { NameRoster } from "@scrollcaster/shared-lib/NameRoster";
 import { getEndpoint } from "@/lib/endpoint";
 import { generateId } from "@/lib/functions/uniqueIdentifier";
 import RosterStateConverter from "./RosterStateConvertImpl";

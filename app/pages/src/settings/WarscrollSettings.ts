@@ -1,6 +1,6 @@
 
 import Settings from "./Settings";
-import UnitInterf from "@/shared-lib/UnitInterface";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
 
 export default class WarscrollSettings implements Settings {
     [name: string]: unknown;

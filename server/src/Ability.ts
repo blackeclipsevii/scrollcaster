@@ -1,6 +1,6 @@
 import { BsProfile } from "./lib/bs/BsCatalog.js";
 import bsTextSmoother from "./lib/bs/BsSmoother.js"
-import { AbilityType } from "../shared-lib/AbilityInterface.js";
+import { AbilityType } from "@scrollcaster/shared-lib/AbilityInterface.js";
 
 import { bsCharacteristicArrToMetadata, Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 

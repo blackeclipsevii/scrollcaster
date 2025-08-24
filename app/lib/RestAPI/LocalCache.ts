@@ -1,7 +1,7 @@
-import { ArmyUpgrades } from "@/shared-lib/ArmyUpgrades";
-import BattleTacticCardInterf from "@/shared-lib/BattleTacticCardInterf";
-import { Force } from "@/shared-lib/Force";
-import UnitInterf from "@/shared-lib/UnitInterface";
+import { ArmyUpgrades } from "@scrollcaster/shared-lib/ArmyUpgrades";
+import BattleTacticCardInterf from "@scrollcaster/shared-lib/BattleTacticCardInterf";
+import { Force } from "@scrollcaster/shared-lib/Force";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
 import { fetchArmies } from "./fetchWithLoadingDisplay";
 import { fetchRegimentsOfRenown } from "./regimentsOfRenown";
 import { fetchTactics } from "./tactics";

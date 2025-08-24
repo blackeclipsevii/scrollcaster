@@ -3,11 +3,11 @@ import Roster, { Regiment } from "../Roster.js";
 import Unit from "../Unit.js";
 import Upgrade from "../Upgrade.js";
 
-import UpgradeInterf, { UpgradeLUT } from "../../shared-lib/UpgradeInterface.js";
-import { NameRoster, NameUnit } from "../../shared-lib/NameRoster.js";
-import LoreInterf, { LoreLUTInterf } from "../../shared-lib/LoreInterface.js";
-import { UnitType } from "../../shared-lib/UnitInterface.js";
-import { WeaponSelectionInterf } from "../../shared-lib/WeaponInterf.js";
+import UpgradeInterf, { UpgradeLUT } from "@scrollcaster/shared-lib/UpgradeInterface.js";
+import { NameRoster, NameUnit } from "@scrollcaster/shared-lib/NameRoster.js";
+import LoreInterf, { LoreLUTInterf } from "@scrollcaster/shared-lib/LoreInterface.js";
+import { UnitType } from "@scrollcaster/shared-lib/UnitInterface.js";
+import { WeaponSelectionInterf } from "@scrollcaster/shared-lib/WeaponInterf.js";
 import { namesEqual } from "./helperFunctions.js";
 
 // official app does orruks different

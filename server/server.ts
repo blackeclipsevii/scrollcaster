@@ -15,7 +15,7 @@ import installCatalog from './src/lib/installCatalog.js'
 
 import Search from './src/search/Search.js'
 
-import UnitInterf from './shared-lib/UnitInterface.js';
+import UnitInterf from '@scrollcaster/shared-lib/UnitInterface.js';
 
 // don't allow requests while the server is starting
 // it can really muck things up unexpectedly

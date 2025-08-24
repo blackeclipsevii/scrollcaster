@@ -1,5 +1,5 @@
-import { NameRoster } from "@/shared-lib/NameRoster";
-import RosterInterf from "@/shared-lib/RosterInterface";
+import { NameRoster } from "@scrollcaster/shared-lib/NameRoster";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 import { NameRosterImporter } from "./importRoster";
 import { nameRosterToRoster } from "./nameRosterToRoster";
 

@@ -6,8 +6,8 @@ import { makeSelectableItemName } from "@/lib/widgets/helpers";
 import { makeLayout, swapLayout } from "@/lib/widgets/layout";
 import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
 import { initializeDraggable } from "@/lib/widgets/draggable";
-import ArmyInterf from "@/shared-lib/ArmyInterface";
-import UpgradeInterf from "@/shared-lib/UpgradeInterface";
+import ArmyInterf from "@scrollcaster/shared-lib/ArmyInterface";
+import UpgradeInterf from "@scrollcaster/shared-lib/UpgradeInterface";
 import { displayUpgradeOverlay } from "@/lib/widgets/displayUpgradeOverlay";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 

@@ -1,7 +1,7 @@
-import WeaponInterf, {WeaponSelectionPer, WeaponsInterf, WeaponType} from "../shared-lib/WeaponInterf.js";
+import WeaponInterf, {WeaponSelectionPer, WeaponsInterf, WeaponType} from "@scrollcaster/shared-lib/WeaponInterf.js";
 import { BsProfile } from "./lib/bs/BsCatalog.js"
 import { bsCharacteristicArrToMetadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
-import { WeaponSelectionInterf } from "../shared-lib/WeaponInterf.js";
+import { WeaponSelectionInterf } from "@scrollcaster/shared-lib/WeaponInterf.js";
 
 export default class Weapon implements WeaponInterf {
     [name: string]: string | number | null;

@@ -1,5 +1,5 @@
 
-import { Force } from "@/shared-lib/Force";
+import { Force } from "@scrollcaster/shared-lib/Force";
 import Settings from "./Settings";
 
 export default class RegimentOfRenownSettings implements Settings{

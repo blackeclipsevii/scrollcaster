@@ -11,14 +11,14 @@ import path from 'path';
 import Upgrade from './Upgrade.js';
 import BsConstraint, { ConstraintType, getConstraints, BsModifierAttrObj } from './lib/bs/BsConstraint.js';
 import { BsCatalog, BsGameSystem, BsLibrary } from './lib/bs/BsCatalog.js';
-import BattleProfile from '../shared-lib/BattleProfile.js';
-import { Force, UnitContainerInterf } from '../shared-lib/Force.js';
+import BattleProfile from '@scrollcaster/shared-lib/BattleProfile.js';
+import { Force, UnitContainerInterf } from '@scrollcaster/shared-lib/Force.js';
 
 import { RegimentValidator } from './lib/validation/RegimentValidation.js';
 import { registerAllValidators } from './lib/validation/validators/registerValidators.js';
 
-import { UpgradeType } from '../shared-lib/UpgradeInterface.js';
-import { OtherSuperType, OtherTypes } from '../shared-lib/OtherTypes.js';
+import { UpgradeType } from '@scrollcaster/shared-lib/UpgradeInterface.js';
+import { OtherSuperType, OtherTypes } from '@scrollcaster/shared-lib/OtherTypes.js';
 import { safeName } from './lib/helperFunctions.js';
 
 // intermediate step
@@ -56,6 +56,12 @@ class ArmyData extends RorData {
         this.army = null
     }
 }
+
+
+interface ArmyAllianceInterf {
+    name: string,
+    alliance: GrandAlliance
+};
 
 export interface AosDatabase {
     path: string;
@@ -159,12 +165,7 @@ export default class AgeOfSigmar {
         const allKeywords = this._getAvailableKeywords(army);
         return RegimentValidator.getRegimentOptions(army, leaderId, allKeywords);
     }
-
     getArmyAlliances() {
-        interface ArmyAllianceInterf {
-            name: string,
-            alliance: GrandAlliance
-        };
         const names = Object.getOwnPropertyNames(this._database.armies);
         const result: ArmyAllianceInterf[] = [];
         names.forEach(name => {

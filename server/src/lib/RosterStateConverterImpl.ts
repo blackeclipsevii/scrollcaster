@@ -1,9 +1,9 @@
 
-import { ArmyUpgrades } from "../../shared-lib/ArmyUpgrades.js";
-import BattleTacticCardInterf from "../../shared-lib/BattleTacticCardInterf.js";
-import { Force } from "../../shared-lib/Force.js";
-import RosterInterf from "../../shared-lib/RosterInterface.js";
-import RosterStateConverter, { UnitPool } from "../../shared-lib/RosterStateConverter.js";
+import { ArmyUpgrades } from "@scrollcaster/shared-lib/ArmyUpgrades.js";
+import BattleTacticCardInterf from "@scrollcaster/shared-lib/BattleTacticCardInterf.js";
+import { Force } from "@scrollcaster/shared-lib/Force.js";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface.js";
+import RosterStateConverter, { UnitPool } from "@scrollcaster/shared-lib/RosterStateConverter.js";
 import AgeOfSigmar from "../AgeOfSigmar.js";
 import Army from "../Army.js";
 import Roster from "../Roster.js";

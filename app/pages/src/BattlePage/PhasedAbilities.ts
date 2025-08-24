@@ -1,5 +1,5 @@
-import AbilityInterf from "@/shared-lib/AbilityInterface"
-import { Identifiable, Typed } from "@/shared-lib/BasicObject";
+import AbilityInterf from "@scrollcaster/shared-lib/AbilityInterface"
+import { Identifiable, Typed } from "@scrollcaster/shared-lib/BasicObject";
 
 export interface PhaseAbilityData extends Typed, Identifiable {
     abilities: AbilityInterf[]

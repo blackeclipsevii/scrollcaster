@@ -7,8 +7,8 @@ import BattleSettings from "@/pages/src/settings/BattleSettings"
 
 import BattlePage from "./BattlePage.vue";
 import { showVueComponent } from "../../../lib/widgets/VueApp";
-import RosterInterf from "@/shared-lib/RosterInterface";
-import UnitInterf from "@/shared-lib/UnitInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 import PhasedAbilities from "./PhasedAbilities";
 

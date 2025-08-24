@@ -1,9 +1,9 @@
 import { Overlay } from "./overlay";
 import { getVar } from "@/lib/functions/getVar";
 import { AbilityWidget } from "./AbilityWidget";
-import UpgradeInterf, { UpgradeType } from "@/shared-lib/UpgradeInterface";
-import { Force } from "@/shared-lib/Force";
-import LoreInterf from "@/shared-lib/LoreInterface";
+import UpgradeInterf, { UpgradeType } from "@scrollcaster/shared-lib/UpgradeInterface";
+import { Force } from "@scrollcaster/shared-lib/Force";
+import LoreInterf from "@scrollcaster/shared-lib/LoreInterface";
 
 const _initAbSection = () => {
     let section = document.getElementById('abilities-section');

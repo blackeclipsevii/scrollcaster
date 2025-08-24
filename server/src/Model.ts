@@ -2,10 +2,10 @@ import { BsSelectionEntry, BsProfile } from "./lib/bs/BsCatalog.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
 import Weapon, {Weapons, WeaponSelection} from "./Weapon.js";
 
-import OptionSet from "../shared-lib/Options.js";
+import OptionSet from "@scrollcaster/shared-lib/Options.js";
 import { parseOptions } from "./parseOptions.js";
-import ModelInterf from "../shared-lib/ModelInterface.js";
-import { WeaponSelectionPer } from "../shared-lib/WeaponInterf.js";
+import ModelInterf from "@scrollcaster/shared-lib/ModelInterface.js";
+import { WeaponSelectionPer } from "@scrollcaster/shared-lib/WeaponInterf.js";
 
 export default class Model implements ModelInterf {
     id: string;

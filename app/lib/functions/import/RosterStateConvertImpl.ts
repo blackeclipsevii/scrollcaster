@@ -1,9 +1,9 @@
-import RosterStateConverter, { UnitPool } from "@/shared-lib/RosterStateConverter";
-import { ArmyUpgrades } from "@/shared-lib/ArmyUpgrades";
-import BattleTacticCardInterf from "@/shared-lib/BattleTacticCardInterf";
-import { Force } from "@/shared-lib/Force";
+import RosterStateConverter, { UnitPool } from "@scrollcaster/shared-lib/RosterStateConverter";
+import { ArmyUpgrades } from "@scrollcaster/shared-lib/ArmyUpgrades";
+import BattleTacticCardInterf from "@scrollcaster/shared-lib/BattleTacticCardInterf";
+import { Force } from "@scrollcaster/shared-lib/Force";
 import { getNewRoster } from "@/lib/RestAPI/roster";
-import RosterInterf from "@/shared-lib/RosterInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
 export default class RosterStateConverterImpl extends RosterStateConverter {

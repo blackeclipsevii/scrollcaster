@@ -15,7 +15,7 @@ import { getVar } from "@/lib/functions/getVar";
 import { getRoster, getRosters, putRoster, getNewRoster, deleteRoster, deleteRosters } from "@/lib/RestAPI/roster";
 import { ContextMenu } from "@/lib/widgets/contextMenu";
 import { generateId } from "@/lib/functions/uniqueIdentifier";
-import RosterInterf from "@/shared-lib/RosterInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 import { About } from "@/lib/widgets/About";
 import { ImportRoster } from "@/lib/functions/import/importRoster";
 import { displaySlidebanner, SlideBannerMessageType } from "@/lib/widgets/SlideBanner";

@@ -1,6 +1,6 @@
-import LoreInterf from "@/shared-lib/LoreInterface";
-import RosterInterf from "@/shared-lib/RosterInterface";
-import UnitInterf from "@/shared-lib/UnitInterface";
+import LoreInterf from "@scrollcaster/shared-lib/LoreInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
 import { rosterTotalPoints, unitTotalPoints } from "@/lib/host";
 import { version } from "@/lib/RestAPI/version";
 

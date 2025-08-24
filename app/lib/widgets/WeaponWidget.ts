@@ -1,4 +1,4 @@
-import WeaponInterf, { WeaponType } from "@/shared-lib/WeaponInterf";
+import WeaponInterf, { WeaponType } from "@scrollcaster/shared-lib/WeaponInterf";
 import { whClearDiv } from "./helpers";
 import { getVar } from "@/lib/functions/getVar";
 import { abOffensive, abShooting } from "./images.js";

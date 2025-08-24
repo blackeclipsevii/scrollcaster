@@ -1,5 +1,5 @@
-import { NameRoster, NameUnit } from "@/shared-lib/NameRoster";
-import RosterInterf from "@/shared-lib/RosterInterface";
+import { NameRoster, NameUnit } from "@scrollcaster/shared-lib/NameRoster";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 
 export class NameRosterImporter {
     canImport(text: string): boolean {

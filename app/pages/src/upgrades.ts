@@ -1,6 +1,6 @@
-import { ArmyUpgrades } from "@/shared-lib/ArmyUpgrades";
-import RosterInterf from "@/shared-lib/RosterInterface";
-import UpgradeInterf, { UpgradeLUT, UpgradeType, upgradeTypeToString } from "@/shared-lib/UpgradeInterface";
+import { ArmyUpgrades } from "@scrollcaster/shared-lib/ArmyUpgrades";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
+import UpgradeInterf, { UpgradeLUT, UpgradeType, upgradeTypeToString } from "@scrollcaster/shared-lib/UpgradeInterface";
 import { displayPoints } from "@/lib/host";
 import { fetchWithLoadingDisplay } from "@/lib/RestAPI/fetchWithLoadingDisplay";
 import { displayPointsOverlay, hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
@@ -11,7 +11,7 @@ import { disableHeaderContextMenu, getPageRouter, setHeaderTitle } from "@/lib/w
 import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
 import { layoutDefaultFactory, makeLayout, swapLayout } from "@/lib/widgets/layout";
 import { getEndpoint } from "@/lib/endpoint";
-import LoreInterf, { LoreLUTInterf } from "@/shared-lib/LoreInterface";
+import LoreInterf, { LoreLUTInterf } from "@scrollcaster/shared-lib/LoreInterface";
 import { putRoster } from "@/lib/RestAPI/roster";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 

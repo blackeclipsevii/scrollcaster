@@ -1,16 +1,16 @@
 import Ability from "./Ability.js";
 
-import { UnitType, strToUnitType } from "../shared-lib/UnitInterface.js";
+import { UnitType, strToUnitType } from "@scrollcaster/shared-lib/UnitInterface.js";
 import { BsCategoryLink, BsCharacteristic, BsEntryLink, BsSelectionEntry } from "./lib/bs/BsCatalog.js";
 import { Metadata } from "./lib/bs/bsCharacteristicArrToMetadata.js";
 import AgeOfSigmar from "./AgeOfSigmar.js";
-import BattleProfile from "../shared-lib/BattleProfile.js";
+import BattleProfile from "@scrollcaster/shared-lib/BattleProfile.js";
 
 import Model from "./Model.js";
-import OptionSet from "../shared-lib/Options.js";
+import OptionSet from "@scrollcaster/shared-lib/Options.js";
 import { parseOptions } from "./parseOptions.js";
 
-import UnitInterf, { EnhancementSlotInterf, UnitSuperType } from "../shared-lib/UnitInterface.js";
+import UnitInterf, { EnhancementSlotInterf, UnitSuperType } from "@scrollcaster/shared-lib/UnitInterface.js";
 
 export const isUndersizedUnit = (entry: BsEntryLink) => {
     let undersized = false;

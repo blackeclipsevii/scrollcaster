@@ -1,6 +1,6 @@
-import RosterInterf from "@/shared-lib/RosterInterface";
-import UnitInterf from "@/shared-lib/UnitInterface";
-import { WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
+import { WeaponSelectionPer } from "@scrollcaster/shared-lib/WeaponInterf";
 import { getEndpoint } from "@/lib/endpoint";
 import { rosterTotalPoints } from "@/lib/host";
 import RosterStateConverter from "./import/RosterStateConvertImpl";

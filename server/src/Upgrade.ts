@@ -1,4 +1,4 @@
-import UpgradeInterf, {UpgradeSuperType, UpgradeType, upgradeTypeToString} from "../shared-lib/UpgradeInterface.js";
+import UpgradeInterf, {UpgradeSuperType, UpgradeType, upgradeTypeToString} from "@scrollcaster/shared-lib/UpgradeInterface.js";
 import Ability from "./Ability.js";
 import { BsCost, BsProfile, BsSelectionEntry } from "./lib/bs/BsCatalog.js"
 

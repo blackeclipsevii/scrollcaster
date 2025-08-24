@@ -1,6 +1,6 @@
 import { fetchWithLoadingDisplay } from "./fetchWithLoadingDisplay"
 import { getEndpoint } from "@/lib/endpoint";
-import UnitInterf from "@/shared-lib/UnitInterface";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
 
 export const unitsApi = {
     _cache: {

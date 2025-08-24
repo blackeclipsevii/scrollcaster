@@ -7,7 +7,7 @@ import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";
 import { swapLayout } from "@/lib/widgets/layout";
 import { initializeDraggable } from "@/lib/widgets/draggable";
 import { AbilityWidget } from "@/lib/widgets/AbilityWidget";
-import UnitInterf from "@/shared-lib/UnitInterface";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
 
 import Settings from "./settings/Settings";
 import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings";

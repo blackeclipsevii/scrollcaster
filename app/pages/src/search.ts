@@ -3,17 +3,17 @@ import { getPageRouter, setHeaderTitle } from "@/lib/widgets/header";
 import { getEndpoint } from "@/lib/endpoint";
 
 import { fetchWithLoadingDisplay } from "@/lib/RestAPI/fetchWithLoadingDisplay";
-import { SearchableObject } from "@/shared-lib/SearchableObject";
+import { SearchableObject } from "@scrollcaster/shared-lib/SearchableObject";
 import { makeLayout, swapLayout } from "@/lib/widgets/layout";
 import { getVar } from "@/lib/functions/getVar";
 import { fetchSearch } from "@/lib/RestAPI/search";
 import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
-import UnitInterf, { UnitSuperType } from "@/shared-lib/UnitInterface";
+import UnitInterf, { UnitSuperType } from "@scrollcaster/shared-lib/UnitInterface";
 
 import Settings from "./settings/Settings";
 import SearchSettings from "./settings/SearchSettings";
 import WarscrollSettings from "./settings/WarscrollSettings";
-import { OtherSuperType, OtherTypes } from "@/shared-lib/OtherTypes";
+import { OtherSuperType, OtherTypes } from "@scrollcaster/shared-lib/OtherTypes";
 import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 import { searchIcon } from "@/lib/widgets/images.js";

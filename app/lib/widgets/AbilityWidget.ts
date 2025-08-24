@@ -1,9 +1,9 @@
 import { getVar } from "@/lib/functions/getVar";
 import { whClearDiv } from "./helpers";
 import { DYNAMIC_WARSCROLL } from "../host";
-import UnitInterf from "@/shared-lib/UnitInterface";
-import AbilityInterf from "@/shared-lib/AbilityInterface";
-import UpgradeInterf from "@/shared-lib/UpgradeInterface";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
+import AbilityInterf from "@scrollcaster/shared-lib/AbilityInterface";
+import UpgradeInterf from "@scrollcaster/shared-lib/UpgradeInterface";
 
 import { abOffensive } from "./images.js";
 import { abRallying } from "./images.js";

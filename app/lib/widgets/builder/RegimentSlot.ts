@@ -1,6 +1,6 @@
 
-import { Costed } from "@/shared-lib/BasicObject";
-import RosterInterf from "@/shared-lib/RosterInterface";
+import { Costed } from "@scrollcaster/shared-lib/BasicObject";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
 import { displayPoints } from "@/lib/host";
 import { CallbackMap, ContextMenu } from "@/lib/widgets/contextMenu";
 

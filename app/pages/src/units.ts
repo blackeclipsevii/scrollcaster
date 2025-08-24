@@ -1,5 +1,5 @@
-import RosterInterf from "@/shared-lib/RosterInterface";
-import UnitInterf, { UnitType } from "@/shared-lib/UnitInterface";
+import RosterInterf from "@scrollcaster/shared-lib/RosterInterface";
+import UnitInterf, { UnitType } from "@scrollcaster/shared-lib/UnitInterface";
 import { getVar } from "@/lib/functions/getVar";
 import { displayPoints } from "@/lib/host";
 import { putRoster } from "@/lib/RestAPI/roster";
@@ -10,7 +10,7 @@ import { initializeFavoritesList, newFavoritesCheckbox, newFavoritesOnChange } f
 import { disableHeaderContextMenu, getPageRouter, goBack, setHeaderTitle } from "@/lib/widgets/header";
 import { makeSelectableItemName, makeSelectableItemType } from "@/lib/widgets/helpers";
 import { makeLayout, swapLayout } from "@/lib/widgets/layout";
-import { BasicObject } from "@/shared-lib/BasicObject";
+import { BasicObject } from "@scrollcaster/shared-lib/BasicObject";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 
 import Settings from "./settings/Settings";

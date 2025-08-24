@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "app",
+    "server"
+  ],
+  "scripts": {
+    "build": "pnpm -r run build",
+    "dev": "pnpm --filter app dev",
+    "lint": "pnpm -r run lint"
+  }
+}

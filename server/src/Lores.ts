@@ -2,9 +2,9 @@ import parseCatalog from "./lib/parseCatalog.js";
 
 import Upgrade from "./Upgrade.js";
 import { BsLibrary, BsSelectionEntryGroup } from "./lib/bs/BsCatalog.js";
-import { UpgradeType } from "../shared-lib/UpgradeInterface.js";
+import { UpgradeType } from "@scrollcaster/shared-lib/UpgradeInterface.js";
 
-import LoreInterf, {LoreLUTInterf, LoreSuperType, LoreType} from "../shared-lib/LoreInterface.js";
+import LoreInterf, {LoreLUTInterf, LoreSuperType, LoreType} from "@scrollcaster/shared-lib/LoreInterface.js";
 
 export class Lore implements LoreInterf {
     name: string;

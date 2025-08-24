@@ -1,6 +1,6 @@
-import BattleTacticCardInterf from "@/shared-lib/BattleTacticCardInterf";
-import UnitInterf, { UnitSuperType } from "@/shared-lib/UnitInterface";
-import UpgradeInterf, { UpgradeSuperType } from "@/shared-lib/UpgradeInterface";
+import BattleTacticCardInterf from "@scrollcaster/shared-lib/BattleTacticCardInterf";
+import UnitInterf, { UnitSuperType } from "@scrollcaster/shared-lib/UnitInterface";
+import UpgradeInterf, { UpgradeSuperType } from "@scrollcaster/shared-lib/UpgradeInterface";
 import { copyToClipboard } from "@/lib/functions/copyToClipboard";
 import { exportRoster } from "@/lib/functions/exportRoster";
 import { unitTotalPoints } from "@/lib/host";
@@ -13,14 +13,14 @@ import { initializeDraggable } from "@/lib/widgets/draggable";
 import { getPageRouter, setHeaderTitle, updateHeaderContextMenu } from "@/lib/widgets/header";
 import { makeLayout, swapLayout } from "@/lib/widgets/layout";
 import { Overlay } from "@/lib/widgets/overlay";
-import LoreInterf from "@/shared-lib/LoreInterface";
-import { UnitType } from "@/shared-lib/UnitInterface";
-import { BasicObject, Typed } from "@/shared-lib/BasicObject";
+import LoreInterf from "@scrollcaster/shared-lib/LoreInterface";
+import { UnitType } from "@scrollcaster/shared-lib/UnitInterface";
+import { BasicObject, Typed } from "@scrollcaster/shared-lib/BasicObject";
 
 import UnitSlot, {GenericSlot, toggleUnitAddButton} from "@/lib/widgets/builder/UnitSlot";
 import RegimentSlot, { setRegimentIdx } from "@/lib/widgets/builder/RegimentSlot";
 import { fetchLUT } from "@/lib/RestAPI/lut";
-import { WeaponSelectionPer } from "@/shared-lib/WeaponInterf";
+import { WeaponSelectionPer } from "@scrollcaster/shared-lib/WeaponInterf";
 import { displaySlidebanner, SlideBannerMessageType } from "@/lib/widgets/SlideBanner";
 import { getGlobalCache } from "@/lib/RestAPI/LocalCache";
 

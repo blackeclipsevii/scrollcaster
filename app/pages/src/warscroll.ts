@@ -1,8 +1,8 @@
 
-import ModelInterf from "@/shared-lib/ModelInterface";
-import OptionSet from "@/shared-lib/Options";
-import UnitInterf from "@/shared-lib/UnitInterface";
-import WeaponInterf, { WeaponSelectionPer, WeaponType } from "@/shared-lib/WeaponInterf";
+import ModelInterf from "@scrollcaster/shared-lib/ModelInterface";
+import OptionSet from "@scrollcaster/shared-lib/Options";
+import UnitInterf from "@scrollcaster/shared-lib/UnitInterface";
+import WeaponInterf, { WeaponSelectionPer, WeaponType } from "@scrollcaster/shared-lib/WeaponInterf";
 import { DYNAMIC_WARSCROLL } from "@/lib/host";
 import { AbilityWidget } from "@/lib/widgets/AbilityWidget";
 import { hidePointsOverlay } from "@/lib/widgets/displayPointsOverlay";

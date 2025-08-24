@@ -1,6 +1,6 @@
 
-import BattleTacticCardInterf, { BattleTacticInterf } from '../shared-lib/BattleTacticCardInterf.js';
-import { OtherSuperType, OtherTypes } from '../shared-lib/OtherTypes.js';
+import BattleTacticCardInterf, { BattleTacticInterf } from '@scrollcaster/shared-lib/BattleTacticCardInterf.js';
+import { OtherSuperType, OtherTypes } from '@scrollcaster/shared-lib/OtherTypes.js';
 import { BsSelectionEntry } from './lib/bs/BsCatalog.js';
 import bsTextSmoother from './lib/bs/BsSmoother.js';
 

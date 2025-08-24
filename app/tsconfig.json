@@ -1,5 +1,8 @@
 {
-  "extends": "@tsconfig/node20/tsconfig.json",
+  "extends": "../tsconfig.base.json",
+  "references": [
+    { "path": "../packages/shared-lib" }
+  ],
   "compilerOptions": {
     "allowJs": true,
     "outDir": "dist",
@@ -17,6 +20,6 @@
     }
   },
 
-  "include": ["lib/version.ts", "pages/**/*", "lib/**/*", "shared-lib/**/*"],
+  "include": ["lib/version.ts", "pages/**/*", "lib/**/*"],
   "exclude": ["node_modules"]
 }
