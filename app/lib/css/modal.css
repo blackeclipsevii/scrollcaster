@@ -7,6 +7,8 @@
   width: calc(100% - 5em - 4px);
   max-width: var(--max-width);
   display: inline-block;
+  margin-top: 4em;
+  margin-bottom: 4em;
 }
 
 .modal-container,
