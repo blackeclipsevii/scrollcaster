@@ -145,7 +145,7 @@ export default class Army implements ArmyInterf{
             catalogue.categoryEntries.forEach(category => {
                 const potentialKeyword = category['@name'];
                 // all keywords are uppercase
-                if (/^[A-Z0-9]+$/.test(potentialKeyword))
+                if (/^[^a-z]+$/.test(potentialKeyword))
                     this.keywordLUT[category['@id']] = potentialKeyword;
                 else
                     this._tags[category['@id']] = potentialKeyword;

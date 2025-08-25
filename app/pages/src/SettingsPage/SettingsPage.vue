@@ -4,6 +4,9 @@
         <SettingsItem name="Battle View Drawers" description="Open all the drawers in Battle View by default">
             <SettingsSwitch v-model="battleViewDrawers"></SettingsSwitch>
         </SettingsItem>
+        <SettingsItem name="Contextual Filtering" description="Hide invalid unit selections in the listbuilder.">
+            <SettingsSwitch v-model="filterByLeader"></SettingsSwitch>
+        </SettingsItem>
         <SettingsItem name="Display Legends" description="Allow legends units to display in the catalog (<i>This does not currently enable legends listbuilding</i>)">
             <SettingsSwitch v-model="displayLegends"></SettingsSwitch>
         </SettingsItem>
@@ -46,7 +49,7 @@
     // when i make this completely generic, vue seems unable to deduce that i made refs
     const battleViewDrawersKey = 'Battle View Drawers';
     const battleViewDrawers = ref(appSettings.settings()[battleViewDrawersKey]);
-    watch(battleViewDrawers, (newValue) => {
+    watch(battleViewDrawers, (newValue: boolean) => {
         // update to the new value
         appSettings.settings()[battleViewDrawersKey] = newValue;
         // save for reuse
@@ -55,9 +58,19 @@
 
     const displayLegendsKey = 'Display Legends';
     const displayLegends = ref(appSettings.settings()[displayLegendsKey]);
-    watch(displayLegends, (newValue) => {
+    watch(displayLegends, (newValue: boolean) => {
         // update to the new value
         appSettings.settings()[displayLegendsKey] = newValue;
+        // save for reuse
+        appSettings.save();
+    });
+
+    
+    const contextualFilterKey = 'Contextual Filtering';
+    const filterByLeader = ref(appSettings.settings()[contextualFilterKey]);
+    watch(filterByLeader, (newValue: boolean) => {
+        // update to the new value
+        appSettings.settings()[contextualFilterKey] = newValue;
         // save for reuse
         appSettings.save();
     });

@@ -18,6 +18,7 @@ import UnitSettings from "./settings/UnitsSettings";
 import RegimentOfRenownSettings from "./settings/RegimentOfRenownSettings";
 import WarscrollSettings from "./settings/WarscrollSettings";
 import { plusIcon } from "@/lib/widgets/images.js";
+import AppSettings from "@/lib/AppSettings";
 
 const getUnitList = (unit: {type: number}) => {
     let unitList = null;
@@ -255,7 +256,10 @@ const unitPage = {
                 if (regiment.leader)
                     leaderId = regiment.leader.id;
             }
-            const units = await unitsApi.get(roster.army, leaderId);
+
+            const appSettings = new AppSettings;
+            const leaderFilter = appSettings.settings()["Contextual Filtering"] ? leaderId : null;
+            let units = await unitsApi.get(roster.army, leaderFilter);
             if (!units) {
                 return;
             }
