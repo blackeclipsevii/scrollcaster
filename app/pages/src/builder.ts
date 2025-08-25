@@ -951,10 +951,7 @@ const builderPage = {
             })
 
             await loadArmy(true);
-            swapLayout();
-            const ele = document.querySelector('.main');
-            if (ele)
-                ele.classList.add('main-extended');
+            swapLayout(true);
             initializeDraggable('builder');
         }
 

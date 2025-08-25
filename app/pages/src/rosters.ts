@@ -620,7 +620,7 @@ const rosterPage = {
     }
     _makePage();
     await viewRosters(true);
-    swapLayout();
+    swapLayout(true);
     initializeDraggable('roster');
   }
 };

@@ -1,9 +1,11 @@
 
 class AppSettingsInternal {
     [name: string]: boolean;
+    'Contextual Filtering': boolean;
     'Battle View Drawers': boolean;
     'Display Legends': boolean;
     constructor() {
+        this['Contextual Filtering'] = true;
         this['Battle View Drawers'] = true;
         this['Display Legends'] = false;
     }
@@ -15,7 +17,8 @@ var _globalSettings: AppSettingsInternal | null = null;
 export default class AppSettings {
     _key: string;
     constructor() {
-        this._key = 'app-settings';
+        const version = 1;
+        this._key =`app-settings-v${version.toString()}`;
         this.load();
     }
     load(force ?: boolean): AppSettingsInternal {
