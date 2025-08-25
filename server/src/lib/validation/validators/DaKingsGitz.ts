@@ -54,10 +54,10 @@ class DaKingsGitzValidator extends ForcedGeneralValidator {
         });
 
         if (triggerHeroErr)
-            errors.push(`Only non-<${hero}> <${troggoth}> can be added.`);
+            errors.push(`Only non-<${hero}> <${troggoth}> can be added`);
         
         if (triggerTrogError)
-            errors.push(`Only 0-2 non-<${hero}> <${troggoth}> units can be added.`);
+            errors.push(`Only 0-2 non-<${hero}> <${troggoth}> units can be added`);
 
         return errors.length > 0 ? errors : null;
     }

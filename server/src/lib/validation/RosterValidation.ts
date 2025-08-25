@@ -1,6 +1,7 @@
 import Army from "../../Army.js";
 import Roster, { Regiment } from "../../Roster.js"
 import { RegimentValidator } from "./RegimentValidation.js";
+import { validateCanOnlyBeTakenIn } from "./validateCanOnlyBeTakenIn.js";
 
 const formatMessageText = (message: string) => {
     return message.replace(/</g, "#")
@@ -13,7 +14,7 @@ const regimentErrorMessage = (regiment: Regiment, errors: string | string[]) => 
     const origText = typeof errors === 'string' ? errors : errors.join(', ');
     if (!regiment.leader)
         return origText;
-    return `${formatMessageText(origText)} for <b>${regiment.leader.name}</b>'s regiment.`;
+    return `${formatMessageText(origText)} for <b>${regiment.leader.name}</b>'s regiment`;
 }
 
 const armyErrorMessage = (armyName: string, errors: string | string[]) => {
@@ -32,6 +33,13 @@ export const validateRoster = (army: Army, roster: Roster, availableKeywords: st
         if (regErrs && regErrs.length > 0) {
             const errMsg = regimentErrorMessage(reg, regErrs);
             armyErrs.push(errMsg);
+        }
+    });
+
+    roster.auxiliaryUnits.forEach(unit => {
+        const companionError = validateCanOnlyBeTakenIn(null, unit);
+        if (companionError) {
+            armyErrs = armyErrs.concat(formatMessageText(companionError));
         }
     });
     

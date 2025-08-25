@@ -2,6 +2,8 @@ import Army from "../../Army.js";
 import Roster, { Regiment } from "../../Roster.js";
 
 import fs from 'fs'
+import { namesEqual } from "../helperFunctions.js";
+import RosterInterf from "../../../shared-lib/RosterInterface.js";
 
 export interface ArmyValidator {
     validate(army: Army, roster: Roster): string[] | null;
@@ -11,6 +13,22 @@ export interface ArmyValidator {
 // try to standardize them
 export const processName = (name: string) => {
     return name.toLocaleLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+export const mustBeIncluded = (name: string, roster: RosterInterf) => {
+    let isIncluded = roster.regiments.some(regiment => {
+        if (regiment.leader && namesEqual(regiment.leader.name, name))
+            return true;
+        return regiment.units.some(unit => namesEqual(name, unit.name));
+    });
+
+    if (!isIncluded)
+        isIncluded = roster.auxiliaryUnits.some(unit => namesEqual(name, unit.name));
+
+    if (!isIncluded)
+        return [`<${name}> must be included`];
+    
+    return null;
 }
 
 export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeIncluded: boolean) => {
@@ -36,7 +54,7 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
         if (!isIncluded) {
             if (mustBeIncluded) {
                 // required to include but isnt
-                return [`<${name}> must be included and must be your general.`]
+                return [`<${name}> must be included and must be your general`]
             } else {
                 // not included and doesn't have to be
                 return null;
@@ -44,7 +62,7 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
         }
 
         // is included but isn't the general
-        return [`<${name}> must be your general.`];
+        return [`<${name}> must be your general`];
     }
 
     // is the general great job
@@ -53,14 +71,14 @@ export const mustBeYourGeneral = (name: string, regiments: Regiment[], mustBeInc
 
 export const noRegimentOfRenown = (roster: Roster) => {
     if (roster.regimentOfRenown) {
-        return ['cannot include a regiment of renown.'];
+        return ['cannot include a regiment of renown'];
     }
     return null;
 }
 
 export const noFactionTerrain = (roster: Roster) => {
     if (roster.terrainFeature) {
-        return ['cannot include faction terrain.'];
+        return ['cannot include faction terrain'];
     }
     return null;
 }
@@ -100,12 +118,21 @@ export class ForcedGeneralValidator {
     }
 };
 
-export class NoTerrainValidator {
+export class MustBeIncludedValidator {
+    names: string[];
+    constructor(names: string[]) {
+        this.names = names;
+    }
     validate(army: Army, roster: Roster): string[] | null {
-        const errors = noFactionTerrain(roster);
+        let errors: string[] = [];
+        this.names.forEach(name => {
+            const errs = mustBeIncluded(name, roster);
+            if (errs) 
+                errors = errors.concat(errs);
+        });
         return errors && errors.length > 0 ? errors : null;
     }
-}
+};
 
 export class MultiStepValidator {
     _validators: ArmyValidator[];
@@ -138,8 +165,9 @@ export const GenericValidatorFactory = {
             const mustInclude = opts.mustInclude === undefined ? true : opts.mustInclude;
             return new ForcedGeneralValidator(opts.general, mustInclude);
         }
-        else if (name.toUpperCase() === 'NOTERRAIN') {
-            return new NoTerrainValidator;
+        else if (name.toUpperCase() === 'MUSTBEINCLUDED') {
+            const opts = options as {units: []};
+            return new MustBeIncludedValidator(opts.units);
         }
         return new NoRorValidator;
     },

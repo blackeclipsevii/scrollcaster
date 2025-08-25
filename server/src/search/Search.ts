@@ -20,7 +20,8 @@ export default class Search {
                     superType: unit.superType,
                     type: unit.type,
                     armyName: armyName,
-                    keywords: unit.keywords.concat(unit._tags)
+                    keywords: unit.keywords,
+                    _tags: unit._tags
                 });
             });
         }
@@ -43,10 +44,10 @@ export default class Search {
         const rors = Object.values(ageOfSigmar.regimentsOfRenown);
         rors.forEach(ror => {
             const keywordSet: {[keyword: string]: boolean} = {'Regiment of Renown': true};
+            const tagsSet: {[tag: string]: boolean} = {};
             ror.unitContainers.forEach(container => {
-                container.unit.keywords.forEach(keyword => {
-                    keywordSet[keyword] = true;
-                });
+                container.unit.keywords.forEach(keyword => keywordSet[keyword] = true);
+                container.unit._tags.forEach(tag => tagsSet[tag] = true);
             })
 
             this.dataset.push({
@@ -55,7 +56,8 @@ export default class Search {
                 superType: ror.superType,
                 type: ror.type,
                 armyName: 'Core',
-                keywords: Object.getOwnPropertyNames(keywordSet)
+                keywords: Object.getOwnPropertyNames(keywordSet),
+                _tags: Object.getOwnPropertyNames(tagsSet),
             });
         });
 
@@ -77,7 +79,8 @@ export default class Search {
             keys: [
                 "name",
                 "armyName",
-                "keywords"
+                "keywords",
+                "_tags"
             ]
         };
         this.fuse = new Fuse(this.dataset, fuseOptions);

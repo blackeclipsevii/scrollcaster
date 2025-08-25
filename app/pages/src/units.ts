@@ -264,7 +264,7 @@ const unitPage = {
                 if (unit._tags.length > 0) {
                    // console.log (`${unit.name} has tags: ${unit._tags.join(', ')}`);
                 }
-                if (!thisPage.settings.displayLegends && unit.keywords.includes('Legends'))
+                if (!thisPage.settings.displayLegends && unit._tags.includes('Legends'))
                     return;
 
                 if (thisPage.settings.type && !unit.keywords.includes(thisPage.settings.type.toUpperCase()))
@@ -276,10 +276,6 @@ const unitPage = {
                 if (isSelectingLeader) {
                     // cant lead without a profile
                     if (!unit.battleProfile)
-                        return;
-
-                    // the profile explicitly says they cannot lead
-                    if (unit.battleProfile.regimentOptions.toUpperCase() === 'NONE')
                         return;
                 }
 

@@ -1,54 +1,19 @@
 import Army from "../../Army.js";
 import { Regiment } from "../../Roster.js";
 import Unit from "../../Unit.js";
-import UnitInterf, { UnitType } from "@scrollcaster/shared-lib/UnitInterface.js";
-import { namesEqual } from "../helperFunctions.js";
-
-interface KeyOpt {
-    keyword: string;
-    raw: string;
-    index: number;
-}
+import { UnitType } from "@scrollcaster/shared-lib/UnitInterface.js";
+import { ExtractedKeyword, getKeywordsFromOption } from "./ExtractedKeyword.js";
+import { validateCanOnlyBeTakenIn } from "./validateCanOnlyBeTakenIn.js";
 
 // check if a keyword is a non (really only seraphon)
-const _hasNonPrefix = (options: string, keyOpt: KeyOpt) => {
+const _hasNonPrefix = (options: string, keyOpt: ExtractedKeyword) => {
     // Check if the 4 characters before the needle are 'non-'
     const substr = options.slice(keyOpt.index - 4, keyOpt.index).toUpperCase().trim();
     return substr.startsWith('NON');
 }
 
-const getKeywordsFromOption = (option: string): KeyOpt[] => {
-    option = option.trim();
-    // let optionQualifier = option.split(' ')[0];
-    const regex = /<([^>]+)>/g;
-    const optionKeywords: KeyOpt[] = [];
-    for (const match of option.matchAll(regex)) {
-        optionKeywords.push({
-            keyword: match[1].toUpperCase(),
-            raw: match[1],
-            index: match.index
-        });
-    }
-    return optionKeywords;
-}
-
-const validateCanOnlyBeTakenIn = (leader: UnitInterf, unit: UnitInterf) => {
-    if (unit.battleProfile) {
-        const notes = unit.battleProfile.notes;
-        if (notes) {
-            if (notes.toLowerCase().replace(/ /g, '').includes('thisunitcanonlybetakenin')) {
-                const keyOpts = getKeywordsFromOption(notes);
-                if (keyOpts.length > 0 && !namesEqual(leader.name, keyOpts[0].keyword)) {
-                    return `<${unit.name}> can only be taken in <${keyOpts[0].raw}>'s regiment`;
-                }
-            }
-        }
-    }
-    return null;
-}
-
-const meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], availableKeywords: string[]) => {
-    const testKeyOpt = (allTags: string[], keyOpt: KeyOpt) => {
+const meetsOption = (unit: Unit, option: string, optionKeywords: ExtractedKeyword[], availableKeywords: string[]) => {
+    const testKeyOpt = (allTags: string[], keyOpt: ExtractedKeyword) => {
         const isNon = _hasNonPrefix(option, keyOpt);
 
         // alphanumeric and whitespace
@@ -91,7 +56,7 @@ const meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], avail
     const itrFunc = option.includes(' OR ') ? 'some' : 'every';
     const allTags = getAllTags(unit);
 
-    return optionKeywords[itrFunc]((keyOpt: KeyOpt) => {
+    return optionKeywords[itrFunc]((keyOpt: ExtractedKeyword) => {
         return testKeyOpt(allTags, keyOpt);
     });
 }
@@ -99,19 +64,27 @@ const meetsOption = (unit: Unit, option: string, optionKeywords: KeyOpt[], avail
 export const RegimentValidator = {
     validateRegiment: (regiment: Regiment, availableKeywords: string[]) => {
         const leader = regiment.leader;
-        if (!leader)
+        if (!leader) {
             return `No leader`;
+        }
+        
+        // don't let a companion lead
+        const leaderNotAllowed = validateCanOnlyBeTakenIn(leader, leader);
+        if (leaderNotAllowed) {
+            return leaderNotAllowed;
+        }
 
         const options = leader.battleProfile?.regimentOptions.split(',');
-        if (!options)
-            return `${leader.name} cannot lead. They have no regiment options.`;
+        if (!options) {
+            return `${leader.name} has no regiment options`;
+        }
 
         class _Slot {
             originalOption: string;
             min: number;
             max: number;
             conditional: string;
-            keywords: KeyOpt[];
+            keywords: ExtractedKeyword[];
             units: Unit[];
             priority: number;
             constructor(option: string) {
@@ -167,6 +140,7 @@ export const RegimentValidator = {
         }
 
         let slots: _Slot[] = []
+
         // initialize the expect slots
         const canLead = options.every(option => {
             const optionUc = option.trim().toUpperCase();
@@ -177,11 +151,9 @@ export const RegimentValidator = {
             slots.push(slot);
             return true;
         });
-        if (!canLead) {
-            if (leader.battleProfile?.notes)
-                return [`${leader.name} cannot be a leader: ${leader.battleProfile.notes}`];
-            else
-                return [`${leader.name} cannot be a leader!`];
+        
+        if (!canLead && regiment.units.length > 0) {
+            return [`${leader.name} cannot have units in their regiment`];
         }
         slots = slots.sort((a, b) => b.priority - a.priority);
 

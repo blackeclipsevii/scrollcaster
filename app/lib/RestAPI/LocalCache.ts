@@ -74,8 +74,7 @@ export default class LocalCache {
         if (units && !appSettings.settings()["Display Legends"]) {
             const keys = Object.getOwnPropertyNames(units);
             keys.forEach(key => {
-                const unit = units[key];
-                if (unit.keywords.includes('Legends')) {
+                if (units[key]._tags.includes('Legends')) {
                     delete units[key];
                 }
             });

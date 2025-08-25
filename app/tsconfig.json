@@ -20,6 +20,6 @@
     }
   },
 
-  "include": ["lib/version.ts", "pages/**/*", "lib/**/*"],
+  "include": ["version.ts", "releaseNotes.ts", "pages/**/*", "lib/**/*"],
   "exclude": ["node_modules"]
 }

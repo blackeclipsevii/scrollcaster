@@ -118,6 +118,15 @@
   },
   {
     "type": "Hero",
+    "name": "Lord Vitriolic",
+    "unitSize": 1,
+    "points": 120,
+    "regimentOptions": "Any <Infantry>, 0-1 <Black Coach>",
+    "notes": "This Hero can join an eligible regiment as a <Cursed Soul>.",
+    "baseSize": "40mm"
+  },
+  {
+    "type": "Hero",
     "name": "Tomb Banshee",
     "unitSize": 1,
     "points": 130,
