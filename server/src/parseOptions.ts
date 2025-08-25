@@ -44,8 +44,7 @@ export const parseOptions = (optionSets: OptionSet[], ageOfSigmar: AgeOfSigmar, 
                 entry.modifiers.forEach(modifer => {
                     if (modifer["@type"] === 'add' &&
                         modifer["@field"] === 'category') {
-                        const keywordLUT = ageOfSigmar.keywordLUT as {[key:string]: string};
-                        const value = keywordLUT[modifer["@value"]];
+                        const value = ageOfSigmar.keywordLUT[modifer["@value"]];
                         option.keywords.push(value ? value : modifer["@value"]);
                     }
                 });

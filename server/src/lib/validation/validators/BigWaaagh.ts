@@ -53,9 +53,9 @@ class BigWaaaghValidator implements ArmyValidator {
                     if(!unit.keywords.includes(keyword)) {
                         const regLeaderName = reg.leader ? reg.leader.name : '';
                         if (errs.length === 0 && regLeaderName.includes('Kragnos')) {
-                            errs.push(`Kragnos can only include units with either the <${ironjawz}> or <${kruelboyz}> faction keyword, but not both.`);
+                            errs.push(`Kragnos can only include units with either the <${ironjawz}> or <${kruelboyz}> faction keyword, but not both`);
                         }
-                        const err = `<${unit.name}> does not have the <${keyword}> faction keyword required by <${regLeaderName}>'s regiment.`;
+                        const err = `<${unit.name}> does not have the <${keyword}> faction keyword required by <${regLeaderName}>'s regiment`;
                         errs.push(err);
                     }
                 });

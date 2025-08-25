@@ -88,7 +88,7 @@ const searchPage = {
 
             results.forEach(result => {
                 if (!appSettings.settings()["Display Legends"]) {
-                    if (result.item.keywords.includes('Legends')) {
+                    if (result.item._tags.includes('Legends')) {
                         return;
                     }
                 }

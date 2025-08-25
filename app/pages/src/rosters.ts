@@ -30,6 +30,7 @@ import SettingsSettings from "./settings/SettingsSettings";
 import { infoIcon, plusIcon } from "@/lib/widgets/images.js";
 import { hideVueComponent, showVueComponent } from "@/lib/widgets/VueApp";
 import InfoWidget from "@/lib/widgets/info/InfoWidget.vue";
+import { releaseNotes } from "@/releaseNotes";
 
 interface Alliances {
   name: string;
@@ -603,20 +604,11 @@ const rosterPage = {
             modal.style.border = `2px solid ${getVar('black-4')}`
             
             const vueDisplay = document.createElement('div');
-            const title = 'Phase Reminders 1.0';
-            const changelist = [
-              'Added per-phase abilities to the Battle View. Access it via the header menu in the list editor.',
-              'Added settings page to the header menu.',
-              'Added more list formats to the importer.',
-              'Added PWA support: you can install this web app to your phone!',
-              'Added this awesome widget.',
-              'Added validation checks for companion units.',
-              'Bugfixes & more'
-            ]
+            const notes = releaseNotes();
             showVueComponent(InfoWidget, {
               version: clientVersion,
-              description: title,
-              bulletPoints: changelist
+              description: notes.description,
+              bulletPoints: notes.changelist
             }, vueDisplay);
             
             modal.appendChild(vueDisplay);

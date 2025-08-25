@@ -143,7 +143,12 @@ export default class Army implements ArmyInterf{
         
         if (catalogue.categoryEntries) {
             catalogue.categoryEntries.forEach(category => {
-                this.keywordLUT[category['@id']] = category['@name'];
+                const potentialKeyword = category['@name'];
+                // all keywords are uppercase
+                if (/^[A-Z0-9]+$/.test(potentialKeyword))
+                    this.keywordLUT[category['@id']] = potentialKeyword;
+                else
+                    this._tags[category['@id']] = potentialKeyword;
                 this.lut[category['@id']] = category['@name'];
             });
         }
@@ -374,11 +379,9 @@ export default class Army implements ArmyInterf{
                                 modifier['@field'] === 'category' &&
                                 modifier['@value'] && 
                                 !modifier['@scope']) {
-                                const keyword = this.keywordLUT[modifier['@value']];
-                                if (keyword) {
-                                    // the keywords isn't technically on the warscroll
-                                  //  console.log(`${unit.name} tag added : ${keyword}`);
-                                    unit._tags.push(keyword);
+                                const tag = this._tags[modifier['@value']];
+                                if (tag) {
+                                    unit._tags.push(tag);
                                 }
                             }
                         });

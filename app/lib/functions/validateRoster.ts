@@ -54,7 +54,7 @@ export const validateRoster = async (roster: RosterInterf) => {
     const validateUnique = (unit: UnitInterf) => {
         const uniqueName = unit.name.replace(" (Scourge of Ghyran)", "");
         if (uniqueUnits[uniqueName]) {
-            let errorMsg = `Multiple instances of UNIQUE unit: ${uniqueName}`;
+            let errorMsg = `Multiple instances of UNIQUE unit: <b>${uniqueName}</b>`;
             errors.push(errorMsg);
         } else {
             uniqueUnits[uniqueName] = true;
@@ -67,7 +67,7 @@ export const validateRoster = async (roster: RosterInterf) => {
                 warmasterIsGeneral = _unit.isWarmaster;
             }
             if (!isRegLeader) {
-                const errorMsg = `Your general must be a regiment leader.`;
+                const errorMsg = `Your general must be a regiment leader`;
                 errors.push(errorMsg);
             }
             numGenerals += 1;
@@ -101,7 +101,7 @@ export const validateRoster = async (roster: RosterInterf) => {
                             if (quantity !== null && quantity !== undefined) {
                                 const max = selection.max * (_unit.isReinforced ? 2 : 1);
                                 if (max < quantity) {
-                                    const errorMsg = `Invalid weapon selection option for <b>${_unit.name}</b>. You may only select ${max} instances of <i>${selection.name}</i>.`;
+                                    const errorMsg = `Invalid weapon selection option for <b>${_unit.name}</b>. You may only select ${max} instances of <i>${selection.name}</i>`;
                                     errors.push(errorMsg);
                                 }
                             }
@@ -128,12 +128,12 @@ export const validateRoster = async (roster: RosterInterf) => {
         }
         
         if (nunits > 3 && !reg.leader.isGeneral) {
-            let errorMsg = `Regiment ${idx+1} contains more than 3 units.`;
+            let errorMsg = `Regiment ${idx+1} contains more than 3 units`;
             errors.push(errorMsg);
         }
         
         if (nunits > 4 && reg.leader.isGeneral) {
-            let errorMsg = `The general's regiment contains more than 5 units.`;
+            let errorMsg = `The general's regiment contains more than 5 units`;
             errors.push(errorMsg);
         }
 
@@ -152,7 +152,7 @@ export const validateRoster = async (roster: RosterInterf) => {
     enhancementNames.forEach(eName => {
         const count = enhanceCounts[eName];
         if (count > 1) {
-            let errorMsg = `You have selected ${count} instances of <b>${eName}</b>. Only 1 instance of each enhancement may be selected.`;
+            let errorMsg = `More than one instance of <b>${eName}</b> selected (${count})`;
             errors.push(errorMsg);
         }
     })
@@ -161,7 +161,7 @@ export const validateRoster = async (roster: RosterInterf) => {
         let errorMsg = `A <b>General</b> must be selected`;
         errors.push(errorMsg);
     } else if (numGenerals > 1) {
-        let errorMsg = `More than one unit is selected as your <b>General</b>.`;
+        let errorMsg = `More than one unit is selected as your <b>General</b>`;
         errors.push(errorMsg);
     } else if (warmasters.length > 0 && !warmasterIsGeneral) {
         let errorMsg = `If you include any <b>WARMASTER</b> units in your roster, one of them must be your general: ${warmasters.join(', ')}`;
@@ -169,12 +169,12 @@ export const validateRoster = async (roster: RosterInterf) => {
     }
 
     if (!roster.isArmyOfRenown && !roster.battleFormation) {
-        let errorMsg = `A <b>Battle Formation</b> must be chosen.`;
+        let errorMsg = `A <b>Battle Formation</b> must be chosen`;
         errors.push(errorMsg);
     }
     
     if (roster.battleTacticCards.length !== 2) {
-        let errorMsg = `Two <b>Battle Tactic Cards</b> must be chosen.`;
+        let errorMsg = `Two <b>Battle Tactic Cards</b> must be chosen`;
         errors.push(errorMsg);
     }
 

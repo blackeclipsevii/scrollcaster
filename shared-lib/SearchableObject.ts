@@ -6,4 +6,5 @@ export interface SearchableObject {
     type: number;
     armyName: string;
     keywords: string[];
+    _tags: string[];
 };

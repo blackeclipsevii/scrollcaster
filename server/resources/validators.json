@@ -17,8 +17,7 @@
         "ForcedGeneral": {
             "general": "Prince Vhordrai",
             "mustInclude": false
-        },
-        "NoTerrain": {}
+        }
     },
     "Scions of Nulahmia": {
         "ForcedGeneral": {
@@ -38,9 +37,7 @@
             "mustInclude": true
         }
     },
-    "Lofnir Drothkeepers": {
-        "NoTerrain": {}
-    },
+    "Lofnir Drothkeepers": {},
     "Grundstok Expeditionary Force": {},
     "Gorechosen Champions": {
         "ForcedGeneral": {
@@ -48,14 +45,26 @@
             "mustInclude": false
         }
     },
+    "The Equinox Feast": {
+        "MustBeIncluded": {
+            "units": ["High Falconer Felgryn"]
+        }
+    },
+    "The Eternal Nightmare": {
+        "ForcedGeneral": {
+            "general": "Nagash, Supreme Lord of the Undead",
+            "mustInclude": true
+        }
+    },
+    "New Summercourt": {
+        "MustBeIncluded": {
+            "units": ["Ushoran, Mortarch of Delusion"]
+        }
+    },
     "The Swords of Chaos": {},
     "Tribes of the Snow Peaks": {},
-    "Great-grand Gnawhorde": {
-        "NoTerrain": {}
-    },
-    "Thanquol's Mutated Menagerie": {
-        "NoTerrain": {}
-    },
+    "Great-grand Gnawhorde": {},
+    "Thanquol's Mutated Menagerie": {},
     "Droggz's Gitmob": {
         "ForcedGeneral": {
             "general": "Droggz da Sunchompa",
@@ -66,8 +75,7 @@
         "ForcedGeneral": {
             "general": "Trugg the Troggoth King",
             "mustInclude": true
-        },
-        "NoTerrain": {}
+        }
     },
     "Krazogg's Grunta Stampede": {},
     "Zoggrok's Ironmongerz": {

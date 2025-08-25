@@ -24,7 +24,7 @@ class PyrofaneCultValidator extends NoRorValidator {
                 ++ nGauntSummoner;
                 if (nGauntSummoner > 1 && triggerErr) {
                     triggerErr = false;
-                    errors.push(`Only 0-1 <Gaunt Summoner> or <Gaunt Summoner on Disc of Tzeentch> allowed.`);
+                    errors.push(`Only 0-1 <Gaunt Summoner> or <Gaunt Summoner on Disc of Tzeentch> allowed`);
                 }
             }
         }

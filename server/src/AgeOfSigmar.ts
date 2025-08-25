@@ -573,7 +573,10 @@ export default class AgeOfSigmar {
 
         // get a lut for keywords
         this.gameSystem.categoryEntries.forEach(entry => {
-            this.keywordLUT[entry['@id']] = entry['@name'];
+            const potentialKeyword = entry['@name'];
+            // all keywords are uppercase
+            if (/^[A-Z0-9]+$/.test(potentialKeyword))
+                this.keywordLUT[entry['@id']] = potentialKeyword;
         });
 
         this.gameSystem.selectionEntries.forEach(entry => {

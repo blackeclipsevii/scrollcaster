@@ -107,7 +107,10 @@ export default class Unit implements UnitInterf {
             if (keyword === 'Legends') {
                 this.legends = true;
             }
-            this.keywords.push(keyword);
+            if (/^[A-Z0-9]+$/.test(keyword))
+                this.keywords.push(keyword);
+            else
+                this._tags.push(keyword);
         }
     }
 

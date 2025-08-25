@@ -17,6 +17,6 @@
     }
   },
 
-  "include": ["lib/version.ts", "pages/**/*", "lib/**/*", "shared-lib/**/*"],
+  "include": ["version.ts", "releaseNotes.ts", "pages/**/*", "lib/**/*", "shared-lib/**/*"],
   "exclude": ["node_modules"]
 }

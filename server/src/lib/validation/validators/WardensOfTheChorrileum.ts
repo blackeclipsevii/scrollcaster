@@ -36,9 +36,9 @@ class WardensOfTheChorrileumValidator extends NoRorValidator {
         });
 
         if (nEidolon === 0) {
-            errors.push(`Either <Eidolon of Mathlann, Aspect of the Sea> or <Eidolon of Mathlann, Aspect of the Storm> must be included. No more than 1 can be included.`);
+            errors.push(`Either <Eidolon of Mathlann, Aspect of the Sea> or <Eidolon of Mathlann, Aspect of the Storm> must be included. No more than 1 can be included`);
         } else if (nEidolon > 1) {
-            errors.push(`Only <Eidolon of Mathlann, Aspect of the Sea> or <Eidolon of Mathlann, Aspect of the Storm> can be included. No more than 1 can be included.`)
+            errors.push(`Only <Eidolon of Mathlann, Aspect of the Sea> or <Eidolon of Mathlann, Aspect of the Storm> can be included. No more than 1 can be included`)
         }
 
         return errors.length > 0 ? errors : null;
