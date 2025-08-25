@@ -282,13 +282,7 @@ const upgradePage = {
                 manLoreSect.parentElement.appendChild(manLoreSect);
             }
 
-            swapLayout();
-            if (thisPage.settings.roster) {
-                // leave room for the overlay
-                const ele = document.querySelector('.main');
-                if (ele)
-                    ele.classList.add('main-extended');
-            }
+            swapLayout(true);
             initializeDraggable('upgrades');
         }
         

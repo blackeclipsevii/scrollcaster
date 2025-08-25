@@ -303,7 +303,7 @@ footer {
     margin-right: auto;
 }
 
-.main-extended { 
+.main.main-extended { 
     margin-bottom: 10em;
 }
 
@@ -318,7 +318,6 @@ footer {
 }
 
 .section-container {
-    display: inline-block;
   box-sizing: border-box;
   padding: 0;
   margin: 0;

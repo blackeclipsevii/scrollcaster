@@ -56,7 +56,7 @@ export const makeLayout = (sections: string[],
     });
 }
 
-export const swapLayout = () => {
+export const swapLayout = (extend?: boolean) => {
     const oldView = document.getElementById('visible-content');
     if (!oldView)
         return;
@@ -71,12 +71,18 @@ export const swapLayout = () => {
             const top = header.offsetHeight + 7;
             newView.style.marginTop = `${top}px`;
         }
-    } if (inset.bottom) {
+    }
+    if (inset.bottom) {
         const footer = document.querySelector('footer');
         if (footer) {
-            const bottom = footer.offsetHeight + 7;
-            newView.style.marginBottom = `${bottom}px`;
+            const bottom = footer.offsetHeight;
+            if (extend)
+                newView.style.marginBottom = `calc(7em + ${bottom}px)`;
+            else
+                newView.style.marginBottom = `${bottom + 7}px`;
         }
+    } else if (extend) {
+        newView.classList.add('main-extended');
     }
     newView.style.display = '';
     oldView.style.display = 'none';
